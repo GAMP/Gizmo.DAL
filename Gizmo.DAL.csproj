@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">
+		<TargetFrameworks>net461</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='NET_5_DEBUG' or '$(Configuration)'=='NET_5_RELEASE'">
+		<TargetFrameworks>net5.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='NET_5_WIN_DEBUG' or '$(Configuration)'=='NET_5_WIN_RELEASE'">
+		<TargetFrameworks>net5.0-windows</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<Product>GizmoDALV2</Product>
+		<Description>GizmoDALV2</Description>
+		<Copyright>NETProjects</Copyright>
+		<Authors />
+		<Company>NETProjects</Company>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
+		<NoWarn>1591</NoWarn>
+		<Optimize>true</Optimize>
+		<Configurations>Debug;Release;NET_5_DEBUG;NET_5_RELEASE;NET_5_WIN_DEBUG;NET_5_WIN_RELEASE</Configurations>
+
+		<!-- !IMPORTANT! will break compatibility with older builds if name is changed-->
+		<AssemblyName>GizmoDALV2</AssemblyName>
+		
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='NET_5_DEBUG' or '$(Configuration)'=='NET_5_WIN_DEBUG' or '$(Configuration)'=='Debug'">
+		<Optimize>false</Optimize>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="EntityFramework" Version="6.4.4" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)'=='net461'">
+		<Reference Include="System.ComponentModel.Composition" />
+		<Reference Include="System.ComponentModel.DataAnnotations" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)'=='net5.0' or '$(TargetFramework)'=='net5.0-windows'">
+		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+		<PackageReference Include="System.ComponentModel.Composition" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DataInterfaces\DataInterfaces\DataInterfaces.csproj" />
+		<ProjectReference Include="..\Gizmo.DAL.Entities\Gizmo.DAL.Entities.csproj" />
+	</ItemGroup>
+
+</Project>
