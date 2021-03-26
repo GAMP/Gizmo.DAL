@@ -1,4 +1,7 @@
-﻿//UPDATE 10
+﻿//UPDATE 11
+Added ProductHostHidden
+
+//UPDATE 10
 Added Verfication
 Added VerficationEmail
 Added VerficationMobilePhone
