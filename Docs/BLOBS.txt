@@ -3,18 +3,14 @@ NORMAL 65535
 MEDIUMBLOB 16777215
 LONGBLOB 4294967295
 
-Add-Migration -Name Initial -ConfigurationTypeName MYSQLConfiguration -ProjectName MYSQLContext -Force -ConnectionStringName appdb
-Add-Migration -Name Initial -ConfigurationTypeName Configuration -ProjectName BASEContext -Force -ConnectionStringName appdbsql
+//Adding a new migration
+Add-Migration -Name MigrationName -ConfigurationTypeName MSSQLConfiguration -ProjectName Gizmo.DAL -Force -ConnectionStringName mssql-connection
 
-Update-Database -TargetMigration $InitialDatabase -Force
-Enable-Migrations -EnableAutomaticMigrations -Force
-
-//UPDATE
-
+//Update database to specific migration
 Update-Database -TargetMigration MYSQLInitialCreate -ConfigurationTypeName MYSQLConfiguration -ProjectName GizmoDALV2 -Force -ConnectionStringName mysql-connection
-Update-Database -TargetMigration MSSQLInitialCreate -ConfigurationTypeName MSSQLConfiguration -ProjectName GizmoDALV2 -Force -ConnectionStringName mssql-connection
 
-Add-Migration -Name MYSQLInitialCreate -ConfigurationTypeName MYSQLConfiguration -ProjectName GizmoDALV2 -Force -ConnectionStringName mysql-connection
-Add-Migration -Name MSSQLInitialCreate -ConfigurationTypeName MSSQLConfiguration -ProjectName GizmoDALV2 -Force -ConnectionStringName mssql-connection
+//Update database to inital migration https://docs.microsoft.com/en-us/ef/ef6/modeling/code-first/migrations/
+Update-Database -TargetMigration $InitialDatabase -Force
 
+Enable-Migrations -EnableAutomaticMigrations -Force
 
