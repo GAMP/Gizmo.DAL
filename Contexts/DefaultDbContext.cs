@@ -712,6 +712,11 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<RegisterTransaction> RegisterTransactions { get; set; }
 
+        /// <summary>
+        /// Gets or sets product hidden host groups.
+        /// </summary>
+        public DbSet<ProductHostHidden> ProductHostGroupHidden { get; set; }
+
         #endregion
 
         #endregion
@@ -841,6 +846,7 @@ namespace GizmoDALV2
             modelBuilder.Configurations.Add(new ProductUserPriceMap());
             modelBuilder.Configurations.Add(new ProductUserDisallowedMap());
             modelBuilder.Configurations.Add(new ProductTimeHostDisallowedMap());
+            modelBuilder.Configurations.Add(new ProductHostHiddenMap());
             modelBuilder.Configurations.Add(new ProductMap());
             modelBuilder.Configurations.Add(new ProductTimeMap());
 
