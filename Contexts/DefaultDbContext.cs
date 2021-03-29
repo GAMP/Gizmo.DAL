@@ -1457,7 +1457,7 @@ namespace GizmoDALV2
         }
 
         /// <summary>
-        /// Demands that an entity with specified key exeists.
+        /// Demands that an entity with specified key exists.
         /// </summary>
         /// <typeparam name="TEntity">Entity type.</typeparam>
         /// <param name="entityKey">Entity key.</param>
