@@ -1,18 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">
-		<TargetFrameworks>net461</TargetFrameworks>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)'=='NET_5_DEBUG' or '$(Configuration)'=='NET_5_RELEASE'">
-		<TargetFrameworks>net5.0</TargetFrameworks>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)'=='NET_5_WIN_DEBUG' or '$(Configuration)'=='NET_5_WIN_RELEASE'">
-		<TargetFrameworks>net5.0-windows</TargetFrameworks>
-	</PropertyGroup>
-
 	<PropertyGroup>
+
+		<TargetFrameworks>net5.0;net461</TargetFrameworks>
+		<Configurations>Debug;Release;NET_5_DEBUG;NET_5_RELEASE</Configurations>
+
 		<LangVersion>latest</LangVersion>
 		<Product>GizmoDALV2</Product>
 		<Description>GizmoDALV2</Description>
@@ -24,14 +16,27 @@
 		<EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
 		<NoWarn>1591</NoWarn>
 		<Optimize>true</Optimize>
-		<Configurations>Debug;Release;NET_5_DEBUG;NET_5_RELEASE;NET_5_WIN_DEBUG;NET_5_WIN_RELEASE</Configurations>
 
 		<!-- !IMPORTANT! will break compatibility with older builds if name is changed-->
 		<AssemblyName>GizmoDALV2</AssemblyName>
-		
+
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)'=='NET_5_DEBUG' or '$(Configuration)'=='NET_5_WIN_DEBUG' or '$(Configuration)'=='Debug'">
+	<!--net461-->
+	<PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">
+	</PropertyGroup>
+
+	<!--net5.0-->
+	<PropertyGroup Condition="'$(Configuration)'=='NET_5_DEBUG' or '$(Configuration)'=='NET_5_RELEASE'">
+	</PropertyGroup>
+
+	<!--release-all-->
+	<PropertyGroup Condition="'$(Configuration)'=='NET_5_RELEASE' or '$(Configuration)'=='Release'">
+		<Optimize>true</Optimize>
+	</PropertyGroup>
+
+	<!--debug-all-->
+	<PropertyGroup Condition="'$(Configuration)'=='NET_5_DEBUG' or '$(Configuration)'=='Debug'">
 		<Optimize>false</Optimize>
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
 	</PropertyGroup>
