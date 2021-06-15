@@ -4,6 +4,7 @@
 
 		<TargetFrameworks>net5.0;net461</TargetFrameworks>
 		<Configurations>Debug;Release;NET_5_DEBUG;NET_5_RELEASE</Configurations>
+		<RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
 
 		<LangVersion>latest</LangVersion>
 		<Product>GizmoDALV2</Product>
@@ -58,6 +59,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\DataInterfaces\DataInterfaces\DataInterfaces.csproj" />
 		<ProjectReference Include="..\Gizmo.DAL.Entities\Gizmo.DAL.Entities.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\" />
 	</ItemGroup>
 
 </Project>
