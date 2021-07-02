@@ -15,18 +15,18 @@ namespace Gizmo.DAL.Mappings
             //primary key column configuration
             Property(e => e.Id)
                 .HasColumnOrder(0)
-                .HasColumnName("HostDeviceId");
+                .HasColumnName("DeviceHostId");
+
+            //device id column configuration
+            Property(e => e.DeviceId)
+                .HasColumnName(nameof(DeviceHost.DeviceId))
+                .HasColumnOrder(1)
+                .IsRequired()
+                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostDevice") { IsUnique = true, Order = 0 } }));
 
             //host id column configuration
             Property(e => e.HostId)
                 .HasColumnName(nameof(DeviceHost.HostId))
-                .HasColumnOrder(1)
-                .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostDevice") { IsUnique = true, Order = 0 } }));
-            
-            //device id column configuration
-            Property(e => e.DeviceId)
-                .HasColumnName(nameof(DeviceHost.DeviceId))
                 .HasColumnOrder(2)
                 .IsRequired()
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostDevice") { IsUnique = true, Order = 1 } }));

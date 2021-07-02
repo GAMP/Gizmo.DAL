@@ -22,7 +22,7 @@ namespace Gizmo.DAL.Mappings
             Property(e => e.Name)
                 .HasColumnOrder(1)
                 .HasColumnName(nameof(Device.Name))
-                .IsRequired()
+                .IsOptional()
                 .HasMaxLength(SQLStringSize.TINY45)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[]
