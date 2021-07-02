@@ -28,7 +28,7 @@ namespace Gizmo.DAL.Mappings
                 new IndexAnnotation(new[]
                 {
                     new IndexAttribute("UQ_Name") { IsUnique = true }
-                })); ;
+                }));
 
             //table name configuration
             ToTable(nameof(Device));

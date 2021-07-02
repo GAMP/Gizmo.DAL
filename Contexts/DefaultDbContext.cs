@@ -729,12 +729,12 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets HDMI devices.
         /// </summary>
-        public DbSet<HdmiDevice> HdmiDevices { get; private set; }
+        public DbSet<DeviceHdmi> DevicesHdmi { get; private set; }
 
         /// <summary>
         /// Gets host devices.
         /// </summary>
-        public DbSet<HostDevice> HostDevices { get; private set; } 
+        public DbSet<DeviceHost> DevicesHosts { get; private set; } 
 
         #endregion
 
@@ -933,8 +933,8 @@ namespace GizmoDALV2
 
             //devices
             modelBuilder.Configurations.Add(new DeviceMap());
-            modelBuilder.Configurations.Add(new HdmiDeviceMap());
-            modelBuilder.Configurations.Add(new HostDeviceMap());
+            modelBuilder.Configurations.Add(new DeviceHdmiMap());
+            modelBuilder.Configurations.Add(new DeviceHostMap());
 
             //IGNORES
             modelBuilder.Ignore<DiscountBase>();

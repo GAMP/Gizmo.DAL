@@ -5,9 +5,9 @@ using System.Data.Entity.ModelConfiguration;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class HostDeviceMap : EntityTypeConfiguration<HostDevice>
+    public class DeviceHostMap : EntityTypeConfiguration<DeviceHost>
     {
-        public HostDeviceMap()
+        public DeviceHostMap()
         {
             //primary key configuration
             HasKey(e => e.Id);
@@ -19,20 +19,30 @@ namespace Gizmo.DAL.Mappings
 
             //host id column configuration
             Property(e => e.HostId)
-                .HasColumnName(nameof(HostDevice.HostId))
+                .HasColumnName(nameof(DeviceHost.HostId))
                 .HasColumnOrder(1)
                 .IsRequired()
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostDevice") { IsUnique = true, Order = 0 } }));
             
             //device id column configuration
             Property(e => e.DeviceId)
-                .HasColumnName(nameof(HostDevice.DeviceId))
+                .HasColumnName(nameof(DeviceHost.DeviceId))
                 .HasColumnOrder(2)
                 .IsRequired()
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostDevice") { IsUnique = true, Order = 1 } }));
 
+            //host navigational mappings
+            HasRequired(e => e.Host)
+                .WithMany(e => e.Devices)
+                .HasForeignKey(e => e.HostId);
+
+            //device navigational mappings
+            HasRequired(e => e.Device)
+                .WithMany(e => e.Hosts)
+                .HasForeignKey(e => e.DeviceId);
+
             //table configuration
-            ToTable(nameof(HostDevice));
+            ToTable(nameof(DeviceHost));
         }
     }
 }
