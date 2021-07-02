@@ -1,4 +1,6 @@
-﻿using GizmoDALV2.Entities;
+﻿using Gizmo.DAL.Entities;
+using Gizmo.DAL.Mappings;
+using GizmoDALV2.Entities;
 using GizmoDALV2.Mappings;
 using GizmoDALV2.Migrations;
 using SharedLib;
@@ -717,6 +719,25 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<ProductHostHidden> ProductHostGroupHidden { get; set; }
 
+        #region DEVICES
+        
+        /// <summary>
+        /// Gets devices.
+        /// </summary>
+        public DbSet<Device> Devices { get; private set; }
+
+        /// <summary>
+        /// Gets HDMI devices.
+        /// </summary>
+        public DbSet<HdmiDevice> HdmiDevices { get; private set; }
+
+        /// <summary>
+        /// Gets host devices.
+        /// </summary>
+        public DbSet<HostDevice> HostDevices { get; private set; } 
+
+        #endregion
+
         #endregion
 
         #endregion
@@ -909,6 +930,11 @@ namespace GizmoDALV2
             modelBuilder.Configurations.Add(new ReservationMap());
             modelBuilder.Configurations.Add(new ReservationUserMap());
             modelBuilder.Configurations.Add(new ReservationHostMap());
+
+            //devices
+            modelBuilder.Configurations.Add(new DeviceMap());
+            modelBuilder.Configurations.Add(new HdmiDeviceMap());
+            modelBuilder.Configurations.Add(new HostDeviceMap());
 
             //IGNORES
             modelBuilder.Ignore<DiscountBase>();
