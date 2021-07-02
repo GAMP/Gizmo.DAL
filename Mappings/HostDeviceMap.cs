@@ -29,7 +29,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName(nameof(HostDevice.DeviceId))
                 .HasColumnOrder(2)
                 .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostDevice") { IsUnique = true, Order = 0 } }));
+                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostDevice") { IsUnique = true, Order = 1 } }));
 
             //table configuration
             ToTable(nameof(HostDevice));

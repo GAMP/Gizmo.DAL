@@ -10,7 +10,7 @@ namespace Gizmo.DAL.Mappings
         {
             //serial number column configuration
             Property(x => x.SerialNumber)
-                .HasColumnOrder(0)
+                .HasColumnOrder(3)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY);
 
