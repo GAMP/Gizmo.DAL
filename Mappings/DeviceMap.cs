@@ -30,6 +30,14 @@ namespace Gizmo.DAL.Mappings
                     new IndexAttribute("UQ_Name") { IsUnique = true }
                 }));
 
+            //is enabled property
+            Property(e => e.IsEnabled)
+                .HasColumnOrder(2);
+
+            //is deleted property
+            Property(e => e.IsDeleted)
+                .HasColumnOrder(3);
+
             //table name configuration
             ToTable(nameof(Device));
         }
