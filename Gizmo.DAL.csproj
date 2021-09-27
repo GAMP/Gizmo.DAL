@@ -51,7 +51,7 @@
 		<Reference Include="System.ComponentModel.DataAnnotations" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)'=='net5.0' or '$(TargetFramework)'=='net5.0-windows'">
+	<ItemGroup Condition="'$(TargetFramework)'=='net6.0' or '$(TargetFramework)'=='net6.0-windows'">
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 		<PackageReference Include="System.ComponentModel.Composition" Version="5.0.0" />
 	</ItemGroup>
