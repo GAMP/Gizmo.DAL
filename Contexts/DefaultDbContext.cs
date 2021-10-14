@@ -724,17 +724,17 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets devices.
         /// </summary>
-        public DbSet<Device> Devices { get; private set; }
+        public DbSet<Device> Devices { get; set; }
 
         /// <summary>
         /// Gets HDMI devices.
         /// </summary>
-        public DbSet<DeviceHdmi> DevicesHdmi { get; private set; }
+        public DbSet<DeviceHdmi> DevicesHdmi { get; set; }
 
         /// <summary>
         /// Gets host devices.
         /// </summary>
-        public DbSet<DeviceHost> DevicesHosts { get; private set; } 
+        public DbSet<DeviceHost> DevicesHosts { get; set; } 
 
         #endregion
 
