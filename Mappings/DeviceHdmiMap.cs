@@ -19,7 +19,7 @@ namespace Gizmo.DAL.Mappings
                 new IndexAnnotation(new[]
                 {
                     new IndexAttribute("UQ_UniqueId") { IsUnique = true }
-                })); ;
+                }));
 
             //table configuration
             ToTable(nameof(DeviceHdmi));
