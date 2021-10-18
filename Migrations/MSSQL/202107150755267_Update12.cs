@@ -44,7 +44,7 @@
                 .PrimaryKey(t => t.DeviceId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
-                .Index(t => t.Name, unique: true, name: "UQ_Name")
+                //.Index(t => t.Name, unique: true, name: "UQ_Name")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
             
@@ -65,9 +65,15 @@
             //update existing host and add newly generated guid
             Sql("UPDATE [dbo].[Host] SET Guid = NEWID();");
 
-            CreateIndex("dbo.Host", "Guid", unique: true, name: "UQ_Guid");            
+            CreateIndex("dbo.Host", "Guid", unique: true, name: "UQ_Guid");
+
+            #region FILTERED INDEXES
+
+            Sql("CREATE UNIQUE NONCLUSTERED INDEX [UQ_Name] ON [dbo].[Device](Name) WHERE Name IS NOT NULL");
+
+            #endregion
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.DeviceHdmi", "DeviceId", "dbo.Device");
