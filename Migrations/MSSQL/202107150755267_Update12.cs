@@ -44,7 +44,6 @@
                 .PrimaryKey(t => t.DeviceId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
-                //.Index(t => t.Name, unique: true, name: "UQ_Name")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
             
@@ -60,18 +59,17 @@
                 .Index(t => t.DeviceId)
                 .Index(t => t.UniqueId, unique: true, name: "UQ_UniqueId");
             
+            //add guid column to host
             AddColumn("dbo.Host", "Guid", c => c.Guid(nullable: false));
 
             //update existing host and add newly generated guid
             Sql("UPDATE [dbo].[Host] SET Guid = NEWID();");
 
+            //create unique guid index on host
             CreateIndex("dbo.Host", "Guid", unique: true, name: "UQ_Guid");
 
-            #region FILTERED INDEXES
-
+            //create filtered index on unique name, this will allow nullable device nanes while retaining uniqueness
             Sql("CREATE UNIQUE NONCLUSTERED INDEX [UQ_Name] ON [dbo].[Device](Name) WHERE Name IS NOT NULL");
-
-            #endregion
         }
 
         public override void Down()
