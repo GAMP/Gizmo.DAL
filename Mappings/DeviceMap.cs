@@ -34,10 +34,6 @@ namespace Gizmo.DAL.Mappings
             Property(e => e.IsEnabled)
                 .HasColumnOrder(2);
 
-            //is deleted property
-            Property(e => e.IsDeleted)
-                .HasColumnOrder(3);
-
             //table name configuration
             ToTable(nameof(Device));
         }
