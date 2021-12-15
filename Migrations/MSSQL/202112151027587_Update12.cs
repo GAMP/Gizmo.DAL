@@ -35,7 +35,6 @@
                         DeviceId = c.Int(nullable: false, identity: true),
                         Name = c.String(maxLength: 45),
                         IsEnabled = c.Boolean(nullable: false),
-                        IsDeleted = c.Boolean(nullable: false),
                         ModifiedById = c.Int(),
                         ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
                         CreatedById = c.Int(),
@@ -58,7 +57,7 @@
                 .ForeignKey("dbo.Device", t => t.DeviceId)
                 .Index(t => t.DeviceId)
                 .Index(t => t.UniqueId, unique: true, name: "UQ_UniqueId");
-            
+       
             //add guid column to host
             AddColumn("dbo.Host", "Guid", c => c.Guid(nullable: false));
 
@@ -71,7 +70,7 @@
             //create filtered index on unique name, this will allow nullable device nanes while retaining uniqueness
             Sql("CREATE UNIQUE NONCLUSTERED INDEX [UQ_Name] ON [dbo].[Device](Name) WHERE Name IS NOT NULL");
         }
-
+        
         public override void Down()
         {
             DropForeignKey("dbo.DeviceHdmi", "DeviceId", "dbo.Device");
