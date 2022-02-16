@@ -629,6 +629,12 @@ namespace GizmoDALV2
 
                 #region PRODUCTS
 
+                if (deleteProducts || deleteHosts)
+                {
+                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductHostHidden];", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductHostHidden]', RESEED, 1);", ct);
+                }
+
                 if (deleteProducts)
                 {
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductImage];", ct);
@@ -747,6 +753,31 @@ namespace GizmoDALV2
                         await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[Host] Set CreatedById=NULL", ct);
                         await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[Host] Set ModifiedById=NULL", ct);
                     }
+
+                    if (!deleteHosts && !deleteProducts)
+                    {
+                        await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[ProductHostHidden] Set CreatedById=NULL", ct);
+                        await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[ProductHostHidden] Set ModifiedById=NULL", ct);
+                    }
+
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[DeviceHost] Set CreatedById=NULL", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[DeviceHost] Set ModifiedById=NULL", ct);
+
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[Device] Set CreatedById=NULL", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[Device] Set ModifiedById=NULL", ct);
+
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[ReservationUser] Set CreatedById=NULL", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[ReservationUser] Set ModifiedById=NULL", ct);
+
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[ReservationHost] Set CreatedById=NULL", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[ReservationHost] Set ModifiedById=NULL", ct);
+
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[Reservation] Set CreatedById=NULL", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[Reservation] Set ModifiedById=NULL", ct);
+
+                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Token] WHERE Type=0;", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[Token] Set CreatedById=NULL", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[Token] Set ModifiedById=NULL", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[App] Set CreatedById=NULL", ct);
                     await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[App] Set ModifiedById=NULL", ct);
