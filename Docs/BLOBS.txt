@@ -7,10 +7,10 @@ LONGBLOB 4294967295
 Add-Migration -Name MigrationName -ConfigurationTypeName MSSQLConfiguration -ProjectName Gizmo.DAL -Force -ConnectionStringName mssql-connection
 
 //Update database to specific migration
-Update-Database -TargetMigration MYSQLInitialCreate -ConfigurationTypeName MYSQLConfiguration -ProjectName GizmoDALV2 -Force -ConnectionStringName mysql-connection
+Update-Database -TargetMigration MigrationName -ConfigurationTypeName MSSQLConfiguration -ProjectName Gizmo.DAL -Force -ConnectionStringName mssql-connection
 
 //Update database to inital migration https://docs.microsoft.com/en-us/ef/ef6/modeling/code-first/migrations/
-Update-Database -TargetMigration $InitialDatabase -Force
+Update-Database -TargetMigration $InitialDatabase -ConfigurationTypeName MSSQLConfiguration -ProjectName Gizmo.DAL -Force -ConnectionStringName mssql-connection
 
 Enable-Migrations -EnableAutomaticMigrations -Force
 

@@ -10,16 +10,16 @@ namespace GizmoDALV2.Mappings
         public AppEnterpriseMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(t => t.Id)
+            Property(t => t.Id)
               .HasColumnName("AppEnterpriseId");
 
-            this.Property(t => t.Name)
+            Property(t => t.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45)
@@ -30,7 +30,7 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("UQ_Name") { IsUnique = true } 
                 }));
             
-            this.Property(t => t.Guid)
+            Property(t => t.Guid)
                 .HasColumnOrder(2)
                 .HasColumnAnnotation(
                 "Index",
@@ -40,7 +40,7 @@ namespace GizmoDALV2.Mappings
                 }));
 
             // Table & Column Mappings
-            this.ToTable("AppEnterprise");          
+            ToTable("AppEnterprise");          
         }
     }
 }
