@@ -2,14 +2,8 @@
 
 	<PropertyGroup>
 
-<<<<<<< HEAD
-		<TargetFrameworks>net6.0;net461</TargetFrameworks>
-=======
-		<TargetFrameworks>net461;net5.0</TargetFrameworks>
->>>>>>> device-mappings
 		<Configurations>Debug;Release;NET_5_DEBUG;NET_5_RELEASE</Configurations>
-		<!--<RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>-->
-
+		<TargetFrameworks>net6.0;net461</TargetFrameworks>
 		<LangVersion>latest</LangVersion>
 		<Product>GizmoDALV2</Product>
 		<Description>GizmoDALV2</Description>
