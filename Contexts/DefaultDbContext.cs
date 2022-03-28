@@ -55,9 +55,9 @@ namespace GizmoDALV2
         /// <summary>
         /// Creates new instance.
         /// </summary>
-        /// <param name="connectionString">Connection string.</param>
-        public DefaultDbContext(string connectionString)
-            : base(connectionString)
+        /// <param name="nameOrConnectionString">Connection string.</param>
+        public DefaultDbContext(string nameOrConnectionString)
+            : base(nameOrConnectionString)
         {
         }
 
@@ -554,6 +554,9 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<InvoiceLine> InvoiceLines { get; set; }
 
+        /// <summary>
+        /// Gets extended invoice lines.
+        /// </summary>
         public DbSet<InvoiceLineExtended> InvoiceLinesExtended { get; set; }
 
         /// <summary>
@@ -611,20 +614,44 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<ProductTax> ProductsTaxes { get; set; }
 
+        /// <summary>
+        /// Gets product images.
+        /// </summary>
         public DbSet<ProductImage> ProductImages { get; set; }
 
+        /// <summary>
+        /// Gets product periods.
+        /// </summary>
         public DbSet<ProductPeriod> ProductPeriods { get; set; }
 
+        /// <summary>
+        /// Gets product periods times.
+        /// </summary>
         public DbSet<ProductPeriodDayTime> ProductPeriodsTimes { get; set; }
 
+        /// <summary>
+        /// Gets product time period days.
+        /// </summary>
         public DbSet<ProductPeriodDay> ProductPeriodDays { get; set; }
 
+        /// <summary>
+        /// Gets product time periods.
+        /// </summary>
         public DbSet<ProductTimePeriod> ProductTimePeriods { get; set; }
 
+        /// <summary>
+        /// Gets product time period days.
+        /// </summary>
         public DbSet<ProductTimePeriodDay> ProductTimePeriodDays { get; set; }
 
+        /// <summary>
+        /// Gets product time priods times.
+        /// </summary>
         public DbSet<ProductTimePeriodDayTime> ProductTimePeriodsTimes { get; set; }
 
+        /// <summary>
+        /// Gets product user prices.
+        /// </summary>
         public DbSet<ProductUserPrice> ProductUserPrices { get; set; }
 
         /// <summary>
@@ -719,8 +746,18 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<ProductHostHidden> ProductHostGroupHidden { get; set; }
 
+        /// <summary>
+        /// Gets deposit payment voids.
+        /// </summary>
+        public IDbSet<VoidDepositPayment> DepositPaymentVoids { get; set; }
+
+        /// <summary>
+        /// Gets deposit payment refunds.
+        /// </summary>
+        public IDbSet<RefundDepositPayment> DepositPaymentRefunds { get; set; }
+
         #region DEVICES
-        
+
         /// <summary>
         /// Gets devices.
         /// </summary>
@@ -734,7 +771,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets host devices.
         /// </summary>
-        public DbSet<DeviceHost> DevicesHosts { get; set; } 
+        public DbSet<DeviceHost> DevicesHosts { get; set; }
 
         #endregion
 

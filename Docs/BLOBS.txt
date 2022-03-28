@@ -14,3 +14,7 @@ Update-Database -TargetMigration $InitialDatabase -ConfigurationTypeName MSSQLCo
 
 Enable-Migrations -EnableAutomaticMigrations -Force
 
+//Command line config
+Update-Database -TargetMigration $InitialDatabase -ConfigurationTypeName MSSQLConfiguration -ProjectName Gizmo.DAL -Force -connectionString "Data Source=localhost\SQLEXPRESS;Initial Catalog=Gizmo;Integrated Security=True" -connectionProviderName "System.Data.SqlClient" -verbose
+
+Update-Database -TargetMigration $InitialDatabase -ConfigurationTypeName MSSQLConfiguration -ProjectName Gizmo.DAL -Force -connectionString "Data Source=localhost\SQLEXPRESS;Initial Catalog=Gizmo;Integrated Security=True" -connectionProviderName "System.Data.SqlClient"

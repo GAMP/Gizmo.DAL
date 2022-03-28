@@ -18,9 +18,9 @@ namespace Gizmo.DAL.Mappings
 
             HasRequired(t => t.DepositPayment)
                 .WithMany()
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete(true);
 
-            ToTable(nameof(RefundDepositPaymentMap));
+            ToTable(nameof(RefundDepositPayment));
         }
     }
 }
