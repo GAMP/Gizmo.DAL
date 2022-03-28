@@ -936,6 +936,9 @@ namespace GizmoDALV2
             modelBuilder.Configurations.Add(new DeviceHdmiMap());
             modelBuilder.Configurations.Add(new DeviceHostMap());
 
+            modelBuilder.Configurations.Add(new RefundDepositPaymentMap());
+            modelBuilder.Configurations.Add(new VoidDepositPaymentMap());
+
             //IGNORES
             modelBuilder.Ignore<DiscountBase>();
             modelBuilder.Ignore<DiscountTimePeriod>();
