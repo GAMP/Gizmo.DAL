@@ -22,28 +22,38 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(2);
 
             Property(t => t.DepositTransactionId)
-                .IsOptional()
                 .HasColumnOrder(3);
 
-            Property(t => t.RefundMethodId)
+            Property(t => t.PointTransactionId)
                 .HasColumnOrder(4);
+
+            Property(t => t.RefundMethodId)
+                .HasColumnOrder(5);
 
             HasOptional(t => t.Payment)
                 .WithMany()
                 .HasForeignKey(t => t.PaymentId);
+
+            HasOptional(t => t.DepositTransaction)
+                .WithMany()
+                .HasForeignKey(t => t.DepositTransactionId);
+
+            HasOptional(t => t.PointTransaction)
+                .WithMany()
+                .HasForeignKey(t => t.PointTransactionId);
+
+            HasOptional(t => t.Shift)
+                .WithMany(t => t.Refunds)
+                .HasForeignKey(t => t.ShiftId)
+                .WillCascadeOnDelete(false);
 
             HasRequired(t => t.RefundMethod)
                 .WithMany()
                 .HasForeignKey(t => t.RefundMethodId)
                 .WillCascadeOnDelete(false);
 
-            HasOptional(t => t.Shift)
-                .WithMany(t => t.Refunds)
-                .WillCascadeOnDelete(false);
-
-
             // Table & Column Mappings
             ToTable(nameof(Refund));
         }
-    }   
+    }
 }
