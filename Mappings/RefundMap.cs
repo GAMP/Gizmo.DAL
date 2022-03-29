@@ -22,12 +22,13 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(2);
 
             Property(t => t.DepositTransactionId)
+                .IsOptional()
                 .HasColumnOrder(3);
 
             Property(t => t.RefundMethodId)
                 .HasColumnOrder(4);
 
-            HasRequired(t => t.Payment)
+            HasOptional(t => t.Payment)
                 .WithMany()
                 .HasForeignKey(t => t.PaymentId);
 

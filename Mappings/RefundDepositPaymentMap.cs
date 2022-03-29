@@ -16,9 +16,18 @@ namespace Gizmo.DAL.Mappings
                     new IndexAttribute("UQ_DepositPayment") { IsUnique = true }
                 }));
 
-            HasRequired(t => t.DepositPayment)
+            Property(x => x.FiscalReceiptId)
+                .HasColumnOrder(2);
+
+            HasOptional(t => t.DepositPayment)
                 .WithMany()
-                .WillCascadeOnDelete(true);
+                .HasForeignKey(x=>x.DepositPaymentId)
+                .WillCascadeOnDelete(false);
+
+            HasOptional(x => x.FiscalReceipt)
+                .WithMany()
+                .HasForeignKey(x => x.FiscalReceiptId)
+                .WillCascadeOnDelete(false);
 
             ToTable(nameof(RefundDepositPayment));
         }

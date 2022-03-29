@@ -972,9 +972,11 @@ namespace GizmoDALV2
             modelBuilder.Configurations.Add(new DeviceMap());
             modelBuilder.Configurations.Add(new DeviceHdmiMap());
             modelBuilder.Configurations.Add(new DeviceHostMap());
-
-            modelBuilder.Configurations.Add(new RefundDepositPaymentMap());
+                      
             modelBuilder.Configurations.Add(new VoidDepositPaymentMap());
+            modelBuilder.Configurations.Add(new RefundDepositPaymentMap());
+            modelBuilder.Configurations.Add(new FiscalReceiptMap());
+            modelBuilder.Configurations.Add(new InvoiceFiscalReceiptMap());
 
             //IGNORES
             modelBuilder.Ignore<DiscountBase>();
