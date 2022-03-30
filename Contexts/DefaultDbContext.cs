@@ -1504,6 +1504,34 @@ namespace GizmoDALV2
         /// Demand find of specified entity.
         /// </summary>
         /// <typeparam name="TEntity">Entity set type.</typeparam>
+        /// <param name="entityKey">Entity key.</param>
+        /// <typeparam name="TNotFoundEntity">Type of not found exception entity.</typeparam>
+        /// <returns>Found entity.</returns>
+        /// <exception cref="EntityNotFoundException">
+        /// Thrown if entity with specified key not found in the entity set.
+        /// </exception>
+        public async Task<TEntity> DemandFindEntityAsync<TEntity,TNotFoundEntity>(int entityKey)
+        {
+            object entity = null;
+            try
+            {
+                entity = await Set(typeof(TEntity)).FindAsync(entityKey);
+            }
+            catch (InvalidOperationException)
+            {
+                //this will occur if we fail to materialize
+            }
+
+            if (entity == null)
+                throw new EntityNotFoundException(entityKey, typeof(TNotFoundEntity));
+
+            return (TEntity)entity;
+        }
+
+        /// <summary>
+        /// Demand find of specified entity.
+        /// </summary>
+        /// <typeparam name="TEntity">Entity set type.</typeparam>
         /// <param name="entityKeys">Entity keys.</param>
         /// <returns>Found entity.</returns>
         /// <exception cref="EntityNotFoundException">
@@ -1534,6 +1562,19 @@ namespace GizmoDALV2
         {
             if (await Set<TEntity>().Where(entity => entity.Id == entityKey).AnyAsync() == false)
                 throw new EntityNotFoundException(entityKey, typeof(TEntity));
+        }
+
+        /// <summary>
+        /// Demands that an entity with specified key exists.
+        /// </summary>
+        /// <typeparam name="TEntity">Entity type.</typeparam>
+        /// <typeparam name="TNotFoundEntity">Type of not found exception entity.</typeparam>
+        /// <param name="entityKey">Entity key.</param>
+        /// <returns>Associated task.</returns>
+        public async Task DemandFindAsync<TEntity,TNotFoundEntity>(int entityKey) where TEntity : EntityBase
+        {
+            if (await Set<TEntity>().Where(entity => entity.Id == entityKey).AnyAsync() == false)
+                throw new EntityNotFoundException(entityKey, typeof(TNotFoundEntity));
         }
 
         /// <summary>
