@@ -88,10 +88,13 @@
             AddColumn("dbo.DepositPayment", "RefundStatus", c => c.Int(nullable: false));
             AddColumn("dbo.DepositPayment", "IsVoided", c => c.Boolean(nullable: false));
             AddColumn("dbo.DepositPayment", "FiscalReceiptId", c => c.Int());
+            AddColumn("dbo.DepositPayment", "Void_Id", c => c.Int());
             AlterColumn("dbo.Refund", "PaymentId", c => c.Int());
             CreateIndex("dbo.DepositPayment", "FiscalReceiptId");
+            CreateIndex("dbo.DepositPayment", "Void_Id");
             CreateIndex("dbo.Refund", "PaymentId");
             AddForeignKey("dbo.DepositPayment", "FiscalReceiptId", "dbo.FiscalReceipt", "FiscalReceiptId");
+            AddForeignKey("dbo.DepositPayment", "Void_Id", "dbo.VoidDepositPayment", "VoidId");
             AddForeignKey("dbo.Refund", "PaymentId", "dbo.Payment", "PaymentId");
         }
         
@@ -109,6 +112,7 @@
             DropForeignKey("dbo.InvoiceFiscalReceipt", "FiscalReceiptId", "dbo.FiscalReceipt");
             DropForeignKey("dbo.FiscalReceipt", "ShiftId", "dbo.Shift");
             DropForeignKey("dbo.FiscalReceipt", "RegisterId", "dbo.Register");
+            DropForeignKey("dbo.DepositPayment", "Void_Id", "dbo.VoidDepositPayment");
             DropForeignKey("dbo.DepositPayment", "FiscalReceiptId", "dbo.FiscalReceipt");
             DropForeignKey("dbo.FiscalReceipt", "CreatedById", "dbo.UserOperator");
             DropForeignKey("dbo.InvoiceFiscalReceipt", "CreatedById", "dbo.UserOperator");
@@ -118,6 +122,7 @@
             DropIndex("dbo.RefundDepositPayment", "UQ_DepositPayment");
             DropIndex("dbo.RefundDepositPayment", new[] { "RefundId" });
             DropIndex("dbo.Refund", new[] { "PaymentId" });
+            DropIndex("dbo.DepositPayment", new[] { "Void_Id" });
             DropIndex("dbo.DepositPayment", new[] { "FiscalReceiptId" });
             DropIndex("dbo.FiscalReceipt", new[] { "CreatedById" });
             DropIndex("dbo.FiscalReceipt", new[] { "RegisterId" });
@@ -128,6 +133,7 @@
             DropIndex("dbo.InvoiceFiscalReceipt", new[] { "FiscalReceiptId" });
             DropIndex("dbo.InvoiceFiscalReceipt", new[] { "InvoiceId" });
             AlterColumn("dbo.Refund", "PaymentId", c => c.Int(nullable: false));
+            DropColumn("dbo.DepositPayment", "Void_Id");
             DropColumn("dbo.DepositPayment", "FiscalReceiptId");
             DropColumn("dbo.DepositPayment", "IsVoided");
             DropColumn("dbo.DepositPayment", "RefundStatus");
