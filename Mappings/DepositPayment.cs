@@ -26,6 +26,10 @@ namespace GizmoDALV2.Mappings
                 .WithMany(x => x.DepositPayments)
                 .HasForeignKey(x => x.UserId)
                 .WillCascadeOnDelete(false);
+
+            HasOptional(x => x.Void)
+                .WithMany()
+                .HasForeignKey(x => x.VoidId);
         }
     }
 }
