@@ -1,4 +1,6 @@
-﻿using System.Data.Entity.ModelConfiguration;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.Infrastructure.Annotations;
+using System.Data.Entity.ModelConfiguration;
 
 namespace Gizmo.DAL.Mappings
 {
@@ -13,6 +15,13 @@ namespace Gizmo.DAL.Mappings
 
             Property(x => x.InvoiceId)
                 .HasColumnOrder(1);
+
+            Property(x => x.FiscalReceiptId)
+                .HasColumnOrder(2)
+                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
+                {
+                    new IndexAttribute("UQ_FiscalReceipt") { IsUnique = true }
+                }));
 
             HasRequired(x => x.Invoice)
                 .WithMany(x => x.FiscalReceipts)
