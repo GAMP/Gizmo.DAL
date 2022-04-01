@@ -39,9 +39,9 @@
                     {
                         FiscalReceiptId = c.Int(nullable: false, identity: true),
                         Type = c.Int(nullable: false),
-                        Status = c.Int(nullable: false),
+                        TaxSystem = c.Int(nullable: false),
                         DocumentId = c.Int(),
-                        Signature = c.String(),
+                        Signature = c.String(nullable: false),
                         ShiftId = c.Int(),
                         RegisterId = c.Int(),
                         CreatedById = c.Int(),
@@ -61,6 +61,7 @@
                     {
                         RefundId = c.Int(nullable: false),
                         DepositPaymentId = c.Int(),
+                        FiscalReceiptStatus = c.Int(nullable: false),
                         FiscalReceiptId = c.Int(),
                     })
                 .PrimaryKey(t => t.RefundId)
@@ -85,17 +86,17 @@
                 .Index(t => t.VoidId)
                 .Index(t => t.DepositPaymentId, unique: true, name: "UQ_DepositPayment");
             
+            AddColumn("dbo.Invoice", "SaleFiscalReceiptStatus", c => c.Int(nullable: false));
+            AddColumn("dbo.Invoice", "ReturnFiscalReceiptStatus", c => c.Int(nullable: false));
             AddColumn("dbo.DepositPayment", "RefundedAmount", c => c.Decimal(nullable: false, precision: 19, scale: 4));
             AddColumn("dbo.DepositPayment", "RefundStatus", c => c.Int(nullable: false));
-            AddColumn("dbo.DepositPayment", "IsVoided", c => c.Boolean(nullable: false));
+            AddColumn("dbo.DepositPayment", "FiscalReceiptStatus", c => c.Int(nullable: false));
             AddColumn("dbo.DepositPayment", "FiscalReceiptId", c => c.Int());
-            AddColumn("dbo.DepositPayment", "VoidId", c => c.Int());
+            AddColumn("dbo.DepositPayment", "IsVoided", c => c.Boolean(nullable: false));
             AlterColumn("dbo.Refund", "PaymentId", c => c.Int());
             CreateIndex("dbo.DepositPayment", "FiscalReceiptId");
-            CreateIndex("dbo.DepositPayment", "VoidId");
             CreateIndex("dbo.Refund", "PaymentId");
             AddForeignKey("dbo.DepositPayment", "FiscalReceiptId", "dbo.FiscalReceipt", "FiscalReceiptId");
-            AddForeignKey("dbo.DepositPayment", "VoidId", "dbo.VoidDepositPayment", "VoidId");
             AddForeignKey("dbo.Refund", "PaymentId", "dbo.Payment", "PaymentId");
 
             Sql(Gizmo.DAL.Scripts.SQLScripts.CREATE_DEPOSIT_PAYMENT_REFUNDS);
@@ -104,7 +105,7 @@
         public override void Down()
         {
             Sql("DELETE FROM [dbo].[RefundDepositPayment];"); //this table did not exist before so all records should be deleted
-            Sql("DELETE FROM [dbo].[Refund] WHERE PaymentId is NULL;"); //this table did not support null values, all records with null values should be deleted
+            Sql("DELETE FROM [dbo].[Refund] WHERE PaymentId is NULL;");//this table did not support null values, all records with null values should be deleted
 
             DropForeignKey("dbo.Refund", "PaymentId", "dbo.Payment");
             DropForeignKey("dbo.VoidDepositPayment", "DepositPaymentId", "dbo.DepositPayment");
@@ -118,7 +119,6 @@
             DropForeignKey("dbo.InvoiceFiscalReceipt", "FiscalReceiptId", "dbo.FiscalReceipt");
             DropForeignKey("dbo.FiscalReceipt", "ShiftId", "dbo.Shift");
             DropForeignKey("dbo.FiscalReceipt", "RegisterId", "dbo.Register");
-            DropForeignKey("dbo.DepositPayment", "VoidId", "dbo.VoidDepositPayment");
             DropForeignKey("dbo.DepositPayment", "FiscalReceiptId", "dbo.FiscalReceipt");
             DropForeignKey("dbo.FiscalReceipt", "CreatedById", "dbo.UserOperator");
             DropForeignKey("dbo.InvoiceFiscalReceipt", "CreatedById", "dbo.UserOperator");
@@ -128,7 +128,6 @@
             DropIndex("dbo.RefundDepositPayment", "UQ_DepositPayment");
             DropIndex("dbo.RefundDepositPayment", new[] { "RefundId" });
             DropIndex("dbo.Refund", new[] { "PaymentId" });
-            DropIndex("dbo.DepositPayment", new[] { "VoidId" });
             DropIndex("dbo.DepositPayment", new[] { "FiscalReceiptId" });
             DropIndex("dbo.FiscalReceipt", new[] { "CreatedById" });
             DropIndex("dbo.FiscalReceipt", new[] { "RegisterId" });
@@ -139,11 +138,13 @@
             DropIndex("dbo.InvoiceFiscalReceipt", "UQ_FiscalReceipt");
             DropIndex("dbo.InvoiceFiscalReceipt", new[] { "InvoiceId" });
             AlterColumn("dbo.Refund", "PaymentId", c => c.Int(nullable: false));
-            DropColumn("dbo.DepositPayment", "VoidId");
-            DropColumn("dbo.DepositPayment", "FiscalReceiptId");
             DropColumn("dbo.DepositPayment", "IsVoided");
+            DropColumn("dbo.DepositPayment", "FiscalReceiptId");
+            DropColumn("dbo.DepositPayment", "FiscalReceiptStatus");
             DropColumn("dbo.DepositPayment", "RefundStatus");
             DropColumn("dbo.DepositPayment", "RefundedAmount");
+            DropColumn("dbo.Invoice", "ReturnFiscalReceiptStatus");
+            DropColumn("dbo.Invoice", "SaleFiscalReceiptStatus");
             DropTable("dbo.VoidDepositPayment");
             DropTable("dbo.RefundDepositPayment");
             DropTable("dbo.FiscalReceipt");

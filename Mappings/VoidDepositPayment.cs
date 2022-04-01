@@ -20,7 +20,7 @@ namespace Gizmo.DAL.Mappings
                 }));
 
             HasRequired(t => t.DepositPayment)
-                .WithMany()
+                .WithMany(t=>t.Voids)
                 .HasForeignKey(t => t.DepositPaymentId);
 
             // Table & Column Mappings

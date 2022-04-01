@@ -10,9 +10,35 @@ namespace GizmoDALV2.Mappings
             HasKey(x => x.Id);
 
             Property(x => x.Id)
+                .HasColumnOrder(0)
                 .HasColumnName("DepositPaymentId");
 
-            ToTable("DepositPayment");
+            Property(x => x.DepositTransactionId)
+                .HasColumnOrder(1);
+
+            Property(x => x.PaymentId)
+                .HasColumnOrder(2);
+
+            Property(x => x.ShiftId)
+                .HasColumnOrder(3);
+
+            Property(x => x.RegisterId)
+                .HasColumnOrder(4);
+
+            Property(x => x.RefundedAmount)
+                .HasColumnOrder(5);
+
+            Property(x => x.RefundStatus)
+                .HasColumnOrder(6);
+
+            Property(x => x.FiscalReceiptStatus)
+              .HasColumnOrder(7);
+
+            Property(x => x.FiscalReceiptId)
+                .HasColumnOrder(8);
+
+            Property(x => x.IsVoided)
+                .HasColumnOrder(9);
 
             HasRequired(x => x.Payment)
                 .WithMany()
@@ -26,10 +52,8 @@ namespace GizmoDALV2.Mappings
                 .WithMany(x => x.DepositPayments)
                 .HasForeignKey(x => x.UserId)
                 .WillCascadeOnDelete(false);
-
-            HasOptional(x => x.Void)
-                .WithMany()
-                .HasForeignKey(x => x.VoidId);
+            
+            ToTable(nameof(DepositPayment));
         }
     }
 }

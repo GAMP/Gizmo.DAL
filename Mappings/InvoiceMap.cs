@@ -40,6 +40,21 @@ namespace GizmoDALV2.Mappings
             Property(x => x.OutstandngPoints)
                 .HasColumnOrder(9);
 
+            Property(x => x.ShiftId)
+                .HasColumnOrder(10);
+
+            Property(x => x.RegisterId)
+                .HasColumnOrder(11);
+
+            Property(x => x.IsVoided)
+                .HasColumnOrder(12);
+
+            Property(x => x.SaleFiscalReceiptStatus)
+                .HasColumnOrder(13);
+
+            Property(x => x.ReturnFiscalReceiptStatus)
+                .HasColumnOrder(14);
+
             HasRequired(x => x.ProductOrder)
                 .WithMany(x => x.Invoices)
                 .HasForeignKey(x => x.ProductOrderId);

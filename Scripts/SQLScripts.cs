@@ -7,8 +7,8 @@ namespace Gizmo.DAL.Scripts
         public const string CREATE_DEPOSIT_PAYMENT_REFUNDS = "BEGIN TRANSACTION;" +
             "INSERT INTO [dbo].[Refund] (Amount,DepositTransactionId, RefundMethodId,CreatedTime)" +
             "SELECT [Amount],[DepositTransactionId],-1,[CreatedTime] FROM [dbo].[DepositTransaction] WHERE Type =1;" +
-            "INSERT INTO [dbo].[RefundDepositPayment] (RefundId)" +
-            "SELECT RefundId FROM [dbo].[Refund] _refunds WHERE NOT EXISTS (SELECT RefundId FROM [dbo].[RefundInvoicePayment] _refundIvoice WHERE _refunds.RefundId= _refundIvoice.RefundId);" +
+            "INSERT INTO [dbo].[RefundDepositPayment] (FiscalReceiptStatus,RefundId)" +
+            "SELECT 0,RefundId FROM [dbo].[Refund] _refunds WHERE NOT EXISTS (SELECT RefundId FROM [dbo].[RefundInvoicePayment] _refundIvoice WHERE _refunds.RefundId= _refundIvoice.RefundId);" +
             "COMMIT;";
 
         public static string CreateUniqueNullableIndex(string indexName,string tableName,string columnName)

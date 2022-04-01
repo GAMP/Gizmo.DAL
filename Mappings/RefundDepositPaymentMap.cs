@@ -16,8 +16,11 @@ namespace Gizmo.DAL.Mappings
                     new IndexAttribute("UQ_DepositPayment") { IsUnique = true }
                 }));
 
-            Property(x => x.FiscalReceiptId)
+            Property(x => x.FiscalReceiptStatus)
                 .HasColumnOrder(2);
+
+            Property(x => x.FiscalReceiptId)
+                .HasColumnOrder(3);
 
             HasOptional(t => t.DepositPayment)
                 .WithMany()
