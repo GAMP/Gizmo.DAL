@@ -756,6 +756,11 @@ namespace GizmoDALV2
         /// </summary>
         public IDbSet<RefundDepositPayment> DepositPaymentRefunds { get; set; }
 
+        /// <summary>
+        /// Gets fiscal receipts.
+        /// </summary>
+        public DbSet<FiscalReceipt> FiscalReceipts { get; set; }
+
         #region DEVICES
 
         /// <summary>
