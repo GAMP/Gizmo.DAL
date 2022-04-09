@@ -977,7 +977,7 @@ namespace GizmoDALV2
             modelBuilder.Configurations.Add(new DeviceMap());
             modelBuilder.Configurations.Add(new DeviceHdmiMap());
             modelBuilder.Configurations.Add(new DeviceHostMap());
-                      
+
             modelBuilder.Configurations.Add(new VoidDepositPaymentMap());
             modelBuilder.Configurations.Add(new RefundDepositPaymentMap());
             modelBuilder.Configurations.Add(new FiscalReceiptMap());
@@ -1483,16 +1483,17 @@ namespace GizmoDALV2
         /// </summary>
         /// <typeparam name="TEntity">Entity set type.</typeparam>
         /// <param name="entityKey">Entity key.</param>
+        /// <param name="ct">Cancellation token.</param>
         /// <returns>Found entity.</returns>
         /// <exception cref="EntityNotFoundException">
         /// Thrown if entity with specified key not found in the entity set.
         /// </exception>
-        public async Task<TEntity> DemandFindEntityAsync<TEntity>(int entityKey)
+        public async Task<TEntity> DemandFindEntityAsync<TEntity>(int entityKey, CancellationToken ct = default)
         {
             object entity = null;
             try
             {
-                entity = await Set(typeof(TEntity)).FindAsync(entityKey);
+                entity = await Set(typeof(TEntity)).FindAsync(ct, entityKey);
             }
             catch (InvalidOperationException)
             {
@@ -1510,17 +1511,18 @@ namespace GizmoDALV2
         /// </summary>
         /// <typeparam name="TEntity">Entity set type.</typeparam>
         /// <param name="entityKey">Entity key.</param>
+        /// <param name="ct">Cancellation token.</param>
         /// <typeparam name="TNotFoundEntity">Type of not found exception entity.</typeparam>
         /// <returns>Found entity.</returns>
         /// <exception cref="EntityNotFoundException">
         /// Thrown if entity with specified key not found in the entity set.
         /// </exception>
-        public async Task<TEntity> DemandFindEntityAsync<TEntity,TNotFoundEntity>(int entityKey)
+        public async Task<TEntity> DemandFindEntityAsync<TEntity, TNotFoundEntity>(int entityKey, CancellationToken ct = default)
         {
             object entity = null;
             try
             {
-                entity = await Set(typeof(TEntity)).FindAsync(entityKey);
+                entity = await Set(typeof(TEntity)).FindAsync(ct, entityKey);
             }
             catch (InvalidOperationException)
             {
@@ -1538,6 +1540,7 @@ namespace GizmoDALV2
         /// </summary>
         /// <typeparam name="TEntity">Entity set type.</typeparam>
         /// <param name="entityKeys">Entity keys.</param>
+        /// <param name="ct">Cancellation token.</param>
         /// <returns>Found entity.</returns>
         /// <exception cref="EntityNotFoundException">
         /// Thrown if entity with specified keys not found in the entity set.
@@ -1563,9 +1566,9 @@ namespace GizmoDALV2
         /// <typeparam name="TEntity">Entity type.</typeparam>
         /// <param name="entityKey">Entity key.</param>
         /// <returns>Associated task.</returns>
-        public async Task DemandFindAsync<TEntity>(int entityKey) where TEntity : EntityBase
+        public async Task DemandFindAsync<TEntity>(int entityKey, CancellationToken ct = default) where TEntity : EntityBase
         {
-            if (await Set<TEntity>().Where(entity => entity.Id == entityKey).AnyAsync() == false)
+            if (await Set<TEntity>().Where(entity => entity.Id == entityKey).AnyAsync(ct) == false)
                 throw new EntityNotFoundException(entityKey, typeof(TEntity));
         }
 
@@ -1575,10 +1578,11 @@ namespace GizmoDALV2
         /// <typeparam name="TEntity">Entity type.</typeparam>
         /// <typeparam name="TNotFoundEntity">Type of not found exception entity.</typeparam>
         /// <param name="entityKey">Entity key.</param>
+        /// <param name="ct">Cancellation token.</param>
         /// <returns>Associated task.</returns>
-        public async Task DemandFindAsync<TEntity,TNotFoundEntity>(int entityKey) where TEntity : EntityBase
+        public async Task DemandFindAsync<TEntity, TNotFoundEntity>(int entityKey, CancellationToken ct = default) where TEntity : EntityBase
         {
-            if (await Set<TEntity>().Where(entity => entity.Id == entityKey).AnyAsync() == false)
+            if (await Set<TEntity>().Where(entity => entity.Id == entityKey).AnyAsync(ct) == false)
                 throw new EntityNotFoundException(entityKey, typeof(TNotFoundEntity));
         }
 
@@ -1598,8 +1602,9 @@ namespace GizmoDALV2
         /// <typeparam name="TEntity">Entity type.</typeparam>
         /// <param name="propertyName">Entity property.</param>
         /// <param name="value">Desired unique value.</param>
+        /// <param name="ct">Cancellation token.</param>
         /// <returns>Associated task.</returns>
-        public async Task DemandUniqueAsync<TEntity>(string propertyName, object value) where TEntity : EntityBase
+        public async Task DemandUniqueAsync<TEntity>(string propertyName, object value, CancellationToken ct = default) where TEntity : EntityBase
         {
             if (string.IsNullOrWhiteSpace(propertyName))
                 throw new ArgumentNullException(nameof(propertyName));
@@ -1612,7 +1617,7 @@ namespace GizmoDALV2
             var equalExpression = Expression.Equal(propertyExpression, constant);
             var lambda = Expression.Lambda<Func<TEntity, bool>>(equalExpression, entityExpression);
 
-            if (await entitySet.Where(lambda).AnyAsync() == true)
+            if (await entitySet.Where(lambda).AnyAsync(ct) == true)
                 throw new NonUniqueEntityValueException(propertyName, value, typeof(TEntity));
         }
 
