@@ -19,13 +19,12 @@ namespace Gizmo.DAL.Mappings
             Property(x => x.TaxSystem)
                 .HasColumnOrder(2);
 
-            Property(x => x.DocumentId)
-                .HasColumnOrder(3)
-                .IsOptional();
+            Property(x => x.DocumentNumber)
+                .HasColumnOrder(3);
 
             Property(x => x.Signature)
                 .HasColumnOrder(4)
-                .IsRequired();            
+                .IsOptional();            
 
             //Table name
             ToTable(nameof(Entities.FiscalReceipt));
