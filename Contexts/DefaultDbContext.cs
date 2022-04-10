@@ -707,6 +707,11 @@ namespace GizmoDALV2
         public DbSet<RefundInvoicePayment> InvoicePaymentRefund { get; set; }
 
         /// <summary>
+        /// Gets invoice fiscal receipts.
+        /// </summary>
+        public DbSet<InvoiceFiscalReceipt> InvoiceFiscalReceipts { get; set; }
+
+        /// <summary>
         /// Gets voids.
         /// </summary>
         public DbSet<Entities.Void> Voids { get; set; }
@@ -1460,12 +1465,12 @@ namespace GizmoDALV2
         /// <exception cref="EntityNotFoundException">
         /// Thrown if entity with specified key not found in the entity set.
         /// </exception>
-        public TEntity DemandFind<TEntity>(int entityKey)
+        public TEntity DemandFind<TEntity>(int entityKey) where TEntity : class
         {
-            object entity = null;
+            TEntity entity = default;
             try
             {
-                entity = Set(typeof(TEntity)).Find(entityKey);
+                entity = Set<TEntity>().Find(entityKey);
             }
             catch (InvalidOperationException)
             {
@@ -1475,7 +1480,7 @@ namespace GizmoDALV2
             if (entity == null)
                 throw new EntityNotFoundException(entityKey, typeof(TEntity));
 
-            return (TEntity)entity;
+            return entity;
         }
 
         /// <summary>
@@ -1488,22 +1493,9 @@ namespace GizmoDALV2
         /// <exception cref="EntityNotFoundException">
         /// Thrown if entity with specified key not found in the entity set.
         /// </exception>
-        public async Task<TEntity> DemandFindEntityAsync<TEntity>(int entityKey, CancellationToken ct = default)
+        public Task<TEntity> DemandFindEntityAsync<TEntity>(int entityKey, CancellationToken ct = default) where TEntity : class
         {
-            object entity = null;
-            try
-            {
-                entity = await Set(typeof(TEntity)).FindAsync(ct, entityKey);
-            }
-            catch (InvalidOperationException)
-            {
-                //this will occur if we fail to materialize
-            }
-
-            if (entity == null)
-                throw new EntityNotFoundException(entityKey, typeof(TEntity));
-
-            return (TEntity)entity;
+            return DemandFindEntityAsync<TEntity, TEntity>(entityKey, ct);
         }
 
         /// <summary>
@@ -1517,12 +1509,12 @@ namespace GizmoDALV2
         /// <exception cref="EntityNotFoundException">
         /// Thrown if entity with specified key not found in the entity set.
         /// </exception>
-        public async Task<TEntity> DemandFindEntityAsync<TEntity, TNotFoundEntity>(int entityKey, CancellationToken ct = default)
+        public async Task<TEntity> DemandFindEntityAsync<TEntity, TNotFoundEntity>(int entityKey, CancellationToken ct = default) where TEntity : class
         {
-            object entity = null;
+            TEntity entity = default;
             try
             {
-                entity = await Set(typeof(TEntity)).FindAsync(ct, entityKey);
+                entity = await Set<TEntity>().FindAsync(ct, entityKey);
             }
             catch (InvalidOperationException)
             {
@@ -1532,7 +1524,7 @@ namespace GizmoDALV2
             if (entity == null)
                 throw new EntityNotFoundException(entityKey, typeof(TNotFoundEntity));
 
-            return (TEntity)entity;
+            return entity;
         }
 
         /// <summary>
@@ -1548,16 +1540,16 @@ namespace GizmoDALV2
         /// <exception cref="ArgumentNullException">
         /// Thrown if entity keys are equal to null.
         /// </exception>
-        public TEntity DemandFind<TEntity>(object[] entityKeys)
+        public TEntity DemandFind<TEntity>(object[] entityKeys) where TEntity : class
         {
             if (entityKeys == null)
                 throw new ArgumentNullException(nameof(entityKeys));
 
-            var entity = Set(typeof(TEntity)).Find(entityKeys);
+            var entity = Set<TEntity>().Find(entityKeys);
             if (entity == null)
                 throw new EntityNotFoundException(entityKeys, typeof(TEntity));
 
-            return (TEntity)entity;
+            return entity;
         }
 
         /// <summary>
@@ -1565,6 +1557,7 @@ namespace GizmoDALV2
         /// </summary>
         /// <typeparam name="TEntity">Entity type.</typeparam>
         /// <param name="entityKey">Entity key.</param>
+        /// <param name="ct">Cancellation token.</param>
         /// <returns>Associated task.</returns>
         public async Task DemandFindAsync<TEntity>(int entityKey, CancellationToken ct = default) where TEntity : EntityBase
         {
