@@ -39,8 +39,8 @@
                     {
                         FiscalReceiptId = c.Int(nullable: false, identity: true),
                         Type = c.Int(nullable: false),
-                        TaxSystem = c.Int(nullable: false),
-                        DocumentNumber = c.Int(nullable: false),
+                        TaxSystem = c.Int(),
+                        DocumentNumber = c.Int(),
                         Signature = c.String(),
                         ShiftId = c.Int(),
                         RegisterId = c.Int(),
@@ -84,8 +84,8 @@
                 .ForeignKey("dbo.Void", t => t.VoidId)
                 .ForeignKey("dbo.DepositPayment", t => t.DepositPaymentId, cascadeDelete: true)
                 .Index(t => t.VoidId)
-                .Index(t => t.DepositPaymentId, unique: true, name: "UQ_DepositPayment");
-            
+                .Index(t => t.DepositPaymentId, unique: true, name: "UQ_DepositPayment");    
+
             AddColumn("dbo.Invoice", "SaleFiscalReceiptStatus", c => c.Int(nullable: false));
             AddColumn("dbo.Invoice", "ReturnFiscalReceiptStatus", c => c.Int(nullable: false));
             AddColumn("dbo.DepositPayment", "RefundedAmount", c => c.Decimal(nullable: false, precision: 19, scale: 4));
