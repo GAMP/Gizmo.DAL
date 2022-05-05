@@ -10,7 +10,8 @@ namespace GizmoDALV2.Migrations
             MigrationsNamespace = "GizmoDALV2.Migrations.MSSQL";
             MigrationsDirectory = @"Migrations\MSSQL";
             AutomaticMigrationsEnabled = false;
-            SetSqlGenerator("System.Data.SqlClient", new SqlServerCustomMigrationSqlGenerator());            
+            SetSqlGenerator("System.Data.SqlClient", new SqlServerCustomMigrationSqlGenerator());
+            CommandTimeout = 360; //migration timeout, this usefull in cases where database creation or migration can take more time than default timeout
         }
     }
 }
