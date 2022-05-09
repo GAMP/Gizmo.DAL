@@ -1532,7 +1532,6 @@ namespace GizmoDALV2
         /// </summary>
         /// <typeparam name="TEntity">Entity set type.</typeparam>
         /// <param name="entityKeys">Entity keys.</param>
-        /// <param name="ct">Cancellation token.</param>
         /// <returns>Found entity.</returns>
         /// <exception cref="EntityNotFoundException">
         /// Thrown if entity with specified keys not found in the entity set.
