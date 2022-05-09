@@ -217,7 +217,7 @@ namespace GizmoDALV2.Mappings
                 .HasForeignKey(x => x.OrderLineId);
 
             HasRequired(x => x.UsageSession)
-                .WithMany()
+                .WithMany(x=>x.InvoiceLines)
                 .HasForeignKey(x => x.UsageSessionId);
         }
     }
