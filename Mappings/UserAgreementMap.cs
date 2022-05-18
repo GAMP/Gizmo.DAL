@@ -13,7 +13,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0)
                 .HasColumnName("UserAgreementId");
 
-            Property(x => x.Aggrement)
+            Property(x => x.Agreement)
                 .HasColumnOrder(1)
                 .IsRequired();
 

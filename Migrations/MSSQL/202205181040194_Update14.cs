@@ -34,7 +34,7 @@
                 c => new
                     {
                         UserAgreementId = c.Int(nullable: false, identity: true),
-                        Aggrement = c.String(nullable: false),
+                        Agreement = c.String(nullable: false),
                         Options = c.Int(nullable: false),
                         DisplayOptions = c.Int(nullable: false),
                         DisplayOrder = c.Int(nullable: false),
