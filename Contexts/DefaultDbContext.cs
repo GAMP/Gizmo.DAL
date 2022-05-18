@@ -659,6 +659,9 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<BundleProduct> BundleProducts { get; set; }
 
+        /// <summary>
+        /// Gets bundled product user prices.
+        /// </summary>
         public DbSet<BundleProductUserPrice> BunledProductUserPrices { get; set; }
 
         /// <summary>
@@ -765,6 +768,16 @@ namespace GizmoDALV2
         /// Gets fiscal receipts.
         /// </summary>
         public DbSet<FiscalReceipt> FiscalReceipts { get; set; }
+
+        /// <summary>
+        /// Gets user agreements.
+        /// </summary>
+        public DbSet<UserAgreement> UserAgreements { get; set; }
+
+        /// <summary>
+        /// Gets user agreement states.
+        /// </summary>
+        public DbSet<UserAgreementState> UserAgreementStates { get; set; }
 
         #region DEVICES
 
@@ -987,6 +1000,9 @@ namespace GizmoDALV2
             modelBuilder.Configurations.Add(new RefundDepositPaymentMap());
             modelBuilder.Configurations.Add(new FiscalReceiptMap());
             modelBuilder.Configurations.Add(new InvoiceFiscalReceiptMap());
+
+            modelBuilder.Configurations.Add(new UserAgreementMap());
+            modelBuilder.Configurations.Add(new UserAgreementStateMap());
 
             //IGNORES
             modelBuilder.Ignore<DiscountBase>();
