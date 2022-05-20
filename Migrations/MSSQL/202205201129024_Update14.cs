@@ -34,10 +34,12 @@
                 c => new
                     {
                         UserAgreementId = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false, maxLength: 255),
                         Agreement = c.String(nullable: false),
                         Options = c.Int(nullable: false),
                         DisplayOptions = c.Int(nullable: false),
                         DisplayOrder = c.Int(nullable: false),
+                        IsEnabled = c.Boolean(nullable: false),
                         ModifiedById = c.Int(),
                         ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
                         CreatedById = c.Int(),

@@ -1,4 +1,5 @@
-﻿using System.Data.Entity.ModelConfiguration;
+﻿using GizmoDALV2;
+using System.Data.Entity.ModelConfiguration;
 
 namespace Gizmo.DAL.Mappings
 {
@@ -13,19 +14,26 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0)
                 .HasColumnName("UserAgreementId");
 
-            Property(x => x.Agreement)
+            Property(x => x.Name)
                 .HasColumnOrder(1)
+                .HasMaxLength(SQLStringSize.TINY)
+                .IsRequired();
+
+            Property(x => x.Agreement)
+                .HasColumnOrder(2)
                 .IsRequired();
 
             Property(x => x.Options)
-                .HasColumnOrder(2);
-
-            Property(x => x.DisplayOptions)
                 .HasColumnOrder(3);
 
-            Property(x => x.DisplayOrder)
-                .HasColumnOrder(4);             
+            Property(x => x.DisplayOptions)
+                .HasColumnOrder(4);
 
+            Property(x => x.DisplayOrder)
+                .HasColumnOrder(5);
+
+            Property(x => x.IsEnabled)
+                .HasColumnOrder(6);
 
             // Table & Column Mappings
             ToTable(nameof(Entities.UserAgreement));
