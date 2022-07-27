@@ -505,16 +505,16 @@ namespace GizmoDALV2
                 if (deleteHosts || deleteUsers)
                 {
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AppStat];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[AppStat]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[AppStat]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ReservationUser];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ReservationUser]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ReservationUser]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ReservationHost];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ReservationHost]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ReservationHost]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Reservation];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Reservation]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Reservation]', RESEED, 1);", ct);
                 }
 
                 if (deleteHosts && !deleteUsers)
@@ -535,58 +535,59 @@ namespace GizmoDALV2
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UsageUserSession];", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Usage];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Usage]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Usage]', RESEED, 1);", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UsageSession];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[UsageSession]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[UsageSession]', RESEED, 1);", ct);
 
                 //USER SESSION
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserSessionChange];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[UserSessionChange]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[UserSessionChange]', RESEED, 1);", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserSession];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[UserSession]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[UserSession]', RESEED, 1);", ct);
 
                 //REFUNDS
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[RefundInvoicePayment];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[RefundDepositPayment];", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Refund];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Refund]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Refund]', RESEED, 1);", ct);
 
                 //VOIDS
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VoidInvoice];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VoidDepositPayment];", ct);   
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Void];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Void]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Void]', RESEED, 1);", ct);
 
                 //INVOICE PAYMENTS
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoicePayment];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[InvoicePayment]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[InvoicePayment]', RESEED, 1);", ct);
 
                 //DEPOSIT PAYMENT
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[DepositPayment];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[DepositPayment]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[DepositPayment]', RESEED, 1);", ct);
 
                 //PAYMENTS
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Payment];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Payment]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Payment]', RESEED, 1);", ct);
 
                 //INVOICE
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineProduct];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineSession];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineTime];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineTimeFixed];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineExtended];", ct);
-
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceFiscalReceipt];", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineExtended];", ct);               
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLine];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[InvoiceLine]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[InvoiceLine]', RESEED, 1);", ct);
+
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceFiscalReceipt];", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[InvoiceFiscalReceipt]', RESEED, 1);", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Invoice];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Invoice]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Invoice]', RESEED, 1);", ct);
 
                 //ORDER
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOLTimeFixed];", ct);
@@ -596,42 +597,42 @@ namespace GizmoDALV2
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOLExtended];", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOL];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductOL]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductOL]', RESEED, 1);", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOrder];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductOrder]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductOrder]', RESEED, 1);", ct);
 
                 //DEPOSIT TRANSACTION
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[DepositTransaction];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[DepositTransaction]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[DepositTransaction]', RESEED, 1);", ct);
 
                 //POINT TRANSACTION
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[PointTransaction];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[PointTransaction]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[PointTransaction]', RESEED, 1);", ct);
 
                 //STOCK TRANSACTION
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[StockTransaction];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[StockTransaction]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[StockTransaction]', RESEED, 1);", ct);
 
                 //SHIFT COUNT
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ShiftCount];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ShiftCount]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ShiftCount]', RESEED, 1);", ct);
 
                 //REGISTER TRANSACTION
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[RegisterTransaction];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[RegisterTransaction]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[RegisterTransaction]', RESEED, 1);", ct);
 
                 //FISCAL RECEIPTS
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[FiscalReceipt];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[FiscalReceipt]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[FiscalReceipt]', RESEED, 1);", ct);
 
                 //SHIFT
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Shift];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Shift]', RESEED, 0);", ct);              
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Shift]', RESEED, 1);", ct);
 
                 //REGISTER
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Register];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Register]', RESEED, 0);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Register]', RESEED, 1);", ct);
 
                 #endregion
 
@@ -640,41 +641,41 @@ namespace GizmoDALV2
                 if (deleteProducts || deleteHosts)
                 {
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductHostHidden];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductHostHidden]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductHostHidden]', RESEED, 1);", ct);
                 }
 
                 if (deleteProducts)
                 {
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductImage];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductImage]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductImage]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTax];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTax]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTax]', RESEED, 1);", ct);
 
+                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductPeriod];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductPeriodDayTime];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductPeriodDay];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductPeriodDay]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductPeriodDay]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimeHostDisallowed];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimeHostDisallowed]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimeHostDisallowed]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductUserDisallowed];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductUserDisallowed]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductUserDisallowed]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductUserPrice];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductUserPrice]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductUserPrice]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[BundleProduct];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[BundleProduct]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[BundleProduct]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimeHostDisallowed];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimeHostDisallowed]', RESEED, 0);", ct);
-
-                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriodDayTime];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriodDay];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimePeriodDay]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimeHostDisallowed]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriod];", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriodDayTime];", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriodDay];", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimePeriodDay]', RESEED, 1);", ct);                    
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductBundle];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Product];", ct);
@@ -682,7 +683,7 @@ namespace GizmoDALV2
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductBaseExtended];", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductBase];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductBase]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductBase]', RESEED, 1);", ct);
                 }
 
                 #endregion
@@ -692,35 +693,38 @@ namespace GizmoDALV2
                 if (deleteUsers)
                 {
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[HostGroupWaitingLineEntry];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[HostGroupWaitingLineEntry]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[HostGroupWaitingLineEntry]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AssetTransaction];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[AssetTransaction]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[AssetTransaction]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AppRating];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserCreditLimit];", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserAttribute];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[UserAttribute]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[UserAttribute]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserNote];", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Note];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Note]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Note]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VerificationEmail];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VerificationMobilePhone];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Verification];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Verification]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Verification]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Token];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Token]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Token]', RESEED, 1);", ct);
 
                     cx.UsersGuest.RemoveRange(cx.UsersGuest);
                     cx.UsersMember.RemoveRange(cx.UsersMember);
 
+                    //detect any changes made
                     cx.ChangeTracker.DetectChanges();
-                    cx.SaveChanges();
+
+                    //save any changes made
+                    await cx.SaveChangesAsync(ct);
                 }
 
                 #endregion
@@ -732,7 +736,7 @@ namespace GizmoDALV2
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[HostEndpoint];", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Host];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Host]', RESEED, 0);", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Host]', RESEED, 1);", ct);
                 }
                 #endregion
 
@@ -990,13 +994,15 @@ namespace GizmoDALV2
                 }
                 #endregion
 
+                //detect any changes made
                 cx.ChangeTracker.DetectChanges();
 
-                await cx.SaveChangesAsync();
+                //save any changes made
+                await cx.SaveChangesAsync(ct);
 
+                //commit changes
                 trx.Commit();
             }
-
         }
 
         //TODO Add invoice correcting functionality
