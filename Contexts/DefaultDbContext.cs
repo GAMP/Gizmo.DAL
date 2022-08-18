@@ -779,6 +779,11 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<UserAgreementState> UserAgreementStates { get; set; }
 
+        /// <summary>
+        /// Gets deposit intents.
+        /// </summary>
+        public DbSet<DepositIntent> DepositIntents { get; set; }
+
         #region DEVICES
 
         /// <summary>
@@ -1003,6 +1008,8 @@ namespace GizmoDALV2
 
             modelBuilder.Configurations.Add(new UserAgreementMap());
             modelBuilder.Configurations.Add(new UserAgreementStateMap());
+
+            modelBuilder.Configurations.Add(new DepositIntentMap());
 
             //IGNORES
             modelBuilder.Ignore<DiscountBase>();
