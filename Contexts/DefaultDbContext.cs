@@ -780,9 +780,9 @@ namespace GizmoDALV2
         public DbSet<UserAgreementState> UserAgreementStates { get; set; }
 
         /// <summary>
-        /// Gets deposit intents.
+        /// Gets payment intents.
         /// </summary>
-        public DbSet<DepositIntent> DepositIntents { get; set; }
+        public DbSet<PaymentIntent> PaymentIntents { get; set; }
 
         #region DEVICES
 
@@ -808,7 +808,7 @@ namespace GizmoDALV2
         #endregion
 
         #region OVERRIDES
-
+        /// <inheritdoc/>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -1009,7 +1009,9 @@ namespace GizmoDALV2
             modelBuilder.Configurations.Add(new UserAgreementMap());
             modelBuilder.Configurations.Add(new UserAgreementStateMap());
 
-            modelBuilder.Configurations.Add(new DepositIntentMap());
+            modelBuilder.Configurations.Add(new PaymentIntentMap());
+            modelBuilder.Configurations.Add(new PaymentIntentDepositMap());
+            modelBuilder.Configurations.Add(new PaymentIntentOrderMap());
 
             //IGNORES
             modelBuilder.Ignore<DiscountBase>();
@@ -1817,11 +1819,13 @@ namespace GizmoDALV2
 
         #region TRANSACTIONS
 
+        /// <inheritdoc/>
         public IDatabaseTransaction BeginTransaction()
         {
             return BeginTransaction(IsolationLevel.ReadCommitted);
         }
 
+        /// <inheritdoc/>
         public IDatabaseTransaction BeginTransaction(IsolationLevel isolationLevel)
         {
             return new DatabaseTransaction(Database.BeginTransaction(isolationLevel));
@@ -1829,6 +1833,12 @@ namespace GizmoDALV2
 
         #endregion
 
+        /// <summary>
+        /// Checks if the exception is retriable.
+        /// </summary>
+        /// <param name="ex">Exception.</param>
+        /// <returns>True or false.</returns>
+        /// <exception cref="ArgumentNullException">thrown in case <paramref name="ex"/> parameter is equal to null.</exception>
         public static bool IsRetriableException(Exception ex)
         {
             if (ex == null)
@@ -1918,6 +1928,11 @@ namespace GizmoDALV2
             preserveStackTrace.Invoke(ex, null);
         }
 
+        /// <summary>
+        /// Restores permissions for specified users.
+        /// </summary>
+        /// <param name="userQuery">Users query.</param>
+        /// <exception cref="ArgumentNullException">thrown if <paramref name="userQuery"/> is equal to null.</exception>
         public void RestorePermissions(IQueryable<User> userQuery)
         {
             if (userQuery == null)
@@ -1927,6 +1942,12 @@ namespace GizmoDALV2
             SaveChanges();
         }
 
+        /// <summary>
+        /// Restores permissions for specified users.
+        /// </summary>
+        /// <param name="userQuery">Users query.</param>
+        /// <param name="cx">Database context.</param>
+        /// <exception cref="ArgumentNullException">thrown if <paramref name="userQuery"/> is equal to null.</exception>
         public void RestorePermissions(IQueryable<User> userQuery,
             DefaultDbContext cx)
         {
@@ -1958,17 +1979,27 @@ namespace GizmoDALV2
     /// </summary>
     public class DefaultConfig : DbConfiguration
     {
+        #region CONSTRUCTOR
+        /// <summary>
+        /// Creates new instance.
+        /// </summary>
         public DefaultConfig()
             : base()
         {
             SetDefaultConnectionFactory(new SqlConnectionFactory());
             SetDatabaseInitializer(new MSSQLInitializer());
-        }
+        } 
+        #endregion
     }
     #endregion
 
     #region DEFAULTINITIALIZER
 
+    /// <summary>
+    /// Database initializer.
+    /// </summary>
+    /// <typeparam name="TContextType">Context type.</typeparam>
+    /// <typeparam name="TConfiguration">Context configuration.</typeparam>
     public class CreateAndMigrateDatabaseInitializer<TContextType, TConfiguration> :
         IDatabaseInitializer<TContextType>
         where TContextType : DefaultDbContext
@@ -1980,11 +2011,18 @@ namespace GizmoDALV2
 
         #region CONSTRUCTOR
 
+        /// <summary>
+        /// Creates new instance.
+        /// </summary>
         public CreateAndMigrateDatabaseInitializer()
         {
             _configuration = new TConfiguration();
         }
 
+        /// <summary>
+        /// Creates new instance.
+        /// </summary>
+        /// <param name="connection">Database connection string.</param>
         public CreateAndMigrateDatabaseInitializer(string connection)
         {
             Contract.Requires(!string.IsNullOrEmpty(connection), "connection");
@@ -1999,6 +2037,10 @@ namespace GizmoDALV2
 
         #region OVERRIDES
 
+        /// <summary>
+        /// Seeds data.
+        /// </summary>
+        /// <param name="context">Context type.</param>
         protected virtual void Seed(TContextType context)
         {
             AddDefaultOperator(context);
@@ -2339,18 +2381,27 @@ namespace GizmoDALV2
     #endregion
 
     #region MSSQLINITIALIZER
+    /// <summary>
+    /// Microsoft SQL Server initializer.
+    /// </summary>
     public class MSSQLInitializer : CreateAndMigrateDatabaseInitializer<DefaultDbContext, MSSQLConfiguration>
     {
     }
     #endregion
 
     #region SQLSERVERCUSTOMMIGRATIONSQLGENERATOR
+    /// <summary>
+    /// Microsoft SQL Server migration generator.
+    /// </summary>
     public class SqlServerCustomMigrationSqlGenerator : SqlServerMigrationSqlGenerator
     {
     }
     #endregion
 
     #region MSSQLSERVERRETRYABLEERRORS
+    /// <summary>
+    /// Microsoft SQL Server retriable error codes.
+    /// </summary>
     public enum MSSQLServerRetryableErrors
     {
         TimeoutExpired = -2,
