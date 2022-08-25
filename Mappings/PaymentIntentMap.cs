@@ -22,13 +22,9 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0)
                 .HasColumnName("PaymentIntentId");
 
-            Property(x => x.Guid)
-                .HasColumnOrder(1)
+            Property(x => x.UserId)
                 .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true }
-                }));
+                .HasColumnOrder(1);
 
             Property(x => x.Amount)
                 .HasColumnOrder(2)
@@ -38,22 +34,26 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3)
                 .IsRequired();
 
-            Property(x => x.Provider)
-                .HasColumnOrder(4)
-                .IsRequired();
-
             Property(x => x.TransactionId)
-                .HasColumnOrder(5)
+                .HasColumnOrder(4)
                 .IsOptional()
                 .HasMaxLength(SQLStringSize.TINY);
 
             Property(x => x.TransactionTime)
-                .HasColumnOrder(6)
+                .HasColumnOrder(5)
                 .IsOptional();
 
-            Property(x => x.UserId)
-                .HasColumnOrder(7)
+            Property(x => x.Provider)
+                .HasColumnOrder(6)
                 .IsRequired();
+
+            Property(x => x.Guid)
+                .HasColumnOrder(7)
+                .IsRequired()
+                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
+                {
+                    new IndexAttribute("UQ_Guid") { IsUnique = true }
+                }));
 
             HasRequired(x => x.User)
                 .WithMany(x => x.PaymentIntents)

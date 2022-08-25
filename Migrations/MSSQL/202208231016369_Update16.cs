@@ -12,13 +12,13 @@
                 c => new
                     {
                         PaymentIntentId = c.Int(nullable: false, identity: true),
-                        Guid = c.Guid(nullable: false),
+                        UserId = c.Int(nullable: false),
                         Amount = c.Decimal(nullable: false, precision: 19, scale: 4),
                         State = c.Int(nullable: false),
-                        Provider = c.Guid(nullable: false),
                         TransactionId = c.String(maxLength: 255),
                         TransactionTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        UserId = c.Int(nullable: false),
+                        Provider = c.Guid(nullable: false),
+                        Guid = c.Guid(nullable: false),
                         ModifiedById = c.Int(),
                         ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
                         CreatedById = c.Int(),
@@ -28,8 +28,8 @@
                 .ForeignKey("dbo.User", t => t.CreatedById)
                 .ForeignKey("dbo.User", t => t.ModifiedById)
                 .ForeignKey("dbo.UserMember", t => t.UserId)
-                .Index(t => t.Guid, unique: true, name: "UQ_Guid")
                 .Index(t => t.UserId)
+                .Index(t => t.Guid, unique: true, name: "UQ_Guid")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
             
@@ -38,9 +38,11 @@
                 c => new
                     {
                         PaymentIntentId = c.Int(nullable: false),
+                        DepositPaymentId = c.Int(),
                     })
                 .PrimaryKey(t => t.PaymentIntentId)
                 .ForeignKey("dbo.PaymentIntent", t => t.PaymentIntentId)
+                .ForeignKey("dbo.DepositPayment", t => t.DepositPaymentId)
                 .Index(t => t.PaymentIntentId);
             
             CreateTable(
@@ -48,31 +50,40 @@
                 c => new
                     {
                         PaymentIntentId = c.Int(nullable: false),
-                        ProductOrderId = c.Int(nullable: false),
+                        ProductOrderId = c.Int(),
+                        InvoicePaymentId = c.Int(),
                     })
                 .PrimaryKey(t => t.PaymentIntentId)
                 .ForeignKey("dbo.PaymentIntent", t => t.PaymentIntentId)
-                .ForeignKey("dbo.ProductOrder", t => t.ProductOrderId, cascadeDelete: true)
+                .ForeignKey("dbo.ProductOrder", t => t.ProductOrderId)
+                .ForeignKey("dbo.InvoicePayment", t => t.InvoicePaymentId)
                 .Index(t => t.PaymentIntentId)
                 .Index(t => t.ProductOrderId);
-            
+
+            Sql(Gizmo.DAL.Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_InvoicePayment", "PaymentIntentOrder", "InvoicePaymentId"));
+            Sql(Gizmo.DAL.Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_DepositPayment", "PaymentIntentDeposit", "DepositPaymentId"));
+
         }
         
         public override void Down()
         {
+            DropForeignKey("dbo.PaymentIntentOrder", "InvoicePaymentId", "dbo.InvoicePayment");
             DropForeignKey("dbo.PaymentIntentOrder", "ProductOrderId", "dbo.ProductOrder");
             DropForeignKey("dbo.PaymentIntentOrder", "PaymentIntentId", "dbo.PaymentIntent");
+            DropForeignKey("dbo.PaymentIntentDeposit", "DepositPaymentId", "dbo.DepositPayment");
             DropForeignKey("dbo.PaymentIntentDeposit", "PaymentIntentId", "dbo.PaymentIntent");
             DropForeignKey("dbo.PaymentIntent", "UserId", "dbo.UserMember");
             DropForeignKey("dbo.PaymentIntent", "ModifiedById", "dbo.User");
             DropForeignKey("dbo.PaymentIntent", "CreatedById", "dbo.User");
+            DropIndex("dbo.PaymentIntentOrder", "UQ_InvoicePayment");
             DropIndex("dbo.PaymentIntentOrder", new[] { "ProductOrderId" });
             DropIndex("dbo.PaymentIntentOrder", new[] { "PaymentIntentId" });
+            DropIndex("dbo.PaymentIntentDeposit", "UQ_DepositPayment");
             DropIndex("dbo.PaymentIntentDeposit", new[] { "PaymentIntentId" });
             DropIndex("dbo.PaymentIntent", new[] { "CreatedById" });
             DropIndex("dbo.PaymentIntent", new[] { "ModifiedById" });
-            DropIndex("dbo.PaymentIntent", new[] { "UserId" });
             DropIndex("dbo.PaymentIntent", "UQ_Guid");
+            DropIndex("dbo.PaymentIntent", new[] { "UserId" });
             DropTable("dbo.PaymentIntentOrder");
             DropTable("dbo.PaymentIntentDeposit");
             DropTable("dbo.PaymentIntent");
