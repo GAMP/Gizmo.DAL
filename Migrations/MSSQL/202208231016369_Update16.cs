@@ -7,6 +7,7 @@
     {
         public override void Up()
         {
+            DropIndex("dbo.Setting", "UQ_Name");
             CreateTable(
                 "dbo.PaymentIntent",
                 c => new
@@ -59,10 +60,12 @@
                 .ForeignKey("dbo.InvoicePayment", t => t.InvoicePaymentId)
                 .Index(t => t.PaymentIntentId)
                 .Index(t => t.ProductOrderId);
+            
+            AddColumn("dbo.PaymentMethod", "PaymentProvider", c => c.Guid());
+            CreateIndex("dbo.Setting", new[] { "Name", "GroupName" }, unique: true, name: "UQ_NameGroup");
 
             Sql(Gizmo.DAL.Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_InvoicePayment", "PaymentIntentOrder", "InvoicePaymentId"));
             Sql(Gizmo.DAL.Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_DepositPayment", "PaymentIntentDeposit", "DepositPaymentId"));
-
         }
         
         public override void Down()
@@ -80,13 +83,16 @@
             DropIndex("dbo.PaymentIntentOrder", new[] { "PaymentIntentId" });
             DropIndex("dbo.PaymentIntentDeposit", "UQ_DepositPayment");
             DropIndex("dbo.PaymentIntentDeposit", new[] { "PaymentIntentId" });
+            DropIndex("dbo.Setting", "UQ_NameGroup");
             DropIndex("dbo.PaymentIntent", new[] { "CreatedById" });
             DropIndex("dbo.PaymentIntent", new[] { "ModifiedById" });
             DropIndex("dbo.PaymentIntent", "UQ_Guid");
             DropIndex("dbo.PaymentIntent", new[] { "UserId" });
+            DropColumn("dbo.PaymentMethod", "PaymentProvider");
             DropTable("dbo.PaymentIntentOrder");
             DropTable("dbo.PaymentIntentDeposit");
             DropTable("dbo.PaymentIntent");
+            CreateIndex("dbo.Setting", "Name", unique: true, name: "UQ_Name");
         }
     }
 }

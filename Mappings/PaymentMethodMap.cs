@@ -44,6 +44,22 @@ namespace GizmoDALV2.Mappings
             Property(x => x.Options)
                 .HasColumnOrder(6);
 
+            Property(x => x.IsClient)
+                .HasColumnOrder(7);
+
+            Property(x => x.IsManager)
+                .HasColumnOrder(8);
+
+            Property(x => x.IsPortal)
+                .HasColumnOrder(9);
+
+            Property(x => x.IsDeleted)
+                .HasColumnOrder(10);
+
+            Property(x => x.PaymentProvider)
+                .IsOptional()
+                .HasColumnOrder(11);
+
             // Table & Column Mappings
             ToTable("PaymentMethod");              
         }
