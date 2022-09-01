@@ -14,6 +14,7 @@
                     {
                         PaymentIntentId = c.Int(nullable: false, identity: true),
                         UserId = c.Int(nullable: false),
+                        PaymentMethodId = c.Int(nullable: false),
                         Amount = c.Decimal(nullable: false, precision: 19, scale: 4),
                         State = c.Int(nullable: false),
                         TransactionId = c.String(maxLength: 255),
@@ -28,8 +29,10 @@
                 .PrimaryKey(t => t.PaymentIntentId)
                 .ForeignKey("dbo.User", t => t.CreatedById)
                 .ForeignKey("dbo.User", t => t.ModifiedById)
+                .ForeignKey("dbo.PaymentMethod", t => t.PaymentMethodId, cascadeDelete: true)
                 .ForeignKey("dbo.UserMember", t => t.UserId)
                 .Index(t => t.UserId)
+                .Index(t => t.PaymentMethodId)
                 .Index(t => t.Guid, unique: true, name: "UQ_Guid")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
@@ -76,6 +79,7 @@
             DropForeignKey("dbo.PaymentIntentDeposit", "DepositPaymentId", "dbo.DepositPayment");
             DropForeignKey("dbo.PaymentIntentDeposit", "PaymentIntentId", "dbo.PaymentIntent");
             DropForeignKey("dbo.PaymentIntent", "UserId", "dbo.UserMember");
+            DropForeignKey("dbo.PaymentIntent", "PaymentMethodId", "dbo.PaymentMethod");
             DropForeignKey("dbo.PaymentIntent", "ModifiedById", "dbo.User");
             DropForeignKey("dbo.PaymentIntent", "CreatedById", "dbo.User");
             DropIndex("dbo.PaymentIntentOrder", "UQ_InvoicePayment");
@@ -87,6 +91,7 @@
             DropIndex("dbo.PaymentIntent", new[] { "CreatedById" });
             DropIndex("dbo.PaymentIntent", new[] { "ModifiedById" });
             DropIndex("dbo.PaymentIntent", "UQ_Guid");
+            DropIndex("dbo.PaymentIntent", new[] { "PaymentMethodId" });
             DropIndex("dbo.PaymentIntent", new[] { "UserId" });
             DropColumn("dbo.PaymentMethod", "PaymentProvider");
             DropTable("dbo.PaymentIntentOrder");

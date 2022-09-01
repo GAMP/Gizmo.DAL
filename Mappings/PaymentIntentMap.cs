@@ -26,29 +26,33 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(1);
 
-            Property(x => x.Amount)
+            Property(x => x.PaymentMethodId)
                 .HasColumnOrder(2)
                 .IsRequired();
 
-            Property(x => x.State)
+            Property(x => x.Amount)
                 .HasColumnOrder(3)
                 .IsRequired();
 
-            Property(x => x.TransactionId)
+            Property(x => x.State)
                 .HasColumnOrder(4)
+                .IsRequired();
+
+            Property(x => x.TransactionId)
+                .HasColumnOrder(5)
                 .IsOptional()
                 .HasMaxLength(SQLStringSize.TINY);
 
             Property(x => x.TransactionTime)
-                .HasColumnOrder(5)
+                .HasColumnOrder(6)
                 .IsOptional();
 
             Property(x => x.Provider)
-                .HasColumnOrder(6)
+                .HasColumnOrder(7)
                 .IsRequired();
 
             Property(x => x.Guid)
-                .HasColumnOrder(7)
+                .HasColumnOrder(8)
                 .IsRequired()
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[]
                 {
@@ -58,6 +62,10 @@ namespace Gizmo.DAL.Mappings
             HasRequired(x => x.User)
                 .WithMany(x => x.PaymentIntents)
                 .HasForeignKey(x => x.UserId);
+
+            HasRequired(x => x.PaymentMethod)
+                .WithMany(x => x.PaymentIntents)
+                .HasForeignKey(x => x.PaymentMethodId);
 
             ToTable(nameof(PaymentIntent));
         }
