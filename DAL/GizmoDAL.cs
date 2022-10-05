@@ -717,6 +717,11 @@ namespace GizmoDALV2
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Token];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Token]', RESEED, 1);", ct);
 
+                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[PaymentIntentDeposit];", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[PaymentIntentOrder];", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[PaymentIntent];", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[PaymentIntent]', RESEED, 1);", ct);
+
                     cx.UsersGuest.RemoveRange(cx.UsersGuest);
                     cx.UsersMember.RemoveRange(cx.UsersMember);
 
