@@ -973,6 +973,9 @@ namespace GizmoDALV2
                     await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[UserCredential] Set CreatedById=NULL", ct);
                     await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[UserCredential] Set ModifiedById=NULL", ct);
 
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[UserAgreement] Set CreatedById=NULL", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[UserAgreement] Set ModifiedById=NULL", ct);
+
                     cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is UserOperator));
                     cx.UsersOperator.RemoveRange(cx.UsersOperator);
 
