@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using CoreLib;
+using SharedLib;
 
 namespace GizmoDALV2
 {
@@ -35,6 +36,17 @@ namespace GizmoDALV2
         public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)
         {
 
+        }
+
+        /// <summary>
+        /// Creates new instance.
+        /// </summary>
+        /// <param name="nameOrConnectionString">Connection string.</param>
+        /// <param name="databaseType">Database Type.</param>
+        public DefaultDbContext(string nameOrConnectionString, DatabaseType databaseType)
+        {
+            this.connectionString = nameOrConnectionString;
+            this.databaseType = databaseType;
         }
 
         #endregion
@@ -984,6 +996,35 @@ namespace GizmoDALV2
         }
 
         /// <summary>
+        /// Configure database options
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            switch (databaseType)
+            {
+                case DatabaseType.MSSQL:
+                case DatabaseType.LOCALDB:
+                case DatabaseType.MSSQLEXPRESS:
+                    optionsBuilder.UseSqlServer(connectionString);
+                    break;
+
+                case DatabaseType.SQLITE:
+                    optionsBuilder.UseSqlite(connectionString);
+                    break;
+
+                case DatabaseType.MYSQL:
+                    optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+                    break;
+
+                default:
+                    base.OnConfiguring(optionsBuilder);
+                    break;
+            }
+        }
+
+
+        /// <summary>
         /// Override Save Changes
         /// </summary>
         /// <returns></returns>
@@ -1705,6 +1746,9 @@ namespace GizmoDALV2
         private HashSet<IEntityEventArgs> eventCache = new HashSet<IEntityEventArgs>();
         private bool isEventsCached = false;
         private static bool raiseAllEntityEvents;
+        private readonly string connectionString;
+
+        public DatabaseType databaseType { get; }
         #endregion
 
         #region PROPERTIES
