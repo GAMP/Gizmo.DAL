@@ -1,6 +1,7 @@
 ﻿using GizmoDALV2.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace GizmoDALV2.Mappings
 {
@@ -31,6 +32,13 @@ namespace GizmoDALV2.Mappings
             builder.HasMany(x => x.ChildGroups)
                 .WithOne(x => x.Parent)
                 .HasForeignKey(x => x.ParentId);
+
+            // Seeds
+            builder.HasData(new ProductGroup() { Id = 1, Name = "Time Offers", DisplayOrder = 0, Guid = new Guid("e798a7fb-448b-4825-8b32-c5ea6db70271") });
+            builder.HasData(new ProductGroup() { Id = 2, Name = "Food", DisplayOrder = 1, Guid = new Guid("e798a7fb-448b-4825-8b32-c5ea6db70272") });
+            builder.HasData(new ProductGroup() { Id = 3, Name = "Drinks", DisplayOrder = 2, Guid = new Guid("e798a7fb-448b-4825-8b32-c5ea6db70273") });
+            builder.HasData(new ProductGroup() { Id = 4, Name = "Sweets", DisplayOrder = 3, Guid = new Guid("e798a7fb-448b-4825-8b32-c5ea6db70274") });
+
         }
     }
 }

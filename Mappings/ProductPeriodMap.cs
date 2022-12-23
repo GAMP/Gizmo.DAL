@@ -1,6 +1,8 @@
 ﻿using GizmoDALV2.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedLib;
+using System;
 
 namespace GizmoDALV2.Mappings
 {
@@ -31,6 +33,9 @@ namespace GizmoDALV2.Mappings
                 .WithOne(x => x.Period)
                 .HasForeignKey<ProductPeriod>(x => x.Id)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Seeds
+            builder.HasData(new ProductPeriod() { Id = 7, Options = PeriodOptionType.None });
         }
     }
 
@@ -52,13 +57,17 @@ namespace GizmoDALV2.Mappings
 
             builder.Property(x => x.ProductPeriodId)
                 .HasColumnName("ProductPeriodId");
-                
+
             // Indexes
             builder.HasIndex(x => new { x.ProductPeriodId, x.Day }).HasDatabaseName("UQ_ProductPeriodDay").IsUnique();
 
             builder.HasOne(x => x.Period)
                 .WithMany(x => x.Days)
                 .HasForeignKey(x => x.ProductPeriodId);
+
+            // Seeds
+            builder.HasData(new ProductPeriodDay() { Id = 7, ProductPeriodId = 7, Day = DayOfWeek.Saturday });
+            builder.HasData(new ProductPeriodDay() { Id = 8, ProductPeriodId = 7, Day = DayOfWeek.Sunday });
         }
     }
 

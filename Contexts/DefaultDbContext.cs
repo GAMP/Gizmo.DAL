@@ -15,7 +15,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using CoreLib;
-using SharedLib;
 
 namespace GizmoDALV2
 {
@@ -37,18 +36,6 @@ namespace GizmoDALV2
         {
 
         }
-
-        /// <summary>
-        /// Creates new instance.
-        /// </summary>
-        /// <param name="nameOrConnectionString">Connection string.</param>
-        /// <param name="databaseType">Database Type.</param>
-        public DefaultDbContext(string nameOrConnectionString, DatabaseType databaseType)
-        {
-            this.connectionString = nameOrConnectionString;
-            this.databaseType = databaseType;
-        }
-
         #endregion
 
         #region PROPERTIES
@@ -996,35 +983,6 @@ namespace GizmoDALV2
         }
 
         /// <summary>
-        /// Configure database options
-        /// </summary>
-        /// <param name="optionsBuilder"></param>
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            switch (databaseType)
-            {
-                case DatabaseType.MSSQL:
-                case DatabaseType.LOCALDB:
-                case DatabaseType.MSSQLEXPRESS:
-                    optionsBuilder.UseSqlServer(connectionString);
-                    break;
-
-                case DatabaseType.SQLITE:
-                    optionsBuilder.UseSqlite(connectionString);
-                    break;
-
-                case DatabaseType.MYSQL:
-                    optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-                    break;
-
-                default:
-                    base.OnConfiguring(optionsBuilder);
-                    break;
-            }
-        }
-
-
-        /// <summary>
         /// Override Save Changes
         /// </summary>
         /// <returns></returns>
@@ -1424,7 +1382,7 @@ namespace GizmoDALV2
         /// Implements default method to be used by SaltGenerator delegate
         /// </summary>
         /// <returns>String value that can be used as salt.</returns>
-        public byte[] GetNewSalt()
+        public static byte[] GetNewSalt()
         {
             byte[] salt = new byte[100];
             using (var generator = RandomNumberGenerator.Create())
@@ -1440,7 +1398,7 @@ namespace GizmoDALV2
         /// <param name="pwd">Password input string.</param>
         /// <param name="salt">Password salt.</param>
         /// <returns>Hashed password byte array.</returns>
-        public byte[] GetHashedPassword(string pwd, byte[] salt)
+        public static byte[] GetHashedPassword(string pwd, byte[] salt)
         {
             if (string.IsNullOrWhiteSpace(pwd))
                 throw new ArgumentNullException(nameof(pwd), "Password may not be null or empty");
@@ -1746,9 +1704,6 @@ namespace GizmoDALV2
         private HashSet<IEntityEventArgs> eventCache = new HashSet<IEntityEventArgs>();
         private bool isEventsCached = false;
         private static bool raiseAllEntityEvents;
-        private readonly string connectionString;
-
-        public DatabaseType databaseType { get; }
         #endregion
 
         #region PROPERTIES
@@ -1899,16 +1854,6 @@ namespace GizmoDALV2
 
         #endregion
 
-        #region SEEDING
-        /// <summary>
-        /// Gets or sets if only basic data seeding enabled.
-        /// </summary>
-        public bool IsSeedOnlyBasicEnabled
-        {
-            get; set;
-        }
-        #endregion
-
         #region TRANSACTIONS
 
         /// <inheritdoc/>
@@ -2046,432 +1991,6 @@ namespace GizmoDALV2
 
     #endregion
 
-    // #region DEFAULTCONFIG
-    // /// <summary>
-    // /// Default configuration for use with base context.
-    // /// </summary>
-    // public class DefaultConfig : DbConfiguration
-    // {
-    //     #region CONSTRUCTOR
-    //     /// <summary>
-    //     /// Creates new instance.
-    //     /// </summary>
-    //     public DefaultConfig()
-    //         : base()
-    //     {
-    //         SetDefaultConnectionFactory(new SqlConnectionFactory());
-    //         SetDatabaseInitializer(new MSSQLInitializer());
-    //     }
-    //     #endregion
-    // }
-    // #endregion
-
-    // #region DEFAULTINITIALIZER
-
-    // /// <summary>
-    // /// Database initializer.
-    // /// </summary>
-    // /// <typeparam name="TContextType">Context type.</typeparam>
-    // /// <typeparam name="TConfiguration">Context configuration.</typeparam>
-    // public class CreateAndMigrateDatabaseInitializer<TContextType, TConfiguration> :
-    //     IDatabaseInitializer<TContextType>
-    //     where TContextType : DefaultDbContext
-    //     where TConfiguration : DbMigrationsConfiguration<TContextType>, new()
-    // {
-    //     #region FIELDS
-    //     private readonly DbMigrationsConfiguration _configuration;
-    //     #endregion
-
-    //     #region CONSTRUCTOR
-
-    //     /// <summary>
-    //     /// Creates new instance.
-    //     /// </summary>
-    //     public CreateAndMigrateDatabaseInitializer()
-    //     {
-    //         _configuration = new TConfiguration();
-    //     }
-
-    //     /// <summary>
-    //     /// Creates new instance.
-    //     /// </summary>
-    //     /// <param name="connection">Database connection string.</param>
-    //     public CreateAndMigrateDatabaseInitializer(string connection)
-    //     {
-    //         Contract.Requires(!string.IsNullOrEmpty(connection), "connection");
-
-    //         _configuration = new TConfiguration
-    //         {
-    //             TargetDatabase = new DbConnectionInfo(connection)
-    //         };
-    //     }
-
-    //     #endregion        
-
-    //     #region OVERRIDES
-
-    //     /// <summary>
-    //     /// Seeds data.
-    //     /// </summary>
-    //     /// <param name="context">Context type.</param>
-    //     protected virtual void Seed(TContextType context)
-    //     {
-    //         AddDefaultOperator(context);
-    //         AddPaymentMethods(context);
-    //         AddMonetaryUnits(context);
-    //         AddLayoutGroups(context);
-    //         AddPresetTime(context);
-
-    //         if (!context.IsSeedOnlyBasicEnabled)
-    //         {
-    //             AddTaxes(context);
-    //             AddBillProfiles(context);
-    //             AddUserGroups(context);
-    //             AddUsers(context);
-    //             AddHostGroups(context);
-    //             AddProducts(context);
-    //             AddHosts(context);
-    //         }
-    //     }
-
-    //     #endregion
-
-    //     #region SEED METHODS
-
-    //     private void AddPaymentMethods(TContextType cx)
-    //     {
-    //         cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.Cash, Name = "Cash", DisplayOrder = 0, IsEnabled = true, IsClient = true, IsManager = true });
-    //         cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.Points, Name = "Points", DisplayOrder = 2, IsEnabled = true, IsClient = true, IsManager = true });
-    //         cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.Deposit, Name = "Deposit", DisplayOrder = 3, IsEnabled = true, IsClient = true, IsManager = true });
-    //         cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.CreditCard, Name = "Credit Card", DisplayOrder = 4, IsEnabled = true, IsClient = true, IsManager = true });
-    //     }
-
-    //     private void AddMonetaryUnits(TContextType cx)
-    //     {
-    //         string isoCurrencySymbol = RegionInfo.CurrentRegion.ISOCurrencySymbol;
-
-    //         if (isoCurrencySymbol == "EUR")
-    //         {
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Cent", Value = 0.01M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Cent", Value = 0.05M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Cent", Value = 0.10M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "20 Cent", Value = 0.20M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "50 Cent", Value = 0.50M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Euro", Value = 1.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "2 Euro", Value = 2.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Euro", Value = 5.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Euro", Value = 10.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "20 Euro", Value = 20.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "50 Euro", Value = 50.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "100 Euro", Value = 100.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "200 Euro", Value = 200.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "500 Euro", Value = 500.00M });
-    //         }
-    //         else
-    //         {
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Cent", Value = 0.01M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Cent", Value = 0.05M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Cent", Value = 0.10M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "25 Cent", Value = 0.25M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Dollar", Value = 1.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "2 Dollar", Value = 2.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Dollar", Value = 5.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Dollar", Value = 10.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "20 Dollar", Value = 20.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "50 Dollar", Value = 50.00M });
-    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "100 Dollar", Value = 100.00M });
-    //         }
-
-    //         var newList = cx.MonetaryUnits.Local.ToList();
-    //         newList.ForEach(unit =>
-    //         {
-    //             unit.DisplayOrder = newList.IndexOf(unit);
-    //         });
-    //     }
-
-    //     private void AddDefaultOperator(TContextType cx)
-    //     {
-    //         var defaultOperator = new UserOperator();
-
-    //         byte[] salt = cx.GetNewSalt();
-    //         byte[] password = cx.GetHashedPassword("admin", salt);
-
-    //         defaultOperator.UserCredential = new UserCredential();
-    //         defaultOperator.Username = "Admin";
-
-    //         defaultOperator.CreatedTime = DateTime.Now;
-    //         defaultOperator.UserCredential.Salt = salt;
-    //         defaultOperator.UserCredential.Password = password;
-
-    //         var allPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes().Select(claim =>
-    //         {
-    //             return new UserPermission() { Type = claim.Resource, Value = claim.Operation };
-    //         });
-
-    //         defaultOperator.Permissions.UnionWith(allPermissions);
-
-    //         cx.UsersOperator.AddOrUpdate(defaultOperator);
-    //     }
-
-    //     private void AddProducts(TContextType cx)
-    //     {
-    //         var tax = cx.Taxes.Local.First();
-
-    //         var timeGroup = cx.ProductGroups.Add(new ProductGroup() { Name = "Time Offers", DisplayOrder = 0 });
-    //         var foodGrooup = cx.ProductGroups.Add(new ProductGroup() { Name = "Food", DisplayOrder = 1 });
-    //         var drinksGroup = cx.ProductGroups.Add(new ProductGroup() { Name = "Drinks", DisplayOrder = 2 });
-    //         var sweetsGroup = cx.ProductGroups.Add(new ProductGroup() { Name = "Sweets", DisplayOrder = 3 });
-
-    //         var product = new Product()
-    //         {
-    //             Name = "Mars Bar",
-    //             Cost = 0.90m,
-    //             Price = 1.10m,
-    //             Points = 10,
-    //             StockOptions = StockOptionType.EnableStock
-    //         };
-
-    //         product.Taxes.Add(new ProductTax() { Tax = tax });
-    //         product.ProductGroup = sweetsGroup;
-    //         sweetsGroup.Products.Add(product);
-    //         cx.Products.Add(product);
-
-    //         product = new Product()
-    //         {
-    //             Name = "Snickers Bar",
-    //             Points = 15,
-    //             StockOptions = StockOptionType.EnableStock,
-    //             Cost = 1.20m,
-    //             Price = 2.0m
-    //         };
-    //         product.Taxes.Add(new ProductTax() { Tax = tax });
-    //         product.ProductGroup = sweetsGroup;
-    //         sweetsGroup.Products.Add(product);
-    //         cx.Products.Add(product);
-
-    //         var bundle = new ProductBundle()
-    //         {
-    //             Name = "Pizza and Cola",
-    //             StockOptions = StockOptionType.EnableStock,
-    //             Points = 200,
-    //             Price = 3.40m, //pizza plus cola
-    //             ProductGroup = foodGrooup
-    //         };
-    //         bundle.Taxes.Add(new ProductTax() { Tax = tax });
-
-    //         var pizza = new Product()
-    //         {
-    //             Name = "Pizza (Small)",
-    //             ProductGroup = foodGrooup,
-    //             Cost = 2.20m,
-    //             Price = 6.0m
-    //         };
-    //         pizza.Taxes.Add(new ProductTax() { Tax = tax });
-    //         cx.Products.Add(pizza);
-    //         bundle.BundledProducts.Add(new BundleProduct() { Price = 1, Product = pizza, Quantity = 1 });
-
-    //         var cola = new Product()
-    //         {
-    //             Name = "Coca Cola (Can)",
-    //             ProductGroup = drinksGroup,
-    //             Cost = 1.20m,
-    //             Price = 2.0m
-    //         };
-    //         cola.Taxes.Add(new ProductTax() { Tax = tax });
-    //         cx.Products.Add(cola);
-    //         bundle.BundledProducts.Add(new BundleProduct() { Price = 2, Product = cola, Quantity = 1 });
-
-    //         cx.Products.Add(bundle);
-
-    //         var productTime = new ProductTime()
-    //         {
-    //             UsePeriod = new ProductTimePeriod()
-    //         };
-    //         productTime.Taxes.Add(new ProductTax() { Tax = tax });
-    //         productTime.Minutes = 360;
-    //         productTime.Price = 12;
-    //         productTime.WeekEndMaxMinutes = null;
-    //         productTime.Name = "Six Hours (6)";
-    //         productTime.ProductGroup = timeGroup;
-    //         timeGroup.Products.Add(productTime);
-    //         cx.Products.Add(productTime);
-
-    //         productTime = new ProductTime();
-    //         productTime.Taxes.Add(new ProductTax() { Tax = tax });
-    //         productTime.Minutes = 360;
-    //         productTime.Price = 16;
-    //         productTime.WeekEndMaxMinutes = null;
-    //         productTime.Period = new ProductPeriod()
-    //         {
-    //             Options = PeriodOptionType.None
-    //         };
-    //         productTime.Period.Days.Add(new ProductPeriodDay() { Day = DayOfWeek.Saturday });
-    //         productTime.Period.Days.Add(new ProductPeriodDay() { Day = DayOfWeek.Sunday });
-    //         productTime.Name = "Six Hours (6 Weekends)";
-    //         productTime.ProductGroup = timeGroup;
-    //         timeGroup.Products.Add(productTime);
-    //         cx.Products.Add(productTime);
-    //     }
-
-    //     private void AddTaxes(TContextType cx)
-    //     {
-    //         cx.Taxes.AddOrUpdate(new Tax() { Name = "24%", Value = 23, UseOrder = 0 });
-    //         cx.Taxes.AddOrUpdate(new Tax() { Name = "16%", Value = 16, UseOrder = 1 });
-    //         cx.Taxes.AddOrUpdate(new Tax() { Name = "None", Value = 0, UseOrder = 2 });
-    //     }
-
-    //     private void AddLayoutGroups(TContextType cx)
-    //     {
-    //         var hostLayoutGroup = new HostLayoutGroup()
-    //         {
-    //             Name = "Default",
-    //             DisplayOrder = 0
-    //         };
-    //         cx.HostLayoutGroups.Add(hostLayoutGroup);
-    //     }
-
-    //     private void AddBillProfiles(TContextType cx)
-    //     {
-    //         var billProfile = cx.BillProfiles.Add(new BillProfile() { Name = "Member Prices" });
-    //         var rate = new BillRate()
-    //         {
-    //             BillProfile = billProfile,
-    //             IsDefault = true,
-    //             MinimumFee = 2,
-    //             ChargeAfter = 1,
-    //             ChargeEvery = 5,
-    //             Rate = 2,
-    //             StartFee = 1
-    //         };
-
-    //         billProfile.BillRates.Add(rate);
-    //         cx.BillRates.Add(rate);
-
-    //         billProfile = cx.BillProfiles.Add(new BillProfile() { Name = "Guests Prices" });
-    //         rate = new BillRate()
-    //         {
-    //             BillProfile = billProfile,
-    //             IsDefault = true,
-    //             MinimumFee = 2,
-    //             ChargeAfter = 1,
-    //             ChargeEvery = 5,
-    //             Rate = 2,
-    //             StartFee = 1
-    //         };
-
-    //         billProfile.BillRates.Add(rate);
-    //         cx.BillRates.Add(rate);
-    //     }
-
-    //     private void AddUserGroups(TContextType cx)
-    //     {
-    //         var memberPrices = cx.BillProfiles.Local.Where(x => x.Name == "Member Prices").First();
-    //         var guestPrices = cx.BillProfiles.Local.Where(x => x.Name == "Guests Prices").First();
-
-    //         cx.UserGroups.Add(new UserGroup() { Name = "Members", BillProfile = memberPrices, IsDefault = true });
-    //         cx.UserGroups.Add(new UserGroup() { Name = "Guests", Options = UserGroupOptionType.GuestUse, BillProfile = guestPrices });
-    //     }
-
-    //     private void AddUsers(TContextType cx)
-    //     {
-    //         var group = cx.UserGroups.Local.Where(x => x.Name == "Members").FirstOrDefault();
-    //         cx.Users.Add(new UserMember() { Username = "User", UserGroup = group });
-    //     }
-
-    //     private void AddHostGroups(TContextType cx)
-    //     {
-    //         var defaultGuestGroup = cx.UserGroups.Local.Where(x => x.Name == "Guests").FirstOrDefault();
-
-    //         cx.HostGroups.AddOrUpdate(new HostGroup() { Name = "Computers", DefaultGuestGroup = defaultGuestGroup });
-    //         cx.HostGroups.AddOrUpdate(new HostGroup() { Name = "Endpoints", DefaultGuestGroup = defaultGuestGroup });
-    //     }
-
-    //     private void AddHosts(TContextType cx)
-    //     {
-    //         var hostGroup = cx.HostGroups.Local.LastOrDefault();
-
-    //         if (hostGroup != null)
-    //         {
-    //             cx.HostEndpoint.Add(new HostEndpoint() { Name = "XBOX-ONE-1", Number = 1, MaximumUsers = 4, HostGroup = hostGroup });
-    //             cx.HostEndpoint.Add(new HostEndpoint() { Name = "XBOX-ONE-2", Number = 2, MaximumUsers = 4, HostGroup = hostGroup });
-    //             cx.HostEndpoint.Add(new HostEndpoint() { Name = "PS4-1", Number = 3, MaximumUsers = 4, HostGroup = hostGroup });
-    //             cx.HostEndpoint.Add(new HostEndpoint() { Name = "WII-1", Number = 4, MaximumUsers = 4, HostGroup = hostGroup });
-    //         }
-    //     }
-
-    //     private void AddPresetTime(TContextType cx)
-    //     {
-    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 1 });
-    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 5 });
-    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 15 });
-    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 30 });
-    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 60 });
-
-    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 1 });
-    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 2 });
-    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 5 });
-    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 10 });
-    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 20 });
-    //     }
-
-    //     #endregion
-
-    //     #region IDatabaseInitializer
-
-    //     void IDatabaseInitializer<TContextType>.InitializeDatabase(TContextType context)
-    //     {
-    //         Contract.Requires(context != null, "context");
-
-    //         if (context.Database.Exists())
-    //         {
-    //             var connection = context.Database.Connection;
-
-    //             var internalContextProperty = context.Configuration.GetType().GetField("_internalContext", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-    //             var internalContextValue = internalContextProperty.GetValue(context.Configuration);
-    //             var providerNameProp = internalContextValue.GetType().GetProperty("ProviderName", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-    //             var providerNameValue = providerNameProp.GetValue(internalContextValue) as string;
-
-    //             _configuration.TargetDatabase = new DbConnectionInfo(connection.ConnectionString, providerNameValue);
-
-    //             var migrator = new DbMigrator(_configuration);
-    //             var pendingMigrations = migrator.GetPendingMigrations();
-    //             if (pendingMigrations.Any())
-    //             {
-    //                 migrator.Update();
-    //             }
-    //         }
-    //         else
-    //         {
-    //             context.Database.Create();
-    //             Seed(context);
-    //             context.SaveChanges();
-    //         }
-    //     }
-
-    //     #endregion
-    // }
-
-    // #endregion
-
-    // #region MSSQLINITIALIZER
-    // /// <summary>
-    // /// Microsoft SQL Server initializer.
-    // /// </summary>
-    // public class MSSQLInitializer : CreateAndMigrateDatabaseInitializer<DefaultDbContext, MSSQLConfiguration>
-    // {
-    // }
-    // #endregion
-
-    // #region SQLSERVERCUSTOMMIGRATIONSQLGENERATOR
-    // /// <summary>
-    // /// Microsoft SQL Server migration generator.
-    // /// </summary>
-    // public class SqlServerCustomMigrationSqlGenerator : SqlServerMigrationSqlGenerator
-    // {
-    // }
-    // #endregion
-
-    // #region MSSQLSERVERRETRYABLEERRORS
     /// <summary>
     /// Microsoft SQL Server retriable error codes.
     /// </summary>

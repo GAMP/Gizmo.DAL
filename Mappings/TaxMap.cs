@@ -20,13 +20,18 @@ namespace GizmoDALV2.Mappings
             builder.Property(x => x.Value)
                 .IsRequired();
 
+            builder.Property(x => x.Id)
+                .HasColumnName("TaxId");
+
             // Indexes
             builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
 
             builder.ToTable("Tax");
 
-            builder.Property(x => x.Id)
-                .HasColumnName("TaxId");
+            // Seeds
+            builder.HasData(new Tax() { Id = 1, Name = "24%", Value = 23, UseOrder = 0 });
+            builder.HasData(new Tax() { Id = 2, Name = "16%", Value = 16, UseOrder = 1 });
+            builder.HasData(new Tax() { Id = 3, Name = "None", Value = 0, UseOrder = 2 });
         }
     }
 }

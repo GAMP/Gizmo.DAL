@@ -23,13 +23,16 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45);
 
+            builder.Property(x => x.Id)
+                .HasColumnName("BillProfileId");
+
             // Indexes
             builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
 
             builder.ToTable("BillProfile");
 
-            builder.Property(x => x.Id)
-                .HasColumnName("BillProfileId");
+            builder.HasData(new BillProfile() { Id = 1, Name = "Member Prices" });
+            builder.HasData(new BillProfile() { Id = 2, Name = "Guests Prices" });
         }
     }
 }

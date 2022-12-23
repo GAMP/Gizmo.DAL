@@ -39,6 +39,10 @@ namespace GizmoDALV2.Mappings
             builder.HasOne(x => x.Product)
                 .WithMany()
                 .HasForeignKey(x => x.ProductId);
+
+            //Seeds
+            builder.HasData(new BundleProduct() { Id = 1, ProductBundleId = 5, Price = 1, ProductId = 3, Quantity = 1 });
+            builder.HasData(new BundleProduct() { Id = 2, ProductBundleId = 5, Price = 2, ProductId = 4, Quantity = 1 });
         }
     }
 }

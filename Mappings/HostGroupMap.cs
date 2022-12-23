@@ -57,6 +57,10 @@ namespace GizmoDALV2.Mappings
             builder.HasOne(t => t.SecurityProfile)
                 .WithMany(t => t.HostGroups)
                 .HasForeignKey(d => d.SecurityProfileId);
+
+            // Seeds
+            builder.HasData(new HostGroup() { Id = 1, Name = "Computers", DefaultGuestGroupId = 2 });
+            builder.HasData(new HostGroup() { Id = 2, Name = "Endpoints", DefaultGuestGroupId = 2 });
         }
     }
 }

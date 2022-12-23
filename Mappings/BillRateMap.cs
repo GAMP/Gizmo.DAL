@@ -56,6 +56,31 @@ namespace GizmoDALV2.Mappings
                 .WithMany(x => x.BillRates)
                 .HasForeignKey(x => x.BillProfileId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Seeds
+            builder.HasData(new BillRate()
+            {
+                Id = 1,
+                BillProfileId = 1,
+                IsDefault = true,
+                MinimumFee = 2,
+                ChargeAfter = 1,
+                ChargeEvery = 5,
+                Rate = 2,
+                StartFee = 1,
+            });
+
+            builder.HasData(new BillRate()
+            {
+                Id = 2,
+                BillProfileId = 2,
+                IsDefault = true,
+                MinimumFee = 2,
+                ChargeAfter = 1,
+                ChargeEvery = 5,
+                Rate = 2,
+                StartFee = 1
+            });
         }
     }
 }

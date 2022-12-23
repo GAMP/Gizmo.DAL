@@ -31,6 +31,9 @@ namespace GizmoDALV2.Mappings
                 .WithOne(x => x.UsePeriod)
                 .HasForeignKey<ProductTimePeriod>(x => x.Id)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Seeds
+            builder.HasData(new ProductTimePeriod() { Id = 6 });
         }
     }
 

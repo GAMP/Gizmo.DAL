@@ -1,6 +1,8 @@
 ﻿using GizmoDALV2.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Linq;
+using System;
 
 namespace GizmoDALV2.Mappings
 {
@@ -86,6 +88,15 @@ namespace GizmoDALV2.Mappings
 
             // Table & Column Mappings
             builder.ToTable("UserOperator");
+
+            // Seeds
+            builder.HasData(new UserOperator
+            {
+                Id = 1,
+                Username = "Admin",
+                CreatedTime = new DateTime(2023, 01, 01),
+                Guid = new Guid("691ea8b4-d794-4096-84ae-bbdb7bcc0b02"),
+            });
         }
     }
 
@@ -118,6 +129,9 @@ namespace GizmoDALV2.Mappings
                 .WithMany(t => t.Users)
                 .HasForeignKey(d => d.UserGroupId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Seeds
+            builder.HasData(new UserMember() { Id = 2, Username = "User", UserGroupId = 1, Guid = new Guid("38753737-24f1-40d7-8ac4-ba61660d666a") });
         }
     }
 

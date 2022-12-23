@@ -1029,8 +1029,8 @@ namespace GizmoDALV2
 
                     var defaultOperator = new UserOperator();
 
-                    byte[] salt = cx.GetNewSalt();
-                    byte[] password = cx.GetHashedPassword("admin", salt);
+                    byte[] salt = DefaultDbContext.GetNewSalt();
+                    byte[] password = DefaultDbContext.GetHashedPassword("admin", salt);
 
                     defaultOperator.UserCredential = new UserCredential();
                     defaultOperator.Username = "Admin";
@@ -1259,8 +1259,8 @@ namespace GizmoDALV2
                         }
                         else
                         {
-                            byte[] salt = cx.GetNewSalt();
-                            byte[] password = cx.GetHashedPassword(user.Password, salt);
+                            byte[] salt = DefaultDbContext.GetNewSalt();
+                            byte[] password = DefaultDbContext.GetHashedPassword(user.Password, salt);
                             userCredentials.Salt = salt;
                             userCredentials.Password = password;
                         }

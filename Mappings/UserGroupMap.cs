@@ -1,6 +1,7 @@
 ﻿using GizmoDALV2.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedLib;
 
 namespace GizmoDALV2.Mappings
 {
@@ -78,7 +79,7 @@ namespace GizmoDALV2.Mappings
 
             // Indexes
             builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
-            
+
             // Relationships
             builder.HasOne(x => x.AppGroup)
                 .WithMany(x => x.UserGroups)
@@ -91,6 +92,10 @@ namespace GizmoDALV2.Mappings
             builder.HasOne(x => x.BillProfile)
                 .WithMany(x => x.UserGroups)
                 .HasForeignKey(x => x.BillProfileId);
+
+            // Seeds
+            builder.HasData(new UserGroup() { Id = 1, Name = "Members", BillProfileId = 1, IsDefault = true });
+            builder.HasData(new UserGroup() { Id = 2, Name = "Guests", Options = UserGroupOptionType.GuestUse, BillProfileId = 2 });
         }
     }
 }

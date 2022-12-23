@@ -24,6 +24,13 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(2);
 
             builder.ToTable(nameof(PresetTimeSaleMoney));
+
+            // Seeds
+            builder.HasData(new PresetTimeSaleMoney() { Id = 1, Value = 1 });
+            builder.HasData(new PresetTimeSaleMoney() { Id = 2, Value = 2 });
+            builder.HasData(new PresetTimeSaleMoney() { Id = 3, Value = 5 });
+            builder.HasData(new PresetTimeSaleMoney() { Id = 4, Value = 10 });
+            builder.HasData(new PresetTimeSaleMoney() { Id = 5, Value = 20 });
         }
     }
 }

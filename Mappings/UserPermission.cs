@@ -1,6 +1,10 @@
 ﻿using GizmoDALV2.Entities;
+using IntegrationLib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 
 namespace GizmoDALV2.Mappings
 {
@@ -43,6 +47,16 @@ namespace GizmoDALV2.Mappings
 
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Permissions);
+
+            // Seeds
+            var autoIncrementId = 1;
+            var claims = ClaimTypeBase.GetClaimTypes().ToList();
+            var permissions = new List<UserPermission>();
+            
+            foreach (var claim in claims)
+                permissions.Add(new UserPermission() { Id = autoIncrementId++, UserId = 1, Type = claim.Resource, Value = claim.Operation });
+
+            builder.HasData(permissions);
         }
     }
 }
