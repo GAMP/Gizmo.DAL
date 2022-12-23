@@ -1,46 +1,41 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppEnterpriseMap : EntityTypeConfiguration<AppEnterprise>
+    public class AppEnterpriseMap : IEntityTypeConfiguration<AppEnterprise>
     {
-        public AppEnterpriseMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppEnterprise> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            Property(t => t.Id)
+            builder.Property(t => t.Id)
               .HasColumnName("AppEnterpriseId");
 
-            Property(t => t.Name)
+            builder.Property(t => t.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation(
-                "Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
-                }));
-            
-            Property(t => t.Guid)
-                .HasColumnOrder(2)
-                .HasColumnAnnotation(
-                "Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
-                }));
+                .HasMaxLength(SQLStringSize.TINY45);
+
+            builder.Property(t => t.Guid)
+                .HasColumnOrder(2);
+
+            // Indexes
+            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
+
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
 
             // Table & Column Mappings
-            ToTable("AppEnterprise");          
+            builder.ToTable("AppEnterprise");          
         }
     }
 }

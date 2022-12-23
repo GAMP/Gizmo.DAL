@@ -2,20 +2,10 @@
 using Gizmo.DAL.Mappings;
 using GizmoDALV2.Entities;
 using GizmoDALV2.Mappings;
-using GizmoDALV2.Migrations;
-using SharedLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Migrations;
-using System.Data.Entity.SqlServer;
-using System.Data.SqlClient;
-using System.Diagnostics.Contracts;
-using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -23,6 +13,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using CoreLib;
 
 namespace GizmoDALV2
 {
@@ -31,44 +23,19 @@ namespace GizmoDALV2
     /// <summary>
     /// Default db context.
     /// </summary>
-    [DbConfigurationType(typeof(DefaultConfig))]
     public class DefaultDbContext : DbContext,
         IGizmoDBContext
     {
         #region CONSTRUCTOR
 
         /// <summary>
-        /// Creates new static instance.
+        /// Default constructor for dependency injection
         /// </summary>
-        static DefaultDbContext()
+        /// <param name="options">Default database options</param>
+        public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)
         {
-        }
 
-        /// <summary>
-        /// Creates new instance.
-        /// </summary>
-        public DefaultDbContext()
-            : base()
-        {
         }
-
-        /// <summary>
-        /// Creates new instance.
-        /// </summary>
-        /// <param name="nameOrConnectionString">Connection string.</param>
-        public DefaultDbContext(string nameOrConnectionString)
-            : base(nameOrConnectionString)
-        {
-        }
-
-        /// <summary>
-        /// Creates new instance.
-        /// </summary>
-        /// <param name="existingConnection">Existing database connection.</param>
-        /// <param name="owned">Indicates if connection is owned by this context. The connection will not be disposed when context is disposed if <paramref name="owned"/> equals to false.</param>
-        public DefaultDbContext(DbConnection existingConnection, bool owned)
-            : base(existingConnection, owned)
-        { }
 
         #endregion
 
@@ -757,12 +724,12 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets deposit payment voids.
         /// </summary>
-        public IDbSet<VoidDepositPayment> DepositPaymentVoids { get; set; }
+        public DbSet<VoidDepositPayment> DepositPaymentVoids { get; set; }
 
         /// <summary>
         /// Gets deposit payment refunds.
         /// </summary>
-        public IDbSet<RefundDepositPayment> DepositPaymentRefunds { get; set; }
+        public DbSet<RefundDepositPayment> DepositPaymentRefunds { get; set; }
 
         /// <summary>
         /// Gets fiscal receipts.
@@ -809,231 +776,224 @@ namespace GizmoDALV2
 
         #region OVERRIDES
         /// <inheritdoc/>
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-            //make all date time to be mapped as SQL server datetime2
-            modelBuilder.Properties<DateTime>()
-                .Configure(x => x.HasColumnType("datetime2"));
-
-            //make all decimal to have 19,4 precision
-            modelBuilder.Properties<decimal>()
-                .Configure(x => x.HasPrecision(19, 4));
-
-            modelBuilder.Configurations.Add(new SettingMap());
-            modelBuilder.Configurations.Add(new NewsMap());
-            modelBuilder.Configurations.Add(new FeedMap());
-            modelBuilder.Configurations.Add(new VariableMap());
-            modelBuilder.Configurations.Add(new MappingMap());
-            modelBuilder.Configurations.Add(new IconMap());
-            modelBuilder.Configurations.Add(new AttributeMap());
+            modelBuilder.ApplyConfiguration(new SettingMap());
+            modelBuilder.ApplyConfiguration(new NewsMap());
+            modelBuilder.ApplyConfiguration(new FeedMap());
+            modelBuilder.ApplyConfiguration(new VariableMap());
+            modelBuilder.ApplyConfiguration(new MappingMap());
+            modelBuilder.ApplyConfiguration(new IconMap());
+            modelBuilder.ApplyConfiguration(new AttributeMap());
 
             //TASK
-            modelBuilder.Configurations.Add(new TaskBaseMap());
-            modelBuilder.Configurations.Add(new TaskJunctionMap());
-            modelBuilder.Configurations.Add(new TaskNotificationMap());
-            modelBuilder.Configurations.Add(new TaskScriptMap());
-            modelBuilder.Configurations.Add(new TaskProcessMap());
-            modelBuilder.Configurations.Add(new ClientTaskMap());
+            modelBuilder.ApplyConfiguration(new TaskBaseMap());
+            modelBuilder.ApplyConfiguration(new TaskJunctionMap());
+            modelBuilder.ApplyConfiguration(new TaskNotificationMap());
+            modelBuilder.ApplyConfiguration(new TaskScriptMap());
+            modelBuilder.ApplyConfiguration(new TaskProcessMap());
+            modelBuilder.ApplyConfiguration(new ClientTaskMap());
 
             //USER
-            modelBuilder.Configurations.Add(new UserGroupMap());
-            modelBuilder.Configurations.Add(new UserGroupHostDisallowedMap());
-            modelBuilder.Configurations.Add(new UserMap());
-            modelBuilder.Configurations.Add(new UserMemberMap());
-            modelBuilder.Configurations.Add(new UserGuestMap());
-            modelBuilder.Configurations.Add(new UserOperatorMap());
-            modelBuilder.Configurations.Add(new UserPermissionMap());
-            modelBuilder.Configurations.Add(new UserCredentialMap());
-            modelBuilder.Configurations.Add(new UserSessionMap());
-            modelBuilder.Configurations.Add(new UserSessionChangeMap());
-            modelBuilder.Configurations.Add(new UserPictureMap());
-            modelBuilder.Configurations.Add(new UserCreditLimitMap());
+            modelBuilder.ApplyConfiguration(new UserGroupMap());
+            modelBuilder.ApplyConfiguration(new UserGroupHostDisallowedMap());
+            modelBuilder.ApplyConfiguration(new UserMap());
+            modelBuilder.ApplyConfiguration(new UserMemberMap());
+            modelBuilder.ApplyConfiguration(new UserGuestMap());
+            modelBuilder.ApplyConfiguration(new UserOperatorMap());
+            modelBuilder.ApplyConfiguration(new UserPermissionMap());
+            modelBuilder.ApplyConfiguration(new UserCredentialMap());
+            modelBuilder.ApplyConfiguration(new UserSessionMap());
+            modelBuilder.ApplyConfiguration(new UserSessionChangeMap());
+            modelBuilder.ApplyConfiguration(new UserPictureMap());
+            modelBuilder.ApplyConfiguration(new UserCreditLimitMap());
 
             //HOST
-            modelBuilder.Configurations.Add(new HostMap());
-            modelBuilder.Configurations.Add(new HostEndpointMap());
-            modelBuilder.Configurations.Add(new HostComputerMap());
-            modelBuilder.Configurations.Add(new HostGroupMap());
-            modelBuilder.Configurations.Add(new HostLayoutGroupMap());
-            modelBuilder.Configurations.Add(new HostLayoutGroupImageMap());
-            modelBuilder.Configurations.Add(new HostLayoutGroupLayoutMap());
+            modelBuilder.ApplyConfiguration(new HostMap());
+            modelBuilder.ApplyConfiguration(new HostEndpointMap());
+            modelBuilder.ApplyConfiguration(new HostComputerMap());
+            modelBuilder.ApplyConfiguration(new HostGroupMap());
+            modelBuilder.ApplyConfiguration(new HostLayoutGroupMap());
+            modelBuilder.ApplyConfiguration(new HostLayoutGroupImageMap());
+            modelBuilder.ApplyConfiguration(new HostLayoutGroupLayoutMap());
 
             //LOG
-            modelBuilder.Configurations.Add(new LogMap());
-            modelBuilder.Configurations.Add(new LogExceptionMap());
+            modelBuilder.ApplyConfiguration(new LogMap());
+            modelBuilder.ApplyConfiguration(new LogExceptionMap());
 
             //PLUGIN LIBRARY
-            modelBuilder.Configurations.Add(new PluginLibraryMap());
+            modelBuilder.ApplyConfiguration(new PluginLibraryMap());
 
             //APP
-            modelBuilder.Configurations.Add(new AppEnterpriseMap());
-            modelBuilder.Configurations.Add(new AppCategoryMap());
-            modelBuilder.Configurations.Add(new AppGroupMap());
-            modelBuilder.Configurations.Add(new AppGroupAppMap());
-            modelBuilder.Configurations.Add(new AppMap());
-            modelBuilder.Configurations.Add(new AppRatingMap());
-            modelBuilder.Configurations.Add(new AppLinkMap());
-            modelBuilder.Configurations.Add(new AppImageMap());
-            modelBuilder.Configurations.Add(new AppExeMap());
-            modelBuilder.Configurations.Add(new AppExeMaxUserMap());
-            modelBuilder.Configurations.Add(new AppExeImageMap());
-            modelBuilder.Configurations.Add(new AppExeTaskMap());
-            modelBuilder.Configurations.Add(new AppExeDeploymentMap());
-            modelBuilder.Configurations.Add(new AppExeLicenseMap());
-            modelBuilder.Configurations.Add(new AppExePersonalFileMap());
-            modelBuilder.Configurations.Add(new AppStatMap());
-            modelBuilder.Configurations.Add(new AppExeCdImageMap());
+            modelBuilder.ApplyConfiguration(new AppEnterpriseMap());
+            modelBuilder.ApplyConfiguration(new AppCategoryMap());
+            modelBuilder.ApplyConfiguration(new AppGroupMap());
+            modelBuilder.ApplyConfiguration(new AppGroupAppMap());
+            modelBuilder.ApplyConfiguration(new AppMap());
+            modelBuilder.ApplyConfiguration(new AppRatingMap());
+            modelBuilder.ApplyConfiguration(new AppLinkMap());
+            modelBuilder.ApplyConfiguration(new AppImageMap());
+            modelBuilder.ApplyConfiguration(new AppExeMap());
+            modelBuilder.ApplyConfiguration(new AppExeMaxUserMap());
+            modelBuilder.ApplyConfiguration(new AppExeImageMap());
+            modelBuilder.ApplyConfiguration(new AppExeTaskMap());
+            modelBuilder.ApplyConfiguration(new AppExeDeploymentMap());
+            modelBuilder.ApplyConfiguration(new AppExeLicenseMap());
+            modelBuilder.ApplyConfiguration(new AppExePersonalFileMap());
+            modelBuilder.ApplyConfiguration(new AppStatMap());
+            modelBuilder.ApplyConfiguration(new AppExeCdImageMap());
 
-            modelBuilder.Configurations.Add(new DeploymentMap());
-            modelBuilder.Configurations.Add(new DeploymentDeploymentMap());
-            modelBuilder.Configurations.Add(new PersonalFileMap());
-            modelBuilder.Configurations.Add(new LicenseMap());
-            modelBuilder.Configurations.Add(new LicenseKeyMap());
+            modelBuilder.ApplyConfiguration(new DeploymentMap());
+            modelBuilder.ApplyConfiguration(new DeploymentDeploymentMap());
+            modelBuilder.ApplyConfiguration(new PersonalFileMap());
+            modelBuilder.ApplyConfiguration(new LicenseMap());
+            modelBuilder.ApplyConfiguration(new LicenseKeyMap());
 
-            modelBuilder.Configurations.Add(new UserAttributeMap());
-            modelBuilder.Configurations.Add(new NoteMap());
-            modelBuilder.Configurations.Add(new UserNoteMap());
+            modelBuilder.ApplyConfiguration(new UserAttributeMap());
+            modelBuilder.ApplyConfiguration(new NoteMap());
+            modelBuilder.ApplyConfiguration(new UserNoteMap());
 
             //SEC
-            modelBuilder.Configurations.Add(new SecurityProfileMap());
-            modelBuilder.Configurations.Add(new SecurityProfilePolicyMap());
-            modelBuilder.Configurations.Add(new SecurityProfileRestrictionMap());
+            modelBuilder.ApplyConfiguration(new SecurityProfileMap());
+            modelBuilder.ApplyConfiguration(new SecurityProfilePolicyMap());
+            modelBuilder.ApplyConfiguration(new SecurityProfileRestrictionMap());
 
-            modelBuilder.Configurations.Add(new MonetaryUnitMap());
-            modelBuilder.Configurations.Add(new TaxMap());
-            modelBuilder.Configurations.Add(new PaymentMethodMap());
-            modelBuilder.Configurations.Add(new PaymentMap());
+            modelBuilder.ApplyConfiguration(new MonetaryUnitMap());
+            modelBuilder.ApplyConfiguration(new TaxMap());
+            modelBuilder.ApplyConfiguration(new PaymentMethodMap());
+            modelBuilder.ApplyConfiguration(new PaymentMap());
 
-            modelBuilder.Configurations.Add(new BillProfileMap());
-            modelBuilder.Configurations.Add(new BillRateMap());
-            modelBuilder.Configurations.Add(new BillProfileRateStepMap());
-            modelBuilder.Configurations.Add(new BillRatePeriodDayMap());
-            modelBuilder.Configurations.Add(new BillRatePeriodTimeMap());
-            modelBuilder.Configurations.Add(new UsageSessionMap());
-            modelBuilder.Configurations.Add(new UsageBaseMap());
-            modelBuilder.Configurations.Add(new UsageUserSessionMap());
-            modelBuilder.Configurations.Add(new UsageTimeMap());
-            modelBuilder.Configurations.Add(new UsageTimeFixedMap());
-            modelBuilder.Configurations.Add(new UsageRateMap());
+            modelBuilder.ApplyConfiguration(new BillProfileMap());
+            modelBuilder.ApplyConfiguration(new BillRateMap());
+            modelBuilder.ApplyConfiguration(new BillProfileRateStepMap());
+            modelBuilder.ApplyConfiguration(new BillRatePeriodDayMap());
+            modelBuilder.ApplyConfiguration(new BillRatePeriodTimeMap());
+            modelBuilder.ApplyConfiguration(new UsageSessionMap());
+            modelBuilder.ApplyConfiguration(new UsageBaseMap());
+            modelBuilder.ApplyConfiguration(new UsageUserSessionMap());
+            modelBuilder.ApplyConfiguration(new UsageTimeMap());
+            modelBuilder.ApplyConfiguration(new UsageTimeFixedMap());
+            modelBuilder.ApplyConfiguration(new UsageRateMap());
 
-            modelBuilder.Configurations.Add(new ProductGroupMap());
-            modelBuilder.Configurations.Add(new ProductBaseMap());
-            modelBuilder.Configurations.Add(new ProductBaseExtendedMap());
-            modelBuilder.Configurations.Add(new ProductPeriodMap());
-            modelBuilder.Configurations.Add(new ProductPeriodDayMap());
-            modelBuilder.Configurations.Add(new ProductPeriodDayTimeMap());
-            modelBuilder.Configurations.Add(new ProductTimePeriodMap());
-            modelBuilder.Configurations.Add(new ProductTimePeriodDayMap());
-            modelBuilder.Configurations.Add(new ProductTimePeriodDayTimeMap());
-            modelBuilder.Configurations.Add(new ProductTaxMap());
-            modelBuilder.Configurations.Add(new ProductImageMap());
-            modelBuilder.Configurations.Add(new ProductUserPriceMap());
-            modelBuilder.Configurations.Add(new ProductUserDisallowedMap());
-            modelBuilder.Configurations.Add(new ProductTimeHostDisallowedMap());
-            modelBuilder.Configurations.Add(new ProductHostHiddenMap());
-            modelBuilder.Configurations.Add(new ProductMap());
-            modelBuilder.Configurations.Add(new ProductTimeMap());
+            modelBuilder.ApplyConfiguration(new ProductGroupMap());
+            modelBuilder.ApplyConfiguration(new ProductBaseMap());
+            modelBuilder.ApplyConfiguration(new ProductBaseExtendedMap());
+            modelBuilder.ApplyConfiguration(new ProductPeriodMap());
+            modelBuilder.ApplyConfiguration(new ProductPeriodDayMap());
+            modelBuilder.ApplyConfiguration(new ProductPeriodDayTimeMap());
+            modelBuilder.ApplyConfiguration(new ProductTimePeriodMap());
+            modelBuilder.ApplyConfiguration(new ProductTimePeriodDayMap());
+            modelBuilder.ApplyConfiguration(new ProductTimePeriodDayTimeMap());
+            modelBuilder.ApplyConfiguration(new ProductTaxMap());
+            modelBuilder.ApplyConfiguration(new ProductImageMap());
+            modelBuilder.ApplyConfiguration(new ProductUserPriceMap());
+            modelBuilder.ApplyConfiguration(new ProductUserDisallowedMap());
+            modelBuilder.ApplyConfiguration(new ProductTimeHostDisallowedMap());
+            modelBuilder.ApplyConfiguration(new ProductHostHiddenMap());
+            modelBuilder.ApplyConfiguration(new ProductMap());
+            modelBuilder.ApplyConfiguration(new ProductTimeMap());
 
-            modelBuilder.Configurations.Add(new ProductBundleMap());
-            modelBuilder.Configurations.Add(new BundleProductMap());
-            modelBuilder.Configurations.Add(new BundleProductUserPriceMap());
+            modelBuilder.ApplyConfiguration(new ProductBundleMap());
+            modelBuilder.ApplyConfiguration(new BundleProductMap());
+            modelBuilder.ApplyConfiguration(new BundleProductUserPriceMap());
 
-            modelBuilder.Configurations.Add(new ProductOrderMap());
-            modelBuilder.Configurations.Add(new ProductOLExtendedMap());
-            modelBuilder.Configurations.Add(new ProductOLBaseMap());
-            modelBuilder.Configurations.Add(new ProductOLProductMap());
-            modelBuilder.Configurations.Add(new ProductOLTimeMap());
-            modelBuilder.Configurations.Add(new ProductOLTimeFixedMap());
-            modelBuilder.Configurations.Add(new ProductOLSessionMap());
+            modelBuilder.ApplyConfiguration(new ProductOrderMap());
+            modelBuilder.ApplyConfiguration(new ProductOLExtendedMap());
+            modelBuilder.ApplyConfiguration(new ProductOLBaseMap());
+            modelBuilder.ApplyConfiguration(new ProductOLProductMap());
+            modelBuilder.ApplyConfiguration(new ProductOLTimeMap());
+            modelBuilder.ApplyConfiguration(new ProductOLTimeFixedMap());
+            modelBuilder.ApplyConfiguration(new ProductOLSessionMap());
 
-            modelBuilder.Configurations.Add(new PresetTimeSaleMap());
-            modelBuilder.Configurations.Add(new PresetTimeSaleMoneyMap());
+            modelBuilder.ApplyConfiguration(new PresetTimeSaleMap());
+            modelBuilder.ApplyConfiguration(new PresetTimeSaleMoneyMap());
 
             //TRANSACTIONS
-            modelBuilder.Configurations.Add(new DepositTransactionMap());
-            modelBuilder.Configurations.Add(new PointTransactionMap());
-            modelBuilder.Configurations.Add(new StockTransactionMap());
+            modelBuilder.ApplyConfiguration(new DepositTransactionMap());
+            modelBuilder.ApplyConfiguration(new PointTransactionMap());
+            modelBuilder.ApplyConfiguration(new StockTransactionMap());
 
             //PAYMENT
-            modelBuilder.Configurations.Add(new DepositPaymentMap());
+            modelBuilder.ApplyConfiguration(new DepositPaymentMap());
 
             //INVOICING
-            modelBuilder.Configurations.Add(new InvoiceMap());
-            modelBuilder.Configurations.Add(new InvoicePaymentMap());
-            modelBuilder.Configurations.Add(new InvoiceLineMap());
-            modelBuilder.Configurations.Add(new InvoiceLineExtendedMap());
-            modelBuilder.Configurations.Add(new InvoiceLineProductMap());
-            modelBuilder.Configurations.Add(new InvoiceLineTimeMap());
-            modelBuilder.Configurations.Add(new InvoiceLineTimeFixedMap());
-            modelBuilder.Configurations.Add(new InvoiceLineSessionMap());
+            modelBuilder.ApplyConfiguration(new InvoiceMap());
+            modelBuilder.ApplyConfiguration(new InvoicePaymentMap());
+            modelBuilder.ApplyConfiguration(new InvoiceLineMap());
+            modelBuilder.ApplyConfiguration(new InvoiceLineExtendedMap());
+            modelBuilder.ApplyConfiguration(new InvoiceLineProductMap());
+            modelBuilder.ApplyConfiguration(new InvoiceLineTimeMap());
+            modelBuilder.ApplyConfiguration(new InvoiceLineTimeFixedMap());
+            modelBuilder.ApplyConfiguration(new InvoiceLineSessionMap());
 
-            modelBuilder.Configurations.Add(new ShiftMap());
-            modelBuilder.Configurations.Add(new ShiftCountMap());
-            modelBuilder.Configurations.Add(new RegisterMap());
-            modelBuilder.Configurations.Add(new RegisterTransactionMap());
+            modelBuilder.ApplyConfiguration(new ShiftMap());
+            modelBuilder.ApplyConfiguration(new ShiftCountMap());
+            modelBuilder.ApplyConfiguration(new RegisterMap());
+            modelBuilder.ApplyConfiguration(new RegisterTransactionMap());
 
-            modelBuilder.Configurations.Add(new AssetTypeMap());
-            modelBuilder.Configurations.Add(new AssetMap());
-            modelBuilder.Configurations.Add(new AssetTransactionMap());
+            modelBuilder.ApplyConfiguration(new AssetTypeMap());
+            modelBuilder.ApplyConfiguration(new AssetMap());
+            modelBuilder.ApplyConfiguration(new AssetTransactionMap());
 
-            modelBuilder.Configurations.Add(new VoidMap());
-            modelBuilder.Configurations.Add(new VoidInvoiceMap());
-            modelBuilder.Configurations.Add(new RefundMap());
-            modelBuilder.Configurations.Add(new RefundInvoicePaymentMap());
-            modelBuilder.Configurations.Add(new ProductBundleUserPriceMap());
-            modelBuilder.Configurations.Add(new HostGroupUserBillProfileMap());
+            modelBuilder.ApplyConfiguration(new VoidMap());
+            modelBuilder.ApplyConfiguration(new VoidInvoiceMap());
+            modelBuilder.ApplyConfiguration(new RefundMap());
+            modelBuilder.ApplyConfiguration(new RefundInvoicePaymentMap());
+            modelBuilder.ApplyConfiguration(new ProductBundleUserPriceMap());
+            modelBuilder.ApplyConfiguration(new HostGroupUserBillProfileMap());
 
-            modelBuilder.Configurations.Add(new HostGroupWaitingLineMap());
-            modelBuilder.Configurations.Add(new HostGroupWaitingLineEntryMap());
+            modelBuilder.ApplyConfiguration(new HostGroupWaitingLineMap());
+            modelBuilder.ApplyConfiguration(new HostGroupWaitingLineEntryMap());
 
-            modelBuilder.Configurations.Add(new TokenMap());
-            modelBuilder.Configurations.Add(new VerificationMap());
-            modelBuilder.Configurations.Add(new VerificationEmailMap());
-            modelBuilder.Configurations.Add(new VerificationMobilePhoneMap());
-            modelBuilder.Configurations.Add(new ReservationMap());
-            modelBuilder.Configurations.Add(new ReservationUserMap());
-            modelBuilder.Configurations.Add(new ReservationHostMap());
+            modelBuilder.ApplyConfiguration(new TokenMap());
+            modelBuilder.ApplyConfiguration(new VerificationMap());
+            modelBuilder.ApplyConfiguration(new VerificationEmailMap());
+            modelBuilder.ApplyConfiguration(new VerificationMobilePhoneMap());
+            modelBuilder.ApplyConfiguration(new ReservationMap());
+            modelBuilder.ApplyConfiguration(new ReservationUserMap());
+            modelBuilder.ApplyConfiguration(new ReservationHostMap());
 
             //devices
-            modelBuilder.Configurations.Add(new DeviceMap());
-            modelBuilder.Configurations.Add(new DeviceHdmiMap());
-            modelBuilder.Configurations.Add(new DeviceHostMap());
+            modelBuilder.ApplyConfiguration(new DeviceMap());
+            modelBuilder.ApplyConfiguration(new DeviceHdmiMap());
+            modelBuilder.ApplyConfiguration(new DeviceHostMap());
 
-            modelBuilder.Configurations.Add(new VoidDepositPaymentMap());
-            modelBuilder.Configurations.Add(new RefundDepositPaymentMap());
-            modelBuilder.Configurations.Add(new FiscalReceiptMap());
-            modelBuilder.Configurations.Add(new InvoiceFiscalReceiptMap());
+            modelBuilder.ApplyConfiguration(new VoidDepositPaymentMap());
+            modelBuilder.ApplyConfiguration(new RefundDepositPaymentMap());
+            modelBuilder.ApplyConfiguration(new FiscalReceiptMap());
+            modelBuilder.ApplyConfiguration(new InvoiceFiscalReceiptMap());
 
-            modelBuilder.Configurations.Add(new UserAgreementMap());
-            modelBuilder.Configurations.Add(new UserAgreementStateMap());
+            modelBuilder.ApplyConfiguration(new UserAgreementMap());
+            modelBuilder.ApplyConfiguration(new UserAgreementStateMap());
 
-            modelBuilder.Configurations.Add(new PaymentIntentMap());
-            modelBuilder.Configurations.Add(new PaymentIntentDepositMap());
-            modelBuilder.Configurations.Add(new PaymentIntentOrderMap());
+            modelBuilder.ApplyConfiguration(new PaymentIntentMap());
+            modelBuilder.ApplyConfiguration(new PaymentIntentDepositMap());
+            modelBuilder.ApplyConfiguration(new PaymentIntentOrderMap());
 
             //IGNORES
             modelBuilder.Ignore<DiscountBase>();
             modelBuilder.Ignore<DiscountTimePeriod>();
             modelBuilder.Ignore<DiscountTimePeriodDayTime>();
             modelBuilder.Ignore<DiscountTimePeriodWeekDay>();
+
+            //GLOBAL CONFIGURATIONS
+            ApplyGlobalMapConfigurations(modelBuilder);
+
+            //BASE MODEL CREATION
+            base.OnModelCreating(modelBuilder);
         }
 
+        /// <summary>
+        /// Override Save Changes
+        /// </summary>
+        /// <returns></returns>
         public override int SaveChanges()
         {
             #region OBJECT CONTEXT
 
-            ObjectContext context = ((IObjectContextAdapter)this).ObjectContext;
-
-
-            IEnumerable<ObjectStateEntry> objectStateEntries = from e in context
-                                                               .ObjectStateManager
-                                                               .GetObjectStateEntries(EntityState.Added | EntityState.Modified | EntityState.Deleted)
-                                                               where
-                                                               e.IsRelationship == false &&
-                                                               e.Entity != null
-                                                               select e;
+            var objectStateEntries = this.ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted)
+                .ToList();
 
             var addedEntries = objectStateEntries.Where(x => x.State == EntityState.Added).ToList();
             var modifiedEntries = objectStateEntries.Where(x => x.State == EntityState.Modified).ToList();
@@ -1076,12 +1036,12 @@ namespace GizmoDALV2
 
                         if (iModified.IgnoreCreatedUpdate)
                         {
-                            modifiedEntity.RejectPropertyChanges(nameof(ICreatable.CreatedTime));
+                            modifiedEntity.Property(nameof(ICreatable.CreatedTime)).IsModified = false;
                         }
 
-                        if (!modifiedEntity.GetModifiedProperties().Any(PROPERTY => PROPERTY == nameof(IModifiedBy.ModifiedTime)))
+                        if (!modifiedEntity.Property(nameof(IModifiedBy.ModifiedTime)).IsModified)
                         {
-                            modifiedEntity.SetModifiedProperty(nameof(IModifiedBy.ModifiedTime));
+                            modifiedEntity.Property(nameof(IModifiedBy.ModifiedTime)).IsModified = true;
                         }
                     }
                 }
@@ -1099,13 +1059,13 @@ namespace GizmoDALV2
 
                         if (!iModifiedBy.IgnoreCreatedUpdate)
                         {
-                            modifiedEntity.RejectPropertyChanges(nameof(ICreatable.CreatedTime));
-                            modifiedEntity.RejectPropertyChanges(nameof(ICreatedBy.CreatedById));
+                            modifiedEntity.Property(nameof(ICreatable.CreatedTime)).IsModified = false;
+                            modifiedEntity.Property(nameof(ICreatedBy.CreatedById)).IsModified = false;
                         }
 
-                        if (!modifiedEntity.GetModifiedProperties().Any(PROPERTY => PROPERTY == nameof(IModifiedBy.ModifiedById)))
+                        if (!modifiedEntity.Property(nameof(IModifiedBy.ModifiedById)).IsModified)
                         {
-                            modifiedEntity.SetModifiedProperty(nameof(IModifiedBy.ModifiedById));
+                            modifiedEntity.Property(nameof(IModifiedBy.ModifiedById)).IsModified = true;
                         }
                     }
                 }
@@ -1116,7 +1076,7 @@ namespace GizmoDALV2
 
                 if (iModifiedBy is IReplicatable iReplicate)
                 {
-                    modifiedEntity.RejectPropertyChanges(nameof(IReplicatable.Guid));
+                    modifiedEntity.Property(nameof(IReplicatable.Guid)).IsModified = false;
                 }
 
                 #endregion
@@ -1130,7 +1090,7 @@ namespace GizmoDALV2
             #region EVENT GENERATION
 
             IList<IEntityEventArgs> events = new List<IEntityEventArgs>();
-            var handler = DefaultDbContext.EntityEvent;
+            var handler = EntityEvent;
             if (handler != null)
             {
                 var addedGroups = addedEntries.GroupBy(x => x.Entity.GetType());
@@ -1218,24 +1178,23 @@ namespace GizmoDALV2
             #endregion
         }
 
+        /// <summary>
+        /// Override Save Changes Async
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             #region OBJECT CONTEXT
 
-            ObjectContext context = ((IObjectContextAdapter)this).ObjectContext;
-
-
-            IEnumerable<ObjectStateEntry> objectStateEntries = from e in context
-                                                               .ObjectStateManager
-                                                               .GetObjectStateEntries(EntityState.Added | EntityState.Modified | EntityState.Deleted)
-                                                               where
-                                                               e.IsRelationship == false &&
-                                                               e.Entity != null
-                                                               select e;
+            var objectStateEntries = this.ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted)
+                .ToList();
 
             var addedEntries = objectStateEntries.Where(x => x.State == EntityState.Added).ToList();
             var modifiedEntries = objectStateEntries.Where(x => x.State == EntityState.Modified).ToList();
             var deletedEntries = objectStateEntries.Where(x => x.State == EntityState.Deleted).ToList();
+
             #endregion
 
             #region UPDATE REJECT
@@ -1274,12 +1233,12 @@ namespace GizmoDALV2
 
                         if (iModified.IgnoreCreatedUpdate)
                         {
-                            modifiedEntity.RejectPropertyChanges(nameof(ICreatable.CreatedTime));
+                            modifiedEntity.Property(nameof(ICreatable.CreatedTime)).IsModified = false;
                         }
 
-                        if (!modifiedEntity.GetModifiedProperties().Any(PROPERTY => PROPERTY == nameof(IModifiedBy.ModifiedTime)))
+                        if (!modifiedEntity.Property(nameof(IModifiedBy.ModifiedTime)).IsModified)
                         {
-                            modifiedEntity.SetModifiedProperty(nameof(IModifiedBy.ModifiedTime));
+                            modifiedEntity.Property(nameof(IModifiedBy.ModifiedTime)).IsModified = true;
                         }
                     }
                 }
@@ -1297,13 +1256,13 @@ namespace GizmoDALV2
 
                         if (!iModifiedBy.IgnoreCreatedUpdate)
                         {
-                            modifiedEntity.RejectPropertyChanges(nameof(ICreatable.CreatedTime));
-                            modifiedEntity.RejectPropertyChanges(nameof(ICreatedBy.CreatedById));
+                            modifiedEntity.Property(nameof(ICreatable.CreatedTime)).IsModified = false;
+                            modifiedEntity.Property(nameof(ICreatedBy.CreatedById)).IsModified = false;
                         }
 
-                        if (!modifiedEntity.GetModifiedProperties().Any(PROPERTY => PROPERTY == nameof(IModifiedBy.ModifiedById)))
+                        if (!modifiedEntity.Property(nameof(IModifiedBy.ModifiedById)).IsModified)
                         {
-                            modifiedEntity.SetModifiedProperty(nameof(IModifiedBy.ModifiedById));
+                            modifiedEntity.Property(nameof(IModifiedBy.ModifiedById)).IsModified = true;
                         }
                     }
                 }
@@ -1314,7 +1273,7 @@ namespace GizmoDALV2
 
                 if (iModifiedBy is IReplicatable iReplicate)
                 {
-                    modifiedEntity.RejectPropertyChanges(nameof(IReplicatable.Guid));
+                    modifiedEntity.Property(nameof(IReplicatable.Guid)).IsModified = false;
                 }
 
                 #endregion
@@ -1328,7 +1287,7 @@ namespace GizmoDALV2
             #region EVENT GENERATION
 
             IList<IEntityEventArgs> events = new List<IEntityEventArgs>();
-            var handler = DefaultDbContext.EntityEvent;
+            var handler = EntityEvent;
             if (handler != null)
             {
                 var addedGroups = addedEntries.GroupBy(x => x.Entity.GetType());
@@ -1427,7 +1386,7 @@ namespace GizmoDALV2
         public byte[] GetNewSalt()
         {
             byte[] salt = new byte[100];
-            using (var generator = RNGCryptoServiceProvider.Create())
+            using (var generator = RandomNumberGenerator.Create())
             {
                 generator.GetNonZeroBytes(salt);
             }
@@ -1450,7 +1409,7 @@ namespace GizmoDALV2
 
             List<byte> bytes = new List<byte>(Encoding.Default.GetBytes(pwd));
             bytes.AddRange(salt);
-            using (SHA512 hasher = SHA512Managed.Create())
+            using (SHA512 hasher = SHA512.Create())
             {
                 return hasher.ComputeHash(bytes.ToArray());
             }
@@ -1478,7 +1437,10 @@ namespace GizmoDALV2
         /// <returns>True or false.</returns>
         public bool IsProxy(object type)
         {
-            return type != null && ObjectContext.GetObjectType(type.GetType()) != type.GetType();
+            // TO DO
+            //return type != null && ObjectContext.GetObjectType(type.GetType()) != type.GetType();
+
+            return false;
         }
 
         /// <summary>
@@ -1638,6 +1600,92 @@ namespace GizmoDALV2
                 throw new NonUniqueEntityValueException(propertyName, value, typeof(TEntity));
         }
 
+        /// <summary>
+        /// Restores permissions for specified users.
+        /// </summary>
+        /// <param name="userQuery">Users query.</param>
+        /// <exception cref="ArgumentNullException">thrown if <paramref name="userQuery"/> is equal to null.</exception>
+        public void RestorePermissions(IQueryable<User> userQuery)
+        {
+            if (userQuery == null)
+                throw new ArgumentNullException(nameof(userQuery));
+
+            RestorePermissions(userQuery, this);
+            SaveChanges();
+        }
+
+        /// <summary>
+        /// Restores permissions for specified users.
+        /// </summary>
+        /// <param name="userQuery">Users query.</param>
+        /// <param name="cx">Database context.</param>
+        /// <exception cref="ArgumentNullException">thrown if <paramref name="userQuery"/> is equal to null.</exception>
+        public void RestorePermissions(IQueryable<User> userQuery, DefaultDbContext cx)
+        {
+            if (userQuery == null)
+                throw new ArgumentNullException(nameof(userQuery));
+
+            foreach (var @operator in userQuery.ToList())
+            {
+                cx.UserPermissions.RemoveRange(@operator.Permissions);
+                var allPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes()
+                    .Select(claim =>
+                    {
+                        return new UserPermission()
+                        {
+                            Type = claim.Resource,
+                            Value = claim.Operation,
+                        };
+                    }).ToList();
+                @operator.Permissions.UnionWith(allPermissions);
+            }
+        }
+
+        /// <summary>
+        /// Apply gloable configurations on common properties types
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        public void ApplyGlobalMapConfigurations(ModelBuilder modelBuilder)
+        {
+            var entities = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).ToList();
+            foreach (var entity in entities)
+            {
+                if (Database.IsSqlServer())
+                {
+                    //make all datetime properties to be mapped as SQL server datetime2
+                    var dateTimeProperties = entity.GetProperties().Where(p => p.PropertyType == typeof(DateTime) || p.PropertyType.GenericTypeArguments?.FirstOrDefault() == typeof(DateTime)).ToList();
+                    foreach (var property in dateTimeProperties)
+                        modelBuilder.Entity(entity).Property(property.Name).HasColumnType("datetime2");
+                }
+
+                //make all decimal properties to have 19,4 precision
+                var decimalProperties = entity.GetProperties().Where(p => p.PropertyType == typeof(decimal) || p.PropertyType.GenericTypeArguments?.FirstOrDefault() == typeof(decimal)).ToList();
+                foreach (var property in decimalProperties)
+                    modelBuilder.Entity(entity).Property(property.Name).HasPrecision(19, 4);
+            }
+
+            // Change default generated index names of foreign keys to match the old database pattern 
+            // TO DO
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var index in entity.GetIndexes())
+                {
+                    var indexName = index.GetDatabaseName();
+                    if (indexName.StartsWith("IX") == false)
+                        continue;
+
+                    var splitted = indexName.Split('_').ToList();
+                    if (splitted.Count < 3)
+                        continue;
+
+                    splitted.RemoveAt(1);
+                    splitted = splitted.Where(e => e.IsNullOrEmpty() == false).ToList();
+
+                    index.SetDatabaseName($"{string.Join("_", splitted)}");
+                }
+            }
+        }
+
         #endregion
 
         #region NOTIFICATIONS
@@ -1665,9 +1713,9 @@ namespace GizmoDALV2
         {
             get
             {
-                if (DefaultDbContext.notifyTypes == null)
-                    DefaultDbContext.notifyTypes = new HashSet<Type>();
-                return DefaultDbContext.notifyTypes;
+                if (notifyTypes == null)
+                    notifyTypes = new HashSet<Type>();
+                return notifyTypes;
             }
         }
 
@@ -1702,8 +1750,8 @@ namespace GizmoDALV2
         /// </summary>
         public static bool RaiseAllEntityEvents
         {
-            get { return DefaultDbContext.raiseAllEntityEvents; }
-            set { DefaultDbContext.raiseAllEntityEvents = value; }
+            get { return raiseAllEntityEvents; }
+            set { raiseAllEntityEvents = value; }
         }
 
         #endregion
@@ -1716,8 +1764,8 @@ namespace GizmoDALV2
         /// <param name="type">Type.</param>
         public static void RegisterNotification(Type type)
         {
-            if (!DefaultDbContext.NotifyTypes.Contains(type))
-                DefaultDbContext.NotifyTypes.Add(type);
+            if (!NotifyTypes.Contains(type))
+                NotifyTypes.Add(type);
         }
 
         /// <summary>
@@ -1726,7 +1774,7 @@ namespace GizmoDALV2
         /// <typeparam name="T">Type.</typeparam>
         public static void RegisterNotification<T>()
         {
-            DefaultDbContext.RegisterNotification(typeof(T));
+            RegisterNotification(typeof(T));
         }
 
         /// <summary>
@@ -1736,10 +1784,10 @@ namespace GizmoDALV2
         /// <returns>True or false.</returns>
         public static bool IsNotificationRegistered(Type type)
         {
-            if (DefaultDbContext.RaiseAllEntityEvents)
+            if (RaiseAllEntityEvents)
                 return true;
 
-            return DefaultDbContext.NotifyTypes.Contains(type);
+            return NotifyTypes.Contains(type);
         }
 
         /// <summary>
@@ -1749,7 +1797,7 @@ namespace GizmoDALV2
         {
             try
             {
-                var handler = DefaultDbContext.EntityEvent;
+                var handler = EntityEvent;
                 if (handler != null)
                 {
                     //generate new event list
@@ -1833,6 +1881,8 @@ namespace GizmoDALV2
 
         #endregion
 
+        #region EXCEPTION HANDLERS
+
         /// <summary>
         /// Checks if the exception is retriable.
         /// </summary>
@@ -1850,6 +1900,14 @@ namespace GizmoDALV2
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="retries"></param>
+        /// <param name="minWaitTime"></param>
+        /// <param name="maxWaitTime"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public static void RetryBeforeThrow(Action action, int retries = 10, int minWaitTime = 100, int maxWaitTime = 1000)
         {
             if (action == null)
@@ -1882,6 +1940,17 @@ namespace GizmoDALV2
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="action"></param>
+        /// <param name="retries"></param>
+        /// <param name="minWaitTime"></param>
+        /// <param name="maxWaitTime"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public static TResult RetryBeforeThrow<TResult>(Func<TResult> action, int retries = 10, int minWaitTime = 100, int maxWaitTime = 1000)
         {
             if (action == null)
@@ -1928,477 +1997,437 @@ namespace GizmoDALV2
             preserveStackTrace.Invoke(ex, null);
         }
 
-        /// <summary>
-        /// Restores permissions for specified users.
-        /// </summary>
-        /// <param name="userQuery">Users query.</param>
-        /// <exception cref="ArgumentNullException">thrown if <paramref name="userQuery"/> is equal to null.</exception>
-        public void RestorePermissions(IQueryable<User> userQuery)
-        {
-            if (userQuery == null)
-                throw new ArgumentNullException(nameof(userQuery));
-
-            RestorePermissions(userQuery, this);
-            SaveChanges();
-        }
-
-        /// <summary>
-        /// Restores permissions for specified users.
-        /// </summary>
-        /// <param name="userQuery">Users query.</param>
-        /// <param name="cx">Database context.</param>
-        /// <exception cref="ArgumentNullException">thrown if <paramref name="userQuery"/> is equal to null.</exception>
-        public void RestorePermissions(IQueryable<User> userQuery,
-            DefaultDbContext cx)
-        {
-            if (userQuery == null)
-                throw new ArgumentNullException(nameof(userQuery));
-
-            foreach (var @operator in userQuery.ToList())
-            {
-                cx.UserPermissions.RemoveRange(@operator.Permissions);
-                var allPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes()
-                    .Select(claim =>
-                    {
-                        return new UserPermission()
-                        {
-                            Type = claim.Resource,
-                            Value = claim.Operation,
-                        };
-                    }).ToList();
-                @operator.Permissions.UnionWith(allPermissions);
-            }
-        }
-    }
-
-    #endregion
-
-    #region DEFAULTCONFIG
-    /// <summary>
-    /// Default configuration for use with base context.
-    /// </summary>
-    public class DefaultConfig : DbConfiguration
-    {
-        #region CONSTRUCTOR
-        /// <summary>
-        /// Creates new instance.
-        /// </summary>
-        public DefaultConfig()
-            : base()
-        {
-            SetDefaultConnectionFactory(new SqlConnectionFactory());
-            SetDatabaseInitializer(new MSSQLInitializer());
-        } 
-        #endregion
-    }
-    #endregion
-
-    #region DEFAULTINITIALIZER
-
-    /// <summary>
-    /// Database initializer.
-    /// </summary>
-    /// <typeparam name="TContextType">Context type.</typeparam>
-    /// <typeparam name="TConfiguration">Context configuration.</typeparam>
-    public class CreateAndMigrateDatabaseInitializer<TContextType, TConfiguration> :
-        IDatabaseInitializer<TContextType>
-        where TContextType : DefaultDbContext
-        where TConfiguration : DbMigrationsConfiguration<TContextType>, new()
-    {
-        #region FIELDS
-        private readonly DbMigrationsConfiguration _configuration;
-        #endregion
-
-        #region CONSTRUCTOR
-
-        /// <summary>
-        /// Creates new instance.
-        /// </summary>
-        public CreateAndMigrateDatabaseInitializer()
-        {
-            _configuration = new TConfiguration();
-        }
-
-        /// <summary>
-        /// Creates new instance.
-        /// </summary>
-        /// <param name="connection">Database connection string.</param>
-        public CreateAndMigrateDatabaseInitializer(string connection)
-        {
-            Contract.Requires(!string.IsNullOrEmpty(connection), "connection");
-
-            _configuration = new TConfiguration
-            {
-                TargetDatabase = new DbConnectionInfo(connection)
-            };
-        }
-
-        #endregion        
-
-        #region OVERRIDES
-
-        /// <summary>
-        /// Seeds data.
-        /// </summary>
-        /// <param name="context">Context type.</param>
-        protected virtual void Seed(TContextType context)
-        {
-            AddDefaultOperator(context);
-            AddPaymentMethods(context);
-            AddMonetaryUnits(context);
-            AddLayoutGroups(context);
-            AddPresetTime(context);
-
-            if (!context.IsSeedOnlyBasicEnabled)
-            {
-                AddTaxes(context);
-                AddBillProfiles(context);
-                AddUserGroups(context);
-                AddUsers(context);
-                AddHostGroups(context);
-                AddProducts(context);
-                AddHosts(context);
-            }
-        }
-
-        #endregion
-
-        #region SEED METHODS
-
-        private void AddPaymentMethods(TContextType cx)
-        {
-            cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.Cash, Name = "Cash", DisplayOrder = 0, IsEnabled = true, IsClient = true, IsManager = true });
-            cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.Points, Name = "Points", DisplayOrder = 2, IsEnabled = true, IsClient = true, IsManager = true });
-            cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.Deposit, Name = "Deposit", DisplayOrder = 3, IsEnabled = true, IsClient = true, IsManager = true });
-            cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.CreditCard, Name = "Credit Card", DisplayOrder = 4, IsEnabled = true, IsClient = true, IsManager = true });
-        }
-
-        private void AddMonetaryUnits(TContextType cx)
-        {
-            string isoCurrencySymbol = RegionInfo.CurrentRegion.ISOCurrencySymbol;
-
-            if (isoCurrencySymbol == "EUR")
-            {
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Cent", Value = 0.01M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Cent", Value = 0.05M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Cent", Value = 0.10M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "20 Cent", Value = 0.20M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "50 Cent", Value = 0.50M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Euro", Value = 1.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "2 Euro", Value = 2.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Euro", Value = 5.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Euro", Value = 10.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "20 Euro", Value = 20.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "50 Euro", Value = 50.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "100 Euro", Value = 100.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "200 Euro", Value = 200.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "500 Euro", Value = 500.00M });
-            }
-            else
-            {
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Cent", Value = 0.01M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Cent", Value = 0.05M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Cent", Value = 0.10M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "25 Cent", Value = 0.25M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Dollar", Value = 1.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "2 Dollar", Value = 2.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Dollar", Value = 5.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Dollar", Value = 10.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "20 Dollar", Value = 20.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "50 Dollar", Value = 50.00M });
-                cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "100 Dollar", Value = 100.00M });
-            }
-
-            var newList = cx.MonetaryUnits.Local.ToList();
-            newList.ForEach(unit =>
-            {
-                unit.DisplayOrder = newList.IndexOf(unit);
-            });
-        }
-
-        private void AddDefaultOperator(TContextType cx)
-        {
-            var defaultOperator = new UserOperator();
-
-            byte[] salt = cx.GetNewSalt();
-            byte[] password = cx.GetHashedPassword("admin", salt);
-
-            defaultOperator.UserCredential = new UserCredential();
-            defaultOperator.Username = "Admin";
-
-            defaultOperator.CreatedTime = DateTime.Now;
-            defaultOperator.UserCredential.Salt = salt;
-            defaultOperator.UserCredential.Password = password;
-
-            var allPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes().Select(claim =>
-            {
-                return new UserPermission() { Type = claim.Resource, Value = claim.Operation };
-            });
-
-            defaultOperator.Permissions.UnionWith(allPermissions);
-
-            cx.UsersOperator.AddOrUpdate(defaultOperator);
-        }
-
-        private void AddProducts(TContextType cx)
-        {
-            var tax = cx.Taxes.Local.First();
-
-            var timeGroup = cx.ProductGroups.Add(new ProductGroup() { Name = "Time Offers", DisplayOrder = 0 });
-            var foodGrooup = cx.ProductGroups.Add(new ProductGroup() { Name = "Food", DisplayOrder = 1 });
-            var drinksGroup = cx.ProductGroups.Add(new ProductGroup() { Name = "Drinks", DisplayOrder = 2 });
-            var sweetsGroup = cx.ProductGroups.Add(new ProductGroup() { Name = "Sweets", DisplayOrder = 3 });
-
-            var product = new Product()
-            {
-                Name = "Mars Bar",
-                Cost = 0.90m,
-                Price = 1.10m,
-                Points = 10,
-                StockOptions = StockOptionType.EnableStock
-            };
-
-            product.Taxes.Add(new ProductTax() { Tax = tax });
-            product.ProductGroup = sweetsGroup;
-            sweetsGroup.Products.Add(product);
-            cx.Products.Add(product);
-
-            product = new Product()
-            {
-                Name = "Snickers Bar",
-                Points = 15,
-                StockOptions = StockOptionType.EnableStock,
-                Cost = 1.20m,
-                Price = 2.0m
-            };
-            product.Taxes.Add(new ProductTax() { Tax = tax });
-            product.ProductGroup = sweetsGroup;
-            sweetsGroup.Products.Add(product);
-            cx.Products.Add(product);
-
-            var bundle = new ProductBundle()
-            {
-                Name = "Pizza and Cola",
-                StockOptions = StockOptionType.EnableStock,
-                Points = 200,
-                Price = 3.40m, //pizza plus cola
-                ProductGroup = foodGrooup
-            };
-            bundle.Taxes.Add(new ProductTax() { Tax = tax });
-
-            var pizza = new Product()
-            {
-                Name = "Pizza (Small)",
-                ProductGroup = foodGrooup,
-                Cost = 2.20m,
-                Price = 6.0m
-            };
-            pizza.Taxes.Add(new ProductTax() { Tax = tax });
-            cx.Products.Add(pizza);
-            bundle.BundledProducts.Add(new BundleProduct() { Price = 1, Product = pizza, Quantity = 1 });
-
-            var cola = new Product()
-            {
-                Name = "Coca Cola (Can)",
-                ProductGroup = drinksGroup,
-                Cost = 1.20m,
-                Price = 2.0m
-            };
-            cola.Taxes.Add(new ProductTax() { Tax = tax });
-            cx.Products.Add(cola);
-            bundle.BundledProducts.Add(new BundleProduct() { Price = 2, Product = cola, Quantity = 1 });
-
-            cx.Products.Add(bundle);
-
-            var productTime = new ProductTime()
-            {
-                UsePeriod = new ProductTimePeriod()
-            };
-            productTime.Taxes.Add(new ProductTax() { Tax = tax });
-            productTime.Minutes = 360;
-            productTime.Price = 12;
-            productTime.WeekEndMaxMinutes = null;
-            productTime.Name = "Six Hours (6)";
-            productTime.ProductGroup = timeGroup;
-            timeGroup.Products.Add(productTime);
-            cx.Products.Add(productTime);
-
-            productTime = new ProductTime();
-            productTime.Taxes.Add(new ProductTax() { Tax = tax });
-            productTime.Minutes = 360;
-            productTime.Price = 16;
-            productTime.WeekEndMaxMinutes = null;
-            productTime.Period = new ProductPeriod()
-            {
-                Options = PeriodOptionType.None
-            };
-            productTime.Period.Days.Add(new ProductPeriodDay() { Day = DayOfWeek.Saturday });
-            productTime.Period.Days.Add(new ProductPeriodDay() { Day = DayOfWeek.Sunday });
-            productTime.Name = "Six Hours (6 Weekends)";
-            productTime.ProductGroup = timeGroup;
-            timeGroup.Products.Add(productTime);
-            cx.Products.Add(productTime);
-        }
-
-        private void AddTaxes(TContextType cx)
-        {
-            cx.Taxes.AddOrUpdate(new Tax() { Name = "24%", Value = 23, UseOrder = 0 });
-            cx.Taxes.AddOrUpdate(new Tax() { Name = "16%", Value = 16, UseOrder = 1 });
-            cx.Taxes.AddOrUpdate(new Tax() { Name = "None", Value = 0, UseOrder = 2 });
-        }
-
-        private void AddLayoutGroups(TContextType cx)
-        {
-            var hostLayoutGroup = new HostLayoutGroup()
-            {
-                Name = "Default",
-                DisplayOrder = 0
-            };
-            cx.HostLayoutGroups.Add(hostLayoutGroup);
-        }
-
-        private void AddBillProfiles(TContextType cx)
-        {
-            var billProfile = cx.BillProfiles.Add(new BillProfile() { Name = "Member Prices" });
-            var rate = new BillRate()
-            {
-                BillProfile = billProfile,
-                IsDefault = true,
-                MinimumFee = 2,
-                ChargeAfter = 1,
-                ChargeEvery = 5,
-                Rate = 2,
-                StartFee = 1
-            };
-
-            billProfile.BillRates.Add(rate);
-            cx.BillRates.Add(rate);
-
-            billProfile = cx.BillProfiles.Add(new BillProfile() { Name = "Guests Prices" });
-            rate = new BillRate()
-            {
-                BillProfile = billProfile,
-                IsDefault = true,
-                MinimumFee = 2,
-                ChargeAfter = 1,
-                ChargeEvery = 5,
-                Rate = 2,
-                StartFee = 1
-            };
-
-            billProfile.BillRates.Add(rate);
-            cx.BillRates.Add(rate);
-        }
-
-        private void AddUserGroups(TContextType cx)
-        {
-            var memberPrices = cx.BillProfiles.Local.Where(x => x.Name == "Member Prices").First();
-            var guestPrices = cx.BillProfiles.Local.Where(x => x.Name == "Guests Prices").First();
-
-            cx.UserGroups.Add(new UserGroup() { Name = "Members", BillProfile = memberPrices, IsDefault = true });
-            cx.UserGroups.Add(new UserGroup() { Name = "Guests", Options = UserGroupOptionType.GuestUse, BillProfile = guestPrices });
-        }
-
-        private void AddUsers(TContextType cx)
-        {
-            var group = cx.UserGroups.Local.Where(x => x.Name == "Members").FirstOrDefault();
-            cx.Users.Add(new UserMember() { Username = "User", UserGroup = group });
-        }
-
-        private void AddHostGroups(TContextType cx)
-        {
-            var defaultGuestGroup = cx.UserGroups.Local.Where(x => x.Name == "Guests").FirstOrDefault();
-
-            cx.HostGroups.AddOrUpdate(new HostGroup() { Name = "Computers", DefaultGuestGroup = defaultGuestGroup });
-            cx.HostGroups.AddOrUpdate(new HostGroup() { Name = "Endpoints", DefaultGuestGroup = defaultGuestGroup });
-        }
-
-        private void AddHosts(TContextType cx)
-        {
-            var hostGroup = cx.HostGroups.Local.LastOrDefault();
-
-            if (hostGroup != null)
-            {
-                cx.HostEndpoint.Add(new HostEndpoint() { Name = "XBOX-ONE-1", Number = 1, MaximumUsers = 4, HostGroup = hostGroup });
-                cx.HostEndpoint.Add(new HostEndpoint() { Name = "XBOX-ONE-2", Number = 2, MaximumUsers = 4, HostGroup = hostGroup });
-                cx.HostEndpoint.Add(new HostEndpoint() { Name = "PS4-1", Number = 3, MaximumUsers = 4, HostGroup = hostGroup });
-                cx.HostEndpoint.Add(new HostEndpoint() { Name = "WII-1", Number = 4, MaximumUsers = 4, HostGroup = hostGroup });
-            }
-        }
-
-        private void AddPresetTime(TContextType cx)
-        {
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 1 });
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 5 });
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 15 });
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 30 });
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 60 });
-
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 1 });
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 2 });
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 5 });
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 10 });
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 20 });
-        }
-
-        #endregion
-
-        #region IDatabaseInitializer
-
-        void IDatabaseInitializer<TContextType>.InitializeDatabase(TContextType context)
-        {
-            Contract.Requires(context != null, "context");
-
-            if (context.Database.Exists())
-            {
-                var connection = context.Database.Connection;
-
-                var internalContextProperty = context.Configuration.GetType().GetField("_internalContext", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-                var internalContextValue = internalContextProperty.GetValue(context.Configuration);
-                var providerNameProp = internalContextValue.GetType().GetProperty("ProviderName", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-                var providerNameValue = providerNameProp.GetValue(internalContextValue) as string;
-
-                _configuration.TargetDatabase = new DbConnectionInfo(connection.ConnectionString, providerNameValue);
-
-                var migrator = new DbMigrator(_configuration);
-                var pendingMigrations = migrator.GetPendingMigrations();
-                if (pendingMigrations.Any())
-                {
-                    migrator.Update();
-                }
-            }
-            else
-            {
-                context.Database.Create();
-                Seed(context);
-                context.SaveChanges();
-            }
-        }
-
         #endregion
     }
 
     #endregion
 
-    #region MSSQLINITIALIZER
-    /// <summary>
-    /// Microsoft SQL Server initializer.
-    /// </summary>
-    public class MSSQLInitializer : CreateAndMigrateDatabaseInitializer<DefaultDbContext, MSSQLConfiguration>
-    {
-    }
-    #endregion
+    // #region DEFAULTCONFIG
+    // /// <summary>
+    // /// Default configuration for use with base context.
+    // /// </summary>
+    // public class DefaultConfig : DbConfiguration
+    // {
+    //     #region CONSTRUCTOR
+    //     /// <summary>
+    //     /// Creates new instance.
+    //     /// </summary>
+    //     public DefaultConfig()
+    //         : base()
+    //     {
+    //         SetDefaultConnectionFactory(new SqlConnectionFactory());
+    //         SetDatabaseInitializer(new MSSQLInitializer());
+    //     }
+    //     #endregion
+    // }
+    // #endregion
 
-    #region SQLSERVERCUSTOMMIGRATIONSQLGENERATOR
-    /// <summary>
-    /// Microsoft SQL Server migration generator.
-    /// </summary>
-    public class SqlServerCustomMigrationSqlGenerator : SqlServerMigrationSqlGenerator
-    {
-    }
-    #endregion
+    // #region DEFAULTINITIALIZER
 
-    #region MSSQLSERVERRETRYABLEERRORS
+    // /// <summary>
+    // /// Database initializer.
+    // /// </summary>
+    // /// <typeparam name="TContextType">Context type.</typeparam>
+    // /// <typeparam name="TConfiguration">Context configuration.</typeparam>
+    // public class CreateAndMigrateDatabaseInitializer<TContextType, TConfiguration> :
+    //     IDatabaseInitializer<TContextType>
+    //     where TContextType : DefaultDbContext
+    //     where TConfiguration : DbMigrationsConfiguration<TContextType>, new()
+    // {
+    //     #region FIELDS
+    //     private readonly DbMigrationsConfiguration _configuration;
+    //     #endregion
+
+    //     #region CONSTRUCTOR
+
+    //     /// <summary>
+    //     /// Creates new instance.
+    //     /// </summary>
+    //     public CreateAndMigrateDatabaseInitializer()
+    //     {
+    //         _configuration = new TConfiguration();
+    //     }
+
+    //     /// <summary>
+    //     /// Creates new instance.
+    //     /// </summary>
+    //     /// <param name="connection">Database connection string.</param>
+    //     public CreateAndMigrateDatabaseInitializer(string connection)
+    //     {
+    //         Contract.Requires(!string.IsNullOrEmpty(connection), "connection");
+
+    //         _configuration = new TConfiguration
+    //         {
+    //             TargetDatabase = new DbConnectionInfo(connection)
+    //         };
+    //     }
+
+    //     #endregion        
+
+    //     #region OVERRIDES
+
+    //     /// <summary>
+    //     /// Seeds data.
+    //     /// </summary>
+    //     /// <param name="context">Context type.</param>
+    //     protected virtual void Seed(TContextType context)
+    //     {
+    //         AddDefaultOperator(context);
+    //         AddPaymentMethods(context);
+    //         AddMonetaryUnits(context);
+    //         AddLayoutGroups(context);
+    //         AddPresetTime(context);
+
+    //         if (!context.IsSeedOnlyBasicEnabled)
+    //         {
+    //             AddTaxes(context);
+    //             AddBillProfiles(context);
+    //             AddUserGroups(context);
+    //             AddUsers(context);
+    //             AddHostGroups(context);
+    //             AddProducts(context);
+    //             AddHosts(context);
+    //         }
+    //     }
+
+    //     #endregion
+
+    //     #region SEED METHODS
+
+    //     private void AddPaymentMethods(TContextType cx)
+    //     {
+    //         cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.Cash, Name = "Cash", DisplayOrder = 0, IsEnabled = true, IsClient = true, IsManager = true });
+    //         cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.Points, Name = "Points", DisplayOrder = 2, IsEnabled = true, IsClient = true, IsManager = true });
+    //         cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.Deposit, Name = "Deposit", DisplayOrder = 3, IsEnabled = true, IsClient = true, IsManager = true });
+    //         cx.PaymentMethods.AddOrUpdate(new PaymentMethod() { Id = (int)PaymentMethodType.CreditCard, Name = "Credit Card", DisplayOrder = 4, IsEnabled = true, IsClient = true, IsManager = true });
+    //     }
+
+    //     private void AddMonetaryUnits(TContextType cx)
+    //     {
+    //         string isoCurrencySymbol = RegionInfo.CurrentRegion.ISOCurrencySymbol;
+
+    //         if (isoCurrencySymbol == "EUR")
+    //         {
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Cent", Value = 0.01M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Cent", Value = 0.05M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Cent", Value = 0.10M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "20 Cent", Value = 0.20M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "50 Cent", Value = 0.50M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Euro", Value = 1.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "2 Euro", Value = 2.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Euro", Value = 5.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Euro", Value = 10.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "20 Euro", Value = 20.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "50 Euro", Value = 50.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "100 Euro", Value = 100.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "200 Euro", Value = 200.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "500 Euro", Value = 500.00M });
+    //         }
+    //         else
+    //         {
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Cent", Value = 0.01M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Cent", Value = 0.05M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Cent", Value = 0.10M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "25 Cent", Value = 0.25M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "1 Dollar", Value = 1.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "2 Dollar", Value = 2.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "5 Dollar", Value = 5.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "10 Dollar", Value = 10.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "20 Dollar", Value = 20.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "50 Dollar", Value = 50.00M });
+    //             cx.MonetaryUnits.Add(new MonetaryUnit() { Name = "100 Dollar", Value = 100.00M });
+    //         }
+
+    //         var newList = cx.MonetaryUnits.Local.ToList();
+    //         newList.ForEach(unit =>
+    //         {
+    //             unit.DisplayOrder = newList.IndexOf(unit);
+    //         });
+    //     }
+
+    //     private void AddDefaultOperator(TContextType cx)
+    //     {
+    //         var defaultOperator = new UserOperator();
+
+    //         byte[] salt = cx.GetNewSalt();
+    //         byte[] password = cx.GetHashedPassword("admin", salt);
+
+    //         defaultOperator.UserCredential = new UserCredential();
+    //         defaultOperator.Username = "Admin";
+
+    //         defaultOperator.CreatedTime = DateTime.Now;
+    //         defaultOperator.UserCredential.Salt = salt;
+    //         defaultOperator.UserCredential.Password = password;
+
+    //         var allPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes().Select(claim =>
+    //         {
+    //             return new UserPermission() { Type = claim.Resource, Value = claim.Operation };
+    //         });
+
+    //         defaultOperator.Permissions.UnionWith(allPermissions);
+
+    //         cx.UsersOperator.AddOrUpdate(defaultOperator);
+    //     }
+
+    //     private void AddProducts(TContextType cx)
+    //     {
+    //         var tax = cx.Taxes.Local.First();
+
+    //         var timeGroup = cx.ProductGroups.Add(new ProductGroup() { Name = "Time Offers", DisplayOrder = 0 });
+    //         var foodGrooup = cx.ProductGroups.Add(new ProductGroup() { Name = "Food", DisplayOrder = 1 });
+    //         var drinksGroup = cx.ProductGroups.Add(new ProductGroup() { Name = "Drinks", DisplayOrder = 2 });
+    //         var sweetsGroup = cx.ProductGroups.Add(new ProductGroup() { Name = "Sweets", DisplayOrder = 3 });
+
+    //         var product = new Product()
+    //         {
+    //             Name = "Mars Bar",
+    //             Cost = 0.90m,
+    //             Price = 1.10m,
+    //             Points = 10,
+    //             StockOptions = StockOptionType.EnableStock
+    //         };
+
+    //         product.Taxes.Add(new ProductTax() { Tax = tax });
+    //         product.ProductGroup = sweetsGroup;
+    //         sweetsGroup.Products.Add(product);
+    //         cx.Products.Add(product);
+
+    //         product = new Product()
+    //         {
+    //             Name = "Snickers Bar",
+    //             Points = 15,
+    //             StockOptions = StockOptionType.EnableStock,
+    //             Cost = 1.20m,
+    //             Price = 2.0m
+    //         };
+    //         product.Taxes.Add(new ProductTax() { Tax = tax });
+    //         product.ProductGroup = sweetsGroup;
+    //         sweetsGroup.Products.Add(product);
+    //         cx.Products.Add(product);
+
+    //         var bundle = new ProductBundle()
+    //         {
+    //             Name = "Pizza and Cola",
+    //             StockOptions = StockOptionType.EnableStock,
+    //             Points = 200,
+    //             Price = 3.40m, //pizza plus cola
+    //             ProductGroup = foodGrooup
+    //         };
+    //         bundle.Taxes.Add(new ProductTax() { Tax = tax });
+
+    //         var pizza = new Product()
+    //         {
+    //             Name = "Pizza (Small)",
+    //             ProductGroup = foodGrooup,
+    //             Cost = 2.20m,
+    //             Price = 6.0m
+    //         };
+    //         pizza.Taxes.Add(new ProductTax() { Tax = tax });
+    //         cx.Products.Add(pizza);
+    //         bundle.BundledProducts.Add(new BundleProduct() { Price = 1, Product = pizza, Quantity = 1 });
+
+    //         var cola = new Product()
+    //         {
+    //             Name = "Coca Cola (Can)",
+    //             ProductGroup = drinksGroup,
+    //             Cost = 1.20m,
+    //             Price = 2.0m
+    //         };
+    //         cola.Taxes.Add(new ProductTax() { Tax = tax });
+    //         cx.Products.Add(cola);
+    //         bundle.BundledProducts.Add(new BundleProduct() { Price = 2, Product = cola, Quantity = 1 });
+
+    //         cx.Products.Add(bundle);
+
+    //         var productTime = new ProductTime()
+    //         {
+    //             UsePeriod = new ProductTimePeriod()
+    //         };
+    //         productTime.Taxes.Add(new ProductTax() { Tax = tax });
+    //         productTime.Minutes = 360;
+    //         productTime.Price = 12;
+    //         productTime.WeekEndMaxMinutes = null;
+    //         productTime.Name = "Six Hours (6)";
+    //         productTime.ProductGroup = timeGroup;
+    //         timeGroup.Products.Add(productTime);
+    //         cx.Products.Add(productTime);
+
+    //         productTime = new ProductTime();
+    //         productTime.Taxes.Add(new ProductTax() { Tax = tax });
+    //         productTime.Minutes = 360;
+    //         productTime.Price = 16;
+    //         productTime.WeekEndMaxMinutes = null;
+    //         productTime.Period = new ProductPeriod()
+    //         {
+    //             Options = PeriodOptionType.None
+    //         };
+    //         productTime.Period.Days.Add(new ProductPeriodDay() { Day = DayOfWeek.Saturday });
+    //         productTime.Period.Days.Add(new ProductPeriodDay() { Day = DayOfWeek.Sunday });
+    //         productTime.Name = "Six Hours (6 Weekends)";
+    //         productTime.ProductGroup = timeGroup;
+    //         timeGroup.Products.Add(productTime);
+    //         cx.Products.Add(productTime);
+    //     }
+
+    //     private void AddTaxes(TContextType cx)
+    //     {
+    //         cx.Taxes.AddOrUpdate(new Tax() { Name = "24%", Value = 23, UseOrder = 0 });
+    //         cx.Taxes.AddOrUpdate(new Tax() { Name = "16%", Value = 16, UseOrder = 1 });
+    //         cx.Taxes.AddOrUpdate(new Tax() { Name = "None", Value = 0, UseOrder = 2 });
+    //     }
+
+    //     private void AddLayoutGroups(TContextType cx)
+    //     {
+    //         var hostLayoutGroup = new HostLayoutGroup()
+    //         {
+    //             Name = "Default",
+    //             DisplayOrder = 0
+    //         };
+    //         cx.HostLayoutGroups.Add(hostLayoutGroup);
+    //     }
+
+    //     private void AddBillProfiles(TContextType cx)
+    //     {
+    //         var billProfile = cx.BillProfiles.Add(new BillProfile() { Name = "Member Prices" });
+    //         var rate = new BillRate()
+    //         {
+    //             BillProfile = billProfile,
+    //             IsDefault = true,
+    //             MinimumFee = 2,
+    //             ChargeAfter = 1,
+    //             ChargeEvery = 5,
+    //             Rate = 2,
+    //             StartFee = 1
+    //         };
+
+    //         billProfile.BillRates.Add(rate);
+    //         cx.BillRates.Add(rate);
+
+    //         billProfile = cx.BillProfiles.Add(new BillProfile() { Name = "Guests Prices" });
+    //         rate = new BillRate()
+    //         {
+    //             BillProfile = billProfile,
+    //             IsDefault = true,
+    //             MinimumFee = 2,
+    //             ChargeAfter = 1,
+    //             ChargeEvery = 5,
+    //             Rate = 2,
+    //             StartFee = 1
+    //         };
+
+    //         billProfile.BillRates.Add(rate);
+    //         cx.BillRates.Add(rate);
+    //     }
+
+    //     private void AddUserGroups(TContextType cx)
+    //     {
+    //         var memberPrices = cx.BillProfiles.Local.Where(x => x.Name == "Member Prices").First();
+    //         var guestPrices = cx.BillProfiles.Local.Where(x => x.Name == "Guests Prices").First();
+
+    //         cx.UserGroups.Add(new UserGroup() { Name = "Members", BillProfile = memberPrices, IsDefault = true });
+    //         cx.UserGroups.Add(new UserGroup() { Name = "Guests", Options = UserGroupOptionType.GuestUse, BillProfile = guestPrices });
+    //     }
+
+    //     private void AddUsers(TContextType cx)
+    //     {
+    //         var group = cx.UserGroups.Local.Where(x => x.Name == "Members").FirstOrDefault();
+    //         cx.Users.Add(new UserMember() { Username = "User", UserGroup = group });
+    //     }
+
+    //     private void AddHostGroups(TContextType cx)
+    //     {
+    //         var defaultGuestGroup = cx.UserGroups.Local.Where(x => x.Name == "Guests").FirstOrDefault();
+
+    //         cx.HostGroups.AddOrUpdate(new HostGroup() { Name = "Computers", DefaultGuestGroup = defaultGuestGroup });
+    //         cx.HostGroups.AddOrUpdate(new HostGroup() { Name = "Endpoints", DefaultGuestGroup = defaultGuestGroup });
+    //     }
+
+    //     private void AddHosts(TContextType cx)
+    //     {
+    //         var hostGroup = cx.HostGroups.Local.LastOrDefault();
+
+    //         if (hostGroup != null)
+    //         {
+    //             cx.HostEndpoint.Add(new HostEndpoint() { Name = "XBOX-ONE-1", Number = 1, MaximumUsers = 4, HostGroup = hostGroup });
+    //             cx.HostEndpoint.Add(new HostEndpoint() { Name = "XBOX-ONE-2", Number = 2, MaximumUsers = 4, HostGroup = hostGroup });
+    //             cx.HostEndpoint.Add(new HostEndpoint() { Name = "PS4-1", Number = 3, MaximumUsers = 4, HostGroup = hostGroup });
+    //             cx.HostEndpoint.Add(new HostEndpoint() { Name = "WII-1", Number = 4, MaximumUsers = 4, HostGroup = hostGroup });
+    //         }
+    //     }
+
+    //     private void AddPresetTime(TContextType cx)
+    //     {
+    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 1 });
+    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 5 });
+    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 15 });
+    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 30 });
+    //         cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 60 });
+
+    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 1 });
+    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 2 });
+    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 5 });
+    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 10 });
+    //         cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 20 });
+    //     }
+
+    //     #endregion
+
+    //     #region IDatabaseInitializer
+
+    //     void IDatabaseInitializer<TContextType>.InitializeDatabase(TContextType context)
+    //     {
+    //         Contract.Requires(context != null, "context");
+
+    //         if (context.Database.Exists())
+    //         {
+    //             var connection = context.Database.Connection;
+
+    //             var internalContextProperty = context.Configuration.GetType().GetField("_internalContext", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+    //             var internalContextValue = internalContextProperty.GetValue(context.Configuration);
+    //             var providerNameProp = internalContextValue.GetType().GetProperty("ProviderName", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+    //             var providerNameValue = providerNameProp.GetValue(internalContextValue) as string;
+
+    //             _configuration.TargetDatabase = new DbConnectionInfo(connection.ConnectionString, providerNameValue);
+
+    //             var migrator = new DbMigrator(_configuration);
+    //             var pendingMigrations = migrator.GetPendingMigrations();
+    //             if (pendingMigrations.Any())
+    //             {
+    //                 migrator.Update();
+    //             }
+    //         }
+    //         else
+    //         {
+    //             context.Database.Create();
+    //             Seed(context);
+    //             context.SaveChanges();
+    //         }
+    //     }
+
+    //     #endregion
+    // }
+
+    // #endregion
+
+    // #region MSSQLINITIALIZER
+    // /// <summary>
+    // /// Microsoft SQL Server initializer.
+    // /// </summary>
+    // public class MSSQLInitializer : CreateAndMigrateDatabaseInitializer<DefaultDbContext, MSSQLConfiguration>
+    // {
+    // }
+    // #endregion
+
+    // #region SQLSERVERCUSTOMMIGRATIONSQLGENERATOR
+    // /// <summary>
+    // /// Microsoft SQL Server migration generator.
+    // /// </summary>
+    // public class SqlServerCustomMigrationSqlGenerator : SqlServerMigrationSqlGenerator
+    // {
+    // }
+    // #endregion
+
+    // #region MSSQLSERVERRETRYABLEERRORS
     /// <summary>
     /// Microsoft SQL Server retriable error codes.
     /// </summary>
@@ -2416,5 +2445,5 @@ namespace GizmoDALV2
         ServiceBusy = 40501,
         DatabaseOrServerNotAvailable = 40613
     }
-    #endregion
+    //#endregion
 }

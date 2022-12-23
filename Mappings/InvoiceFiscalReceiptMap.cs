@@ -1,33 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+﻿using Gizmo.DAL.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class InvoiceFiscalReceiptMap : EntityTypeConfiguration<Entities.InvoiceFiscalReceipt>
+    public class InvoiceFiscalReceiptMap : IEntityTypeConfiguration<InvoiceFiscalReceipt>
     {
-        public InvoiceFiscalReceiptMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<InvoiceFiscalReceipt> builder)
         {
-            HasKey(x=>x.Id);
+            builder.HasKey(x=>x.Id);
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("InvoiceFiscalReceiptId");
 
-            Property(x => x.InvoiceId)
+            builder.Property(x => x.InvoiceId)
                 .HasColumnOrder(1);
 
-            Property(x => x.FiscalReceiptId)
-                .HasColumnOrder(2)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_FiscalReceipt") { IsUnique = true }
-                }));
+            builder.Property(x => x.FiscalReceiptId)
+                .HasColumnOrder(2);
 
-            HasRequired(x => x.Invoice)
+            // Indexes
+            builder.HasIndex(t => t.FiscalReceiptId).HasDatabaseName("UQ_FiscalReceipt").IsUnique();
+
+            builder.HasOne(x => x.Invoice)
                 .WithMany(x => x.FiscalReceipts)
                 .HasForeignKey(x => x.InvoiceId);
 
-            ToTable(nameof(Entities.InvoiceFiscalReceipt));
+            builder.ToTable(nameof(Entities.InvoiceFiscalReceipt));
         }
     }
 }

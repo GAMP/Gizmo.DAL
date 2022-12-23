@@ -1,30 +1,32 @@
 ﻿using Gizmo.DAL.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class VoidDepositPaymentMap : EntityTypeConfiguration<VoidDepositPayment>
+    public class VoidDepositPaymentMap : IEntityTypeConfiguration<VoidDepositPayment>
     {
-        public VoidDepositPaymentMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<VoidDepositPayment> builder)
         {
-            // Primary Key
-            HasKey(t => t.Id);
+            //// Primary Key
+            //builder.HasKey(t => t.Id);
 
-            Property(t => t.DepositPaymentId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_DepositPayment") { IsUnique = true }
-                }));
+            builder.Property(t => t.DepositPaymentId)
+                .HasColumnOrder(1);
 
-            HasRequired(t => t.DepositPayment)
+            // Indexes
+            builder.HasIndex(t => t.DepositPaymentId).HasDatabaseName("UQ_DepositPayment").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(t => t.DepositPayment)
                 .WithMany(t=>t.Voids)
                 .HasForeignKey(t => t.DepositPaymentId);
 
             // Table & Column Mappings
-            ToTable(nameof(VoidDepositPayment));
+            builder.ToTable(nameof(VoidDepositPayment));
         }
     }
 }

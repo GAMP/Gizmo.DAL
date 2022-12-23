@@ -1,153 +1,180 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ProductOLBaseMap : EntityTypeConfiguration<ProductOL>
+    public class ProductOLBaseMap : IEntityTypeConfiguration<ProductOL>
     {
-        public ProductOLBaseMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductOL> builder)
         {
-            ToTable(nameof(ProductOL));
+            builder.ToTable(nameof(ProductOL));
 
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("ProductOLId");
 
-            Property(x => x.ProductOrderId)
+            builder.Property(x => x.ProductOrderId)
                 .HasColumnOrder(1);
 
-            Property(x => x.UserId)
+            builder.Property(x => x.UserId)
                 .HasColumnOrder(2);
 
-            Property(x => x.ProductName)
+            builder.Property(x => x.ProductName)
                 .HasColumnOrder(3);
 
-            Property(x => x.Quantity)
+            builder.Property(x => x.Quantity)
                 .HasColumnOrder(4);
 
-            Property(x => x.UnitPrice)
+            builder.Property(x => x.UnitPrice)
                 .HasColumnOrder(5);
 
-            Property(x => x.UnitListPrice)
+            builder.Property(x => x.UnitListPrice)
                 .HasColumnOrder(6);
 
-            Property(x => x.UnitPointsPrice)
+            builder.Property(x => x.UnitPointsPrice)
                 .HasColumnOrder(7);
 
-            Property(x => x.UnitPointsListPrice)
+            builder.Property(x => x.UnitPointsListPrice)
                 .HasColumnOrder(8);
 
-            Property(x => x.UnitCost)
+            builder.Property(x => x.UnitCost)
                 .HasColumnOrder(9);
 
-            Property(x => x.Cost)
+            builder.Property(x => x.Cost)
                 .HasColumnOrder(10);
 
-            Property(x => x.TaxRate)
+            builder.Property(x => x.TaxRate)
                 .HasColumnOrder(11);
 
-            Property(x => x.PreTaxTotal)
+            builder.Property(x => x.PreTaxTotal)
                 .HasColumnOrder(12);
 
-            Property(x => x.Total)
+            builder.Property(x => x.Total)
                 .HasColumnOrder(13);
 
-            Property(x => x.PointsTotal)
+            builder.Property(x => x.PointsTotal)
                 .HasColumnOrder(14);
 
-            Property(x => x.Points)
+            builder.Property(x => x.Points)
                 .HasColumnOrder(15);
 
-            Property(x => x.PointsAward)
+            builder.Property(x => x.PointsAward)
                 .HasColumnOrder(16);
 
-            Property(x => x.TaxTotal)
+            builder.Property(x => x.TaxTotal)
                 .HasColumnOrder(17);
 
-            Property(x => x.PayType)
+            builder.Property(x => x.PayType)
                .HasColumnOrder(18);
 
-            Property(x => x.IsDeleted)
+            builder.Property(x => x.IsDeleted)
                 .HasColumnOrder(19);
 
-            Property(x => x.IsVoided)
+            builder.Property(x => x.IsVoided)
                 .HasColumnOrder(20);
 
-            HasRequired(x => x.ProductOrder)
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(x => x.ProductOrder)
                 .WithMany(x => x.OrderLines)
-                .HasForeignKey(x => x.ProductOrderId);
+                .HasForeignKey(x => x.ProductOrderId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            HasOptional(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.ProductOrdersLines)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            HasOptional(x => x.CreatedBy)
+            builder.HasOne(x => x.CreatedBy)
                 .WithMany()
                 .HasForeignKey(x => x.CreatedById);
 
-            HasOptional(x => x.ModifiedBy)
+            builder.HasOne(x => x.ModifiedBy)
                 .WithMany()
                 .HasForeignKey(x => x.ModifiedById);
         }
     }
 
-    public class ProductOLExtendedMap : EntityTypeConfiguration<ProductOLExtended>
+    public class ProductOLExtendedMap : IEntityTypeConfiguration<ProductOLExtended>
     {
-        public ProductOLExtendedMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductOLExtended> builder)
         {
-            ToTable(nameof(ProductOLExtended));
+            builder.ToTable(nameof(ProductOLExtended));
 
-            HasOptional(x => x.BundleLine)
+            builder.HasOne(x => x.BundleLine)
                 .WithMany()
                 .HasForeignKey(x => x.BundleLineId);
         }
     }
 
-    public class ProductOLProductMap : EntityTypeConfiguration<ProductOLProduct>
+    public class ProductOLProductMap : IEntityTypeConfiguration<ProductOLProduct>
     {
-        public ProductOLProductMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductOLProduct> builder)
         {
-            ToTable(nameof(ProductOLProduct));
+            builder.ToTable(nameof(ProductOLProduct));
 
-            HasRequired(x => x.Product)
+            builder.HasOne(x => x.Product)
                 .WithMany(x => x.OrderLines)
-                .HasForeignKey(x => x.ProductId);
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 
-    public class ProductOLTimeMap : EntityTypeConfiguration<ProductOLTime>
+    public class ProductOLTimeMap : IEntityTypeConfiguration<ProductOLTime>
     {
-        public ProductOLTimeMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductOLTime> builder)
         {
-            ToTable(nameof(ProductOLTime));
+            builder.ToTable(nameof(ProductOLTime));
 
-            HasRequired(x => x.ProductTime)
+            builder.HasOne(x => x.ProductTime)
                 .WithMany(x => x.OrderLines)
-                .HasForeignKey(x => x.ProductTimeId);
+                .HasForeignKey(x => x.ProductTimeId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 
-    public class ProductOLTimeFixedMap : EntityTypeConfiguration<ProductOLTimeFixed>
+    public class ProductOLTimeFixedMap : IEntityTypeConfiguration<ProductOLTimeFixed>
     {
-        public ProductOLTimeFixedMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductOLTimeFixed> builder)
         {
-            ToTable(nameof(ProductOLTimeFixed));
+            builder.ToTable(nameof(ProductOLTimeFixed));
         }
     }
 
-    public class ProductOLSessionMap : EntityTypeConfiguration<ProductOLSession>
+    public class ProductOLSessionMap : IEntityTypeConfiguration<ProductOLSession>
     {
-        public ProductOLSessionMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductOLSession> builder)
         {
-            ToTable(nameof(ProductOLSession));
+            builder.ToTable(nameof(ProductOLSession));
 
-            HasRequired(x => x.UsageSession)
+            builder.HasOne(x => x.UsageSession)
                 .WithMany()
-                .HasForeignKey(x => x.UsageSessionId);
+                .HasForeignKey(x => x.UsageSessionId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -1,45 +1,45 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class UserGroupHostDisallowedMap : EntityTypeConfiguration<UserGroupHostDisallowed>
+    public class UserGroupHostDisallowedMap : IEntityTypeConfiguration<UserGroupHostDisallowed>
     {
-        public UserGroupHostDisallowedMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserGroupHostDisallowed> builder)
         {
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            this.ToTable("UserGroupHostDisallowed");
+            builder.ToTable("UserGroupHostDisallowed");
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("UserGroupHostDisallowedId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.UserGroupId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_UserGroupHostGroup") { IsUnique = true, Order = 0 } }));
+            builder.Property(x => x.UserGroupId)
+                .HasColumnOrder(1);
 
-            this.Property(x => x.HostGroupId)
-                .HasColumnOrder(2)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_UserGroupHostGroup") { IsUnique = true, Order = 1 } }));
+            builder.Property(x => x.HostGroupId)
+                .HasColumnOrder(2);
 
-            this.Property(x => x.IsDisallowed)
+            builder.Property(x => x.IsDisallowed)
                 .HasColumnOrder(3);
 
-            this.HasRequired(x => x.UserGroup)
-                .WithMany(x => x.DissalowedHostGroups)
-                .HasForeignKey(x => x.UserGroupId);
+            // Indexes
+            builder.HasIndex(x => new { x.UserGroupId, x.HostGroupId }).HasDatabaseName("UQ_UserGroupHostGroup").IsUnique();
 
-            this.HasRequired(x => x.HostGroup)
+            builder.HasOne(x => x.UserGroup)
+                .WithMany(x => x.DissalowedHostGroups)
+                .HasForeignKey(x => x.UserGroupId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(x => x.HostGroup)
                 .WithMany(x => x.DisallowedUserGroups)
-                .HasForeignKey(x => x.HostGroupId);
+                .HasForeignKey(x => x.HostGroupId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

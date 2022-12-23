@@ -1,30 +1,29 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class PresetTimeSaleMoneyMap : EntityTypeConfiguration<PresetTimeSaleMoney>
+    public class PresetTimeSaleMoneyMap : IEntityTypeConfiguration<PresetTimeSaleMoney>
     {
-        public PresetTimeSaleMoneyMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<PresetTimeSaleMoney> builder)
         {
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("PresetTimeSaleMoneyId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Value)
+            builder.Property(x => x.Value)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.DisplayOrder)
+            builder.Property(x => x.DisplayOrder)
                 .HasColumnOrder(2);
 
-            this.ToTable(nameof(PresetTimeSaleMoney));
+            builder.ToTable(nameof(PresetTimeSaleMoney));
         }
     }
 }

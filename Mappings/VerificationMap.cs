@@ -1,74 +1,90 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class VerificationMap : EntityTypeConfiguration<Verification>
+    public class VerificationMap : IEntityTypeConfiguration<Verification>
     {
-        public VerificationMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Verification> builder)
         {
-            ToTable(nameof(Verification));
+            builder.ToTable(nameof(Verification));
 
-            HasKey(e => e.Id);
+            builder.HasKey(e => e.Id);
 
-            Property(e => e.Id)
+            builder.Property(e => e.Id)
                 .HasColumnName("VerificationId");
 
-            Property(e => e.TokenId)
+            builder.Property(e => e.TokenId)
                 .IsRequired();
 
-            Property(e => e.UserId)
-                .IsOptional();
+            builder.Property(e => e.UserId)
+                .IsRequired(false);
 
-            Property(e => e.Status)
+            builder.Property(e => e.Status)
                 .IsRequired();
 
-            HasOptional(e => e.User)
+            builder.HasOne(e => e.User)
                 .WithMany(e => e.Verifications)
                 .HasForeignKey(e => e.UserId);
 
-            HasRequired(e => e.Token)
+            builder.HasOne(e => e.Token)
                 .WithMany()
                 .HasForeignKey(e => e.TokenId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasOptional(e => e.CreatedBy)
+            builder.HasOne(e => e.CreatedBy)
                 .WithMany()
                 .HasForeignKey(e => e.CreatedById)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasOptional(e => e.ModifiedBy)
+            builder.HasOne(e => e.ModifiedBy)
                 .WithMany()
                 .HasForeignKey(e => e.ModifiedById)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 
-    public class VerificationEmailMap : EntityTypeConfiguration<VerificationEmail>
+    public class VerificationEmailMap : IEntityTypeConfiguration<VerificationEmail>
     {
-        public VerificationEmailMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<VerificationEmail> builder)
         {
-            ToTable(nameof(VerificationEmail));
+            builder.ToTable(nameof(VerificationEmail));
 
-            Property(e => e.Id)
+            builder.Property(e => e.Id)
                 .IsRequired();
 
-            Property(e => e.Email)
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.Property(e => e.Email)
                 .HasMaxLength(254)
                 .IsRequired();
         }
     }
 
-    public class VerificationMobilePhoneMap : EntityTypeConfiguration<VerificationMobilePhone>
+    public class VerificationMobilePhoneMap : IEntityTypeConfiguration<VerificationMobilePhone>
     {
-        public VerificationMobilePhoneMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<VerificationMobilePhone> builder)
         {
-            ToTable(nameof(VerificationMobilePhone));
+            builder.ToTable(nameof(VerificationMobilePhone));
 
-            Property(e => e.Id)
+            builder.Property(e => e.Id)
                 .IsRequired();
 
-            Property(e => e.PhoneNumber)
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.Property(e => e.PhoneNumber)
                 .HasMaxLength(20)
                 .IsRequired();
         }

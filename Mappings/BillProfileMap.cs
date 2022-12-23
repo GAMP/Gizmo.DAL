@@ -1,39 +1,34 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class BillProfileMap : EntityTypeConfiguration<BillProfile>
+    public class BillProfileMap : IEntityTypeConfiguration<BillProfile>
     {
-        public BillProfileMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<BillProfile> builder)
         {
             // Primary Key
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Name)
+            builder.Property(x => x.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true }
-                }));
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            this.ToTable("BillProfile");
+            // Indexes
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
 
-            this.Property(x => x.Id)
+            builder.ToTable("BillProfile");
+
+            builder.Property(x => x.Id)
                 .HasColumnName("BillProfileId");
         }
     }

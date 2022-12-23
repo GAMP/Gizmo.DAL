@@ -1,42 +1,47 @@
-﻿using GizmoDALV2;
-using System.Data.Entity.ModelConfiguration;
+﻿using Gizmo.DAL.Entities;
+using GizmoDALV2;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class UserAgreementMap : EntityTypeConfiguration<Entities.UserAgreement>
+    public class UserAgreementMap : IEntityTypeConfiguration<UserAgreement>
     {
-        public UserAgreementMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserAgreement> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("UserAgreementId");
 
-            Property(x => x.Name)
+            builder.Property(x => x.Name)
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired();
 
-            Property(x => x.Agreement)
+            builder.Property(x => x.Agreement)
                 .HasColumnOrder(2)
                 .IsRequired();
 
-            Property(x => x.Options)
+            builder.Property(x => x.Options)
                 .HasColumnOrder(3);
 
-            Property(x => x.DisplayOptions)
+            builder.Property(x => x.DisplayOptions)
                 .HasColumnOrder(4);
 
-            Property(x => x.DisplayOrder)
+            builder.Property(x => x.DisplayOrder)
                 .HasColumnOrder(5);
 
-            Property(x => x.IsEnabled)
+            builder.Property(x => x.IsEnabled)
                 .HasColumnOrder(6);
 
             // Table & Column Mappings
-            ToTable(nameof(Entities.UserAgreement));
+            builder.ToTable(nameof(UserAgreement));
         }
     }
 }

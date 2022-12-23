@@ -1,58 +1,56 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class HostLayoutGroupLayoutMap : EntityTypeConfiguration<HostLayoutGroupLayout>
+    public class HostLayoutGroupLayoutMap : IEntityTypeConfiguration<HostLayoutGroupLayout>
     {
-        public HostLayoutGroupLayoutMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<HostLayoutGroupLayout> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("HostLayoutGroupLayoutId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.HostLayoutGroupId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostLayoutGroupHost") { IsUnique = true, Order = 0 } }));
+            builder.Property(x => x.HostLayoutGroupId)
+                .HasColumnOrder(1);
+                
+            builder.Property(x => x.HostId)
+                .HasColumnOrder(2);
 
-            this.Property(x => x.HostId)
-                .HasColumnOrder(2)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostLayoutGroupHost") { IsUnique = true, Order = 1 } }));
-
-            this.Property(x => x.X)
+            builder.Property(x => x.X)
                 .HasColumnOrder(3);
 
-            this.Property(x => x.Y)
+            builder.Property(x => x.Y)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.Height)
+            builder.Property(x => x.Height)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.Width)
+            builder.Property(x => x.Width)
                 .HasColumnOrder(6);
 
-            this.Property(x => x.IsHidden)
+            builder.Property(x => x.IsHidden)
                 .HasColumnOrder(7);
 
-            // Table & Column Mappings
-            this.ToTable("HostLayoutGroupLayout");
+            // Indexes
+            builder.HasIndex(x => new { x.HostLayoutGroupId, x.HostId }).HasDatabaseName("UQ_HostLayoutGroupHost").IsUnique();
 
-            this.HasRequired(x => x.HostLayoutGroup)
+            // Table & Column Mappings
+            builder.ToTable("HostLayoutGroupLayout");
+
+            builder.HasOne(x => x.HostLayoutGroup)
                 .WithMany(x => x.Layouts)
                 .HasForeignKey(x => x.HostLayoutGroupId);
 
-            this.HasRequired(x => x.Host)
+            builder.HasOne(x => x.Host)
                 .WithMany(x => x.Layouts)
                 .HasForeignKey(x => x.HostId);
         }

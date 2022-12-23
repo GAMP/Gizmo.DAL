@@ -1,13 +1,20 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ProductMap : EntityTypeConfiguration<Product>
+    public class ProductMap : IEntityTypeConfiguration<Product>
     {
-        public ProductMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Product> builder)
         {
-            ToTable("Product");
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.ToTable("Product");
         }        
     }
 }

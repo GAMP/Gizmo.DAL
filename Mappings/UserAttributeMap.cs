@@ -1,53 +1,47 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class UserAttributeMap : EntityTypeConfiguration<UserAttribute>
+    public class UserAttributeMap : IEntityTypeConfiguration<UserAttribute>
     {
-        public UserAttributeMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserAttribute> builder)
         {
             // Primary Key
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("UserAttributeId"); ;
 
-            this.Property(x => x.UserId)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_UserAttribute") { IsUnique = true , Order = 0 }
-                }))
+            builder.Property(x => x.UserId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.AttributeId)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_UserAttribute") { IsUnique = true , Order = 1 }
-                }))
+            builder.Property(x => x.AttributeId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Value)
+            builder.Property(x => x.Value)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY)
                 .HasColumnOrder(3);
 
+            // Indexes
+            builder.HasIndex(x => new { x.UserId, x.AttributeId }).HasDatabaseName("UQ_UserAttribute").IsUnique();
+
+            // Relations
+            builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);
+            builder.HasOne(x => x.ModifiedBy).WithMany().HasForeignKey(x => x.ModifiedById);
+
             // Table & Column Mappings
-            this.ToTable(nameof(UserAttribute));
+            builder.ToTable(nameof(UserAttribute));
 
             //Relations
-            this.HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.Attributes);
         }
     }

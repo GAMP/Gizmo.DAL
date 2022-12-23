@@ -1,49 +1,40 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppGroupMap : EntityTypeConfiguration<AppGroup>
+    public class AppGroupMap : IEntityTypeConfiguration<AppGroup>
     {
-        public AppGroupMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppGroup> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("AppGroupId")
                 .HasColumnOrder(0);
 
-            this.Property(t => t.Name)
+            builder.Property(t => t.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
-                }));
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Guid)
-                .HasColumnOrder(2)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
-                }));
+            builder.Property(x => x.Guid)
+                .HasColumnOrder(2);
+
+            // Indexes
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
 
             // Table & Column Mappings
-            this.ToTable("AppGroup");
+            builder.ToTable("AppGroup");
 
-            this.Property(t => t.Id);                
+            builder.Property(t => t.Id);                
         }
     }
 }

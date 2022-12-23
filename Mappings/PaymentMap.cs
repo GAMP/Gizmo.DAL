@@ -1,81 +1,80 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class PaymentMap : EntityTypeConfiguration<Payment>
+    public class PaymentMap : IEntityTypeConfiguration<Payment>
     {
-        public PaymentMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Payment> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            ToTable("Payment");
+            builder.ToTable("Payment");
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("PaymentId")
                 .HasColumnOrder(0);
 
-            Property(x => x.UserId)
+            builder.Property(x => x.UserId)
                 .HasColumnOrder(1);
 
-            Property(x => x.PaymentMethodId)
+            builder.Property(x => x.PaymentMethodId)
                 .HasColumnOrder(2);
 
-            Property(x => x.Amount)
+            builder.Property(x => x.Amount)
                 .HasColumnOrder(3);
 
-            Property(x => x.AmountReceived)
+            builder.Property(x => x.AmountReceived)
                 .HasColumnOrder(4);
 
-            Property(x => x.IsDeleted)
+            builder.Property(x => x.IsDeleted)
                 .HasColumnOrder(5);
 
-            //Property(x => x.IsRefunded)
+            //builder.Property(x => x.IsRefunded)
             //    .HasColumnOrder(6);
 
-            Property(x => x.IsVoided)
+            builder.Property(x => x.IsVoided)
                 .HasColumnOrder(7);
 
-            Property(x => x.DepositTransactionId)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_DepositTransaction")
-                {
-                    IsUnique = true
-                }}))
+            builder.Property(x => x.DepositTransactionId)
                 .HasColumnOrder(8);
 
-            Property(x => x.PointTransactionId)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_PointsTransaction")
-                {
-                    IsUnique = true
-                }}))
+            builder.Property(x => x.PointTransactionId)
                 .HasColumnOrder(9);
 
-            // Relationships
-            HasRequired(x => x.User)
-                .WithMany(x => x.Payments)
-                .HasForeignKey(x => x.UserId);
+            // Indexes
+            builder.HasIndex(t => t.DepositTransactionId).HasDatabaseName("UQ_DepositTransaction").IsUnique();
+            builder.HasIndex(t => t.PointTransactionId).HasDatabaseName("UQ_PointsTransaction").IsUnique();
 
-            HasRequired(x => x.PaymentMethod)
+            // Relationships
+            builder.HasOne(x => x.User)
+                .WithMany(x => x.Payments)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(x => x.PaymentMethod)
                 .WithMany(x => x.Payments)
                 .HasForeignKey(x => x.PaymentMethodId);
 
-            HasOptional(x => x.CreatedBy)
+            builder.HasOne(x => x.CreatedBy)
                 .WithMany(x => x.CreatedPayments)
                 .HasForeignKey(x => x.CreatedById);
 
-            HasOptional(x => x.ModifiedBy)
+            builder.HasOne(x => x.ModifiedBy)
                 .WithMany(x => x.ModifiedPayments)
                 .HasForeignKey(x => x.ModifiedById);
 
-            HasOptional(x => x.PointTransaction)
+            builder.HasOne(x => x.PointTransaction)
                 .WithMany()
                 .HasForeignKey(x => x.PointTransactionId);
 
-            HasOptional(x => x.DepositTransaction)
+            builder.HasOne(x => x.DepositTransaction)
                 .WithMany()
                 .HasForeignKey(x => x.DepositTransactionId);
         }

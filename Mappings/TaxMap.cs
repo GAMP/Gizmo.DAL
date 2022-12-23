@@ -1,36 +1,31 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class TaxMap : EntityTypeConfiguration<Tax>
+    public class TaxMap : IEntityTypeConfiguration<Tax>
     {
-        public TaxMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Tax> builder)
         {
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            this.Property(x => x.Name)
+            builder.Property(x => x.Name)
                 .IsRequired()
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
-                }));
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Value)
+            builder.Property(x => x.Value)
                 .IsRequired();
 
-            this.ToTable("Tax");
+            // Indexes
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
 
-            this.Property(x => x.Id)
+            builder.ToTable("Tax");
+
+            builder.Property(x => x.Id)
                 .HasColumnName("TaxId");
         }
     }

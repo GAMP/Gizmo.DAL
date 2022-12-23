@@ -1,84 +1,76 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class DeploymentMap : EntityTypeConfiguration<Deployment>
+    public class DeploymentMap : IEntityTypeConfiguration<Deployment>
     {
-        public DeploymentMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Deployment> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(t => t.Id).
+            builder.Property(t => t.Id).
                 HasColumnOrder(0);
 
-            this.Property(t => t.Name)
+            builder.Property(t => t.Name)
                 .HasColumnOrder(1)
                 .IsRequired()
-                .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
-                }));
+                .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Source)
+            builder.Property(t => t.Source)
                 .HasColumnOrder(2)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Destination)
+            builder.Property(t => t.Destination)
                 .HasColumnOrder(3)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.ExcludeDirectories)
+            builder.Property(t => t.ExcludeDirectories)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(t => t.ExcludeFiles)
+            builder.Property(t => t.ExcludeFiles)
                 .HasColumnOrder(5)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(t => t.IncludeDirectories)
+            builder.Property(t => t.IncludeDirectories)
                 .HasColumnOrder(6)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(t => t.IncludeFiles)
+            builder.Property(t => t.IncludeFiles)
                 .HasColumnOrder(7)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(t => t.RegistryString)
+            builder.Property(t => t.RegistryString)
                 .HasColumnOrder(8)
                 .HasMaxLength(SQLStringSize.MEDIUM);
 
-            this.Property(t => t.Guid)
-                .HasColumnOrder(9)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
-                }));
+            builder.Property(t => t.Guid)
+                .HasColumnOrder(9);
 
-            this.Property(t => t.ComparisonLevel)
+            builder.Property(t => t.ComparisonLevel)
                 .HasColumnOrder(10);
 
-            this.Property(t => t.Options)
+            builder.Property(t => t.Options)
                 .HasColumnOrder(11);
 
-            // Table & Column Mappings
-            this.ToTable("Deployment");
+            // Indexes
+            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
 
-            this.Property(t => t.Id)
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+
+            // Table & Column Mappings
+            builder.ToTable("Deployment");
+
+            builder.Property(t => t.Id)
                 .HasColumnName("DeploymentId");
         }
     }

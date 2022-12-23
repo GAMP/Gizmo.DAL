@@ -1,58 +1,58 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class HostMap : EntityTypeConfiguration<Host>
+    public class HostMap : IEntityTypeConfiguration<Host>
     {
-        public HostMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Host> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("HostId")
                 .HasColumnOrder(0);
 
-            Property(x => x.Number)
+            builder.Property(x => x.Number)
                 .HasColumnOrder(1);
 
-            Property(x => x.Name)
+            builder.Property(x => x.Name)
                 .IsRequired()
                 .HasColumnOrder(2);
 
-            Property(x => x.HostGroupId)
+            builder.Property(x => x.HostGroupId)
                 .HasColumnOrder(3);
 
-            Property(x => x.State)
+            builder.Property(x => x.State)
                 .HasColumnOrder(4);
 
-            Property(x => x.IconId)
+            builder.Property(x => x.IconId)
                 .HasColumnOrder(5);
 
-            Property(x => x.IsDeleted)
+            builder.Property(x => x.IsDeleted)
                 .HasColumnOrder(6);
 
-            Property(x => x.Guid)
-                .HasColumnOrder(7)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true }
-                }));
+            builder.Property(x => x.Guid)
+                .HasColumnOrder(7);
+
+            // Indexes
+            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
 
             // Table & Column Mappings
-            ToTable(nameof(Host));
+            builder.ToTable(nameof(Host));
 
             // Relationships
-            HasOptional(t => t.HostGroup)
+            builder.HasOne(t => t.HostGroup)
                 .WithMany(t => t.Hosts)
                 .HasForeignKey(d => d.HostGroupId);
 
-            HasOptional(x => x.Icon)
+            builder.HasOne(x => x.Icon)
                 .WithMany()
                 .HasForeignKey(x => x.IconId);
         }

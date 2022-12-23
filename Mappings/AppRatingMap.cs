@@ -1,48 +1,48 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppRatingMap : EntityTypeConfiguration<AppRating>
+    public class AppRatingMap : IEntityTypeConfiguration<AppRating>
     {
-        public AppRatingMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppRating> builder)
         {
             // Primary Key
-            this.HasKey(x => new { x.AppId,x.UserId});
+            builder.HasKey(x => new { x.AppId,x.UserId});
 
             // Properties
-            this.Property(x => x.AppId)
+            builder.Property(x => x.AppId)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.UserId)
+            builder.Property(x => x.UserId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.Value)
+            builder.Property(x => x.Value)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Date)
+            builder.Property(x => x.Date)
                 .HasColumnOrder(3);
 
             // Table & Column Mappings
-            this.ToTable("AppRating");
-      
+            builder.ToTable("AppRating");
+
+            // Indexes
+            builder.HasIndex(x => x.AppId);
+
             // Relationships
-            this.HasRequired(t => t.App)
+            builder.HasOne(t => t.App)
                 .WithMany(t => t.AppRatings)
                 .HasForeignKey(d => d.AppId)
-                .WillCascadeOnDelete(true);
+                .OnDelete(DeleteBehavior.Cascade);
 
-            this.HasRequired(t => t.User)
+            builder.HasOne(t => t.User)
                .WithMany(t => t.AppRatings)
                .HasForeignKey(d => d.UserId)
-               .WillCascadeOnDelete(true);
+               .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

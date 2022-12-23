@@ -1,65 +1,60 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class HostGroupMap : EntityTypeConfiguration<HostGroup>
+    public class HostGroupMap : IEntityTypeConfiguration<HostGroup>
     {
-        public HostGroupMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<HostGroup> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(t => t.Name)
+            builder.Property(t => t.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
-                }));
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.AppGroupId)
+            builder.Property(x => x.AppGroupId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.SecurityProfileId)
+            builder.Property(x => x.SecurityProfileId)
                 .HasColumnOrder(3);
 
-            this.Property(t => t.SkinName)
+            builder.Property(t => t.SkinName)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(x => x.Options)
+            builder.Property(x => x.Options)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.DefaultGuestGroupId)
+            builder.Property(x => x.DefaultGuestGroupId)
                 .HasColumnOrder(6)
-                .IsOptional();
+                .IsRequired(false);
 
             // Table & Column Mappings
-            this.ToTable(nameof(HostGroup));
+            builder.ToTable(nameof(HostGroup));
 
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("HostGroupId");
 
+            // Indexes
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+
             // Relationships
-            this.HasOptional(t => t.AppGroup)
+            builder.HasOne(t => t.AppGroup)
                 .WithMany(t => t.HostGroups)
                 .HasForeignKey(d => d.AppGroupId);
 
-            this.HasOptional(t => t.SecurityProfile)
+            builder.HasOne(t => t.SecurityProfile)
                 .WithMany(t => t.HostGroups)
                 .HasForeignKey(d => d.SecurityProfileId);
         }

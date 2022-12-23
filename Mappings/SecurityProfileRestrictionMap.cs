@@ -1,38 +1,42 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class SecurityProfileRestrictionMap : EntityTypeConfiguration<SecurityProfileRestriction>
+    public class SecurityProfileRestrictionMap : IEntityTypeConfiguration<SecurityProfileRestriction>
     {
-        public SecurityProfileRestrictionMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<SecurityProfileRestriction> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            Property(x => x.SecurityProfileId)
+            builder.Property(x => x.SecurityProfileId)
                 .HasColumnOrder(1);
 
-            Property(t => t.Parameter)
+            builder.Property(t => t.Parameter)
                 .IsRequired()
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            Property(x => x.Type)
+            builder.Property(x => x.Type)
                 .HasColumnOrder(3);
 
             // Table & Column Mappings
-            ToTable("SecurityProfileRestriction");
+            builder.ToTable("SecurityProfileRestriction");
 
-            Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("SecurityProfileRestrictionId");
 
             // Relationships
-            HasRequired(t => t.SecurityProfile)
+            builder.HasOne(t => t.SecurityProfile)
                 .WithMany(t => t.Restrictions)
                 .HasForeignKey(d => d.SecurityProfileId);
         }

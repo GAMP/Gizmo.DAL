@@ -1,33 +1,31 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class IconMap : EntityTypeConfiguration<Icon>
+    public class IconMap : IEntityTypeConfiguration<Icon>
     {
-        public IconMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Icon> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Image)
+            builder.Property(x => x.Image)
                 .HasMaxLength(GizmoDALV2.SQLByteArraySize.MEDIUM)
                 .IsRequired();
 
             // Table & Column Mappings
-            this.ToTable("Icon");
+            builder.ToTable("Icon");
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("IconId");
         }
     }

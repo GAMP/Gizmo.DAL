@@ -1,34 +1,36 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class RefundInvoicePaymentMap : EntityTypeConfiguration<RefundInvoicePayment>
+    public class RefundInvoicePaymentMap : IEntityTypeConfiguration<RefundInvoicePayment>
     {
-        public RefundInvoicePaymentMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<RefundInvoicePayment> builder)
         {
-            Property(t => t.InvoicePaymentId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_InvoicePayment") { IsUnique = true }
-                }));
+            builder.Property(t => t.InvoicePaymentId)
+                .HasColumnOrder(1);
 
-            Property(t => t.InvoiceId)
+            builder.Property(t => t.InvoiceId)
                 .HasColumnOrder(2);
 
-            HasRequired(t => t.Invoice)
+            builder.HasOne(t => t.Invoice)
                 .WithMany()
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasRequired(t => t.InvoicePayment)
+            builder.HasOne(t => t.InvoicePayment)
                 .WithMany()
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Indexes
+            builder.HasIndex(t => t.InvoicePaymentId).HasDatabaseName("UQ_InvoicePayment").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings
-            ToTable(nameof(RefundInvoicePayment));
+            builder.ToTable(nameof(RefundInvoicePayment));
         }
     }
 }

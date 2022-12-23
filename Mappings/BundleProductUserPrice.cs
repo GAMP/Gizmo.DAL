@@ -1,44 +1,41 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class BundleProductUserPriceMap : EntityTypeConfiguration<BundleProductUserPrice>
+    public class BundleProductUserPriceMap : IEntityTypeConfiguration<BundleProductUserPrice>
     {
-        public BundleProductUserPriceMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<BundleProductUserPrice> builder)
         {
             // Key
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("BundleProductUserPriceId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.BundleProductId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_BundleProductUserGroup") { IsUnique = true, Order = 0 } }));
-
-            this.Property(x => x.UserGroupId)
-                .HasColumnOrder(2)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_BundleProductUserGroup") { IsUnique = true, Order = 1 } }));
-
-            this.Property(x => x.Price)
+            builder.Property(x => x.Price)
                 .HasColumnOrder(3);
 
-            this.ToTable(nameof(BundleProductUserPrice));
+            // Indexes
+            builder.HasIndex(t => new { t.BundleProductId, t.UserGroupId }).HasDatabaseName("UQ_BundleProductUserGroup").IsUnique();
+
+            builder.ToTable(nameof(BundleProductUserPrice));
 
             // Relations            
-            this.HasRequired(x => x.BundleProduct)
+            builder.HasOne(x => x.BundleProduct)
                 .WithMany(x => x.UserPrices)
                 .HasForeignKey(x => x.BundleProductId);
 
-            this.HasRequired(x => x.UserGroup)
+            builder.HasOne(x => x.UserGroup)
                 .WithMany()
                 .HasForeignKey(x => x.UserGroupId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

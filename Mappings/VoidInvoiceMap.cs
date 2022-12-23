@@ -1,30 +1,32 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class VoidInvoiceMap : EntityTypeConfiguration<VoidInvoice>
+    public class VoidInvoiceMap : IEntityTypeConfiguration<VoidInvoice>
     {
-        public VoidInvoiceMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<VoidInvoice> builder)
         {
-            // Primary Key
-            HasKey(t => t.Id);
+            //// Primary Key
+            //builder.HasKey(t => t.Id);
 
-            Property(t => t.InvoiceId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Invoice") { IsUnique = true }
-                }));
+            builder.Property(t => t.InvoiceId)
+                .HasColumnOrder(1);
 
-            HasRequired(t => t.Invoice)
+            // Indexes
+            builder.HasIndex(t => t.InvoiceId).HasDatabaseName("UQ_Invoice").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(t => t.Invoice)
                 .WithMany(t => t.Voids)
                 .HasForeignKey(t => t.InvoiceId);
 
             // Table & Column Mappings
-            ToTable(nameof(VoidInvoice));
+            builder.ToTable(nameof(VoidInvoice));
         }
     }
 }

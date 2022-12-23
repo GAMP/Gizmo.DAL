@@ -1,85 +1,84 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppExeMap : EntityTypeConfiguration<AppExe>
+    public class AppExeMap : IEntityTypeConfiguration<AppExe>
     {
-        public AppExeMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppExe> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.AppId)
+            builder.Property(x => x.AppId)
                 .HasColumnOrder(1);
 
-            this.Property(t => t.Caption)
+            builder.Property(t => t.Caption)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
             
-            this.Property(t => t.Description)
+            builder.Property(t => t.Description)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.ExecutablePath)
+            builder.Property(t => t.ExecutablePath)
                 .HasColumnOrder(4)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Arguments)
+            builder.Property(t => t.Arguments)
                 .HasColumnOrder(5)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.WorkingDirectory)
+            builder.Property(t => t.WorkingDirectory)
                 .HasColumnOrder(6)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(x => x.Modes)
+            builder.Property(x => x.Modes)
                 .HasColumnOrder(7);
 
-            this.Property(x => x.RunMode)
+            builder.Property(x => x.RunMode)
                 .HasColumnOrder(8);
 
-            this.Property(x => x.DefaultDeploymentId)
+            builder.Property(x => x.DefaultDeploymentId)
                 .HasColumnOrder(9);
 
-            this.Property(x => x.ReservationType)
+            builder.Property(x => x.ReservationType)
                .HasColumnOrder(10);
 
-            this.Property(x => x.DisplayOrder)
+            builder.Property(x => x.DisplayOrder)
                 .HasColumnOrder(11);       
 
-            this.Property(x => x.Options)
+            builder.Property(x => x.Options)
                 .HasColumnOrder(12);
 
-            this.Property(x => x.Guid)
+            builder.Property(x => x.Guid)
                 .HasColumnOrder(13);
 
-            this.Property(x => x.Accessible)
+            builder.Property(x => x.Accessible)
                 .HasColumnOrder(14);
 
-            // Table & Column Mappings
-            this.ToTable("AppExe");
-
-            this.Property(t => t.Id).
+            builder.Property(t => t.Id).
                 HasColumnName("AppExeId");
 
+            // Table & Column Mappings
+            builder.ToTable("AppExe");
+
             // Relationships
-            this.HasRequired(t => t.App)
+            builder.HasOne(t => t.App)
                 .WithMany(t => t.AppExes)
                 .HasForeignKey(d => d.AppId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            this.HasOptional(t => t.DefaultDeployment)
+            builder.HasOne(t => t.DefaultDeployment)
                 .WithMany(t => t.DefaultedAppExes)
                 .HasForeignKey(d => d.DefaultDeploymentId);
         }

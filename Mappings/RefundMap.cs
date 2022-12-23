@@ -1,59 +1,63 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class RefundMap : EntityTypeConfiguration<Refund>
+    public class RefundMap : IEntityTypeConfiguration<Refund>
     {
-        public RefundMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Refund> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("RefundId")
                 .HasColumnOrder(0);
 
-            Property(t => t.PaymentId)
+            builder.Property(t => t.PaymentId)
                 .HasColumnOrder(1);
 
-            Property(t => t.Amount)
+            builder.Property(t => t.Amount)
                 .HasColumnOrder(2);
 
-            Property(t => t.DepositTransactionId)
+            builder.Property(t => t.DepositTransactionId)
                 .HasColumnOrder(3);
 
-            Property(t => t.PointTransactionId)
+            builder.Property(t => t.PointTransactionId)
                 .HasColumnOrder(4);
 
-            Property(t => t.RefundMethodId)
+            builder.Property(t => t.RefundMethodId)
                 .HasColumnOrder(5);
 
-            HasOptional(t => t.Payment)
+            builder.HasOne(t => t.Payment)
                 .WithMany()
                 .HasForeignKey(t => t.PaymentId);
 
-            HasOptional(t => t.DepositTransaction)
+            builder.HasOne(t => t.DepositTransaction)
                 .WithMany()
                 .HasForeignKey(t => t.DepositTransactionId);
 
-            HasOptional(t => t.PointTransaction)
+            builder.HasOne(t => t.PointTransaction)
                 .WithMany()
                 .HasForeignKey(t => t.PointTransactionId);
 
-            HasOptional(t => t.Shift)
+            builder.HasOne(t => t.Shift)
                 .WithMany(t => t.Refunds)
                 .HasForeignKey(t => t.ShiftId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasRequired(t => t.RefundMethod)
+            builder.HasOne(t => t.RefundMethod)
                 .WithMany()
                 .HasForeignKey(t => t.RefundMethodId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Table & Column Mappings
-            ToTable(nameof(Refund));
+            builder.ToTable(nameof(Refund));
         }
     }
 }

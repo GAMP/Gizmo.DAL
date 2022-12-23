@@ -1,153 +1,172 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class TaskBaseMap : EntityTypeConfiguration<TaskBase>
+    public class TaskBaseMap : IEntityTypeConfiguration<TaskBase>
     {
-        public TaskBaseMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<TaskBase> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(t => t.Name)
+            builder.Property(t => t.Name)
                 .HasColumnOrder(1)
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
-                }));
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Guid)
+            builder.Property(x => x.Guid)
                 .IsRequired()
-                .HasColumnOrder(2)
-                .HasColumnAnnotation(
-                "Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
-                }));
+                .HasColumnOrder(2);
+
+            // Indexes
+            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings
-            this.ToTable("TaskBase");
+            builder.ToTable("TaskBase");
 
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("TaskId");     
         }
     }
 
-    public class TaskProcessMap : EntityTypeConfiguration<TaskProcess>
+    public class TaskProcessMap : IEntityTypeConfiguration<TaskProcess>
     {
-        public TaskProcessMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<TaskProcess> builder)
         {
             // Properties
-            this.Property(t => t.FileName)
+            builder.Property(t => t.FileName)
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Arguments)
+            builder.Property(t => t.Arguments)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.WorkingDirectory)
+            builder.Property(t => t.WorkingDirectory)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Username)
+            builder.Property(t => t.Username)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Password)
+            builder.Property(t => t.Password)
                 .HasColumnOrder(5)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.ProcessOptions)
+            builder.Property(x => x.ProcessOptions)
                 .HasColumnOrder(6);
 
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
             // Table & Column Mappings
-            this.ToTable("TaskProcess");
+            builder.ToTable("TaskProcess");
 
         }
     }
 
-    public class TaskJunctionMap : EntityTypeConfiguration<TaskJunction>
+    public class TaskJunctionMap : IEntityTypeConfiguration<TaskJunction>
     {
-        public TaskJunctionMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<TaskJunction> builder)
         {
             // Properties
-            this.Property(x => x.SourceDirectory)
+            builder.Property(x => x.SourceDirectory)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired();
 
-            this.Property(x => x.DestinationDirectory)
+            builder.Property(x => x.DestinationDirectory)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired();
+
+            // Indexes
+            builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings
-            this.ToTable("TaskJunction");
+            builder.ToTable("TaskJunction");
         }
     }
 
-    public class TaskNotificationMap : EntityTypeConfiguration<TaskNotification>
+    public class TaskNotificationMap : IEntityTypeConfiguration<TaskNotification>
     {
-        public TaskNotificationMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<TaskNotification> builder)
         {
             // Properties
-            this.Property(x => x.Title)
+            builder.Property(x => x.Title)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(x => x.Message)
+            builder.Property(x => x.Message)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(x => x.NotificationOptions);
+            builder.Property(x => x.NotificationOptions);
+
+            // Indexes
+            builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings
-            this.ToTable("TaskNotification");
+            builder.ToTable("TaskNotification");
         }
     }
 
-    public class TaskScriptMap : EntityTypeConfiguration<TaskScript>
+    public class TaskScriptMap : IEntityTypeConfiguration<TaskScript>
     {
-        public TaskScriptMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<TaskScript> builder)
         {
             // Properties
-            this.Property(x => x.Data)
+            builder.Property(x => x.Data)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
             // Table & Column Mappings
-            this.ToTable("TaskScript");
+            builder.ToTable("TaskScript");
 
         }
     }
 
-    public class ClientTaskMap : EntityTypeConfiguration<ClientTask>
+    public class ClientTaskMap : IEntityTypeConfiguration<ClientTask>
     {
-        public ClientTaskMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ClientTask> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("ClientTaskId");
 
             // Table & Column Mappings
-            this.HasRequired(x => x.TaskBase)
+            builder.HasOne(x => x.TaskBase)
                 .WithMany(x=>x.UsedByTask)
                 .HasForeignKey(x => x.TaskBaseId);
 
-            this.ToTable("ClientTask");
+            builder.ToTable("ClientTask");
         }
     }
 }

@@ -1,65 +1,62 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
     /// <summary>
     /// License key map.
     /// </summary>
-    public class LicenseKeyMap : EntityTypeConfiguration<LicenseKey>
+    public class LicenseKeyMap : IEntityTypeConfiguration<LicenseKey>
     {
         /// <summary>
-        /// Creates new instance.
+        /// Configure entity
         /// </summary>
-        public LicenseKeyMap()
+        public void Configure(EntityTypeBuilder<LicenseKey> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
-            Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("LicenseKeyId");
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            Property(t => t.LicenseId)
+            builder.Property(t => t.LicenseId)
                 .HasColumnOrder(1);
 
-            Property(x => x.Value)
+            builder.Property(x => x.Value)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLByteArraySize.NORMAL);
 
-            Property(t => t.Comment)
+            builder.Property(t => t.Comment)
                 .HasMaxLength(SQLStringSize.TINY)
                 .HasColumnOrder(3);            
 
-            Property(x => x.Guid)
-                .HasColumnOrder(4)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
-                }));
+            builder.Property(x => x.Guid)
+                .HasColumnOrder(4);
 
-            Property(x => x.IsEnabled)
+            builder.Property(x => x.IsEnabled)
                 .HasColumnOrder(5);
 
-            Property(x => x.AssignedHostId)
+            builder.Property(x => x.AssignedHostId)
                 .HasColumnOrder(6)
-                .IsOptional();
+                .IsRequired(false);
+
+            // Indexes
+            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
 
             // Table & Column Mappings
-            ToTable(nameof(LicenseKey));      
+            builder.ToTable(nameof(LicenseKey));      
 
             // Relationships
-            HasRequired(t => t.License)
+            builder.HasOne(t => t.License)
                 .WithMany(t => t.LicenseKeys)
                 .HasForeignKey(d => d.LicenseId);
 
-            HasOptional(x => x.AssignedHost)
+            builder.HasOne(x => x.AssignedHost)
                 .WithMany()
                 .HasForeignKey(x => x.AssignedHostId);
         }

@@ -1,52 +1,60 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class HostGroupWaitingLineEntryMap : EntityTypeConfiguration<HostGroupWaitingLineEntry>
+    public class HostGroupWaitingLineEntryMap : IEntityTypeConfiguration<HostGroupWaitingLineEntry>
     {
-        public HostGroupWaitingLineEntryMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<HostGroupWaitingLineEntry> builder)
         {
-            HasKey(entity => entity.Id);
+            builder.HasKey(entity => entity.Id);
 
-            Property(entity => entity.Id)
+            builder.Property(entity => entity.Id)
                 .HasColumnOrder(0);
 
-            Property(entity => entity.HostGroupId)
+            builder.Property(entity => entity.HostGroupId)
                 .HasColumnOrder(1);
 
-            Property(entity => entity.UserId)
+            builder.Property(entity => entity.UserId)
                 .HasColumnOrder(2);
 
-            Property(entity => entity.Position)
+            builder.Property(entity => entity.Position)
                 .HasColumnOrder(3);
 
-            Property(entity => entity.IsManualPosition)
+            builder.Property(entity => entity.IsManualPosition)
                 .HasColumnOrder(4);
 
-            Property(entity => entity.TimeInLine)
+            builder.Property(entity => entity.TimeInLine)
               .HasColumnOrder(5);
 
-            Property(entity => entity.ReadyTime)
+            builder.Property(entity => entity.ReadyTime)
                 .HasColumnOrder(6);
 
-            Property(entity => entity.IsReadyTimedOut)
+            builder.Property(entity => entity.IsReadyTimedOut)
                 .HasColumnOrder(7);
 
-            Property(entity => entity.State)
+            builder.Property(entity => entity.State)
                 .HasColumnOrder(8);
 
-            ToTable(nameof(HostGroupWaitingLineEntry));
+            builder.ToTable(nameof(HostGroupWaitingLineEntry));
 
-            HasRequired(entity => entity.WatingLine)
+            builder.HasOne(e => e.User)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(entity => entity.WatingLine)
                 .WithMany(waitingLine => waitingLine.Entries)
                 .HasForeignKey(entity => entity.HostGroupId)
-                .WillCascadeOnDelete(true);
+                .OnDelete(DeleteBehavior.Cascade);
 
-            HasRequired(entity => entity.HostGroup)
+            builder.HasOne(entity => entity.HostGroup)
                 .WithMany(hostGroup => hostGroup.WaitingLineEntries)
                 .HasForeignKey(entity => entity.HostGroupId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

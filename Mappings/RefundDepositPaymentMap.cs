@@ -1,38 +1,40 @@
 ﻿using Gizmo.DAL.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class RefundDepositPaymentMap : EntityTypeConfiguration<RefundDepositPayment>
+    public class RefundDepositPaymentMap : IEntityTypeConfiguration<RefundDepositPayment>
     {
-        public RefundDepositPaymentMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<RefundDepositPayment> builder)
         {
-            Property(t => t.DepositPaymentId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_DepositPayment") { IsUnique = true }
-                }));
+            builder.Property(t => t.DepositPaymentId)
+                .HasColumnOrder(1);
 
-            Property(x => x.FiscalReceiptStatus)
+            builder.Property(x => x.FiscalReceiptStatus)
                 .HasColumnOrder(2);
 
-            Property(x => x.FiscalReceiptId)
+            builder.Property(x => x.FiscalReceiptId)
                 .HasColumnOrder(3);
 
-            HasOptional(t => t.DepositPayment)
+            // Indexes
+            builder.HasIndex(t => t.DepositPaymentId).HasDatabaseName("UQ_DepositPayment").IsUnique();
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(t => t.DepositPayment)
                 .WithMany()
                 .HasForeignKey(x=>x.DepositPaymentId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasOptional(x => x.FiscalReceipt)
+            builder.HasOne(x => x.FiscalReceipt)
                 .WithMany()
                 .HasForeignKey(x => x.FiscalReceiptId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            ToTable(nameof(RefundDepositPayment));
+            builder.ToTable(nameof(RefundDepositPayment));
         }
     }
 }

@@ -1,22 +1,26 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class VoidMap : EntityTypeConfiguration<Void>
+    public class VoidMap : IEntityTypeConfiguration<Void>
     {
-        public VoidMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Void> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("VoidId")
                 .HasColumnOrder(0);
 
             // Table & Column Mappings
-            ToTable(nameof(Void));
+            builder.ToTable(nameof(Void));
         }
     }   
 }

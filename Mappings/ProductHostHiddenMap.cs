@@ -1,40 +1,43 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ProductHostHiddenMap : EntityTypeConfiguration<ProductHostHidden>
+    public class ProductHostHiddenMap : IEntityTypeConfiguration<ProductHostHidden>
     {
-        public ProductHostHiddenMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductHostHidden> builder)
         {
             //Primary key
-            HasKey(x => x.Id);            
+            builder.HasKey(x => x.Id);            
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("ProductHostHiddenId");
 
-            Property(x => x.ProductId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_ProductHostGroup") { IsUnique = true, Order = 0 } }));
+            builder.Property(x => x.ProductId)
+                .HasColumnOrder(1);
 
-            Property(x => x.HostGroupId)
-                .HasColumnOrder(2)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_ProductHostGroup") { IsUnique = true, Order = 1 } }));
-
-            Property(x => x.IsHidden)
+            builder.Property(x => x.HostGroupId)
+                .HasColumnOrder(2);
+                
+            builder.Property(x => x.IsHidden)
                 .HasColumnOrder(3);
 
-            // Table & Column Mappings
-            ToTable(nameof(ProductHostHidden));
+            // Indexes
+            builder.HasIndex(x => new { x.ProductId, x.HostGroupId }).HasDatabaseName("UQ_ProductHostGroup").IsUnique();
 
-            HasRequired(x => x.Product)
+            // Table & Column Mappings
+            builder.ToTable(nameof(ProductHostHidden));
+
+            builder.HasOne(x => x.Product)
                 .WithMany(x => x.HiddenHostGroups)
                 .HasForeignKey(x => x.ProductId);
 
-            HasRequired(x => x.HostGroup)
+            builder.HasOne(x => x.HostGroup)
                 .WithMany(x => x.HiddenProducts)
                 .HasForeignKey(x => x.HostGroupId);
         }

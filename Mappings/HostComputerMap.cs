@@ -1,38 +1,34 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class HostComputerMap : EntityTypeConfiguration<HostComputer>
+    public class HostComputerMap : IEntityTypeConfiguration<HostComputer>
     {
-        public HostComputerMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<HostComputer> builder)
         {
             // Properties
-            this.Property(x => x.Id);
+            builder.Property(x => x.Id);
 
-            this.Property(t => t.Hostname)
+            builder.Property(t => t.Hostname)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.MACAddress)
+            builder.Property(t => t.MACAddress)
                 .IsRequired()
                 .HasColumnOrder(3)
-                .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_MACAddress") { IsUnique = true } 
-                })); 
+                .HasMaxLength(SQLStringSize.TINY); 
+
+            // Indexes
+            builder.HasIndex(t => t.MACAddress).HasDatabaseName("UQ_MACAddress").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.Id).IsUnique(false);
 
             // Table & Column Mappings
-            this.ToTable("HostComputer");       
+            builder.ToTable("HostComputer");       
         }
     }
 }

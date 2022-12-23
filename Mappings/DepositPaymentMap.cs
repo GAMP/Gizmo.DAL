@@ -1,59 +1,63 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class DepositPaymentMap : EntityTypeConfiguration<DepositPayment>
+    public class DepositPaymentMap : IEntityTypeConfiguration<DepositPayment>
     {
-        public DepositPaymentMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<DepositPayment> builder)
         {
-            HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("DepositPaymentId");
 
-            Property(x => x.DepositTransactionId)
+            builder.Property(x => x.DepositTransactionId)
                 .HasColumnOrder(1);
 
-            Property(x => x.PaymentId)
+            builder.Property(x => x.PaymentId)
                 .HasColumnOrder(2);
 
-            Property(x => x.ShiftId)
+            builder.Property(x => x.ShiftId)
                 .HasColumnOrder(3);
 
-            Property(x => x.RegisterId)
+            builder.Property(x => x.RegisterId)
                 .HasColumnOrder(4);
 
-            Property(x => x.RefundedAmount)
+            builder.Property(x => x.RefundedAmount)
                 .HasColumnOrder(5);
 
-            Property(x => x.RefundStatus)
+            builder.Property(x => x.RefundStatus)
                 .HasColumnOrder(6);
 
-            Property(x => x.FiscalReceiptStatus)
+            builder.Property(x => x.FiscalReceiptStatus)
               .HasColumnOrder(7);
 
-            Property(x => x.FiscalReceiptId)
+            builder.Property(x => x.FiscalReceiptId)
                 .HasColumnOrder(8);
 
-            Property(x => x.IsVoided)
+            builder.Property(x => x.IsVoided)
                 .HasColumnOrder(9);
 
-            HasRequired(x => x.Payment)
+            builder.HasOne(x => x.Payment)
                 .WithMany()
                 .HasForeignKey(x => x.PaymentId);
 
-            HasRequired(x => x.DepositTransaction)
+            builder.HasOne(x => x.DepositTransaction)
                 .WithMany()
                 .HasForeignKey(x => x.DepositTransactionId);
 
-            HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.DepositPayments)
                 .HasForeignKey(x => x.UserId)
-                .WillCascadeOnDelete(false);
-            
-            ToTable(nameof(DepositPayment));
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.ToTable(nameof(DepositPayment));
         }
     }
 }

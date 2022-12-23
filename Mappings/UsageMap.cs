@@ -1,96 +1,126 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class UsageBaseMap : EntityTypeConfiguration<Usage>
+    public class UsageBaseMap : IEntityTypeConfiguration<Usage>
     {
-        public UsageBaseMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Usage> builder)
         {
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("UsageId");
 
-            this.Property(x => x.UsageSessionId)
+            builder.Property(x => x.UsageSessionId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.UserId)
+            builder.Property(x => x.UserId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Seconds)
+            builder.Property(x => x.Seconds)
                 .HasColumnOrder(3);
 
-            this.ToTable(nameof(Usage));
+            builder.ToTable(nameof(Usage));
 
-            this.HasRequired(x => x.UsageSession)
+            builder.HasOne(x => x.UsageSession)
                 .WithMany(x => x.Usage)
                 .HasForeignKey(x => x.UsageSessionId);
 
-            this.HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.Usage)
                 .HasForeignKey(x => x.UserId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 
-    public class UsageUserSessionMap : EntityTypeConfiguration<UsageUserSession>
+    public class UsageUserSessionMap : IEntityTypeConfiguration<UsageUserSession>
     {
-        public UsageUserSessionMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UsageUserSession> builder)
         {
-            this.ToTable(nameof(UsageUserSession));
+            builder.ToTable(nameof(UsageUserSession));
 
-            this.HasRequired(x => x.UserSession)
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(x => x.UserSession)
                 .WithMany(x => x.Usage)
                 .HasForeignKey(x => x.UserSessionId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 
-    public class UsageTimeMap : EntityTypeConfiguration<UsageTime>
+    public class UsageTimeMap : IEntityTypeConfiguration<UsageTime>
     {
-        public UsageTimeMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UsageTime> builder)
         {
-            this.ToTable(nameof(UsageTime));
+            builder.ToTable(nameof(UsageTime));
 
-            this.HasRequired(x => x.InvoiceLine)
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(x => x.InvoiceLine)
                 .WithMany(x=>x.Usages)
-                .HasForeignKey(x => x.InvoiceLineId);
+                .HasForeignKey(x => x.InvoiceLineId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 
-    public class UsageTimeFixedMap : EntityTypeConfiguration<UsageTimeFixed>
+    public class UsageTimeFixedMap : IEntityTypeConfiguration<UsageTimeFixed>
     {
-        public UsageTimeFixedMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UsageTimeFixed> builder)
         {
-            this.ToTable(nameof(UsageTimeFixed));
+            builder.ToTable(nameof(UsageTimeFixed));
 
-            this.HasRequired(x => x.InvoiceLine)
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(x => x.InvoiceLine)
                 .WithMany(x=>x.Usages)
-                .HasForeignKey(x => x.InvoiceLineId);
+                .HasForeignKey(x => x.InvoiceLineId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 
-    public class UsageRateMap : EntityTypeConfiguration<UsageRate>
+    public class UsageRateMap : IEntityTypeConfiguration<UsageRate>
     {
-        public UsageRateMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UsageRate> builder)
         {
-            this.ToTable(nameof(UsageRate));
+            builder.ToTable(nameof(UsageRate));
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.BillRateId)
+            builder.Property(x => x.BillRateId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.Total)
+            builder.Property(x => x.Total)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Rate)
+            builder.Property(x => x.Rate)
                 .HasColumnOrder(3);
 
-            this.HasRequired(x => x.BillRate)
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(x => x.BillRate)
                 .WithMany(x=>x.Usage)
                 .HasForeignKey(x => x.BillRateId);
         }

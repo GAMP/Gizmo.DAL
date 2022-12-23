@@ -1,40 +1,40 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppGroupAppMap : EntityTypeConfiguration<AppGroupApp>
+    public class AppGroupAppMap : IEntityTypeConfiguration<AppGroupApp>
     {
-        public AppGroupAppMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppGroupApp> builder)
         {
             // Primary Key
-            this.HasKey(t => new { t.AppGroupId, t.AppId });
+            builder.HasKey(t => new { t.AppGroupId, t.AppId });
 
             // Properties
-            this.Property(x => x.AppGroupId)
+            builder.Property(x => x.AppGroupId)
                 .HasColumnOrder(0);
 
-            this.Property(t => t.AppId)
+            builder.Property(t => t.AppId)
                 .HasColumnOrder(1);
-            
-            // Table & Column Mappings
-            this.ToTable("AppGroupApp");
 
-            this.HasRequired(x => x.AppGroup)
+            // Indexes
+            builder.HasIndex(x => x.AppGroupId);
+
+            // Table & Column Mappings
+            builder.ToTable("AppGroupApp");
+
+            builder.HasOne(x => x.AppGroup)
                 .WithMany(x => x.Apps)
                 .HasForeignKey(x => x.AppGroupId);
 
-            this.HasRequired(x => x.App)
-                .WithMany(x=>x.AppGroups)
+            builder.HasOne(x => x.App)
+                .WithMany(x => x.AppGroups)
                 .HasForeignKey(x => x.AppId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -1,14 +1,21 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ProductBundleMap : EntityTypeConfiguration<ProductBundle>
+    public class ProductBundleMap : IEntityTypeConfiguration<ProductBundle>
     {
-        public ProductBundleMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductBundle> builder)
         {
-            // Relations
-            ToTable("ProductBundle");          
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            // Table
+            builder.ToTable("ProductBundle");          
         }
     }
 }

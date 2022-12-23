@@ -1,62 +1,68 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ShiftMap : EntityTypeConfiguration<Shift>
+    public class ShiftMap : IEntityTypeConfiguration<Shift>
     {
-        public ShiftMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Shift> builder)
         {
-            this.ToTable(nameof(Shift));
+            builder.ToTable(nameof(Shift));
 
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("ShiftId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.IsActive)
+            builder.Property(x => x.IsActive)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.OperatorId)
+            builder.Property(x => x.OperatorId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.RegisterId)
+            builder.Property(x => x.RegisterId)
                 .HasColumnOrder(3);
 
-            this.Property(x => x.Start)
+            builder.Property(x => x.Start)
                 .HasColumnOrder(4);   
 
-            this.Property(x => x.StartCash)
+            builder.Property(x => x.StartCash)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.IsEnding)
+            builder.Property(x => x.IsEnding)
                 .HasColumnOrder(6);
 
-            this.Property(x => x.EndedById)
-                .IsOptional()
+            builder.Property(x => x.EndedById)
+                .IsRequired(false)
                 .HasColumnOrder(7);
 
-            this.Property(x => x.EndTime)
-                .IsOptional()
+            builder.Property(x => x.EndTime)
+                .IsRequired(false)
                 .HasColumnOrder(8);
 
-            this.HasOptional(x => x.EndedBy)
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(x => x.EndedBy)
                 .WithMany()
                 .HasForeignKey(x => x.EndedById);
 
-            this.HasRequired(x => x.Register)
+            builder.HasOne(x => x.Register)
                 .WithMany(x => x.Shifts)
                 .HasForeignKey(x => x.RegisterId);
 
-            this.HasRequired(x => x.Operator)
+            builder.HasOne(x => x.Operator)
                 .WithMany(x=>x.Shifts)
-                .HasForeignKey(x => x.OperatorId);
+                .HasForeignKey(x => x.OperatorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);
+            builder.HasOne(x => x.ModifiedBy).WithMany().HasForeignKey(x => x.ModifiedById);
         }
     }
 }

@@ -1,73 +1,72 @@
 ﻿using Gizmo.DAL.Entities;
 using GizmoDALV2;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
     /// <summary>
     /// Payment intent map.
     /// </summary>
-    public class PaymentIntentMap : EntityTypeConfiguration<PaymentIntent>
+    public class PaymentIntentMap : IEntityTypeConfiguration<PaymentIntent>
     {
         /// <summary>
-        /// Creates new instance.
+        /// Configure entity
         /// </summary>
-        public PaymentIntentMap()
+        public void Configure(EntityTypeBuilder<PaymentIntent> builder)
         {
-            HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("PaymentIntentId");
 
-            Property(x => x.UserId)
+            builder.Property(x => x.UserId)
                 .IsRequired()
                 .HasColumnOrder(1);
 
-            Property(x => x.PaymentMethodId)
+            builder.Property(x => x.PaymentMethodId)
                 .HasColumnOrder(2)
                 .IsRequired();
 
-            Property(x => x.Amount)
+            builder.Property(x => x.Amount)
                 .HasColumnOrder(3)
                 .IsRequired();
 
-            Property(x => x.State)
+            builder.Property(x => x.State)
                 .HasColumnOrder(4)
                 .IsRequired();
 
-            Property(x => x.TransactionId)
+            builder.Property(x => x.TransactionId)
                 .HasColumnOrder(5)
-                .IsOptional()
+                .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            Property(x => x.TransactionTime)
+            builder.Property(x => x.TransactionTime)
                 .HasColumnOrder(6)
-                .IsOptional();
+                .IsRequired(false);
 
-            Property(x => x.Provider)
+            builder.Property(x => x.Provider)
                 .HasColumnOrder(7)
                 .IsRequired();
 
-            Property(x => x.Guid)
+            builder.Property(x => x.Guid)
                 .HasColumnOrder(8)
-                .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true }
-                }));
+                .IsRequired();;
 
-            HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.PaymentIntents)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            HasRequired(x => x.PaymentMethod)
+            builder.HasOne(x => x.PaymentMethod)
                 .WithMany(x => x.PaymentIntents)
                 .HasForeignKey(x => x.PaymentMethodId);
 
-            ToTable(nameof(PaymentIntent));
+            // Indexes
+            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
+
+            builder.ToTable(nameof(PaymentIntent));
         }
     }
 }

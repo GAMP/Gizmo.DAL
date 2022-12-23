@@ -1,28 +1,29 @@
 ﻿using Gizmo.DAL.Entities;
 using GizmoDALV2;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class DeviceHdmiMap : EntityTypeConfiguration<DeviceHdmi>
+    public class DeviceHdmiMap : IEntityTypeConfiguration<DeviceHdmi>
     {
-        public DeviceHdmiMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<DeviceHdmi> builder)
         {
             //serial number column configuration
-            Property(x => x.UniqueId)
+            builder.Property(x => x.UniqueId)
                 .HasColumnOrder(3)
                 .IsRequired()
-                .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_UniqueId") { IsUnique = true }
-                }));
+                .HasMaxLength(SQLStringSize.TINY);
+
+            // Indexes
+            builder.HasIndex(t => t.UniqueId).HasDatabaseName("UQ_UniqueId").IsUnique().HasFilter(null);
+            builder.HasIndex(x => x.Id);
 
             //table configuration
-            ToTable(nameof(DeviceHdmi));
+            builder.ToTable(nameof(DeviceHdmi));
         }
     }
 }

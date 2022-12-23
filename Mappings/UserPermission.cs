@@ -1,41 +1,47 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class UserPermissionMap : EntityTypeConfiguration<UserPermission>
+    public class UserPermissionMap : IEntityTypeConfiguration<UserPermission>
     {
-        public UserPermissionMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserPermission> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            ToTable(nameof(UserPermission));
+            builder.ToTable(nameof(UserPermission));
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("UserPermissionId");
 
-            Property(x => x.UserId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_UserPermission") { IsUnique = true, Order = 0 } }));
+            builder.Property(x => x.UserId)
+                .HasColumnOrder(1);
 
-            Property(x => x.Type)
+            builder.Property(x => x.Type)
                 .HasColumnOrder(2)
                 .IsRequired()
-                .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_UserPermission") { IsUnique = true, Order = 1 } })); ;
+                .HasMaxLength(SQLStringSize.TINY);
 
-            Property(x => x.Value)
+            builder.Property(x => x.Value)
                 .HasColumnOrder(3)
                 .IsRequired()
-                .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_UserPermission") { IsUnique = true, Order = 2 } }));
+                .HasMaxLength(SQLStringSize.TINY);
 
-            HasRequired(x => x.User)
+            // Indexes
+            builder.HasIndex(x => new { x.UserId, x.Type, x.Value }).HasDatabaseName("UQ_UserPermission").IsUnique();
+
+            // Relations
+            builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);
+            builder.HasOne(x => x.ModifiedBy).WithMany().HasForeignKey(x => x.ModifiedById);
+
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.Permissions);
         }
     }

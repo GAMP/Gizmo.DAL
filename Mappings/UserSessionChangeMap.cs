@@ -1,65 +1,65 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class UserSessionChangeMap : EntityTypeConfiguration<UserSessionChange>
+    public class UserSessionChangeMap : IEntityTypeConfiguration<UserSessionChange>
     {
-        public UserSessionChangeMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserSessionChange> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.UserSessionId)
+            builder.Property(x => x.UserSessionId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.UserId)
+            builder.Property(x => x.UserId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.HostId)
+            builder.Property(x => x.HostId)
                 .HasColumnOrder(3);
 
-            this.Property(x => x.State)
+            builder.Property(x => x.State)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.Slot)
+            builder.Property(x => x.Slot)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.Span)
+            builder.Property(x => x.Span)
                 .HasColumnOrder(6);
 
             // Table & Column Mappings
-            this.ToTable(nameof(UserSessionChange));
+            builder.ToTable(nameof(UserSessionChange));
 
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("UserSessionChangeId");
 
             // Relationships
-            this.HasRequired(t => t.UserSession)
+            builder.HasOne(t => t.UserSession)
                 .WithMany(t => t.UserSessionChanges)
                 .HasForeignKey(d => d.UserSessionId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            this.HasOptional(t => t.CreatedBy)
+            builder.HasOne(t => t.CreatedBy)
                 .WithMany(t=>t.CreatedUserSessionChanges)
                 .HasForeignKey(t => t.CreatedById);
 
-            this.HasRequired(t => t.Host)
+            builder.HasOne(t => t.Host)
                 .WithMany(t=>t.UserSessionsChanges)
                 .HasForeignKey(d => d.HostId);
 
-            this.HasRequired(t => t.User)
+            builder.HasOne(t => t.User)
                 .WithMany(t => t.UserSessionsChanges)
-                .HasForeignKey(d => d.UserId);
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

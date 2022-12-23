@@ -1,64 +1,62 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AssetTransactionMap : EntityTypeConfiguration<AssetTransaction>
+    public class AssetTransactionMap : IEntityTypeConfiguration<AssetTransaction>
     {
-        public AssetTransactionMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AssetTransaction> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("AssetTransactionId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.AssetTypeId)
+            builder.Property(x => x.AssetTypeId)
                 .IsRequired()
                 .HasColumnOrder(1);
 
-            this.Property(x => x.AssetTypeName)
+            builder.Property(x => x.AssetTypeName)
                 .HasMaxLength(SQLStringSize.TINY45)
                 .IsRequired()
                 .HasColumnOrder(2);
 
-            this.Property(x => x.AssetId)
+            builder.Property(x => x.AssetId)
                 .IsRequired()
                 .HasColumnOrder(3);
 
-            this.Property(x => x.IsActive)
+            builder.Property(x => x.IsActive)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.CheckedInById)
+            builder.Property(x => x.CheckedInById)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.CheckInTime)
+            builder.Property(x => x.CheckInTime)
                 .HasColumnOrder(6);
 
             // Table & Column Mappings
-            this.ToTable(nameof(AssetTransaction));
+            builder.ToTable(nameof(AssetTransaction));
 
-            this.HasRequired(x=>x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.AssetTransactions)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            this.HasRequired(x => x.AssetType)
+            builder.HasOne(x => x.AssetType)
                 .WithMany(x => x.Transactions)
                 .HasForeignKey(x => x.AssetTypeId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            this.HasRequired(x=>x.Asset)
+            builder.HasOne(x => x.Asset)
                 .WithMany(x => x.Transactions)
-                .HasForeignKey(x => x.AssetId);        
+                .HasForeignKey(x => x.AssetId);
         }
     }
 }

@@ -1,49 +1,47 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ProductTaxMap : EntityTypeConfiguration<ProductTax>
+    public class ProductTaxMap : IEntityTypeConfiguration<ProductTax>
     {
-        public ProductTaxMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductTax> builder)
         {
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("ProductTaxId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.ProductId)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_TaxProduct") { IsUnique = true, Order = 0 } }))
+            builder.Property(x => x.ProductId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.TaxId)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_TaxProduct") { IsUnique = true, Order = 1 } }))
+            builder.Property(x => x.TaxId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.UseOrder)
+            builder.Property(x => x.UseOrder)
                 .HasColumnOrder(3);
 
-            this.Property(x => x.IsEnabled)
+            builder.Property(x => x.IsEnabled)
                 .HasColumnOrder(4);
 
-            this.ToTable("ProductTax");
+            // Indexes
+            builder.HasIndex(x => new { x.ProductId, x.TaxId }, "UQ_TaxProduct").IsUnique();
 
-            this.HasRequired(x => x.Product)
+            builder.ToTable("ProductTax");
+
+            builder.HasOne(x => x.Product)
                 .WithMany(x => x.Taxes)
                 .HasForeignKey(x => x.ProductId);
 
-            this.HasRequired(x => x.Tax)
+            builder.HasOne(x => x.Tax)
                 .WithMany(x=>x.Products)
                 .HasForeignKey(x => x.TaxId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -1,50 +1,56 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class NoteMap : EntityTypeConfiguration<Note>
+    public class NoteMap : IEntityTypeConfiguration<Note>
     {
-        public NoteMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Note> builder)
         {
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("NoteId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Text)
+            builder.Property(x => x.Text)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.MEDIUM);
 
-            this.Property(x => x.Options)
+            builder.Property(x => x.Options)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.Sevirity)
+            builder.Property(x => x.Sevirity)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.IsDeleted)
+            builder.Property(x => x.IsDeleted)
                 .HasColumnOrder(3);
 
             // Table & Column Mappings
-            this.ToTable(nameof(Note));
+            builder.ToTable(nameof(Note));
         }
     }
 
-    public class UserNoteMap : EntityTypeConfiguration<UserNote>
+    public class UserNoteMap : IEntityTypeConfiguration<UserNote>
     {
-        public UserNoteMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserNote> builder)
         {
-            this.HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.Notes)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            this.ToTable(nameof(UserNote));
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.ToTable(nameof(UserNote));
         }
     }
 }

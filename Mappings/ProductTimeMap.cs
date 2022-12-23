@@ -1,21 +1,23 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ProductTimeMap : EntityTypeConfiguration<ProductTime>
+    public class ProductTimeMap : IEntityTypeConfiguration<ProductTime>
     {
-        public ProductTimeMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductTime> builder)
         {
             // Table & Column Mappings
-            this.ToTable("ProductTime");
+            builder.ToTable("ProductTime");
 
-            this.HasOptional(x => x.AppGroup)
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(x => x.AppGroup)
                 .WithMany(x => x.TimeOffers)
                 .HasForeignKey(x => x.AppGroupId);
         }

@@ -1,66 +1,61 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class UserOperatorUserGroupAcessMap : EntityTypeConfiguration<UserOperatorUserGroupAccess>
+    public class UserOperatorUserGroupAcessMap : IEntityTypeConfiguration<UserOperatorUserGroupAccess>
     {
-        public UserOperatorUserGroupAcessMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserOperatorUserGroupAccess> builder)
         {
-            ToTable(nameof(UserOperatorUserGroupAccess));
+            builder.ToTable(nameof(UserOperatorUserGroupAccess));
 
-            HasKey(e => e.Id);
+            builder.HasKey(e => e.Id);
 
-            Property(e => e.Id)
+            builder.Property(e => e.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("UserOperatorUserGroupAcessId")
                 .IsRequired();
 
-            Property(e => e.OperatorId)
+            builder.Property(e => e.OperatorId)
                 .HasColumnOrder(1)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_UserOperator_UserGroup") { IsUnique = true, Order = 0 }
-                }))
                 .IsRequired();
 
-            Property(e => e.UserGroupId)
+            builder.Property(e => e.UserGroupId)
                 .HasColumnOrder(2)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_UserOperator_UserGroup") { IsUnique = true, Order = 1 }
-                }))
                 .IsRequired();
 
-            Property(e => e.DisallowLogin)
+            builder.Property(e => e.DisallowLogin)
                 .HasColumnOrder(3)
                 .IsRequired();
 
-            Property(e => e.DisallowMove)
+            builder.Property(e => e.DisallowMove)
                 .HasColumnOrder(4)
                 .IsRequired();
 
-            //HasRequired(e => e.Operator)
+            // Indexes
+            builder.HasIndex(x => new { x.OperatorId, x.UserGroupId }).HasDatabaseName("UQ_UserOperator_UserGroup").IsUnique();
+
+            //builder.HasOne(e => e.Operator)
             //    .WithMany(e => e.UserGroupAccess)
             //    .HasForeignKey(e => e.OperatorId);
 
-            HasRequired(e => e.UserGroup)
+            builder.HasOne(e => e.UserGroup)
                 .WithMany()
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasRequired(e => e.CreatedBy)
+            builder.HasOne(e => e.CreatedBy)
                 .WithMany()
                 .HasForeignKey(e => e.CreatedById)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasRequired(e => e.ModifiedBy)
+            builder.HasOne(e => e.ModifiedBy)
                 .WithMany()
                 .HasForeignKey(e => e.ModifiedById)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

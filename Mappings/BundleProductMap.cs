@@ -1,42 +1,42 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class BundleProductMap : EntityTypeConfiguration<BundleProduct>
+    public class BundleProductMap : IEntityTypeConfiguration<BundleProduct>
     {
-        public BundleProductMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<BundleProduct> builder)
         {
             // Key
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("BundleProductId");
 
-            this.Property(x => x.ProductBundleId)
+            builder.Property(x => x.ProductBundleId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.ProductId)
+            builder.Property(x => x.ProductId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Quantity)
+            builder.Property(x => x.Quantity)
                 .HasColumnOrder(3);
             
             // Relations
-            this.ToTable("BundleProduct");
+            builder.ToTable("BundleProduct");
 
-            this.HasRequired(x => x.ProductBundle)
+            builder.HasOne(x => x.ProductBundle)
                 .WithMany(x => x.BundledProducts)
-                .HasForeignKey(x => x.ProductBundleId);
+                .HasForeignKey(x => x.ProductBundleId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            this.HasRequired(x => x.Product)
+            builder.HasOne(x => x.Product)
                 .WithMany()
                 .HasForeignKey(x => x.ProductId);
         }

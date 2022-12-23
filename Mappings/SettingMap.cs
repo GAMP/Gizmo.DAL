@@ -1,53 +1,44 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
     /// <summary>
     /// Settings entity map.
     /// </summary>
-    public class SettingMap : EntityTypeConfiguration<Setting>
+    public class SettingMap : IEntityTypeConfiguration<Setting>
     {
         /// <summary>
-        /// Creates new instance.
+        /// Configure entity
         /// </summary>
-        public SettingMap()
+        public void Configure(EntityTypeBuilder<Setting> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            Property(t => t.Name)
+            builder.Property(t => t.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_NameGroup") { IsUnique = true , Order = 0 }
-                }));
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            Property(t => t.GroupName)
+            builder.Property(t => t.GroupName)
                 .HasColumnOrder(2)
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_NameGroup") { IsUnique = true , Order = 1 }
-                })); ;
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            Property(t => t.Value)
+            builder.HasIndex(t => new { t.Name, t.GroupName }).HasDatabaseName("UQ_NameGroup").IsUnique().HasFilter(null);
+
+            builder.Property(t => t.Value)
                 .HasColumnOrder(3);
 
             // Table & Column Mappings
-            ToTable("Setting");
+            builder.ToTable("Setting");
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("SettingId");
         }
     }

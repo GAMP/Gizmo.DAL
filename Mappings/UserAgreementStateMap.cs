@@ -1,47 +1,44 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+﻿using Gizmo.DAL.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class UserAgreementStateMap : EntityTypeConfiguration<Entities.UserAgreementState>
+    public class UserAgreementStateMap : IEntityTypeConfiguration<UserAgreementState>
     {
-        public UserAgreementStateMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserAgreementState> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                     .HasColumnOrder(0)
                     .HasColumnName("UserAgreementStateId");
 
-            Property(x => x.UserAgreementId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_UserAgreementState")
-                {
-                    IsUnique = true,
-                    Order = 0
-                }}));
-
-            Property(x => x.UserId)
-                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_UserAgreementState")
-                 {
-                     IsUnique = true,
-                     Order = 1
-                 }}));
-
-            Property(x => x.AcceptState)
+            builder.Property(x => x.UserAgreementId)
+                .HasColumnOrder(1);
+                
+            builder.Property(x => x.AcceptState)
                 .HasColumnOrder(2);
 
-            HasRequired(x => x.UserAgreement)
+            // Indexes
+            builder.HasIndex(x => new { x.UserAgreementId, x.UserId }).HasDatabaseName("UQ_UserAgreementState").IsUnique();
+
+            builder.HasOne(x => x.UserAgreement)
                 .WithMany(x => x.UserAgreementStates)
                 .HasForeignKey(x => x.UserAgreementId);
 
-            HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.UserAgreementStates)
                 .HasForeignKey(x => x.UserId);
 
-            ToTable(nameof(Entities.UserAgreementState));
+            builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);
+            builder.HasOne(x => x.ModifiedBy).WithMany().HasForeignKey(x => x.ModifiedById);
+
+            builder.ToTable(nameof(Entities.UserAgreementState));
         }
     }
 }

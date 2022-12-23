@@ -1,41 +1,41 @@
 ﻿using Gizmo.DAL.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
     /// <summary>
     /// Order payment intent map.
     /// </summary>
-    public class PaymentIntentOrderMap : EntityTypeConfiguration<PaymentIntentOrder>
+    public class PaymentIntentOrderMap : IEntityTypeConfiguration<PaymentIntentOrder>
     {
         /// <summary>
-        /// Creates new instance.
+        /// Configure entity
         /// </summary>
-        public PaymentIntentOrderMap()
+        public void Configure(EntityTypeBuilder<PaymentIntentOrder> builder)
         {
-            Property(x => x.ProductOrderId)
-                .IsOptional()
+            builder.Property(x => x.ProductOrderId)
+                //.IsRequired(false)
                 .HasColumnOrder(1);
 
-            Property(x => x.InvoicePaymentId)
-                .IsOptional()
-                .HasColumnOrder(2)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_InvoicePayment") { IsUnique = true } //same invoice payment may not appear multiple times
-                }));
+            builder.Property(x => x.InvoicePaymentId)
+                .IsRequired(false)
+                .HasColumnOrder(2);
 
-            HasOptional(x=>x.ProductOrder)
-                .WithMany(x=>x.PaymentIntents)
-                .HasForeignKey(x=>x.ProductOrderId);
+            // Indexes
+            builder.HasIndex(t => t.InvoicePaymentId).HasDatabaseName("UQ_InvoicePayment").IsUnique(); //same invoice payment may not appear multiple times
+            builder.HasIndex(t => t.Id);
 
-            HasOptional(x => x.InvoicePayment)
+            builder.HasOne(x => x.ProductOrder)
+                .WithMany(x => x.PaymentIntents)
+                .HasForeignKey(x => x.ProductOrderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(x => x.InvoicePayment)
                 .WithMany()
                 .HasForeignKey(x => x.InvoicePaymentId);
 
-            ToTable(nameof(PaymentIntentOrder));
+            builder.ToTable(nameof(PaymentIntentOrder));
         }
     }
 }

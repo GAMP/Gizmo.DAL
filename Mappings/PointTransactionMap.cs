@@ -1,54 +1,52 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class PointTransactionMap : EntityTypeConfiguration<PointTransaction>
+    public class PointTransactionMap : IEntityTypeConfiguration<PointTransaction>
     {
-        public PointTransactionMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<PointTransaction> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("PointTransactionId");
 
-            this.Property(x => x.UserId)
+            builder.Property(x => x.UserId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.Type)
+            builder.Property(x => x.Type)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Amount)
+            builder.Property(x => x.Amount)
                 .HasColumnOrder(3);
 
-            this.Property(x => x.Balance)
+            builder.Property(x => x.Balance)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.IsVoided)
+            builder.Property(x => x.IsVoided)
                 .HasColumnOrder(5);
 
             // Table & Column Mappings
-            this.ToTable(nameof(PointTransaction));
+            builder.ToTable(nameof(PointTransaction));
 
-            this.HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.LoayalityPoints)
-                .HasForeignKey(x => x.UserId);       
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);       
 
-            this.HasOptional(x => x.CreatedBy)
+            builder.HasOne(x => x.CreatedBy)
                 .WithMany()
                 .HasForeignKey(x => x.CreatedById);
 
-            this.HasOptional(x => x.ModifiedBy)
+            builder.HasOne(x => x.ModifiedBy)
                 .WithMany()
                 .HasForeignKey(x => x.ModifiedById);
         }

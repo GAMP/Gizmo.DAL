@@ -1,32 +1,34 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppExeTaskMap : EntityTypeConfiguration<AppExeTask>
+    public class AppExeTaskMap : IEntityTypeConfiguration<AppExeTask>
     {
-        public AppExeTaskMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppExeTask> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
+
+            // Indexes
+            builder.HasIndex(x => x.AppExeId);
 
             // Table & Column Mappings
-            this.ToTable("AppExeTask");
+            builder.ToTable("AppExeTask");
 
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("AppExeTaskId");
 
             // Relationships
-            this.HasRequired(x => x.TaskBase)
+            builder.HasOne(x => x.TaskBase)
                 .WithMany(x => x.UsedByAppExe)
                 .HasForeignKey(x => x.TaskBaseId);
 
-            this.HasRequired(t => t.AppExe)
+            builder.HasOne(t => t.AppExe)
                 .WithMany(t => t.Tasks)
                 .HasForeignKey(d => d.AppExeId);
         }

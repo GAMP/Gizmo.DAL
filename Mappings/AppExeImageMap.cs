@@ -1,33 +1,40 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppExeImageMap : EntityTypeConfiguration<AppExeImage>
+    public class AppExeImageMap : IEntityTypeConfiguration<AppExeImage>
     {
-        public AppExeImageMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppExeImage> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+                .ValueGeneratedNever();
 
-            Property(x => x.Image)
+            builder.Property(x => x.Image)
                 .HasMaxLength(SQLByteArraySize.MEDIUM);
 
-            // Table & Column Mappings
-            ToTable("AppExeImage");
+            // Indexes
+            builder.HasIndex(x => x.Id);
 
-            Property(x => x.Id)
+            // Table & Column Mappings
+            builder.ToTable("AppExeImage");
+
+            builder.Property(x => x.Id)
                 .HasColumnName("AppExeId");
 
-            HasRequired(x => x.AppExe)
-                .WithRequiredDependent(x => x.Image)
-                .WillCascadeOnDelete(true);
+            builder.HasOne(x => x.AppExe)
+                .WithOne(x => x.Image)
+                .HasForeignKey<AppExeImage>(x => x.Id)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

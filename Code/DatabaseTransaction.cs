@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GizmoDALV2
 {
@@ -12,14 +12,14 @@ namespace GizmoDALV2
     public class DatabaseTransaction : IDatabaseTransaction
     {
         #region CONSTRUCTOR
-        public DatabaseTransaction(DbContextTransaction inner)
+        public DatabaseTransaction(IDbContextTransaction inner)
         {
             InnerTransaction = inner ?? throw new ArgumentNullException(nameof(inner));
         }
         #endregion
 
         #region PROPERTIES
-        private DbContextTransaction InnerTransaction
+        private IDbContextTransaction InnerTransaction
         {
             get; set;
         }

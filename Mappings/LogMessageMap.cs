@@ -1,108 +1,99 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ServiceModel.Channels;
 
 namespace GizmoDALV2.Mappings
 {
-    public class LogMap : EntityTypeConfiguration<Log>
+    public class LogMap : IEntityTypeConfiguration<Log>
     {
-        public LogMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Log> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Time)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("IX_Time") 
-                }));
+            builder.Property(x => x.Time)
+                .HasColumnOrder(1);;
 
-            this.Property(x => x.HostNumber)
-                .HasColumnOrder(2)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("IX_HostNumber") 
-                })); ;
+            builder.Property(x => x.HostNumber)
+                .HasColumnOrder(2);
 
-            this.Property(t => t.Hostname)
+            builder.Property(t => t.Hostname)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.ModuleType)
+            builder.Property(x => x.ModuleType)
                 .HasColumnOrder(4);
 
-            this.Property(t => t.ModuleVersion)
+            builder.Property(t => t.ModuleVersion)
                 .HasColumnOrder(5)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Category)
-                .HasColumnOrder(6)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("IX_Category") 
-                }));
+            builder.Property(x => x.Category)
+                .HasColumnOrder(6);
 
-            this.Property(x => x.MessageType)
-                .HasColumnOrder(7)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("IX_MessageType") 
-                }));
+            builder.Property(x => x.MessageType)
+                .HasColumnOrder(7);
 
-            this.Property(t => t.Message)
+            builder.Property(t => t.Message)
                 .IsRequired()
                 .HasColumnOrder(8)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            // Table & Column Mappings
-            this.ToTable("Log");
+           // Indexes
+            builder.HasIndex(t => t.Time, "IX_Time");
+            builder.HasIndex(t => t.HostNumber, "IX_HostNumber");
+            builder.HasIndex(t => t.Category, "IX_Category");
+            builder.HasIndex(t => t.MessageType, "IX_MessageType");
 
-            this.Property(t => t.Id)
+            // Table & Column Mappings
+            builder.ToTable("Log");
+
+            builder.Property(t => t.Id)
                 .HasColumnName("LogId");
         }
     }
 
-    public class LogExceptionMap : EntityTypeConfiguration<LogException>
+    public class LogExceptionMap : IEntityTypeConfiguration<LogException>
     {
-        public LogExceptionMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<LogException> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+                .ValueGeneratedNever();
 
-            this.Property(x => x.ExceptionData)
+            builder.Property(x => x.ExceptionData)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLByteArraySize.NORMAL);
 
-            // Table & mappings
-            this.ToTable("LogException");
-
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("LogId");
 
-            this.HasRequired(x => x.Message)
-                .WithRequiredDependent(x => x.Exception)
-                .WillCascadeOnDelete(true);
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            // Table & mappings
+            builder.ToTable("LogException");
+
+            builder.HasOne(x => x.Message)
+                .WithOne(x => x.Exception)
+                .HasForeignKey<LogException>(x => x.Id)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

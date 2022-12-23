@@ -1,56 +1,54 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class BillProfileRateStepMap : EntityTypeConfiguration<BillRateStep>
+    public class BillProfileRateStepMap : IEntityTypeConfiguration<BillRateStep>
     {
-        public BillProfileRateStepMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<BillRateStep> builder)
         {
             // Primary Key
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.BillRateId)
+            builder.Property(x => x.BillRateId)
                 .IsRequired()
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_BillRateMinute") { IsUnique = true, Order = 0 } }));
+                .HasColumnOrder(1);
 
-            this.Property(x => x.Minute)
+            builder.Property(x => x.Minute)
                 .HasColumnOrder(2)
-                .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_BillRateMinute") { IsUnique = true, Order = 1 } }));
+                .IsRequired();
 
-            this.Property(x => x.Action)
+            builder.Property(x => x.Action)
                 .HasColumnOrder(3)
                 .IsRequired();     
 
-            this.Property(x => x.Charge)
+            builder.Property(x => x.Charge)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.Rate)
+            builder.Property(x => x.Rate)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.TargetMinute)
+            builder.Property(x => x.TargetMinute)
                 .HasColumnOrder(6);
 
-            this.ToTable("BillRateStep");
+            // Indexes
+            builder.HasIndex(t => new { t.BillRateId, t.Minute }).HasDatabaseName("UQ_BillRateMinute").IsUnique();
 
-            this.Property(x => x.Id)
+            builder.ToTable("BillRateStep");
+
+            builder.Property(x => x.Id)
                 .HasColumnName("BillRateStepId");
 
             // Relations
-            this.HasRequired(x => x.BillRate)
+            builder.HasOne(x => x.BillRate)
                 .WithMany(x => x.BillRateSteps)
                 .HasForeignKey(x => x.BillRateId);
         }

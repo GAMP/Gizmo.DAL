@@ -1,47 +1,50 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ProductUserPriceMap : EntityTypeConfiguration<ProductUserPrice>
+    public class ProductUserPriceMap : IEntityTypeConfiguration<ProductUserPrice>
     {
-        public ProductUserPriceMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductUserPrice> builder)
         {
             // Key
-            HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("ProductUserPriceId")
                 .HasColumnOrder(0);
 
-            Property(x => x.ProductId)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_ProductUserGroup") { IsUnique = true, Order = 0 } }));
+            builder.Property(x => x.ProductId)
+                .HasColumnOrder(1);
+                
+            builder.Property(x => x.UserGroupId)
+                .HasColumnOrder(2);
 
-            Property(x => x.UserGroupId)
-                .HasColumnOrder(2)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_ProductUserGroup") { IsUnique = true, Order = 1 } }));
-
-            Property(x => x.Price)
+            builder.Property(x => x.Price)
                 .HasColumnOrder(3);
 
-            Property(x => x.PointsPrice)
+            builder.Property(x => x.PointsPrice)
                 .HasColumnOrder(4);
 
-            Property(x => x.IsEnabled)
+            builder.Property(x => x.IsEnabled)
                 .HasColumnOrder(5);
 
-            ToTable("ProductUserPrice");
+            // Indexes
+            builder.HasIndex(x => new { x.ProductId, x.UserGroupId }).HasDatabaseName("UQ_ProductUserGroup").IsUnique();
+
+            builder.ToTable("ProductUserPrice");
 
             // Relations            
-            HasRequired(x => x.Product)
+            builder.HasOne(x => x.Product)
                 .WithMany(x => x.UserGroupPrices)
                 .HasForeignKey(x => x.ProductId);
 
-            HasRequired(x => x.UserGroup)
+            builder.HasOne(x => x.UserGroup)
                 .WithMany(x => x.ProductPrices)
                 .HasForeignKey(x => x.UserGroupId);
         }

@@ -1,46 +1,43 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppCategoryMap : EntityTypeConfiguration<AppCategory>
+    public class AppCategoryMap : IEntityTypeConfiguration<AppCategory>
     {
-        public AppCategoryMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppCategory> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("AppCategoryId")
                 .HasColumnOrder(0);
 
-            Property(x => x.ParentId)
+            builder.Property(x => x.ParentId)
                 .HasColumnOrder(1);
 
-            Property(t => t.Name)
+            builder.Property(t => t.Name)
                 .IsRequired()
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            Property(t => t.Guid)
-                .HasColumnOrder(3)
-                .HasColumnAnnotation(
-                "Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
-                }));
+            builder.Property(t => t.Guid)
+                .HasColumnOrder(3);
 
+            // Indexes
+            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
 
             // Table & Column Mappings
-            ToTable("AppCategory");
+            builder.ToTable("AppCategory");
 
- 
             // Relationships
-            HasOptional(t => t.Parent)
+            builder.HasOne(t => t.Parent)
                 .WithMany(t => t.Children)
                 .HasForeignKey(d => d.ParentId);
         }

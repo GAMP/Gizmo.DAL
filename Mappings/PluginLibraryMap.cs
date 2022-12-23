@@ -1,30 +1,28 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class PluginLibraryMap : EntityTypeConfiguration<PluginLibrary>
+    public class PluginLibraryMap : IEntityTypeConfiguration<PluginLibrary>
     {
-        public PluginLibraryMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<PluginLibrary> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("PluginLibraryId");
 
-            this.Property(x => x.FileName)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_FileName") { IsUnique = true } 
-                }));
+            // Indexes
+            builder.HasIndex(t => t.FileName).HasDatabaseName("UQ_FileName").IsUnique();
 
             // Table & Column Mappings
-            this.ToTable("PluginLibrary");
+            builder.ToTable("PluginLibrary");
         }
     }
 }

@@ -1,33 +1,40 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class UserCreditLimitMap : EntityTypeConfiguration<UserCreditLimit>
+    public class UserCreditLimitMap : IEntityTypeConfiguration<UserCreditLimit>
     {
-        public UserCreditLimitMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserCreditLimit> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+                .ValueGeneratedNever();
 
-            Property(x => x.CreditLimit);
+            builder.Property(x => x.CreditLimit);
+
+            // Indexes
+            builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings
-            ToTable("UserCreditLimit");
+            builder.ToTable("UserCreditLimit");
 
-            Property(t => t.Id).
+            builder.Property(t => t.Id).
                 HasColumnName("UserId");
 
             // Relationships
-            HasRequired(t => t.User)
-                .WithRequiredDependent(t => t.UserCreditLimit)
-                .WillCascadeOnDelete(true);
+            builder.HasOne(t => t.User)
+                .WithOne(t => t.UserCreditLimit)
+                .HasForeignKey<UserCreditLimit>(x => x.Id)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

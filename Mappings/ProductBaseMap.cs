@@ -1,65 +1,61 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ProductBaseMap : EntityTypeConfiguration<ProductBase>
+    public class ProductBaseMap : IEntityTypeConfiguration<ProductBase>
     {
-        public ProductBaseMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductBase> builder)
         {
             // Key
-            HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("ProductId")
                 .HasColumnOrder(0);
 
-            Property(x => x.ProductGroupId)
+            builder.Property(x => x.ProductGroupId)
                 .HasColumnOrder(1);
 
-            Property(x => x.Name)
+            builder.Property(x => x.Name)
                 .HasColumnOrder(2)
                 .IsRequired()
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true }
-                }));
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            Property(x => x.Description)
+            builder.Property(x => x.Description)
                 .HasMaxLength(SQLStringSize.NORMAL)
                 .HasColumnOrder(3);
 
-            Property(x => x.Price)
+            builder.Property(x => x.Price)
                 .HasColumnOrder(4);
 
-            Property(x => x.Cost)
+            builder.Property(x => x.Cost)
                 .HasColumnOrder(5);
 
-            Property(x => x.Points)
+            builder.Property(x => x.Points)
                 .HasColumnOrder(6);
 
-            Property(x => x.PointsPrice)
+            builder.Property(x => x.PointsPrice)
                 .HasColumnOrder(7);
 
-            Property(x => x.Barcode)
+            builder.Property(x => x.Barcode)
                 .HasColumnOrder(8)
-                .IsOptional()
-                .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Barcode") { IsUnique = true }
-                }));
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY);
+
+            // Indexes
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Barcode).HasDatabaseName("UQ_Barcode").IsUnique();
 
             // Relations
-            ToTable("ProductBase");
+            builder.ToTable("ProductBase");
 
-            HasRequired(x => x.ProductGroup)
+            builder.HasOne(x => x.ProductGroup)
                 .WithMany(x => x.Products)
                 .HasForeignKey(x => x.ProductGroupId);
         }

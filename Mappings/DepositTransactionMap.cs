@@ -1,51 +1,51 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class DepositTransactionMap : EntityTypeConfiguration<DepositTransaction>
+    public class DepositTransactionMap : IEntityTypeConfiguration<DepositTransaction>
     {
-        public DepositTransactionMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<DepositTransaction> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("DepositTransactionId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.UserId)
+            builder.Property(x => x.UserId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.Type)
+            builder.Property(x => x.Type)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Amount)
+            builder.Property(x => x.Amount)
                 .HasColumnOrder(3);
 
-            this.Property(x => x.Balance)
+            builder.Property(x => x.Balance)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.IsVoided)
+            builder.Property(x => x.IsVoided)
                 .HasColumnOrder(5);
 
-            this.ToTable(nameof(DepositTransaction));
+            builder.ToTable(nameof(DepositTransaction));
 
             // Relationships
-            this.HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.Deposits)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            this.HasOptional(x => x.CreatedBy)
+            builder.HasOne(x => x.CreatedBy)
                 .WithMany(x => x.CreatedDeposits)
                 .HasForeignKey(x => x.CreatedById);
 
-            this.HasOptional(x => x.ModifiedBy)
+            builder.HasOne(x => x.ModifiedBy)
               .WithMany(x => x.ModifiedDeposits)
               .HasForeignKey(x => x.ModifiedById);
         }

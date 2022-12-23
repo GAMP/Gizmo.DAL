@@ -1,33 +1,32 @@
 ﻿using Gizmo.DAL.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
     /// <summary>
     /// Deposit payment intent map.
     /// </summary>
-    public class PaymentIntentDepositMap : EntityTypeConfiguration<PaymentIntentDeposit>
+    public class PaymentIntentDepositMap : IEntityTypeConfiguration<PaymentIntentDeposit>
     {
         /// <summary>
-        /// Creates new instance.
+        /// Configure entity
         /// </summary>
-        public PaymentIntentDepositMap()
+        public void Configure(EntityTypeBuilder<PaymentIntentDeposit> builder)
         {
-            Property(x => x.DepositPaymentId)
+            builder.Property(x => x.DepositPaymentId)
                 .HasColumnOrder(1)
-                .IsOptional()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_DepositPayment") { IsUnique = true } //same deposit payment may not appear multiple times
-                }));
+                .IsRequired(false);
 
-            HasOptional(x => x.DepositPayment)
+            // Indexes
+            builder.HasIndex(t => t.DepositPaymentId).HasDatabaseName("UQ_DepositPayment").IsUnique();
+            builder.HasIndex(t => t.Id);
+
+            builder.HasOne(x => x.DepositPayment)
                 .WithMany()
                 .HasForeignKey(x => x.DepositPaymentId);
 
-            ToTable(nameof(PaymentIntentDeposit));
+            builder.ToTable(nameof(PaymentIntentDeposit));
         }
     }
 }

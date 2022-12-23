@@ -1,64 +1,68 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppStatMap : EntityTypeConfiguration<AppStat>
+    public class AppStatMap : IEntityTypeConfiguration<AppStat>
     {
-        public AppStatMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppStat> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.AppId)
+            builder.Property(x => x.AppId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.AppExeId)
+            builder.Property(x => x.AppExeId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.HostId)
+            builder.Property(x => x.HostId)
                 .HasColumnOrder(3);
 
-            this.Property(x => x.UserId)
+            builder.Property(x => x.UserId)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.Span)
+            builder.Property(x => x.Span)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.StartTime)
+            builder.Property(x => x.StartTime)
                 .HasColumnOrder(6);
 
-            // Table & Column Mappings
-            this.ToTable("AppStat");
-
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("AppStatId");
 
+            // Table & Column Mappings
+            builder.ToTable("AppStat");
+
+            // Indexes
+            builder.HasIndex(x => x.AppExeId);
+
             // Relationships
-            this.HasRequired(t => t.App)
+            builder.HasOne(t => t.App)
                 .WithMany(t => t.AppStats)
                 .HasForeignKey(d => d.AppId);
 
-            this.HasRequired(t => t.AppExe)
+            builder.HasOne(t => t.AppExe)
                 .WithMany(t => t.AppStats)
                 .HasForeignKey(d => d.AppExeId);
 
-            this.HasRequired(t => t.Host)
+            builder.HasOne(t => t.Host)
                 .WithMany(t => t.AppStats)
-                .HasForeignKey(d => d.HostId);
+                .HasForeignKey(d => d.HostId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            this.HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.AppStats)
-                .HasForeignKey(x => x.UserId);
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

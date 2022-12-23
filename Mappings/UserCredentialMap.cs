@@ -1,41 +1,49 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class UserCredentialMap : EntityTypeConfiguration<UserCredential>
+    public class UserCredentialMap : IEntityTypeConfiguration<UserCredential>
     {
-        public UserCredentialMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserCredential> builder)
         {
             // Primary Key
-            HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+                .ValueGeneratedNever();
 
-            Property(x => x.Password)
+            builder.Property(x => x.Password)
                 .HasColumnOrder(3)
                 .HasMaxLength(64)
                 .IsFixedLength();
 
-            Property(x => x.Salt)
+            builder.Property(x => x.Salt)
                 .HasColumnOrder(4)
                 .HasMaxLength(100)
                 .IsFixedLength();
 
-            // Table & Column Mappings
-            ToTable("UserCredential");
 
-            Property(t => t.Id).
+            builder.Property(t => t.Id).
                 HasColumnName("UserId");
 
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            // Table & Column Mappings
+            builder.ToTable("UserCredential");
+
             // Relationships
-            HasRequired(t => t.User)
-                .WithRequiredDependent(t => t.UserCredential)
-                .WillCascadeOnDelete(true);
+            builder.HasOne(t => t.User)
+                .WithOne(t => t.UserCredential)
+                .HasForeignKey<UserCredential>(x => x.Id)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

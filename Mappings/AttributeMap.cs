@@ -1,44 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
+﻿using GizmoDALV2.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AttributeMap : EntityTypeConfiguration<GizmoDALV2.Entities.Attribute>
+    public class AttributeMap : IEntityTypeConfiguration<Attribute>
     {
-        public AttributeMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Attribute> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("AttributeId"); ;
 
-            this.Property(x => x.Name)
+            builder.Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnOrder(1)
-                .HasColumnAnnotation(
-                "Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true }
-                }));
+                .HasColumnOrder(1);
 
-            this.Property(x => x.FriendlyName)
+            builder.Property(x => x.FriendlyName)
                 .HasColumnOrder(2)
-                .HasMaxLength(SQLStringSize.TINY); 
+                .HasMaxLength(SQLStringSize.TINY);
+
+
+            // Indexes
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
 
             // Table & Column Mappings
-            this.ToTable(nameof(GizmoDALV2.Entities.Attribute));
+            builder.ToTable(nameof(Attribute));
         }
     }
 }

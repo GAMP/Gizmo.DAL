@@ -1,48 +1,51 @@
 ﻿using Gizmo.DAL.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class DeviceHostMap : EntityTypeConfiguration<DeviceHost>
+    public class DeviceHostMap : IEntityTypeConfiguration<DeviceHost>
     {
-        public DeviceHostMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<DeviceHost> builder)
         {
             //primary key configuration
-            HasKey(e => e.Id);
+            builder.HasKey(e => e.Id);
 
             //primary key column configuration
-            Property(e => e.Id)
+            builder.Property(e => e.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("DeviceHostId");
 
             //device id column configuration
-            Property(e => e.DeviceId)
+            builder.Property(e => e.DeviceId)
                 .HasColumnName(nameof(DeviceHost.DeviceId))
                 .HasColumnOrder(1)
-                .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostDevice") { IsUnique = true, Order = 0 } }));
+                .IsRequired();
 
             //host id column configuration
-            Property(e => e.HostId)
+            builder.Property(e => e.HostId)
                 .HasColumnName(nameof(DeviceHost.HostId))
                 .HasColumnOrder(2)
-                .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_HostDevice") { IsUnique = true, Order = 1 } }));
+                .IsRequired();
 
             //host navigational mappings
-            HasRequired(e => e.Host)
+            builder.HasOne(e => e.Host)
                 .WithMany(e => e.Devices)
                 .HasForeignKey(e => e.HostId);
 
             //device navigational mappings
-            HasRequired(e => e.Device)
+            builder.HasOne(e => e.Device)
                 .WithMany(e => e.Hosts)
                 .HasForeignKey(e => e.DeviceId);
 
+            // Indexes 
+            builder.HasIndex(t => new { t.DeviceId, t.HostId }, "UQ_HostDevice").IsUnique();
+
             //table configuration
-            ToTable(nameof(DeviceHost));
+            builder.ToTable(nameof(DeviceHost));
         }
     }
 }

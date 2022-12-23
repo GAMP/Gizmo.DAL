@@ -1,37 +1,35 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ProductImageMap : EntityTypeConfiguration<ProductImage>
+    public class ProductImageMap : IEntityTypeConfiguration<ProductImage>
     {
-        public ProductImageMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductImage> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Image)
+            builder.Property(x => x.Image)
                 .HasColumnOrder(1)
                 .IsRequired()
                 .HasMaxLength(SQLByteArraySize.MEDIUM);
 
             // Table & Column Mappings
-            this.ToTable(nameof(ProductImage));
+            builder.ToTable(nameof(ProductImage));
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("ProductImageId");
 
-            this.HasRequired(x => x.Product)
+            builder.HasOne(x => x.Product)
                 .WithMany(x => x.Images)
                 .HasForeignKey(x=>x.ProductId);
         }

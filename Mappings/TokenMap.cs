@@ -1,59 +1,59 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class TokenMap : EntityTypeConfiguration<Token>
+    public class TokenMap : IEntityTypeConfiguration<Token>
     {
-        public TokenMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Token> builder)
         {
-            ToTable(nameof(Token));
+            builder.ToTable(nameof(Token));
 
-            HasKey(e => e.Id);
+            builder.HasKey(e => e.Id);
 
-            Property(e => e.Id)
+            builder.Property(e => e.Id)
                 .HasColumnName("TokenId");
 
-            Property(e => e.UserId)
-               .IsOptional();
+            builder.Property(e => e.UserId)
+               .IsRequired(false);
 
-            Property(e => e.Value)
+            builder.Property(e => e.Value)
                 .HasMaxLength(32)
-                .IsRequired()
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Value") { IsUnique = true }
-                }));
+                .IsRequired();
 
-            Property(e => e.ConfirmationCode)
+            builder.Property(e => e.ConfirmationCode)
                 .HasMaxLength(6)
-                .IsOptional();
+                .IsRequired(false);
 
-            Property(e => e.Type)
+            builder.Property(e => e.Type)
                 .IsRequired();
 
-            Property(e => e.Status)
+            builder.Property(e => e.Status)
                 .IsRequired();
 
-            Property(e => e.Expires)
-                .IsOptional();
+            builder.Property(e => e.Expires)
+                .IsRequired(false);
 
-            HasOptional(e => e.User)
+            // Indexes
+            builder.HasIndex(t => t.Value).HasDatabaseName("UQ_Value").IsUnique();
+
+            builder.HasOne(e => e.User)
                 .WithMany(e => e.Tokens)
                 .HasForeignKey(e => e.UserId);
 
-            HasOptional(e => e.CreatedBy)
+            builder.HasOne(e => e.CreatedBy)
                 .WithMany()
                 .HasForeignKey(e => e.CreatedById)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasOptional(e => e.ModifiedBy)
+            builder.HasOne(e => e.ModifiedBy)
                 .WithMany()
                 .HasForeignKey(e => e.ModifiedById)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

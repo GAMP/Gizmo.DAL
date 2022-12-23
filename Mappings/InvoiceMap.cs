@@ -1,70 +1,74 @@
 ﻿using GizmoDALV2.Entities;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class InvoiceMap : EntityTypeConfiguration<Invoice>
+    public class InvoiceMap : IEntityTypeConfiguration<Invoice>
     {
-        public InvoiceMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Invoice> builder)
         {
-            HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("InvoiceId");
 
-            Property(x => x.ProductOrderId)
-                .HasColumnOrder(1);
+            builder.Property(x => x.ProductOrderId)
+                 .HasColumnOrder(1);
 
-            Property(x => x.UserId)
-                .HasColumnOrder(2);
+            builder.Property(x => x.UserId)
+                 .HasColumnOrder(2);
 
-            Property(x => x.Status)
-                .HasColumnOrder(3);
+            builder.Property(x => x.Status)
+                 .HasColumnOrder(3);
 
-            Property(x => x.SubTotal)
-                .HasColumnOrder(4);
+            builder.Property(x => x.SubTotal)
+                 .HasColumnOrder(4);
 
-            Property(x => x.PointsTotal)
-                .HasColumnOrder(5);
+            builder.Property(x => x.PointsTotal)
+                 .HasColumnOrder(5);
 
-            Property(x => x.TaxTotal)
-                .HasColumnOrder(6);
+            builder.Property(x => x.TaxTotal)
+                 .HasColumnOrder(6);
 
-            Property(x => x.Total)
-                .HasColumnOrder(7);
+            builder.Property(x => x.Total)
+                 .HasColumnOrder(7);
 
-            Property(x => x.Outstanding)
-                .HasColumnOrder(8);
+            builder.Property(x => x.Outstanding)
+                 .HasColumnOrder(8);
 
-            Property(x => x.OutstandngPoints)
-                .HasColumnOrder(9);
+            builder.Property(x => x.OutstandngPoints)
+                 .HasColumnOrder(9);
 
-            Property(x => x.ShiftId)
-                .HasColumnOrder(10);
+            builder.Property(x => x.ShiftId)
+                 .HasColumnOrder(10);
 
-            Property(x => x.RegisterId)
-                .HasColumnOrder(11);
+            builder.Property(x => x.RegisterId)
+                 .HasColumnOrder(11);
 
-            Property(x => x.IsVoided)
-                .HasColumnOrder(12);
+            builder.Property(x => x.IsVoided)
+                 .HasColumnOrder(12);
 
-            Property(x => x.SaleFiscalReceiptStatus)
-                .HasColumnOrder(13);
+            builder.Property(x => x.SaleFiscalReceiptStatus)
+                 .HasColumnOrder(13);
 
-            Property(x => x.ReturnFiscalReceiptStatus)
-                .HasColumnOrder(14);
+            builder.Property(x => x.ReturnFiscalReceiptStatus)
+                 .HasColumnOrder(14);
 
-            HasRequired(x => x.ProductOrder)
+            builder.HasOne(x => x.ProductOrder)
                 .WithMany(x => x.Invoices)
                 .HasForeignKey(x => x.ProductOrderId);
 
-            HasRequired(x => x.User)
+            builder.HasOne(x => x.User)
                 .WithMany(x => x.Invoices)
                 .HasForeignKey(x => x.UserId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            ToTable(nameof(Invoice));
+            builder.ToTable(nameof(Invoice));
         }
     }
 }

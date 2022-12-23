@@ -1,74 +1,87 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
-{ 
-    public class ProductTimePeriodMap : EntityTypeConfiguration<ProductTimePeriod>
+{
+    public class ProductTimePeriodMap : IEntityTypeConfiguration<ProductTimePeriod>
     {
-        public ProductTimePeriodMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductTimePeriod> builder)
         {
             // Key
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+            builder.Property(x => x.Id)
+                .ValueGeneratedNever();
+
+            // Indexes
+            builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings
-            this.ToTable("ProductTimePeriod");
+            builder.ToTable("ProductTimePeriod");
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("ProductId");
 
-            this.HasRequired(x => x.ProductTime)
-                .WithRequiredDependent(x => x.UsePeriod)
-                .WillCascadeOnDelete(true);
+            builder.HasOne(x => x.ProductTime)
+                .WithOne(x => x.UsePeriod)
+                .HasForeignKey<ProductTimePeriod>(x => x.Id)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 
-    public class ProductTimePeriodDayMap : EntityTypeConfiguration<ProductTimePeriodDay>
+    public class ProductTimePeriodDayMap : IEntityTypeConfiguration<ProductTimePeriodDay>
     {
-        public ProductTimePeriodDayMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductTimePeriodDay> builder)
         {
             // Key
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
+
+            // Indexes
+            builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings
-            this.ToTable("ProductTimePeriodDay");
+            builder.ToTable("ProductTimePeriodDay");
 
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("ProductTimePeriodDayId");
 
-            this.Property(x => x.ProductTimePeriodId)
-                .HasColumnName("ProductTimePeriodId")
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_ProductTimePeriodDay") { IsUnique = true, Order = 0 } }));
+            builder.Property(x => x.ProductTimePeriodId)
+                .HasColumnName("ProductTimePeriodId");
+                
+            // Indexes
+            builder.HasIndex(x => new { x.ProductTimePeriodId, x.Day }, "UQ_ProductTimePeriodDay").IsUnique();
 
-            this.Property(x=> x.Day)
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_ProductTimePeriodDay") { IsUnique = true, Order = 1 } }));
-
-            this.HasRequired(x => x.Period)
+            builder.HasOne(x => x.Period)
                 .WithMany(x => x.Days)
                 .HasForeignKey(x => x.ProductTimePeriodId);
         }
     }
 
-    public class ProductTimePeriodDayTimeMap : EntityTypeConfiguration<ProductTimePeriodDayTime>
+    public class ProductTimePeriodDayTimeMap : IEntityTypeConfiguration<ProductTimePeriodDayTime>
     {
-        public ProductTimePeriodDayTimeMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ProductTimePeriodDayTime> builder)
         {
             // Key
-            this.HasKey(x => new { x.PeriodDayId, x.StartSecond, x.EndSecond });
+            builder.HasKey(x => new { x.PeriodDayId, x.StartSecond, x.EndSecond });
+
+            // Indexes
+            builder.HasIndex(t => t.PeriodDayId);
 
             // Table & Column Mappings
-            this.ToTable("ProductTimePeriodDayTime");
+            builder.ToTable("ProductTimePeriodDayTime");
 
-            this.HasRequired(x => x.Day)
+            builder.HasOne(x => x.Day)
                 .WithMany(x => x.Times)
                 .HasForeignKey(x => x.PeriodDayId);
         }

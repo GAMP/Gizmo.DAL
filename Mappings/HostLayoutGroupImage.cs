@@ -1,38 +1,40 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class HostLayoutGroupImageMap : EntityTypeConfiguration<HostLayoutGroupImage>
+    public class HostLayoutGroupImageMap : IEntityTypeConfiguration<HostLayoutGroupImage>
     {
-        public HostLayoutGroupImageMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<HostLayoutGroupImage> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+                .ValueGeneratedNever();
 
-            this.Property(x => x.Image)
+            builder.Property(x => x.Image)
                 .HasMaxLength(GizmoDALV2.SQLByteArraySize.MEDIUM);
 
-            // Table & Column Mappings
-            this.ToTable("HostLayoutGroupImage");
-
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("HostLayoutGroupId");
 
-            this.HasRequired(x => x.HostLayoutGroup)
-                .WithRequiredDependent(x => x.Image)
-                .WillCascadeOnDelete(true);
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
+            // Table & Column Mappings
+            builder.ToTable("HostLayoutGroupImage");
+
+            builder.HasOne(x => x.HostLayoutGroup)
+                .WithOne(x => x.Image)
+                .HasForeignKey<HostLayoutGroupImage>(x => x.Id)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

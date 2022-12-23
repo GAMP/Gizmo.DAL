@@ -1,48 +1,48 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class VariableMap : EntityTypeConfiguration<Variable>
+    public class VariableMap : IEntityTypeConfiguration<Variable>
     {
-        public VariableMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Variable> builder)
         {
             //Primary key
-            HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             //Properties
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            Property(x => x.Name)
+            builder.Property(x => x.Name)
                 .HasColumnOrder(1)
                 .IsRequired()
-                .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true }
-                }));
+                .HasMaxLength(SQLStringSize.TINY);
 
-            Property(x => x.Value)
+            builder.Property(x => x.Value)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.NORMAL)
                 .IsRequired();
 
-            Property(x => x.Scope)
+            builder.Property(x => x.Scope)
                 .HasColumnOrder(3)
                 .IsRequired();
 
-            Property(x => x.UseOrder)
+            builder.Property(x => x.UseOrder)
                 .HasColumnOrder(4)
                 .IsRequired();
 
-            //Table & Column mappings
-            ToTable(nameof(Variable));
+            // Indexes
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
 
-            Property(x => x.Id)
+            //Table & Column mappings
+            builder.ToTable(nameof(Variable));
+
+            builder.Property(x => x.Id)
                 .HasColumnName("VariableId");
         }
     }

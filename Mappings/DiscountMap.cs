@@ -1,131 +1,134 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class DiscountBaseMap : EntityTypeConfiguration<DiscountBase>
+    public class DiscountBaseMap : IEntityTypeConfiguration<DiscountBase>
     {
-        public DiscountBaseMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<DiscountBase> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("DiscountId");
 
-            this.Property(x => x.Name)
+            builder.Property(x => x.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
-                .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
-                }));
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Value)
+            builder.Property(x => x.Value)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.DiscountAmountType)
+            builder.Property(x => x.DiscountAmountType)
                 .HasColumnOrder(3);            
 
+            // Indexes
+            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+
             // Table & Column Mappings
-            this.ToTable("DiscountBase");
+            builder.ToTable("DiscountBase");
 
             // Relationships
-
         }
     }
 
-    public class DiscountUserMap : EntityTypeConfiguration<DiscountUser>
+    public class DiscountUserMap : IEntityTypeConfiguration<DiscountUser>
     {
-        public DiscountUserMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<DiscountUser> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("DiscountUserId");  
 
             // Table & Column Mappings
-            this.ToTable("DiscountUser");
+            builder.ToTable("DiscountUser");
 
             // Relationships
 
-            this.HasRequired(x => x.UserGroup)
+            builder.HasOne(x => x.UserGroup)
                 .WithMany()
-                .WillCascadeOnDelete(true);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            this.HasRequired(x => x.Discount)
+            builder.HasOne(x => x.Discount)
                 .WithMany()
-                .WillCascadeOnDelete(true);
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }
 
-    public class DiscountProductMap : EntityTypeConfiguration<DiscountProduct>
+    public class DiscountProductMap : IEntityTypeConfiguration<DiscountProduct>
     {
-        public DiscountProductMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<DiscountProduct> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("DiscountProductId");
 
             // Table & Column Mappings
-            this.ToTable("DiscountUser");
+            builder.ToTable("DiscountUser");
 
             // Relationships
 
-            this.HasRequired(x => x.Product)
+            builder.HasOne(x => x.Product)
                 .WithMany()
-                .WillCascadeOnDelete(true);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            this.HasRequired(x => x.Discount)
+            builder.HasOne(x => x.Discount)
                 .WithMany()
-                .WillCascadeOnDelete(true);
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }
 
-    public class DiscountProductGroupMap : EntityTypeConfiguration<DiscountProductGroup>
+    public class DiscountProductGroupMap : IEntityTypeConfiguration<DiscountProductGroup>
     {
-        public DiscountProductGroupMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<DiscountProductGroup> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("DiscountProductGroupId");
 
             // Table & Column Mappings
-            this.ToTable("DiscountUser");
+            builder.ToTable("DiscountUser");
 
             // Relationships
 
-            this.HasRequired(x => x.ProductGroup)
+            builder.HasOne(x => x.ProductGroup)
                 .WithMany()
-                .WillCascadeOnDelete(true);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            this.HasRequired(x => x.Discount)
+            builder.HasOne(x => x.Discount)
                 .WithMany()
-                .WillCascadeOnDelete(true);
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

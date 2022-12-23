@@ -1,31 +1,38 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class HostGroupWaitingLineMap : EntityTypeConfiguration<HostGroupWaitingLine>
+    public class HostGroupWaitingLineMap : IEntityTypeConfiguration<HostGroupWaitingLine>
     {
-        public HostGroupWaitingLineMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<HostGroupWaitingLine> builder)
         {
-            HasKey(entity => entity.Id);
+            builder.HasKey(entity => entity.Id);
 
-            Property(entity => entity.Id)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None)
+            builder.Property(entity => entity.Id)
+                .ValueGeneratedNever()
                 .HasColumnName("HosGroupId")
                 .HasColumnOrder(0);
 
-            Property(entity => entity.TimeOutOptions)
+            builder.Property(entity => entity.TimeOutOptions)
                 .HasColumnOrder(1);
 
-            Property(entity => entity.EnablePriorities)
+            builder.Property(entity => entity.EnablePriorities)
                 .HasColumnOrder(2);
 
-            HasRequired(entity => entity.HostGroup)
-                .WithRequiredDependent(hostGroup => hostGroup.WaitingLine)
-                .WillCascadeOnDelete(true);
+            // Indexes
+            builder.HasIndex(x => x.Id);
 
-            ToTable(nameof(HostGroupWaitingLine));
+            builder.HasOne(entity => entity.HostGroup)
+                .WithOne(hostGroup => hostGroup.WaitingLine)
+                .HasForeignKey<HostGroupWaitingLine>(x => x.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.ToTable(nameof(HostGroupWaitingLine));
         }
     }
 }

@@ -1,39 +1,38 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AppExeLicenseMap : EntityTypeConfiguration<AppExeLicense>
+    public class AppExeLicenseMap : IEntityTypeConfiguration<AppExeLicense>
     {
-        public AppExeLicenseMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<AppExeLicense> builder)
         {
             // Primary Key
-            this.HasKey(t => new { AppExeId = t.AppExeId, LicenseId = t.LicenseId });
+            builder.HasKey(t => new { AppExeId = t.AppExeId, LicenseId = t.LicenseId });
 
             // Properties
-            this.Property(t => t.AppExeId)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+            builder.Property(t => t.AppExeId).ValueGeneratedNever();
 
-            this.Property(t => t.LicenseId)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+            builder.Property(t => t.LicenseId).ValueGeneratedNever();
 
-            this.ToTable("AppExeLicense");
+            builder.ToTable("AppExeLicense");
+
+            // Indexes
+            builder.HasIndex(x => x.AppExeId);
 
             // Ignores
-            this.Ignore(x => x.Id);
+            builder.Ignore(x => x.Id);
 
             // Relationships
-            this.HasRequired(t => t.AppExe)
+            builder.HasOne(t => t.AppExe)
                 .WithMany(t => t.Licenses)
                 .HasForeignKey(d => d.AppExeId);
 
-            this.HasRequired(t => t.License)
+            builder.HasOne(t => t.License)
                 .WithMany(t => t.AppExes)
                 .HasForeignKey(d => d.LicenseId);
         }

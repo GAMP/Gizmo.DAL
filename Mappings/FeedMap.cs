@@ -1,42 +1,40 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class FeedMap : EntityTypeConfiguration<Feed>
+    public class FeedMap : IEntityTypeConfiguration<Feed>
     {
-        public FeedMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Feed> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(t => t.Title)
+            builder.Property(t => t.Title)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Url)
+            builder.Property(t => t.Url)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(x => x.Maximum)
+            builder.Property(x => x.Maximum)
                 .HasColumnOrder(3);
 
-            // Table & Column Mappings
-            this.ToTable("Feed");
-
-            this.Property(t => t.Id)
+            builder.Property(t => t.Id)
                 .HasColumnName("FeedId");
+                
+            // Table & Column Mappings
+            builder.ToTable("Feed");
         }
     }
 }

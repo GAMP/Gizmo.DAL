@@ -1,67 +1,61 @@
 ﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class MappingMap : EntityTypeConfiguration<Mapping>
+    public class MappingMap : IEntityTypeConfiguration<Mapping>
     {
-        public MappingMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Mapping> builder)
         {
             //Primary key
-            this.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
             //Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Label)
+            builder.Property(x => x.Label)
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Source)
+            builder.Property(x => x.Source)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired();
 
-            this.Property(x => x.MountPoint)
+            builder.Property(x => x.MountPoint)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY)
-                .IsRequired()
-                .HasColumnAnnotation(
-                "Index",
-                new IndexAnnotation(new[] 
-                {
-                    new IndexAttribute("UQ_MountPoint") { IsUnique = true } 
-                })); ;
+                .IsRequired();
 
-            this.Property(x => x.Type)
+            builder.Property(x => x.Type)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.Size)
+            builder.Property(x => x.Size)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.Username)
+            builder.Property(x => x.Username)
                 .HasColumnOrder(6)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Password)
+            builder.Property(x => x.Password)
                 .HasColumnOrder(7)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Options)
+            builder.Property(x => x.Options)
                 .HasColumnOrder(8);
 
-            //Table & Column mappings
-            this.ToTable("Mapping");
+            // Indexes
+            builder.HasIndex(t => t.MountPoint).HasDatabaseName("UQ_MountPoint").IsUnique();
 
-            this.Property(x => x.Id)
+            //Table & Column mappings
+            builder.ToTable("Mapping");
+
+            builder.Property(x => x.Id)
                 .HasColumnName("MappingId");
         }
     }

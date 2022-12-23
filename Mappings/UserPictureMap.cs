@@ -1,39 +1,43 @@
-﻿using GizmoDALV2;
-using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GizmoDALV2.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class UserPictureMap : EntityTypeConfiguration<UserPicture>
+    public class UserPictureMap : IEntityTypeConfiguration<UserPicture>
     {
-        public UserPictureMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<UserPicture> builder)
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            builder.HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnName("UserId")
                 .HasColumnOrder(0)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+                .ValueGeneratedNever();
 
-            this.Property(x => x.Picture)
+            builder.Property(x => x.Picture)
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLByteArraySize.MEDIUM);
 
+            // Indexes
+            builder.HasIndex(t => t.Id);
+
             // Table & mappings
-            this.ToTable(nameof(UserPicture));              
+            builder.ToTable(nameof(UserPicture));              
 
             // Relations
-            this.HasRequired(x => x.User)
-                .WithRequiredDependent(x => x.UserPicture)
-                .WillCascadeOnDelete(true);
+            builder.HasOne(x => x.User)
+                .WithOne(x => x.UserPicture)
+                .HasForeignKey<UserPicture>(x => x.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);
+            builder.HasOne(x => x.ModifiedBy).WithMany().HasForeignKey(x => x.ModifiedById);
         }
     }
 }

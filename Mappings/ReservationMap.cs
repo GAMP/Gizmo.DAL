@@ -1,159 +1,140 @@
 ﻿using GizmoDALV2.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GizmoDALV2.Mappings
 {
-    public class ReservationMap : EntityTypeConfiguration<Reservation>
+    public class ReservationMap : IEntityTypeConfiguration<Reservation>
     {
-        public ReservationMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<Reservation> builder)
         {
-            ToTable(nameof(Reservation));
+            builder.ToTable(nameof(Reservation));
 
-            HasKey(e => e.Id);
+            builder.HasKey(e => e.Id);
 
-            Property(e => e.Id)
+            builder.Property(e => e.Id)
                 .HasColumnName("ReservationId");
 
-            Property(e => e.Pin)
+            builder.Property(e => e.Pin)
                 .HasMaxLength(6)
-                .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Pin") { IsUnique = true }
-                })).IsRequired();
-
-            Property(e => e.Date)
                 .IsRequired();
 
-            Property(e => e.Duration)
+            builder.Property(e => e.Date)
                 .IsRequired();
 
-            Property(e => e.ContactPhone)
+            builder.Property(e => e.Duration)
+                .IsRequired();
+
+            builder.Property(e => e.ContactPhone)
                 .HasMaxLength(20)
-                .IsOptional();
+                .IsRequired(false);
 
-            Property(e => e.ContactEmail)
+            builder.Property(e => e.ContactEmail)
                 .HasMaxLength(254)
-                .IsOptional();
+                .IsRequired(false);
 
-            Property(e => e.Note)
-                .IsOptional();
+            builder.Property(e => e.Note)
+                .IsRequired(false);
 
-            Property(e => e.Status)
+            builder.Property(e => e.Status)
                 .IsRequired();
 
-            HasOptional(e => e.User)
+            // Indexes
+            builder.HasIndex(t => t.Pin, "UQ_Pin").IsUnique();
+
+            builder.HasOne(e => e.User)
                 .WithMany(e => e.Reservations)
                 .HasForeignKey(e => e.UserId);
 
-            HasOptional(e => e.CreatedBy)
+            builder.HasOne(e => e.CreatedBy)
                 .WithMany()
                 .HasForeignKey(e => e.CreatedById)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasOptional(e => e.ModifiedBy)
+            builder.HasOne(e => e.ModifiedBy)
                 .WithMany()
                 .HasForeignKey(e => e.ModifiedById)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }
 
-    public class ReservationUserMap : EntityTypeConfiguration<ReservationUser>
+    public class ReservationUserMap : IEntityTypeConfiguration<ReservationUser>
     {
-        public ReservationUserMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ReservationUser> builder)
         {
-            ToTable(nameof(ReservationUser));
+            builder.ToTable(nameof(ReservationUser));
 
-            HasKey(e => e.Id);
+            builder.HasKey(e => e.Id);
 
-            Property(e => e.Id)
+            builder.Property(e => e.Id)
                 .HasColumnName("ReservationUserId");
 
-            Property(e => e.ReservationId)
-                .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                 {
-                     new IndexAttribute("UQ_Reservation_User")
-                     {
-                         IsUnique = true,
-                         Order = 0
-                     }
-                 }));
+            builder.Property(e => e.ReservationId)
+                .IsRequired();
 
-            Property(e => e.UserId)
-                .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                     new IndexAttribute("UQ_Reservation_User")
-                     {
-                         IsUnique = true,
-                         Order = 1
-                     }
-                 }));
+            builder.Property(e => e.UserId)
+                .IsRequired();
 
-            HasRequired(e => e.Reservation)
+            // Indexes
+            builder.HasIndex(x => new { x.ReservationId, x.UserId }).HasDatabaseName("UQ_Reservation_User").IsUnique();
+
+            builder.HasOne(e => e.Reservation)
                 .WithMany(e => e.Users)
                 .HasForeignKey(e => e.ReservationId);
 
-            HasRequired(e => e.User)
+            builder.HasOne(e => e.User)
                 .WithMany()
                 .HasForeignKey(e => e.UserId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 
-    public class ReservationHostMap : EntityTypeConfiguration<ReservationHost>
+    public class ReservationHostMap : IEntityTypeConfiguration<ReservationHost>
     {
-        public ReservationHostMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<ReservationHost> builder)
         {
-            ToTable(nameof(ReservationHost));
+            builder.ToTable(nameof(ReservationHost));
 
-            HasKey(e => e.Id);
+            builder.HasKey(e => e.Id);
 
-            Property(e => e.Id)
+            builder.Property(e => e.Id)
                 .HasColumnName("ReservationHostId");
 
-            Property(e => e.ReservationId)
-                .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Reservation_Host")
-                    {
-                        IsUnique = true,
-                        Order = 0
-                    }
-                }));
+            builder.Property(e => e.ReservationId)
+                .IsRequired();
 
-            Property(e => e.HostId)
-                .IsRequired()
-                .HasColumnAnnotation("Index", new IndexAnnotation(new[]
-                {
-                    new IndexAttribute("UQ_Reservation_Host")
-                    {
-                        IsUnique = true,
-                        Order = 1
-                    }
-                }));
+            builder.Property(e => e.HostId)
+                .IsRequired();
 
-            Property(e => e.PreferedUserId)
-                .IsOptional();
+            builder.Property(e => e.PreferedUserId)
+                .IsRequired(false);
 
-            HasRequired(e => e.Reservation)
+            // Indexes
+            builder.HasIndex(x => new { x.ReservationId, x.HostId }).HasDatabaseName("UQ_Reservation_Host").IsUnique();
+
+            builder.HasOne(e => e.Reservation)
                 .WithMany(e => e.Hosts)
                 .HasForeignKey(e => e.ReservationId);
 
-            HasRequired(e => e.Host)
+            builder.HasOne(e => e.Host)
                 .WithMany()
                 .HasForeignKey(e => e.HostId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            HasOptional(e => e.PreferedUser)
+            builder.HasOne(e => e.PreferedUser)
                 .WithMany()
                 .HasForeignKey(e => e.PreferedUserId)
-                .WillCascadeOnDelete(false);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

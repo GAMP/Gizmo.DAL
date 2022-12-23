@@ -1,33 +1,38 @@
-﻿using System.Data.Entity.ModelConfiguration;
+﻿using Gizmo.DAL.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class FiscalReceiptMap : EntityTypeConfiguration<Entities.FiscalReceipt>
+    public class FiscalReceiptMap : IEntityTypeConfiguration<FiscalReceipt>
     {
-        public FiscalReceiptMap()
+        /// <summary>
+        /// Configure entity
+        /// </summary>
+        public void Configure(EntityTypeBuilder<FiscalReceipt> builder)
         {
             //Primary key
-            HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-            Property(x => x.Id)
+            builder.Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("FiscalReceiptId");
 
-            Property(x => x.Type)
+            builder.Property(x => x.Type)
                 .HasColumnOrder(1);
 
-            Property(x => x.TaxSystem)
+            builder.Property(x => x.TaxSystem)
                 .HasColumnOrder(2);
 
-            Property(x => x.DocumentNumber)
+            builder.Property(x => x.DocumentNumber)
                 .HasColumnOrder(3);
 
-            Property(x => x.Signature)
+            builder.Property(x => x.Signature)
                 .HasColumnOrder(4)
-                .IsOptional();            
+                .IsRequired(false);            
 
             //Table name
-            ToTable(nameof(Entities.FiscalReceipt));
+            builder.ToTable(nameof(Entities.FiscalReceipt));
         }
     }
 }
