@@ -1,0 +1,115 @@
+﻿//UPDATE 11
+Added ProductHostHidden
+
+//UPDATE 10
+Added Verfication
+Added VerficationEmail
+Added VerficationMobilePhone
+Added Token
+Added ReservationUser
+Added ReservationHost
+Added Reservation
+Added PreferedPaymentMethodId on ProductOrder
+Added IsDelivered on ProductOrder
+Added DeliveredTime on ProductOrder
+Added Source on ProductOrder
+Added UserNote on ProductOrder
+Added IsClient on ProductOrder
+Added IsManager on ProductOrder
+Added IsPortal on ProductOrder
+Added IsDeleted on ProductOrder
+Added IsDelivered on ProductOL
+Added DeliveredQuantity on ProductOL
+Added DeliveredTime on ProductOL
+
+//UPDATE 9
+Added user permissions
+
+//UPDATE 8
+Added HostGroupWaitingLine
+Added HostGroupWaitingLineEntry
+Added EnableDate on UserMember
+Added DisabledDate on UserMember
+Added WaitingLinePriority on UserGroup
+Added IsWaitingLinePriorityEnabled on UserGroup
+Added MediaUrl on News
+
+//UPDATE 7
+Added Void
+Added VoidInvoice
+Added Refund
+Added RefundInvoicePayment
+Added BundleProductUserPrice
+Added HostGroupUserBillProfile
+
+Added BillingOptions on UserMember
+Added BillingOptions on UserGroup
+Added DefaultExecutableId on App
+Added ShiftId,RegisterId on AssetTransaction,StockTransaction
+Added IsVoided on Invoice
+Added RefundedAmount on Payment
+Added RefundStatus on Payment
+Added RefundedAmount on InvoicePayment
+Added RefundStatus on InvoicePayment
+Dropped IsRefunded on Payment
+
+//UPDATE 6
+Renamed CheckOutTime to CheckInTime
+Renamed CheckedOutById to CheckedInById
+
+//UPDATE 5
+Added AssetType
+Added Asset
+Added AssetTransaction
+Added IsPersonalInfoRequested on UserMember
+Added IsAgeRatingEnabled on UserGroup
+
+//UPDATE 4
+Added Shift
+Added Register
+Added ShiftCount
+Added RegisterTransaction
+Added ShiftOptions on UserOperator
+Added IsEnabled on ProductUserPrice
+
+Added PayType on ProductOL
+Added PayType on InvoiceLine
+Added UnitPointPrice on InvoiceLine
+
+
+//UPDATE 3
+Added Slot on UserSession
+Added Slot on UserSessionChnage
+
+Added IsJoined on UserGuest
+Added IsReserved on UserGuest
+Added ReservedHostId on UserGuest
+Added ReservedSlot on UserGuest
+
+Alter Value on Setting
+
+Added IsDeleted on MonetaryUnit
+
+//UPDATE 2
+Added PointsAwardOptions on UserGroup
+Added PointsMoneyRatio on UserGroup
+Added PointsTimeRatio on UserGroup
+Added Points on UserGroup
+
+Added Points on InvoiceLine
+Added PointsAward on InvoiceLine
+
+Added Points on ProductOL
+Added PointsAward on ProductOL
+
+//UPDATE 1
+
+Added Note
+Added UserNote
+Added PresetTimeSale
+Added PresetTimeSaleMoney
+
+Added Identification on User
+Added PointsTotal on InvoiceLine
+Added PointsTotal on ProductOL
+
