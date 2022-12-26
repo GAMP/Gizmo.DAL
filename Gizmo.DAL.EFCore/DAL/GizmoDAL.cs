@@ -158,7 +158,7 @@ namespace GizmoDALV2
             }
 
             var cx = new DefaultDbContext(optionsBuilder.Options);
-
+            
             //set default command timeout
             cx.Database.SetCommandTimeout(CommandTimeout);
 

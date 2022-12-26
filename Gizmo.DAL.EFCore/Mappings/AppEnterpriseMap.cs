@@ -1,6 +1,7 @@
 ﻿using GizmoDALV2.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GizmoDALV2.Mappings
 {

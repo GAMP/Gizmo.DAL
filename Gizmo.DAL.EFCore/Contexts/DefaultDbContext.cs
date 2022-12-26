@@ -15,6 +15,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using CoreLib;
+using System.Reflection.Emit;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace GizmoDALV2
 {
@@ -36,6 +38,7 @@ namespace GizmoDALV2
         {
 
         }
+
         #endregion
 
         #region PROPERTIES
@@ -1663,8 +1666,25 @@ namespace GizmoDALV2
                     modelBuilder.Entity(entity).Property(property.Name).HasPrecision(19, 4);
             }
 
-            // Change default generated index names of foreign keys to match the old database pattern 
-            // TO DO
+
+            if (Database.IsSqlServer() || Database.IsMySql())
+            {
+                // Change default generated index names of foreign keys to match the old database pattern 
+                RenameIndexWithOldPattern(modelBuilder);
+            }
+            else if (Database.IsSqlite() || Database.IsNpgsql())
+            {
+                // Remove duplicated index name to be unique on database level not the table level
+                RenameDuplicatedIndexNames(modelBuilder);
+            }
+        }
+
+        /// <summary>
+        /// Change default generated index names of foreign keys to match the old database pattern 
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        public static void RenameIndexWithOldPattern(ModelBuilder modelBuilder)
+        {
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
                 foreach (var index in entity.GetIndexes())
@@ -1685,6 +1705,40 @@ namespace GizmoDALV2
             }
         }
 
+        /// <summary>
+        /// Change default generated index names of foreign keys to match the old database pattern 
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        public static void RenameDuplicatedIndexNames(ModelBuilder modelBuilder)
+        {
+            var indexes = new Dictionary<string, List<KeyValuePair<IMutableEntityType, IMutableIndex>>>();
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var index in entity.GetIndexes())
+                {
+                    var defaultIndexName = index.GetDefaultDatabaseName();
+                    var indexName = index.GetDatabaseName();
+
+                    // To check only on the index defined by the user not automated
+                    if (defaultIndexName == indexName)
+                        continue;
+
+                    if (indexes.ContainsKey(indexName))
+                        indexes[indexName].Add(new(entity, index));
+                    else
+                        indexes.Add(indexName, new List<KeyValuePair<IMutableEntityType, IMutableIndex>>() { new(entity, index) });
+                }
+            }
+
+            var duplicatedIndexes = indexes.Where(e => e.Value.Count > 1).ToList();
+            foreach (var duplicatedIndex in duplicatedIndexes)
+            {
+                foreach (var index in duplicatedIndex.Value)
+                {
+                    index.Value.SetDatabaseName($"{index.Value.GetDatabaseName()}_{index.Key.GetTableName()}");
+                }
+            }
+        }
         #endregion
 
         #region NOTIFICATIONS

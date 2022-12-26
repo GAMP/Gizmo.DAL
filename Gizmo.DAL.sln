@@ -11,6 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataInterfaces", "..\DataIn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL", "Gizmo.DAL\Gizmo.DAL.csproj", "{EF3D9EAA-753F-4B01-B89F-AB88777D4CFE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL.EFCore.Migrations.MSSQL", "Gizmo.DAL.EFCore.Migrations.MSSQL\Gizmo.DAL.EFCore.Migrations.MSSQL.csproj", "{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gizmo.DAL.EFCore.Migrations.MySQL", "Gizmo.DAL.EFCore.Migrations.MySQL\Gizmo.DAL.EFCore.Migrations.MySQL.csproj", "{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gizmo.DAL.EFCore.Migrations.Sqlit", "Gizmo.DAL.EFCore.Migrations.Sqlit\Gizmo.DAL.EFCore.Migrations.Sqlit.csproj", "{5DAB028D-004F-440B-A5F0-C7368111E3DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gizmo.DAL.EFCore.Migrations.Npgsql", "Gizmo.DAL.EFCore.Migrations.Npgsql\Gizmo.DAL.EFCore.Migrations.Npgsql.csproj", "{F13D0818-8674-4002-9E68-ECB4C9B1AD65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +41,22 @@ Global
 		{EF3D9EAA-753F-4B01-B89F-AB88777D4CFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF3D9EAA-753F-4B01-B89F-AB88777D4CFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF3D9EAA-753F-4B01-B89F-AB88777D4CFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DAB028D-004F-440B-A5F0-C7368111E3DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DAB028D-004F-440B-A5F0-C7368111E3DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DAB028D-004F-440B-A5F0-C7368111E3DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DAB028D-004F-440B-A5F0-C7368111E3DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F13D0818-8674-4002-9E68-ECB4C9B1AD65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F13D0818-8674-4002-9E68-ECB4C9B1AD65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F13D0818-8674-4002-9E68-ECB4C9B1AD65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F13D0818-8674-4002-9E68-ECB4C9B1AD65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

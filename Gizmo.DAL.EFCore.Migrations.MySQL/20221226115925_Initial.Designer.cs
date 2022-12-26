@@ -3,24 +3,23 @@ using System;
 using GizmoDALV2;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.MSSQL
+namespace Gizmo.DAL.EFCore.Migrations.MySQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    partial class DefaultDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221226115925_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.12")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Device", b =>
                 {
@@ -30,27 +29,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("DeviceId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnName("Name")
                         .HasColumnOrder(1);
 
@@ -64,8 +61,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name")
-                        .HasFilter("[Name] IS NOT NULL");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("Device", (string)null);
                 });
@@ -78,13 +74,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("DeviceHostId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DeviceId")
                         .HasColumnType("int")
@@ -100,7 +94,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -127,13 +121,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("FiscalReceiptId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("DocumentNumber")
                         .HasColumnType("int")
@@ -146,7 +138,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<string>("Signature")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("TaxSystem")
@@ -178,13 +170,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("InvoiceFiscalReceiptId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("FiscalReceiptId")
                         .HasColumnType("int")
@@ -229,8 +219,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("PaymentIntentId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)")
@@ -240,24 +228,24 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<Guid>("Provider")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(7);
 
                     b.Property<int>("State")
@@ -266,11 +254,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("TransactionId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(5);
 
                     b.Property<DateTime?>("TransactionTime")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(6);
 
                     b.Property<int>("UserId")
@@ -306,18 +294,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UserAgreementId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("Agreement")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DisplayOptions")
                         .HasColumnType("int")
@@ -328,19 +314,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
@@ -366,8 +352,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UserAgreementStateId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("AcceptState")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
@@ -376,13 +360,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UserAgreementId")
                         .HasColumnType("int")
@@ -417,8 +401,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AppId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("AgeRating")
                         .HasColumnType("int")
                         .HasColumnOrder(9);
@@ -431,7 +413,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("DefaultExecutableId")
                         .HasColumnType("int")
@@ -439,7 +421,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Description")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("DeveloperId")
@@ -447,14 +429,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(3);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(10);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Options")
                         .HasColumnType("int")
@@ -465,18 +447,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(2);
 
                     b.Property<DateTime?>("ReleaseDate")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Version")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(7);
 
                     b.HasKey("Id");
@@ -511,28 +493,26 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AppCategoryId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ParentId")
@@ -565,28 +545,26 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AppEnterpriseId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -616,10 +594,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AppExeId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<bool>("Accessible")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(14);
 
                     b.Property<int>("AppId")
@@ -628,19 +604,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Arguments")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Caption")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("DefaultDeploymentId")
                         .HasColumnType("int")
@@ -648,7 +624,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("DisplayOrder")
@@ -658,11 +634,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("ExecutablePath")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(13);
 
                     b.Property<int>("Modes")
@@ -673,7 +649,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Options")
                         .HasColumnType("int")
@@ -689,7 +665,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("WorkingDirectory")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(6);
 
                     b.HasKey("Id");
@@ -717,46 +693,44 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AppExeCdImageId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("AppExeId")
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("CheckExitCode")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("DeviceId")
                         .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)")
+                        .HasColumnType("varchar(3)")
                         .HasColumnOrder(4);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("MountOptions")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -789,13 +763,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UseOrder")
                         .HasColumnType("int");
@@ -828,17 +802,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<byte[]>("Image")
                         .HasMaxLength(16777215)
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("longblob");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -866,13 +840,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UseOrder")
                         .HasColumnType("int");
@@ -902,8 +876,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AppExeMaxUserId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("AppExeId")
                         .HasColumnType("int")
                         .HasColumnOrder(1);
@@ -912,7 +884,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("MaxUsers")
                         .HasColumnType("int")
@@ -926,7 +898,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -954,13 +926,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UseOrder")
                         .HasColumnType("int");
@@ -989,8 +961,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("AppExeTaskId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("Activation")
                         .HasColumnType("int");
 
@@ -1001,16 +971,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("TaskBaseId")
                         .HasColumnType("int");
@@ -1043,28 +1013,26 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AppGroupId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -1118,17 +1086,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<byte[]>("Image")
                         .HasMaxLength(16777215)
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("longblob");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -1152,26 +1120,24 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AppLinkId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("AppId")
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Caption")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("DisplayOrder")
@@ -1179,19 +1145,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(5);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -1223,7 +1189,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(1);
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Value")
@@ -1249,8 +1215,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AppStatId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("AppExeId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
@@ -1264,11 +1228,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(3);
 
                     b.Property<double>("Span")
-                        .HasColumnType("float")
+                        .HasColumnType("double")
                         .HasColumnOrder(5);
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(6);
 
                     b.Property<int>("UserId")
@@ -1300,32 +1264,30 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AssetId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("AssetTypeId")
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Barcode")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Number")
                         .HasColumnType("int")
@@ -1333,17 +1295,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("SerialNumber")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(6);
 
                     b.Property<string>("SmartCardUID")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<string>("Tag")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -1353,8 +1315,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Barcode")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Barcode")
-                        .HasFilter("[Barcode] IS NOT NULL");
+                        .HasDatabaseName("UQ_Barcode");
 
                     b.HasIndex("CreatedById")
                         .HasDatabaseName("IX_CreatedById");
@@ -1364,8 +1325,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("SmartCardUID")
                         .IsUnique()
-                        .HasDatabaseName("UQ_SmartCardUID")
-                        .HasFilter("[SmartCardUID] IS NOT NULL");
+                        .HasDatabaseName("UQ_SmartCardUID");
 
                     b.ToTable("Asset", (string)null);
                 });
@@ -1378,8 +1338,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AssetTransactionId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("AssetId")
                         .HasColumnType("int")
                         .HasColumnOrder(3);
@@ -1391,11 +1349,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("AssetTypeName")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<DateTime?>("CheckInTime")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("CheckedInById")
@@ -1406,17 +1364,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("RegisterId")
                         .HasColumnType("int");
@@ -1458,34 +1416,32 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AssetTypeId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("PartNumber")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -1511,29 +1467,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("AttributeId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("FriendlyName")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -1559,24 +1513,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("BillProfileId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -1616,8 +1568,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("BillRateId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("BillProfileId")
                         .HasColumnType("int")
                         .HasColumnOrder(1);
@@ -1631,7 +1581,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<decimal>("MinimumFee")
                         .HasPrecision(19, 4)
@@ -1693,8 +1643,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("BillRatePeriodDayId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("BillRateId")
                         .HasColumnType("int");
 
@@ -1736,8 +1684,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("BillRateStepId")
                         .HasColumnOrder(0);
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("Action")
                         .HasColumnType("int")
@@ -1782,13 +1728,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("BundleProductId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
@@ -1797,7 +1741,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Options")
                         .HasColumnType("int");
@@ -1868,8 +1812,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("BundleProductUserPriceId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("BundleProductId")
                         .HasColumnType("int");
 
@@ -1877,13 +1819,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(19, 4)
@@ -1918,8 +1860,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("ClientTaskId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("Activation")
                         .HasColumnType("int");
 
@@ -1927,16 +1867,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("TaskBaseId")
                         .HasColumnType("int");
@@ -1966,8 +1906,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("DeploymentId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("ComparisonLevel")
                         .HasColumnType("int")
                         .HasColumnOrder(10);
@@ -1976,48 +1914,48 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Destination")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("ExcludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(4);
 
                     b.Property<string>("ExcludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(5);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(9);
 
                     b.Property<string>("IncludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(6);
 
                     b.Property<string>("IncludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
@@ -2026,13 +1964,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("RegistryString")
                         .HasMaxLength(16777215)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(8);
 
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -2066,13 +2004,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UseOrder")
                         .HasColumnType("int");
@@ -2102,13 +2040,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("DepositPaymentId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DepositTransactionId")
                         .HasColumnType("int")
@@ -2123,14 +2059,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(9);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("PaymentId")
                         .HasColumnType("int")
@@ -2193,8 +2129,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("DepositTransactionId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)")
@@ -2209,17 +2143,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("RegisterId")
                         .HasColumnType("int");
@@ -2263,13 +2197,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("FeedId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Maximum")
                         .HasColumnType("int")
@@ -2279,18 +2211,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -2312,16 +2244,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("HostId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("HostGroupId")
@@ -2333,19 +2263,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Number")
@@ -2385,8 +2315,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("HostGroupId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("AppGroupId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
@@ -2395,7 +2323,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("DefaultGuestGroupId")
                         .HasColumnType("int")
@@ -2405,12 +2333,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
@@ -2423,7 +2351,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("SkinName")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -2476,8 +2404,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("HostGroupUserBillProfileId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("BillProfileId")
                         .HasColumnType("int")
                         .HasColumnOrder(3);
@@ -2486,7 +2412,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("UserGroupId")
@@ -2518,17 +2444,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("EnablePriorities")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("TimeOutOptions")
                         .HasColumnType("int")
@@ -2556,38 +2482,36 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("HostGroupId")
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsManualPosition")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(4);
 
                     b.Property<bool>("IsReadyTimedOut")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Position")
                         .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<double>("ReadyTime")
-                        .HasColumnType("float")
+                        .HasColumnType("double")
                         .HasColumnOrder(6);
 
                     b.Property<int>("State")
@@ -2595,7 +2519,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(8);
 
                     b.Property<double>("TimeInLine")
-                        .HasColumnType("float")
+                        .HasColumnType("double")
                         .HasColumnOrder(5);
 
                     b.Property<int>("UserId")
@@ -2627,13 +2551,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("HostLayoutGroupId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int")
@@ -2643,12 +2565,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -2686,17 +2608,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<byte[]>("Image")
                         .HasMaxLength(16777215)
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("longblob");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -2720,13 +2642,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("HostLayoutGroupLayoutId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Height")
                         .HasColumnType("int")
@@ -2741,14 +2661,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsHidden")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Width")
                         .HasColumnType("int")
@@ -2788,24 +2708,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("IconId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<byte[]>("Image")
                         .IsRequired()
                         .HasMaxLength(16777215)
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("longblob");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -2826,23 +2744,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("InvoiceId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(12);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("Outstanding")
                         .HasPrecision(19, 4)
@@ -2931,8 +2847,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("InvoiceLineId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal?>("Cost")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)")
@@ -2942,25 +2856,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("InvoiceId")
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(20);
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(21);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("PayType")
                         .HasColumnType("int")
@@ -2990,7 +2904,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Quantity")
@@ -3081,8 +2995,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("InvoicePaymentId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)");
@@ -3091,7 +3003,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("InvoiceId")
                         .HasColumnType("int")
@@ -3101,7 +3013,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("PaymentId")
                         .HasColumnType("int")
@@ -3158,45 +3070,43 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("LicenseId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("Assembly")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Plugin")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<byte[]>("Settings")
                         .HasMaxLength(65535)
-                        .HasColumnType("varbinary(max)")
+                        .HasColumnType("longblob")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -3226,29 +3136,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("LicenseKeyId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("AssignedHostId")
                         .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Comment")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(4);
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("LicenseId")
@@ -3259,12 +3167,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<byte[]>("Value")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("varbinary(max)")
+                        .HasColumnType("longblob")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -3296,8 +3204,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("LogId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("Category")
                         .HasColumnType("int")
                         .HasColumnOrder(6);
@@ -3308,13 +3214,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Hostname")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(8);
 
                     b.Property<int>("MessageType")
@@ -3327,11 +3233,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("ModuleVersion")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(5);
 
                     b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -3357,7 +3263,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<byte[]>("ExceptionData")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("varbinary(max)")
+                        .HasColumnType("longblob")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -3377,29 +3283,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("MappingId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Label")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("MountPoint")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Options")
@@ -3408,7 +3312,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Password")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(7);
 
                     b.Property<int>("Size")
@@ -3418,7 +3322,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Type")
@@ -3427,7 +3331,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Username")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(6);
 
                     b.HasKey("Id");
@@ -3453,31 +3357,29 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("MonetaryUnitId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("Value")
@@ -3609,47 +3511,45 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("NewsId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Data")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(2);
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(6);
 
                     b.Property<string>("MediaUrl")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Url")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -3671,23 +3571,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("NoteId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Options")
                         .HasColumnType("int")
@@ -3700,7 +3598,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(16777215)
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -3721,8 +3619,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("PaymentId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)")
@@ -3737,25 +3633,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("DepositTransactionId")
                         .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int")
@@ -3789,8 +3685,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("DepositTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositTransaction")
-                        .HasFilter("[DepositTransactionId] IS NOT NULL");
+                        .HasDatabaseName("UQ_DepositTransaction");
 
                     b.HasIndex("ModifiedById")
                         .HasDatabaseName("IX_ModifiedById");
@@ -3800,8 +3695,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("PointTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_PointsTransaction")
-                        .HasFilter("[PointTransactionId] IS NOT NULL");
+                        .HasDatabaseName("UQ_PointsTransaction");
 
                     b.HasIndex("RegisterId")
                         .HasDatabaseName("IX_RegisterId");
@@ -3826,11 +3720,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("DisplayOrder")
@@ -3838,35 +3732,35 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(4);
 
                     b.Property<bool>("IsClient")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(10);
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsManager")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(8);
 
                     b.Property<bool>("IsPortal")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(9);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
@@ -3874,7 +3768,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(6);
 
                     b.Property<Guid?>("PaymentProvider")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(11);
 
                     b.Property<decimal>("Surcharge")
@@ -3963,10 +3857,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("PersonalFileId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<bool>("Accessible")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(16);
 
                     b.Property<int>("Activation")
@@ -3975,7 +3867,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Caption")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("CompressionLevel")
@@ -3986,7 +3878,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Deactivation")
                         .HasColumnType("int")
@@ -3994,31 +3886,31 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("ExcludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(9);
 
                     b.Property<string>("ExcludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(10);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(13);
 
                     b.Property<string>("IncludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(11);
 
                     b.Property<string>("IncludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(12);
 
                     b.Property<int>("MaxQuota")
@@ -4029,12 +3921,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
@@ -4044,7 +3936,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Type")
@@ -4077,27 +3969,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("PluginLibraryId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Scope")
                         .HasColumnType("int");
@@ -4125,8 +4015,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("PointTransactionId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("Amount")
                         .HasColumnType("int")
                         .HasColumnOrder(3);
@@ -4139,17 +4027,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("RegisterId")
                         .HasColumnType("int");
@@ -4193,13 +4081,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("PresetTimeSaleId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int")
@@ -4209,7 +4095,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int")
@@ -4271,13 +4157,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("PresetTimeSaleMoneyId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int")
@@ -4287,7 +4171,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("Value")
                         .HasPrecision(19, 4)
@@ -4350,11 +4234,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("Barcode")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(8);
 
                     b.Property<decimal?>("Cost")
@@ -4366,32 +4248,32 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(3);
 
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("OrderOptions")
@@ -4435,8 +4317,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Barcode")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Barcode")
-                        .HasFilter("[Barcode] IS NOT NULL");
+                        .HasDatabaseName("UQ_Barcode");
 
                     b.HasIndex("CreatedById")
                         .HasDatabaseName("IX_CreatedById");
@@ -4465,19 +4346,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductBundleUserPriceId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("PointsPrice")
                         .HasColumnType("int")
@@ -4525,30 +4404,28 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("ProductGroupId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasColumnType("varchar(45)");
 
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
@@ -4620,27 +4497,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductHostHiddenId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("HostGroupId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsHidden")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int")
@@ -4672,25 +4547,23 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductImageId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<byte[]>("Image")
                         .IsRequired()
                         .HasMaxLength(16777215)
-                        .HasColumnType("varbinary(max)")
+                        .HasColumnType("longblob")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -4717,8 +4590,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductOLId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal?>("Cost")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)")
@@ -4728,31 +4599,31 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("DeliveredQuantity")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)");
 
                     b.Property<DateTime?>("DeliveredTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(19);
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(20);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("PayType")
                         .HasColumnType("int")
@@ -4778,7 +4649,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("ProductOrderId")
@@ -4873,35 +4744,33 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductOrderId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeliveredTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("HostId")
                         .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("PointsTotal")
                         .HasColumnType("int")
@@ -4944,7 +4813,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("UserNote")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -4979,13 +4848,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductId");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Options")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -5008,8 +4877,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("ProductPeriodDayId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("Day")
                         .HasColumnType("int");
@@ -5068,23 +4935,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductTaxId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int")
@@ -5188,27 +5053,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductTimeHostDisallowedId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("HostGroupId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsDisallowed")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("ProductTimeId")
                         .HasColumnType("int")
@@ -5239,13 +5102,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductId");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Options")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -5269,8 +5132,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("ProductTimePeriodDayId");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("Day")
                         .HasColumnType("int");
@@ -5317,23 +5178,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductUserDisallowedId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsDisallowed")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int")
@@ -5369,23 +5228,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ProductUserPriceId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("PointsPrice")
                         .HasColumnType("int")
@@ -5433,8 +5290,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("RefundId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)")
@@ -5444,7 +5299,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("DepositTransactionId")
                         .HasColumnType("int")
@@ -5502,37 +5357,35 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("RegisterId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("IdleTimeout")
                         .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(7);
 
                     b.Property<string>("MacAddress")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Number")
@@ -5555,8 +5408,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("MacAddress")
                         .IsUnique()
-                        .HasDatabaseName("UQ_MACAddress")
-                        .HasFilter("[MacAddress] IS NOT NULL");
+                        .HasDatabaseName("UQ_MACAddress");
 
                     b.HasIndex("ModifiedById")
                         .HasDatabaseName("IX_ModifiedById");
@@ -5572,8 +5424,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("RegisterTransactionId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)")
@@ -5583,16 +5433,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(5);
 
                     b.Property<int>("RegisterId")
@@ -5631,24 +5481,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("ReservationId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("ContactEmail")
                         .HasMaxLength(254)
-                        .HasColumnType("nvarchar(254)");
+                        .HasColumnType("varchar(254)");
 
                     b.Property<string>("ContactPhone")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
@@ -5657,15 +5505,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Pin")
                         .IsRequired()
                         .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
+                        .HasColumnType("varchar(6)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -5697,13 +5545,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("ReservationHostId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("HostId")
                         .HasColumnType("int");
@@ -5712,7 +5558,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("PreferedUserId")
                         .HasColumnType("int");
@@ -5748,19 +5594,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("ReservationUserId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("ReservationId")
                         .HasColumnType("int");
@@ -5794,13 +5638,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("SecurityProfileId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DisabledDrives")
                         .HasColumnType("int")
@@ -5810,12 +5652,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -5841,19 +5683,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("SecurityProfilePolicyId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("SecurityProfileId")
                         .HasColumnType("int")
@@ -5886,24 +5726,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("SecurityProfileRestrictionId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Parameter")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("SecurityProfileId")
@@ -5936,33 +5774,31 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("SettingId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("GroupName")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -5988,16 +5824,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ShiftId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("EndTime")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("EndedById")
@@ -6005,18 +5839,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsEnding")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("OperatorId")
                         .HasColumnType("int")
@@ -6027,7 +5861,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(3);
 
                     b.Property<DateTime>("Start")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("StartCash")
@@ -6066,8 +5900,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("ShiftCountId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal>("Actual")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)")
@@ -6077,7 +5909,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("Deposits")
                         .HasPrecision(19, 4)
@@ -6098,10 +5930,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(14);
 
                     b.Property<decimal>("PayIns")
@@ -6172,8 +6004,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("StockTransactionId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)");
@@ -6182,16 +6012,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("OnHand")
                         .HasPrecision(19, 4)
@@ -6245,28 +6075,26 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("TaskId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -6299,24 +6127,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("TaxId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasColumnType("varchar(45)");
 
                     b.Property<int>("UseOrder")
                         .HasColumnType("int");
@@ -6373,26 +6199,24 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("TokenId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("ConfirmationCode")
                         .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
+                        .HasColumnType("varchar(6)");
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("Expires")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -6406,7 +6230,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("varchar(32)");
 
                     b.HasKey("Id");
 
@@ -6434,16 +6258,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UsageId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<double>("Seconds")
-                        .HasColumnType("float")
+                        .HasColumnType("double")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UsageSessionId")
@@ -6473,13 +6295,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UsageSessionId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<double>("CurrentSecond")
-                        .HasColumnType("float")
+                        .HasColumnType("double")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CurrentUsageId")
@@ -6487,7 +6307,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("MinimumFee")
@@ -6495,10 +6315,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("decimal(19,4)");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<double>("NegativeSeconds")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<decimal>("RatesTotal")
                         .HasPrecision(19, 4)
@@ -6533,74 +6353,72 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("UserId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<string>("Address")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime?>("BirthDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("City")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasColumnType("varchar(45)");
 
                     b.Property<string>("Country")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasColumnType("varchar(45)");
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasColumnType("varchar(45)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Identification")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsDisabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasColumnType("varchar(45)");
 
                     b.Property<string>("MobilePhone")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("PostCode")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<int>("Sex")
                         .HasColumnType("int");
 
                     b.Property<string>("SmartCardUID")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
@@ -6613,16 +6431,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Identification")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Identification")
-                        .HasFilter("[Identification] IS NOT NULL");
+                        .HasDatabaseName("UQ_Identification");
 
                     b.HasIndex("ModifiedById")
                         .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("SmartCardUID")
                         .IsUnique()
-                        .HasDatabaseName("UQ_SmartCardUID")
-                        .HasFilter("[SmartCardUID] IS NOT NULL");
+                        .HasDatabaseName("UQ_SmartCardUID");
 
                     b.ToTable("User", (string)null);
                 });
@@ -6635,8 +6451,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UserAttributeId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int>("AttributeId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
@@ -6645,13 +6459,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int")
@@ -6660,7 +6474,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -6692,13 +6506,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<byte[]>("Password")
                         .HasMaxLength(64)
@@ -6746,20 +6560,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("CreditLimit")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -6784,8 +6598,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UserGroupId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("AppGroupId")
                         .HasColumnType("int")
                         .HasColumnOrder(3);
@@ -6801,7 +6613,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("CreditLimit")
                         .HasPrecision(19, 4)
@@ -6814,33 +6626,33 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsAgeRatingEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(16);
 
                     b.Property<bool>("IsNegativeBalanceAllowed")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(10);
 
                     b.Property<bool>("IsWaitingLinePriorityEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
@@ -6955,27 +6767,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UserGroupHostDisallowedId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("HostGroupId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsDisallowed")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UserGroupId")
                         .HasColumnType("int")
@@ -7007,24 +6817,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UserPermissionId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UserId")
@@ -7034,7 +6842,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -7537,17 +7345,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<byte[]>("Picture")
                         .HasMaxLength(16777215)
-                        .HasColumnType("varbinary(max)")
+                        .HasColumnType("longblob")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -7572,50 +7380,48 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UserSessionId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<double>("BilledSpan")
-                        .HasColumnType("float")
+                        .HasColumnType("double")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("EndTime")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(9);
 
                     b.Property<double>("GraceSpan")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<double>("GraceSpanTotal")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<DateTime?>("GraceTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("HostId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<double>("PauseSpan")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<double>("PauseSpanTotal")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<double>("PendSpan")
-                        .HasColumnType("float")
+                        .HasColumnType("double")
                         .HasColumnOrder(8);
 
                     b.Property<double>("PendSpanTotal")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<DateTime?>("PendTime")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("datetime(6)")
                         .HasColumnOrder(7);
 
                     b.Property<int>("Slot")
@@ -7623,7 +7429,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(4);
 
                     b.Property<double>("Span")
-                        .HasColumnType("float")
+                        .HasColumnType("double")
                         .HasColumnOrder(5);
 
                     b.Property<int>("State")
@@ -7656,13 +7462,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("UserSessionChangeId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("HostId")
                         .HasColumnType("int")
@@ -7673,7 +7477,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(5);
 
                     b.Property<double>("Span")
-                        .HasColumnType("float")
+                        .HasColumnType("double")
                         .HasColumnOrder(6);
 
                     b.Property<int>("State")
@@ -7713,24 +7517,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("VariableId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Scope")
@@ -7744,7 +7546,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -7769,19 +7571,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnName("VerificationId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -7817,13 +7617,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnName("VoidId")
                         .HasColumnOrder(0);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("RegisterId")
                         .HasColumnType("int");
@@ -7852,7 +7650,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("UniqueId")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasIndex("Id")
@@ -7876,8 +7674,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("DepositPaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment")
-                        .HasFilter("[DepositPaymentId] IS NOT NULL");
+                        .HasDatabaseName("UQ_DepositPayment");
 
                     b.HasIndex("Id")
                         .IsUnique()
@@ -7904,8 +7701,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("InvoicePaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_InvoicePayment")
-                        .HasFilter("[InvoicePaymentId] IS NOT NULL");
+                        .HasDatabaseName("UQ_InvoicePayment");
 
                     b.HasIndex("ProductOrderId")
                         .HasDatabaseName("IX_ProductOrderId");
@@ -7931,8 +7727,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("DepositPaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment")
-                        .HasFilter("[DepositPaymentId] IS NOT NULL");
+                        .HasDatabaseName("UQ_DepositPayment");
 
                     b.HasIndex("FiscalReceiptId")
                         .HasDatabaseName("IX_FiscalReceiptId");
@@ -7970,13 +7765,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Hostname")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<string>("MACAddress")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasIndex("Id")
@@ -8078,13 +7873,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("StockReturnTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_StockReturnTransaction")
-                        .HasFilter("[StockReturnTransactionId] IS NOT NULL");
+                        .HasDatabaseName("UQ_StockReturnTransaction");
 
                     b.HasIndex("StockTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_StockTransaction")
-                        .HasFilter("[StockTransactionId] IS NOT NULL");
+                        .HasDatabaseName("UQ_StockTransaction");
 
                     b.ToTable("InvoiceLineExtended", (string)null);
                 });
@@ -8118,7 +7911,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("GizmoDALV2.Entities.InvoiceLine");
 
                     b.Property<bool>("IsDepleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("OrderLineId")
                         .HasColumnType("int");
@@ -8308,7 +8101,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("DestinationDirectory")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("Options")
                         .HasColumnType("int");
@@ -8316,7 +8109,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("SourceDirectory")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.ToTable("TaskJunction", (string)null);
                 });
@@ -8328,7 +8121,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("NotificationOptions")
                         .HasColumnType("int");
@@ -8336,7 +8129,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.ToTable("TaskNotification", (string)null);
                 });
@@ -8347,18 +8140,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Arguments")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Password")
                         .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
+                        .HasColumnType("varchar(45)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("ProcessOptions")
@@ -8367,12 +8160,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Username")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<string>("WorkingDirectory")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnOrder(3);
 
                     b.ToTable("TaskProcess", (string)null);
@@ -8385,7 +8178,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Data")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("ProcessOptions")
                         .HasColumnType("int");
@@ -8421,20 +8214,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DisabledDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(254)
-                        .HasColumnType("nvarchar(254)");
+                        .HasColumnType("varchar(254)");
 
                     b.Property<DateTime?>("EnableDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool?>("IsNegativeBalanceAllowed")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsPersonalInfoRequested")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("UserGroupId")
                         .HasColumnType("int");
@@ -8442,12 +8235,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("varchar(30)");
 
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Email")
-                        .HasFilter("[Email] IS NOT NULL");
+                        .HasDatabaseName("UQ_Email");
 
                     b.HasIndex("Id")
                         .IsUnique()
@@ -8503,7 +8295,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<string>("Email")
                         .HasMaxLength(254)
-                        .HasColumnType("nvarchar(254)");
+                        .HasColumnType("varchar(254)");
 
                     b.Property<int>("ShiftOptions")
                         .HasColumnType("int");
@@ -8511,12 +8303,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("varchar(30)");
 
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Email")
-                        .HasFilter("[Email] IS NOT NULL");
+                        .HasDatabaseName("UQ_Email");
 
                     b.HasIndex("Id")
                         .IsUnique()
@@ -8549,7 +8340,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(254)
-                        .HasColumnType("nvarchar(254)");
+                        .HasColumnType("varchar(254)");
 
                     b.HasIndex("Id")
                         .IsUnique()
@@ -8565,7 +8356,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("varchar(20)");
 
                     b.HasIndex("Id")
                         .IsUnique()
@@ -8605,8 +8396,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("OrderLineId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine")
-                        .HasFilter("[OrderLineId] IS NOT NULL");
+                        .HasDatabaseName("UQ_OrderLine");
 
                     b.HasIndex("ProductId")
                         .HasDatabaseName("IX_ProductId");
@@ -8619,7 +8409,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("GizmoDALV2.Entities.InvoiceLineExtended");
 
                     b.Property<bool>("IsDepleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("OrderLineId")
                         .HasColumnType("int");
@@ -8777,7 +8567,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("GizmoDALV2.Entities.UsageUserSession");
 
                     b.Property<DateTime>("BillProfileStamp")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("BillRateId")
                         .HasColumnType("int")
@@ -8830,11 +8620,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("GizmoDALV2.Entities.UserMember");
 
                     b.Property<bool>("IsJoined")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsReserved")
-                        .HasColumnType("bit")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ReservedHostId")
@@ -8847,8 +8637,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("ReservedHostId", "ReservedSlot")
                         .IsUnique()
-                        .HasDatabaseName("UQ_UserGuestHostSlot")
-                        .HasFilter("[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
+                        .HasDatabaseName("UQ_UserGuestHostSlot");
 
                     b.ToTable("UserGuest", (string)null);
                 });
@@ -11707,7 +11496,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("Gizmo.DAL.Entities.Device", null)
                         .WithOne()
                         .HasForeignKey("Gizmo.DAL.Entities.DeviceHdmi", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -11720,7 +11509,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("Gizmo.DAL.Entities.PaymentIntent", null)
                         .WithOne()
                         .HasForeignKey("Gizmo.DAL.Entities.PaymentIntentDeposit", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("DepositPayment");
@@ -11731,7 +11520,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("Gizmo.DAL.Entities.PaymentIntent", null)
                         .WithOne()
                         .HasForeignKey("Gizmo.DAL.Entities.PaymentIntentOrder", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.InvoicePayment", "InvoicePayment")
@@ -11764,7 +11553,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Refund", null)
                         .WithOne()
                         .HasForeignKey("Gizmo.DAL.Entities.RefundDepositPayment", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("DepositPayment");
@@ -11783,7 +11572,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Void", null)
                         .WithOne()
                         .HasForeignKey("Gizmo.DAL.Entities.VoidDepositPayment", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("DepositPayment");
@@ -11794,7 +11583,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Host", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.HostComputer", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -11803,7 +11592,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Host", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.HostEndpoint", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -11817,7 +11606,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.InvoiceLine", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.InvoiceLineExtended", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.StockTransaction", "StockReturnTransaction")
@@ -11841,7 +11630,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.InvoiceLine", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.InvoiceLineSession", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.ProductOLSession", "OrderLine")
@@ -11866,7 +11655,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.InvoiceLine", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.InvoiceLineTimeFixed", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.ProductOLTimeFixed", "OrderLine")
@@ -11883,7 +11672,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.ProductBase", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.ProductBaseExtended", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -11896,7 +11685,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.ProductOL", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.ProductOLExtended", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BundleLine");
@@ -11907,7 +11696,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.ProductOL", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.ProductOLSession", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.UsageSession", "UsageSession")
@@ -11924,7 +11713,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.ProductOL", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.ProductOLTimeFixed", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -11937,7 +11726,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.ProductBase", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.ProductTime", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AppGroup");
@@ -11948,7 +11737,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Refund", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.RefundInvoicePayment", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.Invoice", "Invoice")
@@ -11973,7 +11762,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.TaskBase", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.TaskJunction", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -11982,7 +11771,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.TaskBase", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.TaskNotification", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -11991,7 +11780,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.TaskBase", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.TaskProcess", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -12000,7 +11789,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.TaskBase", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.TaskScript", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -12009,7 +11798,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Usage", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.UsageUserSession", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.UserSession", "UserSession")
@@ -12026,7 +11815,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.User", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.UserMember", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.UserGroup", "UserGroup")
@@ -12043,7 +11832,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Note", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.UserNote", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.UserMember", "User")
@@ -12060,7 +11849,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.User", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.UserOperator", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -12069,7 +11858,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Verification", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.VerificationEmail", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -12078,7 +11867,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Verification", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.VerificationMobilePhone", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -12087,7 +11876,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.Void", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.VoidInvoice", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.Invoice", "Invoice")
@@ -12104,7 +11893,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.InvoiceLineExtended", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.InvoiceLineProduct", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.ProductOLProduct", "OrderLine")
@@ -12129,7 +11918,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.InvoiceLineExtended", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.InvoiceLineTime", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.ProductOLTime", "OrderLine")
@@ -12154,7 +11943,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.ProductBaseExtended", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.Product", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -12163,7 +11952,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.ProductBaseExtended", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.ProductBundle", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -12172,7 +11961,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.ProductOLExtended", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.ProductOLProduct", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.ProductBaseExtended", "Product")
@@ -12189,7 +11978,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.ProductOLExtended", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.ProductOLTime", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.ProductTime", "ProductTime")
@@ -12212,7 +12001,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.UsageUserSession", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.UsageRate", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BillRate");
@@ -12223,7 +12012,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.UsageUserSession", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.UsageTime", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.InvoiceLineTime", "InvoiceLine")
@@ -12240,7 +12029,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.UsageUserSession", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.UsageTimeFixed", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.InvoiceLineTimeFixed", "InvoiceLine")
@@ -12257,7 +12046,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("GizmoDALV2.Entities.UserMember", null)
                         .WithOne()
                         .HasForeignKey("GizmoDALV2.Entities.UserGuest", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GizmoDALV2.Entities.Host", "ReservedHost")

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.MSSQL
+namespace Gizmo.DAL.EFCore.Migrations.Sqlite
 {
     public partial class Initial : Migration
     {
@@ -13,16 +13,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Log",
                 columns: table => new
                 {
-                    LogId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Time = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    HostNumber = table.Column<int>(type: "int", nullable: true),
-                    Hostname = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    ModuleType = table.Column<int>(type: "int", nullable: false),
-                    ModuleVersion = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    Category = table.Column<int>(type: "int", nullable: false),
-                    MessageType = table.Column<int>(type: "int", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: false)
+                    LogId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Time = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    HostNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Hostname = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    ModuleType = table.Column<int>(type: "INTEGER", nullable: false),
+                    ModuleVersion = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    Category = table.Column<int>(type: "INTEGER", nullable: false),
+                    MessageType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Message = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,8 +33,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "LogException",
                 columns: table => new
                 {
-                    LogId = table.Column<int>(type: "int", nullable: false),
-                    ExceptionData = table.Column<byte[]>(type: "varbinary(max)", maxLength: 65535, nullable: false)
+                    LogId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ExceptionData = table.Column<byte[]>(type: "BLOB", maxLength: 65535, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,23 +51,23 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "App",
                 columns: table => new
                 {
-                    AppId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PublisherId = table.Column<int>(type: "int", nullable: true),
-                    DeveloperId = table.Column<int>(type: "int", nullable: true),
-                    AppCategoryId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Version = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    AgeRating = table.Column<int>(type: "int", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DefaultExecutableId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    PublisherId = table.Column<int>(type: "INTEGER", nullable: true),
+                    DeveloperId = table.Column<int>(type: "INTEGER", nullable: true),
+                    AppCategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    ReleaseDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Version = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    AgeRating = table.Column<int>(type: "INTEGER", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    DefaultExecutableId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -78,15 +78,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppCategory",
                 columns: table => new
                 {
-                    AppCategoryId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ParentId = table.Column<int>(type: "int", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppCategoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ParentId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -102,14 +102,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppEnterprise",
                 columns: table => new
                 {
-                    AppEnterpriseId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppEnterpriseId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -120,26 +120,26 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppExe",
                 columns: table => new
                 {
-                    AppExeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AppId = table.Column<int>(type: "int", nullable: false),
-                    Caption = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    ExecutablePath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Arguments = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    WorkingDirectory = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Modes = table.Column<int>(type: "int", nullable: false),
-                    RunMode = table.Column<int>(type: "int", nullable: false),
-                    DefaultDeploymentId = table.Column<int>(type: "int", nullable: true),
-                    ReservationType = table.Column<int>(type: "int", nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Accessible = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppExeId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AppId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Caption = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    ExecutablePath = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Arguments = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    WorkingDirectory = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Modes = table.Column<int>(type: "INTEGER", nullable: false),
+                    RunMode = table.Column<int>(type: "INTEGER", nullable: false),
+                    DefaultDeploymentId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ReservationType = table.Column<int>(type: "INTEGER", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Accessible = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -156,18 +156,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppExeCdImage",
                 columns: table => new
                 {
-                    AppExeCdImageId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AppExeId = table.Column<int>(type: "int", nullable: false),
-                    Path = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    MountOptions = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    DeviceId = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: true),
-                    CheckExitCode = table.Column<bool>(type: "bit", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppExeCdImageId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AppExeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Path = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    MountOptions = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    DeviceId = table.Column<string>(type: "TEXT", maxLength: 3, nullable: true),
+                    CheckExitCode = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -184,13 +184,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppExeDeployment",
                 columns: table => new
                 {
-                    AppExeId = table.Column<int>(type: "int", nullable: false),
-                    DeploymentId = table.Column<int>(type: "int", nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppExeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DeploymentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -207,12 +207,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppExeImage",
                 columns: table => new
                 {
-                    AppExeId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", maxLength: 16777215, nullable: true)
+                    AppExeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Image = table.Column<byte[]>(type: "BLOB", maxLength: 16777215, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -229,13 +229,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppExeLicense",
                 columns: table => new
                 {
-                    AppExeId = table.Column<int>(type: "int", nullable: false),
-                    LicenseId = table.Column<int>(type: "int", nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppExeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LicenseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -252,15 +252,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppExeMaxUser",
                 columns: table => new
                 {
-                    AppExeMaxUserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AppExeId = table.Column<int>(type: "int", nullable: false),
-                    Mode = table.Column<int>(type: "int", nullable: false),
-                    MaxUsers = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppExeMaxUserId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AppExeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Mode = table.Column<int>(type: "INTEGER", nullable: false),
+                    MaxUsers = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -277,13 +277,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppExePersonalFile",
                 columns: table => new
                 {
-                    AppExeId = table.Column<int>(type: "int", nullable: false),
-                    PersonalFileId = table.Column<int>(type: "int", nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppExeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PersonalFileId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -300,17 +300,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppExeTask",
                 columns: table => new
                 {
-                    AppExeTaskId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Activation = table.Column<int>(type: "int", nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AppExeId = table.Column<int>(type: "int", nullable: false),
-                    TaskBaseId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppExeTaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Activation = table.Column<int>(type: "INTEGER", nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    AppExeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaskBaseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -327,14 +327,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppGroup",
                 columns: table => new
                 {
-                    AppGroupId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppGroupId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -345,8 +345,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppGroupApp",
                 columns: table => new
                 {
-                    AppGroupId = table.Column<int>(type: "int", nullable: false),
-                    AppId = table.Column<int>(type: "int", nullable: false)
+                    AppGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AppId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -369,12 +369,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppImage",
                 columns: table => new
                 {
-                    AppId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", maxLength: 16777215, nullable: true)
+                    AppId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Image = table.Column<byte[]>(type: "BLOB", maxLength: 16777215, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -391,18 +391,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppLink",
                 columns: table => new
                 {
-                    AppLinkId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AppId = table.Column<int>(type: "int", nullable: false),
-                    Caption = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Url = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AppLinkId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AppId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Caption = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Url = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -419,10 +419,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppRating",
                 columns: table => new
                 {
-                    AppId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    AppId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Value = table.Column<int>(type: "INTEGER", nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -439,14 +439,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AppStat",
                 columns: table => new
                 {
-                    AppStatId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AppId = table.Column<int>(type: "int", nullable: false),
-                    AppExeId = table.Column<int>(type: "int", nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Span = table.Column<double>(type: "float", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    AppStatId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AppId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AppExeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HostId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Span = table.Column<double>(type: "REAL", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -469,19 +469,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Asset",
                 columns: table => new
                 {
-                    AssetId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AssetTypeId = table.Column<int>(type: "int", nullable: false),
-                    Number = table.Column<int>(type: "int", nullable: false),
-                    Tag = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    SmartCardUID = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Barcode = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    SerialNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AssetId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AssetTypeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Number = table.Column<int>(type: "INTEGER", nullable: false),
+                    Tag = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    SmartCardUID = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Barcode = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    SerialNumber = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -492,21 +492,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AssetTransaction",
                 columns: table => new
                 {
-                    AssetTransactionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AssetTypeId = table.Column<int>(type: "int", nullable: false),
-                    AssetTypeName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    AssetId = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CheckedInById = table.Column<int>(type: "int", nullable: true),
-                    CheckInTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    AssetTransactionId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AssetTypeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AssetTypeName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    AssetId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CheckedInById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CheckInTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -523,15 +523,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "AssetType",
                 columns: table => new
                 {
-                    AssetTypeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    PartNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AssetTypeId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    PartNumber = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -542,14 +542,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Attribute",
                 columns: table => new
                 {
-                    AttributeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    FriendlyName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    AttributeId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    FriendlyName = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -560,13 +560,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "BillProfile",
                 columns: table => new
                 {
-                    BillProfileId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    BillProfileId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -577,16 +577,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "BillRate",
                 columns: table => new
                 {
-                    BillRateId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BillProfileId = table.Column<int>(type: "int", nullable: false),
-                    StartFee = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    MinimumFee = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Rate = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    ChargeEvery = table.Column<int>(type: "int", nullable: false),
-                    ChargeAfter = table.Column<int>(type: "int", nullable: false),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    IsDefault = table.Column<bool>(type: "bit", nullable: false)
+                    BillRateId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BillProfileId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartFee = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    MinimumFee = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Rate = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    ChargeEvery = table.Column<int>(type: "INTEGER", nullable: false),
+                    ChargeAfter = table.Column<int>(type: "INTEGER", nullable: false),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDefault = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -603,10 +603,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "BillRatePeriodDay",
                 columns: table => new
                 {
-                    BillRatePeriodDayId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BillRateId = table.Column<int>(type: "int", nullable: false),
-                    Day = table.Column<int>(type: "int", nullable: false)
+                    BillRatePeriodDayId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BillRateId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Day = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -623,14 +623,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "BillRateStep",
                 columns: table => new
                 {
-                    BillRateStepId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BillRateId = table.Column<int>(type: "int", nullable: false),
-                    Minute = table.Column<int>(type: "int", nullable: false),
-                    Action = table.Column<int>(type: "int", nullable: false),
-                    Charge = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Rate = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    TargetMinute = table.Column<int>(type: "int", nullable: false)
+                    BillRateStepId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BillRateId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Minute = table.Column<int>(type: "INTEGER", nullable: false),
+                    Action = table.Column<int>(type: "INTEGER", nullable: false),
+                    Charge = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Rate = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    TargetMinute = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -647,9 +647,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "BillRatePeriodDayTime",
                 columns: table => new
                 {
-                    StartSecond = table.Column<int>(type: "int", nullable: false),
-                    EndSecond = table.Column<int>(type: "int", nullable: false),
-                    PeriodDayId = table.Column<int>(type: "int", nullable: false)
+                    StartSecond = table.Column<int>(type: "INTEGER", nullable: false),
+                    EndSecond = table.Column<int>(type: "INTEGER", nullable: false),
+                    PeriodDayId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -666,18 +666,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "BundleProduct",
                 columns: table => new
                 {
-                    BundleProductId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductBundleId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    BundleProductId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductBundleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Quantity = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Price = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -688,15 +688,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "BundleProductUserPrice",
                 columns: table => new
                 {
-                    BundleProductUserPriceId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Price = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    BundleProductId = table.Column<int>(type: "int", nullable: false),
-                    UserGroupId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    BundleProductUserPriceId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Price = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    BundleProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -713,16 +713,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ClientTask",
                 columns: table => new
                 {
-                    ClientTaskId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Activation = table.Column<int>(type: "int", nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    TaskBaseId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ClientTaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Activation = table.Column<int>(type: "INTEGER", nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    TaskBaseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -733,23 +733,23 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Deployment",
                 columns: table => new
                 {
-                    DeploymentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Source = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Destination = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ExcludeDirectories = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    ExcludeFiles = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    IncludeDirectories = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    IncludeFiles = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    RegistryString = table.Column<string>(type: "nvarchar(max)", maxLength: 16777215, nullable: true),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ComparisonLevel = table.Column<int>(type: "int", nullable: false),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeploymentId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Source = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Destination = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    ExcludeDirectories = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    ExcludeFiles = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    IncludeDirectories = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    IncludeFiles = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    RegistryString = table.Column<string>(type: "TEXT", maxLength: 16777215, nullable: true),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ComparisonLevel = table.Column<int>(type: "INTEGER", nullable: false),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -760,13 +760,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "DeploymentDeployment",
                 columns: table => new
                 {
-                    ParentId = table.Column<int>(type: "int", nullable: false),
-                    ChildId = table.Column<int>(type: "int", nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ParentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ChildId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -789,22 +789,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "DepositPayment",
                 columns: table => new
                 {
-                    DepositPaymentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DepositTransactionId = table.Column<int>(type: "int", nullable: false),
-                    PaymentId = table.Column<int>(type: "int", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    RefundedAmount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    RefundStatus = table.Column<int>(type: "int", nullable: false),
-                    FiscalReceiptStatus = table.Column<int>(type: "int", nullable: false),
-                    FiscalReceiptId = table.Column<int>(type: "int", nullable: true),
-                    IsVoided = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    DepositPaymentId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DepositTransactionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RefundedAmount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    RefundStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    FiscalReceiptStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    FiscalReceiptId = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsVoided = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -815,19 +815,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "DepositTransaction",
                 columns: table => new
                 {
-                    DepositTransactionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Balance = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    IsVoided = table.Column<bool>(type: "bit", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DepositTransactionId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Balance = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    IsVoided = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -838,14 +838,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Device",
                 columns: table => new
                 {
-                    DeviceId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeviceId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -856,8 +856,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "DeviceHdmi",
                 columns: table => new
                 {
-                    DeviceId = table.Column<int>(type: "int", nullable: false),
-                    UniqueId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    DeviceId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UniqueId = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -866,21 +867,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_DeviceHdmi_Device_DeviceId",
                         column: x => x.DeviceId,
                         principalTable: "Device",
-                        principalColumn: "DeviceId");
+                        principalColumn: "DeviceId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "DeviceHost",
                 columns: table => new
                 {
-                    DeviceHostId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DeviceId = table.Column<int>(type: "int", nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeviceHostId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DeviceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HostId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -897,15 +899,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Feed",
                 columns: table => new
                 {
-                    FeedId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Url = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Maximum = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    FeedId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Url = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Maximum = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -916,16 +918,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "FiscalReceipt",
                 columns: table => new
                 {
-                    FiscalReceiptId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    TaxSystem = table.Column<int>(type: "int", nullable: true),
-                    DocumentNumber = table.Column<int>(type: "int", nullable: true),
-                    Signature = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true)
+                    FiscalReceiptId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaxSystem = table.Column<int>(type: "INTEGER", nullable: true),
+                    DocumentNumber = table.Column<int>(type: "INTEGER", nullable: true),
+                    Signature = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -936,19 +938,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Host",
                 columns: table => new
                 {
-                    HostId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Number = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    HostGroupId = table.Column<int>(type: "int", nullable: true),
-                    State = table.Column<int>(type: "int", nullable: false),
-                    IconId = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    HostId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Number = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    HostGroupId = table.Column<int>(type: "INTEGER", nullable: true),
+                    State = table.Column<int>(type: "INTEGER", nullable: false),
+                    IconId = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -959,9 +961,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "HostComputer",
                 columns: table => new
                 {
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    Hostname = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    MACAddress = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    HostId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Hostname = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    MACAddress = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -970,15 +973,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_HostComputer_Host_HostId",
                         column: x => x.HostId,
                         principalTable: "Host",
-                        principalColumn: "HostId");
+                        principalColumn: "HostId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "HostEndpoint",
                 columns: table => new
                 {
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    MaximumUsers = table.Column<int>(type: "int", nullable: false)
+                    HostId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    MaximumUsers = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -987,25 +992,26 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_HostEndpoint_Host_HostId",
                         column: x => x.HostId,
                         principalTable: "Host",
-                        principalColumn: "HostId");
+                        principalColumn: "HostId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "HostGroup",
                 columns: table => new
                 {
-                    HostGroupId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    AppGroupId = table.Column<int>(type: "int", nullable: true),
-                    SecurityProfileId = table.Column<int>(type: "int", nullable: true),
-                    SkinName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    DefaultGuestGroupId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    HostGroupId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    AppGroupId = table.Column<int>(type: "INTEGER", nullable: true),
+                    SecurityProfileId = table.Column<int>(type: "INTEGER", nullable: true),
+                    SkinName = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    DefaultGuestGroupId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1021,12 +1027,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "HostGroupUserBillProfile",
                 columns: table => new
                 {
-                    HostGroupUserBillProfileId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BillProfileId = table.Column<int>(type: "int", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    HostGroupId = table.Column<int>(type: "int", nullable: false),
-                    UserGroupId = table.Column<int>(type: "int", nullable: false)
+                    HostGroupUserBillProfileId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BillProfileId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    HostGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserGroupId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1049,13 +1055,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "HostGroupWaitingLine",
                 columns: table => new
                 {
-                    HosGroupId = table.Column<int>(type: "int", nullable: false),
-                    TimeOutOptions = table.Column<int>(type: "int", nullable: false),
-                    EnablePriorities = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    HosGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TimeOutOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    EnablePriorities = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1072,20 +1078,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "HostGroupWaitingLineEntry",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    HostGroupId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Position = table.Column<int>(type: "int", nullable: false),
-                    IsManualPosition = table.Column<bool>(type: "bit", nullable: false),
-                    TimeInLine = table.Column<double>(type: "float", nullable: false),
-                    ReadyTime = table.Column<double>(type: "float", nullable: false),
-                    IsReadyTimedOut = table.Column<bool>(type: "bit", nullable: false),
-                    State = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    HostGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Position = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsManualPosition = table.Column<bool>(type: "INTEGER", nullable: false),
+                    TimeInLine = table.Column<double>(type: "REAL", nullable: false),
+                    ReadyTime = table.Column<double>(type: "REAL", nullable: false),
+                    IsReadyTimedOut = table.Column<bool>(type: "INTEGER", nullable: false),
+                    State = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1108,14 +1114,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "HostLayoutGroup",
                 columns: table => new
                 {
-                    HostLayoutGroupId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    HostLayoutGroupId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1126,12 +1132,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "HostLayoutGroupImage",
                 columns: table => new
                 {
-                    HostLayoutGroupId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", maxLength: 16777215, nullable: true)
+                    HostLayoutGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Image = table.Column<byte[]>(type: "BLOB", maxLength: 16777215, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1148,19 +1154,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "HostLayoutGroupLayout",
                 columns: table => new
                 {
-                    HostLayoutGroupLayoutId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    HostLayoutGroupId = table.Column<int>(type: "int", nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    X = table.Column<int>(type: "int", nullable: false),
-                    Y = table.Column<int>(type: "int", nullable: false),
-                    Height = table.Column<int>(type: "int", nullable: false),
-                    Width = table.Column<int>(type: "int", nullable: false),
-                    IsHidden = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    HostLayoutGroupLayoutId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    HostLayoutGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HostId = table.Column<int>(type: "INTEGER", nullable: false),
+                    X = table.Column<int>(type: "INTEGER", nullable: false),
+                    Y = table.Column<int>(type: "INTEGER", nullable: false),
+                    Height = table.Column<int>(type: "INTEGER", nullable: false),
+                    Width = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsHidden = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1183,13 +1189,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Icon",
                 columns: table => new
                 {
-                    IconId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", maxLength: 16777215, nullable: false)
+                    IconId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Image = table.Column<byte[]>(type: "BLOB", maxLength: 16777215, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1200,26 +1206,26 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Invoice",
                 columns: table => new
                 {
-                    InvoiceId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductOrderId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    SubTotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PointsTotal = table.Column<int>(type: "int", nullable: false),
-                    TaxTotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Outstanding = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    OutstandngPoints = table.Column<int>(type: "int", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    IsVoided = table.Column<bool>(type: "bit", nullable: false),
-                    SaleFiscalReceiptStatus = table.Column<int>(type: "int", nullable: false),
-                    ReturnFiscalReceiptStatus = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    InvoiceId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductOrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    SubTotal = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PointsTotal = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaxTotal = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Total = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Outstanding = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    OutstandngPoints = table.Column<int>(type: "INTEGER", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsVoided = table.Column<bool>(type: "INTEGER", nullable: false),
+                    SaleFiscalReceiptStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    ReturnFiscalReceiptStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1230,14 +1236,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "InvoiceFiscalReceipt",
                 columns: table => new
                 {
-                    InvoiceId = table.Column<int>(type: "int", nullable: false),
-                    FiscalReceiptId = table.Column<int>(type: "int", nullable: false),
-                    InvoiceFiscalReceiptId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true)
+                    InvoiceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FiscalReceiptId = table.Column<int>(type: "INTEGER", nullable: false),
+                    InvoiceFiscalReceiptId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1260,35 +1266,35 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "InvoiceLine",
                 columns: table => new
                 {
-                    InvoiceLineId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    InvoiceId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    ProductName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    UnitListPrice = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    UnitPointsPrice = table.Column<int>(type: "int", nullable: false),
-                    UnitPointsListPrice = table.Column<int>(type: "int", nullable: true),
-                    UnitCost = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    Cost = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    TaxRate = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PreTaxTotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PointsTotal = table.Column<int>(type: "int", nullable: false),
-                    Points = table.Column<int>(type: "int", nullable: true),
-                    PointsAward = table.Column<int>(type: "int", nullable: false),
-                    TaxTotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PayType = table.Column<int>(type: "int", nullable: false),
-                    PointsTransactionId = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IsVoided = table.Column<bool>(type: "bit", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    InvoiceLineId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    InvoiceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Quantity = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    UnitListPrice = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    UnitPointsPrice = table.Column<int>(type: "INTEGER", nullable: false),
+                    UnitPointsListPrice = table.Column<int>(type: "INTEGER", nullable: true),
+                    UnitCost = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    Cost = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    TaxRate = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PreTaxTotal = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Total = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PointsTotal = table.Column<int>(type: "INTEGER", nullable: false),
+                    Points = table.Column<int>(type: "INTEGER", nullable: true),
+                    PointsAward = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaxTotal = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PayType = table.Column<int>(type: "INTEGER", nullable: false),
+                    PointsTransactionId = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsVoided = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1305,10 +1311,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "InvoiceLineExtended",
                 columns: table => new
                 {
-                    InvoiceLineId = table.Column<int>(type: "int", nullable: false),
-                    BundleLineId = table.Column<int>(type: "int", nullable: true),
-                    StockTransactionId = table.Column<int>(type: "int", nullable: true),
-                    StockReturnTransactionId = table.Column<int>(type: "int", nullable: true)
+                    InvoiceLineId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BundleLineId = table.Column<int>(type: "INTEGER", nullable: true),
+                    StockTransactionId = table.Column<int>(type: "INTEGER", nullable: true),
+                    StockReturnTransactionId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1317,16 +1324,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_InvoiceLineExtended_InvoiceLine_InvoiceLineId",
                         column: x => x.InvoiceLineId,
                         principalTable: "InvoiceLine",
-                        principalColumn: "InvoiceLineId");
+                        principalColumn: "InvoiceLineId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "InvoiceLineProduct",
                 columns: table => new
                 {
-                    InvoiceLineId = table.Column<int>(type: "int", nullable: false),
-                    OrderLineId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false)
+                    InvoiceLineId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    OrderLineId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1335,16 +1344,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_InvoiceLineProduct_InvoiceLineExtended_InvoiceLineId",
                         column: x => x.InvoiceLineId,
                         principalTable: "InvoiceLineExtended",
-                        principalColumn: "InvoiceLineId");
+                        principalColumn: "InvoiceLineId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "InvoiceLineSession",
                 columns: table => new
                 {
-                    InvoiceLineId = table.Column<int>(type: "int", nullable: false),
-                    OrderLineId = table.Column<int>(type: "int", nullable: false),
-                    UsageSessionId = table.Column<int>(type: "int", nullable: false)
+                    InvoiceLineId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    OrderLineId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UsageSessionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1353,17 +1364,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_InvoiceLineSession_InvoiceLine_InvoiceLineId",
                         column: x => x.InvoiceLineId,
                         principalTable: "InvoiceLine",
-                        principalColumn: "InvoiceLineId");
+                        principalColumn: "InvoiceLineId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "InvoiceLineTime",
                 columns: table => new
                 {
-                    InvoiceLineId = table.Column<int>(type: "int", nullable: false),
-                    OrderLineId = table.Column<int>(type: "int", nullable: false),
-                    ProductTimeId = table.Column<int>(type: "int", nullable: false),
-                    IsDepleted = table.Column<bool>(type: "bit", nullable: false)
+                    InvoiceLineId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    OrderLineId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductTimeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDepleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1372,16 +1385,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_InvoiceLineTime_InvoiceLineExtended_InvoiceLineId",
                         column: x => x.InvoiceLineId,
                         principalTable: "InvoiceLineExtended",
-                        principalColumn: "InvoiceLineId");
+                        principalColumn: "InvoiceLineId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "InvoiceLineTimeFixed",
                 columns: table => new
                 {
-                    InvoiceLineId = table.Column<int>(type: "int", nullable: false),
-                    OrderLineId = table.Column<int>(type: "int", nullable: false),
-                    IsDepleted = table.Column<bool>(type: "bit", nullable: false)
+                    InvoiceLineId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    OrderLineId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDepleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1390,27 +1405,28 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_InvoiceLineTimeFixed_InvoiceLine_InvoiceLineId",
                         column: x => x.InvoiceLineId,
                         principalTable: "InvoiceLine",
-                        principalColumn: "InvoiceLineId");
+                        principalColumn: "InvoiceLineId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "InvoicePayment",
                 columns: table => new
                 {
-                    InvoicePaymentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    InvoiceId = table.Column<int>(type: "int", nullable: false),
-                    PaymentId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    RefundedAmount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    RefundStatus = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    InvoicePaymentId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    InvoiceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RefundedAmount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    RefundStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1427,17 +1443,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "License",
                 columns: table => new
                 {
-                    LicenseId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Assembly = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Plugin = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Settings = table.Column<byte[]>(type: "varbinary(max)", maxLength: 65535, nullable: true),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    LicenseId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Assembly = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Plugin = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Settings = table.Column<byte[]>(type: "BLOB", maxLength: 65535, nullable: true),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1448,18 +1464,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "LicenseKey",
                 columns: table => new
                 {
-                    LicenseKeyId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LicenseId = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<byte[]>(type: "varbinary(max)", maxLength: 65535, nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AssignedHostId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    LicenseKeyId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    LicenseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Value = table.Column<byte[]>(type: "BLOB", maxLength: 65535, nullable: false),
+                    Comment = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    AssignedHostId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1481,20 +1497,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Mapping",
                 columns: table => new
                 {
-                    MappingId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Label = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    Source = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    MountPoint = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Size = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    MappingId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Label = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    Source = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    MountPoint = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Size = table.Column<int>(type: "INTEGER", nullable: false),
+                    Username = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    Password = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1505,16 +1521,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "MonetaryUnit",
                 columns: table => new
                 {
-                    MonetaryUnitId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    MonetaryUnitId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Value = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1525,18 +1541,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "News",
                 columns: table => new
                 {
-                    NewsId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Data = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    Url = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    MediaUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    NewsId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Data = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    Url = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    MediaUrl = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1547,16 +1563,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Note",
                 columns: table => new
                 {
-                    NoteId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    Sevirity = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(max)", maxLength: 16777215, nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    NoteId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    Sevirity = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Text = table.Column<string>(type: "TEXT", maxLength: 16777215, nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1567,24 +1583,24 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Payment",
                 columns: table => new
                 {
-                    PaymentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    AmountReceived = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IsVoided = table.Column<bool>(type: "bit", nullable: false),
-                    DepositTransactionId = table.Column<int>(type: "int", nullable: true),
-                    PointTransactionId = table.Column<int>(type: "int", nullable: true),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    RefundedAmount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    RefundStatus = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PaymentId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    AmountReceived = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsVoided = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DepositTransactionId = table.Column<int>(type: "INTEGER", nullable: true),
+                    PointTransactionId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RefundedAmount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    RefundStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1600,20 +1616,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "PaymentIntent",
                 columns: table => new
                 {
-                    PaymentIntentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    State = table.Column<int>(type: "int", nullable: false),
-                    TransactionId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    TransactionTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Provider = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PaymentIntentId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    State = table.Column<int>(type: "INTEGER", nullable: false),
+                    TransactionId = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    TransactionTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Provider = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1624,8 +1640,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "PaymentIntentDeposit",
                 columns: table => new
                 {
-                    PaymentIntentId = table.Column<int>(type: "int", nullable: false),
-                    DepositPaymentId = table.Column<int>(type: "int", nullable: true)
+                    PaymentIntentId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DepositPaymentId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1639,16 +1656,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_PaymentIntentDeposit_PaymentIntent_PaymentIntentId",
                         column: x => x.PaymentIntentId,
                         principalTable: "PaymentIntent",
-                        principalColumn: "PaymentIntentId");
+                        principalColumn: "PaymentIntentId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "PaymentIntentOrder",
                 columns: table => new
                 {
-                    PaymentIntentId = table.Column<int>(type: "int", nullable: false),
-                    ProductOrderId = table.Column<int>(type: "int", nullable: false),
-                    InvoicePaymentId = table.Column<int>(type: "int", nullable: true)
+                    PaymentIntentId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductOrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    InvoicePaymentId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1662,29 +1681,30 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_PaymentIntentOrder_PaymentIntent_PaymentIntentId",
                         column: x => x.PaymentIntentId,
                         principalTable: "PaymentIntent",
-                        principalColumn: "PaymentIntentId");
+                        principalColumn: "PaymentIntentId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "PaymentMethod",
                 columns: table => new
                 {
-                    PaymentMethodId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Surcharge = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    IsClient = table.Column<bool>(type: "bit", nullable: false),
-                    IsManager = table.Column<bool>(type: "bit", nullable: false),
-                    IsPortal = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    PaymentProvider = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PaymentMethodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Surcharge = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsClient = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsManager = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsPortal = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    PaymentProvider = table.Column<Guid>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1695,28 +1715,28 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "PersonalFile",
                 columns: table => new
                 {
-                    PersonalFileId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Caption = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Source = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Activation = table.Column<int>(type: "int", nullable: false),
-                    Deactivation = table.Column<int>(type: "int", nullable: false),
-                    MaxQuota = table.Column<int>(type: "int", nullable: false),
-                    CompressionLevel = table.Column<int>(type: "int", nullable: false),
-                    ExcludeDirectories = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    ExcludeFiles = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    IncludeDirectories = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    IncludeFiles = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    Accessible = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PersonalFileId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Caption = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Source = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Activation = table.Column<int>(type: "INTEGER", nullable: false),
+                    Deactivation = table.Column<int>(type: "INTEGER", nullable: false),
+                    MaxQuota = table.Column<int>(type: "INTEGER", nullable: false),
+                    CompressionLevel = table.Column<int>(type: "INTEGER", nullable: false),
+                    ExcludeDirectories = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    ExcludeFiles = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    IncludeDirectories = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    IncludeFiles = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    Accessible = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1727,15 +1747,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "PluginLibrary",
                 columns: table => new
                 {
-                    PluginLibraryId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Scope = table.Column<int>(type: "int", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PluginLibraryId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FileName = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Scope = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1746,19 +1766,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "PointTransaction",
                 columns: table => new
                 {
-                    PointTransactionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<int>(type: "int", nullable: false),
-                    Balance = table.Column<int>(type: "int", nullable: false),
-                    IsVoided = table.Column<bool>(type: "bit", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PointTransactionId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<int>(type: "INTEGER", nullable: false),
+                    Balance = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsVoided = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1769,14 +1789,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "PresetTimeSale",
                 columns: table => new
                 {
-                    PresetTimeSaleId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<int>(type: "int", nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PresetTimeSaleId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Value = table.Column<int>(type: "INTEGER", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1787,14 +1807,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "PresetTimeSaleMoney",
                 columns: table => new
                 {
-                    PresetTimeSaleMoneyId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    PresetTimeSaleMoneyId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Value = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1805,7 +1825,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Product",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true)
                 },
                 constraints: table =>
                 {
@@ -1816,29 +1837,29 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductBase",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductGroupId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Cost = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    Points = table.Column<int>(type: "int", nullable: true),
-                    PointsPrice = table.Column<int>(type: "int", nullable: true),
-                    Barcode = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    OrderOptions = table.Column<int>(type: "int", nullable: false),
-                    PurchaseOptions = table.Column<int>(type: "int", nullable: false),
-                    StockOptions = table.Column<int>(type: "int", nullable: false),
-                    StockAlert = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    StockProductId = table.Column<int>(type: "int", nullable: true),
-                    StockProductAmount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: true),
+                    Price = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Cost = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    Points = table.Column<int>(type: "INTEGER", nullable: true),
+                    PointsPrice = table.Column<int>(type: "INTEGER", nullable: true),
+                    Barcode = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    OrderOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    PurchaseOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    StockOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    StockAlert = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    StockProductId = table.Column<int>(type: "INTEGER", nullable: true),
+                    StockProductAmount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1854,7 +1875,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductBaseExtended",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true)
                 },
                 constraints: table =>
                 {
@@ -1863,17 +1885,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_ProductBaseExtended_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
-                        principalColumn: "ProductId");
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ProductPeriod",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Options = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1890,18 +1913,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductTime",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    Minutes = table.Column<int>(type: "int", nullable: false),
-                    WeekDayMaxMinutes = table.Column<int>(type: "int", nullable: true),
-                    WeekEndMaxMinutes = table.Column<int>(type: "int", nullable: true),
-                    AppGroupId = table.Column<int>(type: "int", nullable: true),
-                    ExpiresAfter = table.Column<int>(type: "int", nullable: false),
-                    ExpirationOptions = table.Column<int>(type: "int", nullable: false),
-                    ExpireFromOptions = table.Column<int>(type: "int", nullable: false),
-                    UsageOptions = table.Column<int>(type: "int", nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    ExpireAfterType = table.Column<int>(type: "int", nullable: false),
-                    ExpireAtDayTimeMinute = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Minutes = table.Column<int>(type: "INTEGER", nullable: false),
+                    WeekDayMaxMinutes = table.Column<int>(type: "INTEGER", nullable: true),
+                    WeekEndMaxMinutes = table.Column<int>(type: "INTEGER", nullable: true),
+                    AppGroupId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ExpiresAfter = table.Column<int>(type: "INTEGER", nullable: false),
+                    ExpirationOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    ExpireFromOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    UsageOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    ExpireAfterType = table.Column<int>(type: "INTEGER", nullable: false),
+                    ExpireAtDayTimeMinute = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1915,15 +1939,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_ProductTime_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
-                        principalColumn: "ProductId");
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ProductBundle",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    BundleStockOptions = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BundleStockOptions = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1932,17 +1958,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_ProductBundle_ProductBaseExtended_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBaseExtended",
-                        principalColumn: "ProductId");
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ProductPeriodDay",
                 columns: table => new
                 {
-                    ProductPeriodDayId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductPeriodId = table.Column<int>(type: "int", nullable: false),
-                    Day = table.Column<int>(type: "int", nullable: false)
+                    ProductPeriodDayId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductPeriodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Day = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1959,10 +1986,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductTimePeriod",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Options = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1979,9 +2006,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductPeriodDayTime",
                 columns: table => new
                 {
-                    StartSecond = table.Column<int>(type: "int", nullable: false),
-                    EndSecond = table.Column<int>(type: "int", nullable: false),
-                    PeriodDayId = table.Column<int>(type: "int", nullable: false)
+                    StartSecond = table.Column<int>(type: "INTEGER", nullable: false),
+                    EndSecond = table.Column<int>(type: "INTEGER", nullable: false),
+                    PeriodDayId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1998,10 +2025,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductTimePeriodDay",
                 columns: table => new
                 {
-                    ProductTimePeriodDayId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductTimePeriodId = table.Column<int>(type: "int", nullable: false),
-                    Day = table.Column<int>(type: "int", nullable: false)
+                    ProductTimePeriodDayId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductTimePeriodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Day = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2018,9 +2045,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductTimePeriodDayTime",
                 columns: table => new
                 {
-                    StartSecond = table.Column<int>(type: "int", nullable: false),
-                    EndSecond = table.Column<int>(type: "int", nullable: false),
-                    PeriodDayId = table.Column<int>(type: "int", nullable: false)
+                    StartSecond = table.Column<int>(type: "INTEGER", nullable: false),
+                    EndSecond = table.Column<int>(type: "INTEGER", nullable: false),
+                    PeriodDayId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2037,17 +2064,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductBundleUserPrice",
                 columns: table => new
                 {
-                    ProductBundleUserPriceId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductBundleId = table.Column<int>(type: "int", nullable: false),
-                    UserGroupId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    PointsPrice = table.Column<int>(type: "int", nullable: true),
-                    PurchaseOptions = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductBundleUserPriceId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductBundleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Price = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    PointsPrice = table.Column<int>(type: "INTEGER", nullable: true),
+                    PurchaseOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2063,17 +2090,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductGroup",
                 columns: table => new
                 {
-                    ProductGroupId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    ParentId = table.Column<int>(type: "int", nullable: true),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    SortOption = table.Column<int>(type: "int", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductGroupId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    ParentId = table.Column<int>(type: "INTEGER", nullable: true),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    SortOption = table.Column<int>(type: "INTEGER", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2089,15 +2116,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductHostHidden",
                 columns: table => new
                 {
-                    ProductHostHiddenId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    HostGroupId = table.Column<int>(type: "int", nullable: false),
-                    IsHidden = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductHostHiddenId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HostGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsHidden = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2120,14 +2147,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductImage",
                 columns: table => new
                 {
-                    ProductImageId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", maxLength: 16777215, nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductImageId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Image = table.Column<byte[]>(type: "BLOB", maxLength: 16777215, nullable: false),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2144,37 +2171,37 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductOL",
                 columns: table => new
                 {
-                    ProductOLId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductOrderId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    ProductName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    UnitListPrice = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    UnitPointsPrice = table.Column<int>(type: "int", nullable: false),
-                    UnitPointsListPrice = table.Column<int>(type: "int", nullable: true),
-                    UnitCost = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    Cost = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    TaxRate = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PreTaxTotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PointsTotal = table.Column<int>(type: "int", nullable: false),
-                    Points = table.Column<int>(type: "int", nullable: true),
-                    PointsAward = table.Column<int>(type: "int", nullable: false),
-                    TaxTotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PayType = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IsVoided = table.Column<bool>(type: "bit", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    IsDelivered = table.Column<bool>(type: "bit", nullable: false),
-                    DeliveredQuantity = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    DeliveredTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductOLId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductOrderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Quantity = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    UnitListPrice = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    UnitPointsPrice = table.Column<int>(type: "INTEGER", nullable: false),
+                    UnitPointsListPrice = table.Column<int>(type: "INTEGER", nullable: true),
+                    UnitCost = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    Cost = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    TaxRate = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PreTaxTotal = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Total = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PointsTotal = table.Column<int>(type: "INTEGER", nullable: false),
+                    Points = table.Column<int>(type: "INTEGER", nullable: true),
+                    PointsAward = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaxTotal = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PayType = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsVoided = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsDelivered = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DeliveredQuantity = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    DeliveredTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2185,7 +2212,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductOLTimeFixed",
                 columns: table => new
                 {
-                    ProductOLId = table.Column<int>(type: "int", nullable: false)
+                    ProductOLId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true)
                 },
                 constraints: table =>
                 {
@@ -2194,15 +2222,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_ProductOLTimeFixed_ProductOL_ProductOLId",
                         column: x => x.ProductOLId,
                         principalTable: "ProductOL",
-                        principalColumn: "ProductOLId");
+                        principalColumn: "ProductOLId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ProductOLExtended",
                 columns: table => new
                 {
-                    ProductOLId = table.Column<int>(type: "int", nullable: false),
-                    BundleLineId = table.Column<int>(type: "int", nullable: true)
+                    ProductOLId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BundleLineId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2211,15 +2241,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_ProductOLExtended_ProductOL_ProductOLId",
                         column: x => x.ProductOLId,
                         principalTable: "ProductOL",
-                        principalColumn: "ProductOLId");
+                        principalColumn: "ProductOLId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ProductOLProduct",
                 columns: table => new
                 {
-                    ProductOLId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false)
+                    ProductOLId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2233,15 +2265,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_ProductOLProduct_ProductOLExtended_ProductOLId",
                         column: x => x.ProductOLId,
                         principalTable: "ProductOLExtended",
-                        principalColumn: "ProductOLId");
+                        principalColumn: "ProductOLId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ProductOLTime",
                 columns: table => new
                 {
-                    ProductOLId = table.Column<int>(type: "int", nullable: false),
-                    ProductTimeId = table.Column<int>(type: "int", nullable: false)
+                    ProductOLId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductTimeId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2250,7 +2284,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_ProductOLTime_ProductOLExtended_ProductOLId",
                         column: x => x.ProductOLId,
                         principalTable: "ProductOLExtended",
-                        principalColumn: "ProductOLId");
+                        principalColumn: "ProductOLId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ProductOLTime_ProductTime_ProductTimeId",
                         column: x => x.ProductTimeId,
@@ -2262,8 +2297,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductOLSession",
                 columns: table => new
                 {
-                    ProductOLId = table.Column<int>(type: "int", nullable: false),
-                    UsageSessionId = table.Column<int>(type: "int", nullable: false)
+                    ProductOLId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UsageSessionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2272,35 +2308,36 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_ProductOLSession_ProductOL_ProductOLId",
                         column: x => x.ProductOLId,
                         principalTable: "ProductOL",
-                        principalColumn: "ProductOLId");
+                        principalColumn: "ProductOLId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ProductOrder",
                 columns: table => new
                 {
-                    ProductOrderId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    SubTotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PointsTotal = table.Column<int>(type: "int", nullable: false),
-                    Tax = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IsVoided = table.Column<bool>(type: "bit", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    PreferedPaymentMethodId = table.Column<int>(type: "int", nullable: true),
-                    IsDelivered = table.Column<bool>(type: "bit", nullable: false),
-                    DeliveredTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Source = table.Column<int>(type: "int", nullable: false),
-                    UserNote = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductOrderId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    SubTotal = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Total = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PointsTotal = table.Column<int>(type: "INTEGER", nullable: false),
+                    Tax = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    HostId = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsVoided = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    PreferedPaymentMethodId = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsDelivered = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DeliveredTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Source = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserNote = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2321,16 +2358,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductTax",
                 columns: table => new
                 {
-                    ProductTaxId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    TaxId = table.Column<int>(type: "int", nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductTaxId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaxId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2347,15 +2384,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductTimeHostDisallowed",
                 columns: table => new
                 {
-                    ProductTimeHostDisallowedId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductTimeId = table.Column<int>(type: "int", nullable: false),
-                    HostGroupId = table.Column<int>(type: "int", nullable: false),
-                    IsDisallowed = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductTimeHostDisallowedId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductTimeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HostGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDisallowed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2377,15 +2414,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductUserDisallowed",
                 columns: table => new
                 {
-                    ProductUserDisallowedId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    UserGroupId = table.Column<int>(type: "int", nullable: false),
-                    IsDisallowed = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ProductUserDisallowedId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDisallowed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2402,18 +2439,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ProductUserPrice",
                 columns: table => new
                 {
-                    ProductUserPriceId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    UserGroupId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    PointsPrice = table.Column<int>(type: "int", nullable: true),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PurchaseOptions = table.Column<int>(type: "int", nullable: false)
+                    ProductUserPriceId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Price = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    PointsPrice = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    PurchaseOptions = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2430,17 +2467,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Refund",
                 columns: table => new
                 {
-                    RefundId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PaymentId = table.Column<int>(type: "int", nullable: true),
-                    Amount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    DepositTransactionId = table.Column<int>(type: "int", nullable: true),
-                    PointTransactionId = table.Column<int>(type: "int", nullable: true),
-                    RefundMethodId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true)
+                    RefundId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PaymentId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Amount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    DepositTransactionId = table.Column<int>(type: "INTEGER", nullable: true),
+                    PointTransactionId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RefundMethodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2472,10 +2509,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "RefundDepositPayment",
                 columns: table => new
                 {
-                    RefundId = table.Column<int>(type: "int", nullable: false),
-                    DepositPaymentId = table.Column<int>(type: "int", nullable: true),
-                    FiscalReceiptStatus = table.Column<int>(type: "int", nullable: false),
-                    FiscalReceiptId = table.Column<int>(type: "int", nullable: true)
+                    RefundId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DepositPaymentId = table.Column<int>(type: "INTEGER", nullable: true),
+                    FiscalReceiptStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    FiscalReceiptId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2496,16 +2534,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_RefundDepositPayment_Refund_RefundId",
                         column: x => x.RefundId,
                         principalTable: "Refund",
-                        principalColumn: "RefundId");
+                        principalColumn: "RefundId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "RefundInvoicePayment",
                 columns: table => new
                 {
-                    RefundId = table.Column<int>(type: "int", nullable: false),
-                    InvoicePaymentId = table.Column<int>(type: "int", nullable: false),
-                    InvoiceId = table.Column<int>(type: "int", nullable: false)
+                    RefundId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    InvoicePaymentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    InvoiceId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2526,26 +2566,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_RefundInvoicePayment_Refund_RefundId",
                         column: x => x.RefundId,
                         principalTable: "Refund",
-                        principalColumn: "RefundId");
+                        principalColumn: "RefundId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Register",
                 columns: table => new
                 {
-                    RegisterId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Number = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    MacAddress = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    StartCash = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    IdleTimeout = table.Column<int>(type: "int", nullable: true),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Number = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    MacAddress = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    StartCash = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    IdleTimeout = table.Column<int>(type: "INTEGER", nullable: true),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2556,17 +2597,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "RegisterTransaction",
                 columns: table => new
                 {
-                    RegisterTransactionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RegisterId = table.Column<int>(type: "int", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    Amount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    RegisterTransactionId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Amount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Note = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2583,20 +2624,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Reservation",
                 columns: table => new
                 {
-                    ReservationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    Pin = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Duration = table.Column<int>(type: "int", nullable: false),
-                    ContactPhone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    ContactEmail = table.Column<string>(type: "nvarchar(254)", maxLength: 254, nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ReservationId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Pin = table.Column<string>(type: "TEXT", maxLength: 6, nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
+                    ContactPhone = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    ContactEmail = table.Column<string>(type: "TEXT", maxLength: 254, nullable: true),
+                    Note = table.Column<string>(type: "TEXT", nullable: true),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2607,15 +2648,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ReservationHost",
                 columns: table => new
                 {
-                    ReservationHostId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ReservationId = table.Column<int>(type: "int", nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    PreferedUserId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ReservationHostId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ReservationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HostId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PreferedUserId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2638,14 +2679,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ReservationUser",
                 columns: table => new
                 {
-                    ReservationUserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ReservationId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ReservationUserId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ReservationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2662,14 +2703,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "SecurityProfile",
                 columns: table => new
                 {
-                    SecurityProfileId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    DisabledDrives = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    SecurityProfileId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    DisabledDrives = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2680,14 +2721,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "SecurityProfilePolicy",
                 columns: table => new
                 {
-                    SecurityProfilePolicyId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SecurityProfileId = table.Column<int>(type: "int", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    SecurityProfilePolicyId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SecurityProfileId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2704,15 +2745,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "SecurityProfileRestriction",
                 columns: table => new
                 {
-                    SecurityProfileRestrictionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SecurityProfileId = table.Column<int>(type: "int", nullable: false),
-                    Parameter = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    SecurityProfileRestrictionId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SecurityProfileId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Parameter = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2729,15 +2770,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Setting",
                 columns: table => new
                 {
-                    SettingId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    GroupName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    SettingId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    GroupName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    Value = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2748,20 +2789,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Shift",
                 columns: table => new
                 {
-                    ShiftId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    OperatorId = table.Column<int>(type: "int", nullable: false),
-                    RegisterId = table.Column<int>(type: "int", nullable: false),
-                    Start = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StartCash = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    IsEnding = table.Column<bool>(type: "bit", nullable: false),
-                    EndedById = table.Column<int>(type: "int", nullable: true),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    OperatorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Start = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    StartCash = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    IsEnding = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EndedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    EndTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2778,26 +2819,26 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ShiftCount",
                 columns: table => new
                 {
-                    ShiftCountId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ShiftId = table.Column<int>(type: "int", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "int", nullable: false),
-                    StartCash = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Sales = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Deposits = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PayIns = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Withdrawals = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PayOuts = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Refunds = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Voids = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Expected = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Actual = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Difference = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ShiftCountId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartCash = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Sales = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Deposits = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PayIns = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Withdrawals = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PayOuts = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Refunds = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Voids = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Expected = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Actual = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Difference = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Note = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2820,22 +2861,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "StockTransaction",
                 columns: table => new
                 {
-                    StockTransactionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    SourceProductId = table.Column<int>(type: "int", nullable: true),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    OnHand = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    SourceProductAmount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    SourceProductOnHand = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    IsVoided = table.Column<bool>(type: "bit", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    StockTransactionId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SourceProductId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    OnHand = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    SourceProductAmount = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    SourceProductOnHand = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: true),
+                    IsVoided = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2857,14 +2898,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "TaskBase",
                 columns: table => new
                 {
-                    TaskId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2875,10 +2916,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "TaskJunction",
                 columns: table => new
                 {
-                    TaskId = table.Column<int>(type: "int", nullable: false),
-                    SourceDirectory = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    DestinationDirectory = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Options = table.Column<int>(type: "int", nullable: false)
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SourceDirectory = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    DestinationDirectory = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2887,17 +2929,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_TaskJunction_TaskBase_TaskId",
                         column: x => x.TaskId,
                         principalTable: "TaskBase",
-                        principalColumn: "TaskId");
+                        principalColumn: "TaskId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "TaskNotification",
                 columns: table => new
                 {
-                    TaskId = table.Column<int>(type: "int", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: false),
-                    NotificationOptions = table.Column<int>(type: "int", nullable: false)
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Message = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: false),
+                    NotificationOptions = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2906,20 +2950,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_TaskNotification_TaskBase_TaskId",
                         column: x => x.TaskId,
                         principalTable: "TaskBase",
-                        principalColumn: "TaskId");
+                        principalColumn: "TaskId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "TaskProcess",
                 columns: table => new
                 {
-                    TaskId = table.Column<int>(type: "int", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Arguments = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    WorkingDirectory = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Username = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    ProcessOptions = table.Column<int>(type: "int", nullable: false)
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FileName = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Arguments = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    WorkingDirectory = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Username = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Password = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    ProcessOptions = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2928,17 +2974,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_TaskProcess_TaskBase_TaskId",
                         column: x => x.TaskId,
                         principalTable: "TaskBase",
-                        principalColumn: "TaskId");
+                        principalColumn: "TaskId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "TaskScript",
                 columns: table => new
                 {
-                    TaskId = table.Column<int>(type: "int", nullable: false),
-                    ScriptType = table.Column<int>(type: "int", nullable: false),
-                    Data = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: false),
-                    ProcessOptions = table.Column<int>(type: "int", nullable: false)
+                    TaskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ScriptType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Data = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: false),
+                    ProcessOptions = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2947,22 +2995,23 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_TaskScript_TaskBase_TaskId",
                         column: x => x.TaskId,
                         principalTable: "TaskBase",
-                        principalColumn: "TaskId");
+                        principalColumn: "TaskId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Tax",
                 columns: table => new
                 {
-                    TaxId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    TaxId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Value = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2973,18 +3022,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Token",
                 columns: table => new
                 {
-                    TokenId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    Value = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    ConfirmationCode = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: true),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Expires = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    TokenId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Value = table.Column<string>(type: "TEXT", maxLength: 32, nullable: false),
+                    ConfirmationCode = table.Column<string>(type: "TEXT", maxLength: 6, nullable: true),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    Expires = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2995,13 +3044,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Usage",
                 columns: table => new
                 {
-                    UsageId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UsageSessionId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Seconds = table.Column<double>(type: "float", nullable: false),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UsageId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UsageSessionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Seconds = table.Column<double>(type: "REAL", nullable: false),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3012,11 +3061,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UsageRate",
                 columns: table => new
                 {
-                    UsageId = table.Column<int>(type: "int", nullable: false),
-                    BillRateId = table.Column<int>(type: "int", nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    Rate = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    BillProfileStamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UsageId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BillRateId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Total = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    Rate = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    BillProfileStamp = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3033,18 +3083,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UsageSession",
                 columns: table => new
                 {
-                    UsageSessionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    CurrentUsageId = table.Column<int>(type: "int", nullable: true),
-                    CurrentSecond = table.Column<double>(type: "float", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    NegativeSeconds = table.Column<double>(type: "float", nullable: false),
-                    StartFee = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    MinimumFee = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    RatesTotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UsageSessionId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CurrentUsageId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CurrentSecond = table.Column<double>(type: "REAL", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NegativeSeconds = table.Column<double>(type: "REAL", nullable: false),
+                    StartFee = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    MinimumFee = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    RatesTotal = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3061,8 +3111,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UsageTime",
                 columns: table => new
                 {
-                    UsageId = table.Column<int>(type: "int", nullable: false),
-                    InvoiceLineId = table.Column<int>(type: "int", nullable: false)
+                    UsageId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    InvoiceLineId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3078,8 +3129,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UsageTimeFixed",
                 columns: table => new
                 {
-                    UsageId = table.Column<int>(type: "int", nullable: false),
-                    InvoiceLineId = table.Column<int>(type: "int", nullable: false)
+                    UsageId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    InvoiceLineId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3095,8 +3147,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UsageUserSession",
                 columns: table => new
                 {
-                    UsageId = table.Column<int>(type: "int", nullable: false),
-                    UserSessionId = table.Column<int>(type: "int", nullable: false)
+                    UsageId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserSessionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3105,34 +3158,35 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_UsageUserSession_Usage_UsageId",
                         column: x => x.UsageId,
                         principalTable: "Usage",
-                        principalColumn: "UsageId");
+                        principalColumn: "UsageId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    City = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    Country = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    PostCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    MobilePhone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    Sex = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SmartCardUID = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Identification = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Address = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    City = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    Country = table.Column<string>(type: "TEXT", maxLength: 45, nullable: true),
+                    PostCode = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    Phone = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    MobilePhone = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
+                    Sex = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsDisabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SmartCardUID = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    Identification = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3148,10 +3202,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserOperator",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(254)", maxLength: 254, nullable: true),
-                    ShiftOptions = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Username = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 254, nullable: true),
+                    ShiftOptions = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3160,19 +3215,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_UserOperator_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
-                        principalColumn: "UserId");
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserPicture",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Picture = table.Column<byte[]>(type: "varbinary(max)", maxLength: 16777215, nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Picture = table.Column<byte[]>(type: "BLOB", maxLength: 16777215, nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3199,15 +3255,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Verification",
                 columns: table => new
                 {
-                    VerificationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TokenId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    VerificationId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TokenId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3241,18 +3297,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserAgreement",
                 columns: table => new
                 {
-                    UserAgreementId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Agreement = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    DisplayOptions = table.Column<int>(type: "int", nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserAgreementId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Agreement = table.Column<string>(type: "TEXT", nullable: false),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    DisplayOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3273,15 +3329,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserAttribute",
                 columns: table => new
                 {
-                    UserAttributeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    AttributeId = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserAttributeId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AttributeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Value = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3314,13 +3370,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserCredential",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Password = table.Column<byte[]>(type: "binary(64)", fixedLength: true, maxLength: 64, nullable: true),
-                    Salt = table.Column<byte[]>(type: "binary(100)", fixedLength: true, maxLength: 100, nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Password = table.Column<byte[]>(type: "BLOB", fixedLength: true, maxLength: 64, nullable: true),
+                    Salt = table.Column<byte[]>(type: "BLOB", fixedLength: true, maxLength: 100, nullable: true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3347,32 +3403,32 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserGroup",
                 columns: table => new
                 {
-                    UserGroupId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    AppGroupId = table.Column<int>(type: "int", nullable: true),
-                    SecurityProfileId = table.Column<int>(type: "int", nullable: true),
-                    BillProfileId = table.Column<int>(type: "int", nullable: true),
-                    RequiredUserInfo = table.Column<int>(type: "int", nullable: false),
-                    Overrides = table.Column<int>(type: "int", nullable: false),
-                    Options = table.Column<int>(type: "int", nullable: false),
-                    CreditLimitOptions = table.Column<int>(type: "int", nullable: false),
-                    IsNegativeBalanceAllowed = table.Column<bool>(type: "bit", nullable: false),
-                    CreditLimit = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PointsAwardOptions = table.Column<int>(type: "int", nullable: false),
-                    PointsMoneyRatio = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    PointsTimeRatio = table.Column<int>(type: "int", nullable: false),
-                    Points = table.Column<int>(type: "int", nullable: true),
-                    IsDefault = table.Column<bool>(type: "bit", nullable: false),
-                    IsAgeRatingEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    BillingOptions = table.Column<int>(type: "int", nullable: false),
-                    WaitingLinePriority = table.Column<int>(type: "int", nullable: false),
-                    IsWaitingLinePriorityEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserGroupId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
+                    AppGroupId = table.Column<int>(type: "INTEGER", nullable: true),
+                    SecurityProfileId = table.Column<int>(type: "INTEGER", nullable: true),
+                    BillProfileId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RequiredUserInfo = table.Column<int>(type: "INTEGER", nullable: false),
+                    Overrides = table.Column<int>(type: "INTEGER", nullable: false),
+                    Options = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreditLimitOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsNegativeBalanceAllowed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreditLimit = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PointsAwardOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    PointsMoneyRatio = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    PointsTimeRatio = table.Column<int>(type: "INTEGER", nullable: false),
+                    Points = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsDefault = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsAgeRatingEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    BillingOptions = table.Column<int>(type: "INTEGER", nullable: false),
+                    WaitingLinePriority = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsWaitingLinePriorityEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3408,15 +3464,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserPermission",
                 columns: table => new
                 {
-                    UserPermissionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserPermissionId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Type = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Value = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3443,16 +3499,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Variable",
                 columns: table => new
                 {
-                    VariableId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: false),
-                    Scope = table.Column<int>(type: "int", nullable: false),
-                    UseOrder = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    VariableId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Value = table.Column<string>(type: "TEXT", maxLength: 65535, nullable: false),
+                    Scope = table.Column<int>(type: "INTEGER", nullable: false),
+                    UseOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3473,12 +3529,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Void",
                 columns: table => new
                 {
-                    VoidId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ShiftId = table.Column<int>(type: "int", nullable: true),
-                    RegisterId = table.Column<int>(type: "int", nullable: true)
+                    VoidId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ShiftId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RegisterId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3504,8 +3560,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "VerificationEmail",
                 columns: table => new
                 {
-                    VerificationId = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(254)", maxLength: 254, nullable: false)
+                    VerificationId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 254, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3514,15 +3571,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_VerificationEmail_Verification_VerificationId",
                         column: x => x.VerificationId,
                         principalTable: "Verification",
-                        principalColumn: "VerificationId");
+                        principalColumn: "VerificationId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "VerificationMobilePhone",
                 columns: table => new
                 {
-                    VerificationId = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                    VerificationId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PhoneNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3531,22 +3590,23 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_VerificationMobilePhone_Verification_VerificationId",
                         column: x => x.VerificationId,
                         principalTable: "Verification",
-                        principalColumn: "VerificationId");
+                        principalColumn: "VerificationId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserAgreementState",
                 columns: table => new
                 {
-                    UserAgreementStateId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserAgreementId = table.Column<int>(type: "int", nullable: false),
-                    AcceptState = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserAgreementStateId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserAgreementId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AcceptState = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3579,15 +3639,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserGroupHostDisallowed",
                 columns: table => new
                 {
-                    UserGroupHostDisallowedId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserGroupId = table.Column<int>(type: "int", nullable: false),
-                    HostGroupId = table.Column<int>(type: "int", nullable: false),
-                    IsDisallowed = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserGroupHostDisallowedId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HostGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDisallowed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3618,15 +3678,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserMember",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(254)", maxLength: 254, nullable: true),
-                    UserGroupId = table.Column<int>(type: "int", nullable: false),
-                    IsNegativeBalanceAllowed = table.Column<bool>(type: "bit", nullable: true),
-                    IsPersonalInfoRequested = table.Column<bool>(type: "bit", nullable: false),
-                    BillingOptions = table.Column<int>(type: "int", nullable: true),
-                    EnableDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DisabledDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Username = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 254, nullable: true),
+                    UserGroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsNegativeBalanceAllowed = table.Column<bool>(type: "INTEGER", nullable: true),
+                    IsPersonalInfoRequested = table.Column<bool>(type: "INTEGER", nullable: false),
+                    BillingOptions = table.Column<int>(type: "INTEGER", nullable: true),
+                    EnableDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    DisabledDate = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3635,7 +3696,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_UserMember_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
-                        principalColumn: "UserId");
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserMember_UserGroup_UserGroupId",
                         column: x => x.UserGroupId,
@@ -3648,8 +3710,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "VoidDepositPayment",
                 columns: table => new
                 {
-                    VoidId = table.Column<int>(type: "int", nullable: false),
-                    DepositPaymentId = table.Column<int>(type: "int", nullable: false)
+                    VoidId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DepositPaymentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3664,15 +3727,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_VoidDepositPayment_Void_VoidId",
                         column: x => x.VoidId,
                         principalTable: "Void",
-                        principalColumn: "VoidId");
+                        principalColumn: "VoidId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "VoidInvoice",
                 columns: table => new
                 {
-                    VoidId = table.Column<int>(type: "int", nullable: false),
-                    InvoiceId = table.Column<int>(type: "int", nullable: false)
+                    VoidId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    InvoiceId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3687,20 +3752,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_VoidInvoice_Void_VoidId",
                         column: x => x.VoidId,
                         principalTable: "Void",
-                        principalColumn: "VoidId");
+                        principalColumn: "VoidId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserCreditLimit",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    CreditLimit = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreditLimit = table.Column<decimal>(type: "TEXT", precision: 19, scale: 4, nullable: false),
+                    IsEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3727,11 +3793,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserGuest",
                 columns: table => new
                 {
-                    IsJoined = table.Column<bool>(type: "bit", nullable: false),
-                    IsReserved = table.Column<bool>(type: "bit", nullable: false),
-                    ReservedHostId = table.Column<int>(type: "int", nullable: true),
-                    ReservedSlot = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    IsJoined = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsReserved = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ReservedHostId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ReservedSlot = table.Column<int>(type: "INTEGER", nullable: true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true)
                 },
                 constraints: table =>
                 {
@@ -3745,16 +3812,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_UserGuest_UserMember_UserId",
                         column: x => x.UserId,
                         principalTable: "UserMember",
-                        principalColumn: "UserId");
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserNote",
                 columns: table => new
                 {
-                    NoteId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    UserNoteOptions = table.Column<int>(type: "int", nullable: false)
+                    NoteId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserNoteOptions = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3763,7 +3832,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_UserNote_Note_NoteId",
                         column: x => x.NoteId,
                         principalTable: "Note",
-                        principalColumn: "NoteId");
+                        principalColumn: "NoteId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserNote_UserMember_UserId",
                         column: x => x.UserId,
@@ -3775,25 +3845,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserSession",
                 columns: table => new
                 {
-                    UserSessionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    State = table.Column<int>(type: "int", nullable: false),
-                    Slot = table.Column<int>(type: "int", nullable: false),
-                    Span = table.Column<double>(type: "float", nullable: false),
-                    BilledSpan = table.Column<double>(type: "float", nullable: false),
-                    PendTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PendSpan = table.Column<double>(type: "float", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PendSpanTotal = table.Column<double>(type: "float", nullable: false),
-                    PauseSpan = table.Column<double>(type: "float", nullable: false),
-                    PauseSpanTotal = table.Column<double>(type: "float", nullable: false),
-                    GraceTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GraceSpan = table.Column<double>(type: "float", nullable: false),
-                    GraceSpanTotal = table.Column<double>(type: "float", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UserSessionId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HostId = table.Column<int>(type: "INTEGER", nullable: false),
+                    State = table.Column<int>(type: "INTEGER", nullable: false),
+                    Slot = table.Column<int>(type: "INTEGER", nullable: false),
+                    Span = table.Column<double>(type: "REAL", nullable: false),
+                    BilledSpan = table.Column<double>(type: "REAL", nullable: false),
+                    PendTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    PendSpan = table.Column<double>(type: "REAL", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    PendSpanTotal = table.Column<double>(type: "REAL", nullable: false),
+                    PauseSpan = table.Column<double>(type: "REAL", nullable: false),
+                    PauseSpanTotal = table.Column<double>(type: "REAL", nullable: false),
+                    GraceTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    GraceSpan = table.Column<double>(type: "REAL", nullable: false),
+                    GraceSpanTotal = table.Column<double>(type: "REAL", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3820,16 +3890,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserSessionChange",
                 columns: table => new
                 {
-                    UserSessionChangeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserSessionId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    State = table.Column<int>(type: "int", nullable: false),
-                    Slot = table.Column<int>(type: "int", nullable: false),
-                    Span = table.Column<double>(type: "float", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UserSessionChangeId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserSessionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    HostId = table.Column<int>(type: "INTEGER", nullable: false),
+                    State = table.Column<int>(type: "INTEGER", nullable: false),
+                    Slot = table.Column<int>(type: "INTEGER", nullable: false),
+                    Span = table.Column<double>(type: "REAL", nullable: false),
+                    CreatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -3858,183 +3928,908 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.InsertData(
+                table: "BillProfile",
+                columns: new[] { "BillProfileId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Name" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Member Prices" });
+
+            migrationBuilder.InsertData(
+                table: "BillProfile",
+                columns: new[] { "BillProfileId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Name" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Guests Prices" });
+
+            migrationBuilder.InsertData(
+                table: "HostLayoutGroup",
+                columns: new[] { "HostLayoutGroupId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Name" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, "Default" });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, false, null, null, "1 Cent", 0.01m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, false, null, null, "5 Cent", 0.05m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, false, null, null, "10 Cent", 0.10m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, false, null, null, "25 Cent", 0.25m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, false, null, null, "1 Dollar", 1.00m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 6, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, false, null, null, "2 Dollar", 2.00m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 7, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, false, null, null, "5 Dollar", 5.00m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 8, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, false, null, null, "10 Dollar", 10.00m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 9, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 8, false, null, null, "20 Dollar", 20.00m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 10, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 9, false, null, null, "50 Dollar", 50.00m });
+
+            migrationBuilder.InsertData(
+                table: "MonetaryUnit",
+                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
+                values: new object[] { 11, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 10, false, null, null, "100 Dollar", 100.00m });
+
+            migrationBuilder.InsertData(
+                table: "PaymentMethod",
+                columns: new[] { "PaymentMethodId", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "IsClient", "IsDeleted", "IsEnabled", "IsManager", "IsPortal", "ModifiedById", "ModifiedTime", "Name", "Options", "PaymentProvider", "Surcharge" },
+                values: new object[] { -4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 2, true, false, true, true, false, null, null, "Points", 0, null, 0m });
+
+            migrationBuilder.InsertData(
+                table: "PaymentMethod",
+                columns: new[] { "PaymentMethodId", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "IsClient", "IsDeleted", "IsEnabled", "IsManager", "IsPortal", "ModifiedById", "ModifiedTime", "Name", "Options", "PaymentProvider", "Surcharge" },
+                values: new object[] { -3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 3, true, false, true, true, false, null, null, "Deposit", 0, null, 0m });
+
+            migrationBuilder.InsertData(
+                table: "PaymentMethod",
+                columns: new[] { "PaymentMethodId", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "IsClient", "IsDeleted", "IsEnabled", "IsManager", "IsPortal", "ModifiedById", "ModifiedTime", "Name", "Options", "PaymentProvider", "Surcharge" },
+                values: new object[] { -2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 4, true, false, true, true, false, null, null, "Credit Card", 0, null, 0m });
+
+            migrationBuilder.InsertData(
+                table: "PaymentMethod",
+                columns: new[] { "PaymentMethodId", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "IsClient", "IsDeleted", "IsEnabled", "IsManager", "IsPortal", "ModifiedById", "ModifiedTime", "Name", "Options", "PaymentProvider", "Surcharge" },
+                values: new object[] { -1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, true, false, true, true, false, null, null, "Cash", 0, null, 0m });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSale",
+                columns: new[] { "PresetTimeSaleId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 1 });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSale",
+                columns: new[] { "PresetTimeSaleId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 5 });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSale",
+                columns: new[] { "PresetTimeSaleId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 15 });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSale",
+                columns: new[] { "PresetTimeSaleId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 30 });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSale",
+                columns: new[] { "PresetTimeSaleId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 60 });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSaleMoney",
+                columns: new[] { "PresetTimeSaleMoneyId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 1m });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSaleMoney",
+                columns: new[] { "PresetTimeSaleMoneyId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 2m });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSaleMoney",
+                columns: new[] { "PresetTimeSaleMoneyId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 5m });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSaleMoney",
+                columns: new[] { "PresetTimeSaleMoneyId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 10m });
+
+            migrationBuilder.InsertData(
+                table: "PresetTimeSaleMoney",
+                columns: new[] { "PresetTimeSaleMoneyId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
+                values: new object[] { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 20m });
+
+            migrationBuilder.InsertData(
+                table: "ProductGroup",
+                columns: new[] { "ProductGroupId", "CreatedById", "CreatedTime", "DisplayOrder", "Guid", "ModifiedById", "ModifiedTime", "Name", "ParentId", "SortOption" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, new Guid("e798a7fb-448b-4825-8b32-c5ea6db70271"), null, null, "Time Offers", null, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductGroup",
+                columns: new[] { "ProductGroupId", "CreatedById", "CreatedTime", "DisplayOrder", "Guid", "ModifiedById", "ModifiedTime", "Name", "ParentId", "SortOption" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new Guid("e798a7fb-448b-4825-8b32-c5ea6db70272"), null, null, "Food", null, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductGroup",
+                columns: new[] { "ProductGroupId", "CreatedById", "CreatedTime", "DisplayOrder", "Guid", "ModifiedById", "ModifiedTime", "Name", "ParentId", "SortOption" },
+                values: new object[] { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new Guid("e798a7fb-448b-4825-8b32-c5ea6db70273"), null, null, "Drinks", null, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductGroup",
+                columns: new[] { "ProductGroupId", "CreatedById", "CreatedTime", "DisplayOrder", "Guid", "ModifiedById", "ModifiedTime", "Name", "ParentId", "SortOption" },
+                values: new object[] { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, new Guid("e798a7fb-448b-4825-8b32-c5ea6db70274"), null, null, "Sweets", null, 0 });
+
+            migrationBuilder.InsertData(
+                table: "Tax",
+                columns: new[] { "TaxId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Name", "UseOrder", "Value" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "24%", 0, 23m });
+
+            migrationBuilder.InsertData(
+                table: "Tax",
+                columns: new[] { "TaxId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Name", "UseOrder", "Value" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "16%", 1, 16m });
+
+            migrationBuilder.InsertData(
+                table: "Tax",
+                columns: new[] { "TaxId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Name", "UseOrder", "Value" },
+                values: new object[] { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "None", 2, 0m });
+
+            migrationBuilder.InsertData(
+                table: "User",
+                columns: new[] { "UserId", "Address", "BirthDate", "City", "Country", "CreatedById", "CreatedTime", "FirstName", "Guid", "Identification", "IsDeleted", "IsDisabled", "LastName", "MobilePhone", "ModifiedById", "ModifiedTime", "Phone", "PostCode", "Sex", "SmartCardUID" },
+                values: new object[] { 2, null, null, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, new Guid("38753737-24f1-40d7-8ac4-ba61660d666a"), null, false, false, null, null, null, null, null, null, 0, null });
+
+            migrationBuilder.InsertData(
+                table: "User",
+                columns: new[] { "UserId", "Address", "BirthDate", "City", "Country", "CreatedById", "CreatedTime", "FirstName", "Guid", "Identification", "IsDeleted", "IsDisabled", "LastName", "MobilePhone", "ModifiedById", "ModifiedTime", "Phone", "PostCode", "Sex", "SmartCardUID" },
+                values: new object[] { 1, null, null, null, null, null, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, new Guid("691ea8b4-d794-4096-84ae-bbdb7bcc0b02"), null, false, false, null, null, null, null, null, null, 0, null });
+
+            migrationBuilder.InsertData(
+                table: "BillRate",
+                columns: new[] { "BillRateId", "BillProfileId", "ChargeAfter", "ChargeEvery", "IsDefault", "MinimumFee", "Options", "Rate", "StartFee" },
+                values: new object[] { 1, 1, 1, 5, true, 2m, 0, 2m, 1m });
+
+            migrationBuilder.InsertData(
+                table: "BillRate",
+                columns: new[] { "BillRateId", "BillProfileId", "ChargeAfter", "ChargeEvery", "IsDefault", "MinimumFee", "Options", "Rate", "StartFee" },
+                values: new object[] { 2, 2, 1, 5, true, 2m, 0, 2m, 1m });
+
+            migrationBuilder.InsertData(
+                table: "ProductBase",
+                columns: new[] { "ProductId", "Barcode", "Cost", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "Guid", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "OrderOptions", "Points", "PointsPrice", "Price", "ProductGroupId", "PurchaseOptions", "StockAlert", "StockOptions", "StockProductAmount", "StockProductId" },
+                values: new object[] { 1, null, 0.90m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba1"), false, null, null, "Mars Bar", 0, 10, null, 1.10m, 4, 0, 0m, 1, 0m, null });
+
+            migrationBuilder.InsertData(
+                table: "ProductBase",
+                columns: new[] { "ProductId", "Barcode", "Cost", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "Guid", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "OrderOptions", "Points", "PointsPrice", "Price", "ProductGroupId", "PurchaseOptions", "StockAlert", "StockOptions", "StockProductAmount", "StockProductId" },
+                values: new object[] { 2, null, 1.20m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba2"), false, null, null, "Snickers Bar", 0, 15, null, 2.0m, 4, 0, 0m, 1, 0m, null });
+
+            migrationBuilder.InsertData(
+                table: "ProductBase",
+                columns: new[] { "ProductId", "Barcode", "Cost", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "Guid", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "OrderOptions", "Points", "PointsPrice", "Price", "ProductGroupId", "PurchaseOptions", "StockAlert", "StockOptions", "StockProductAmount", "StockProductId" },
+                values: new object[] { 3, null, 2.20m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba3"), false, null, null, "Pizza (Small)", 0, null, null, 6.0m, 2, 0, 0m, 0, 0m, null });
+
+            migrationBuilder.InsertData(
+                table: "ProductBase",
+                columns: new[] { "ProductId", "Barcode", "Cost", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "Guid", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "OrderOptions", "Points", "PointsPrice", "Price", "ProductGroupId", "PurchaseOptions", "StockAlert", "StockOptions", "StockProductAmount", "StockProductId" },
+                values: new object[] { 4, null, 1.20m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba4"), false, null, null, "Coca Cola (Can)", 0, null, null, 2.0m, 3, 0, 0m, 0, 0m, null });
+
+            migrationBuilder.InsertData(
+                table: "ProductBase",
+                columns: new[] { "ProductId", "Barcode", "Cost", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "Guid", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "OrderOptions", "Points", "PointsPrice", "Price", "ProductGroupId", "PurchaseOptions", "StockAlert", "StockOptions", "StockProductAmount", "StockProductId" },
+                values: new object[] { 5, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba5"), false, null, null, "Pizza and Cola", 0, 200, null, 3.40m, 2, 0, 0m, 1, 0m, null });
+
+            migrationBuilder.InsertData(
+                table: "ProductBase",
+                columns: new[] { "ProductId", "Barcode", "Cost", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "Guid", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "OrderOptions", "Points", "PointsPrice", "Price", "ProductGroupId", "PurchaseOptions", "StockAlert", "StockOptions", "StockProductAmount", "StockProductId" },
+                values: new object[] { 6, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba6"), false, null, null, "Six Hours (6)", 0, null, null, 12m, 1, 0, 0m, 0, 0m, null });
+
+            migrationBuilder.InsertData(
+                table: "ProductBase",
+                columns: new[] { "ProductId", "Barcode", "Cost", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "Guid", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "OrderOptions", "Points", "PointsPrice", "Price", "ProductGroupId", "PurchaseOptions", "StockAlert", "StockOptions", "StockProductAmount", "StockProductId" },
+                values: new object[] { 7, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba7"), false, null, null, "Six Hours (6 Weekends)", 0, null, null, 16m, 1, 0, 0m, 0, 0m, null });
+
+            migrationBuilder.InsertData(
+                table: "UserCredential",
+                columns: new[] { "UserId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Password", "Salt" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, new byte[] { 227, 190, 117, 189, 14, 131, 27, 251, 244, 196, 14, 55, 126, 183, 143, 152, 146, 122, 121, 195, 5, 57, 241, 24, 184, 41, 122, 231, 166, 174, 210, 155, 233, 8, 83, 128, 145, 208, 28, 139, 149, 46, 168, 246, 21, 38, 126, 197, 29, 147, 234, 81, 253, 218, 217, 136, 216, 237, 206, 196, 113, 231, 152, 52 }, new byte[] { 213, 217, 89, 164, 125, 194, 157, 170, 86, 35, 202, 5, 236, 165, 229, 151, 191, 209, 130, 41, 234, 120, 64, 104, 216, 200, 194, 9, 221, 163, 100, 236, 125, 143, 49, 114, 227, 161, 166, 20, 120, 7, 250, 81, 128, 236, 241, 116, 231, 235, 216, 208, 131, 155, 104, 218, 249, 75, 34, 190, 62, 160, 147, 82, 158, 78, 172, 74, 131, 17, 26, 236, 95, 7, 190, 245, 165, 235, 103, 17, 172, 55, 141, 182, 51, 96, 212, 209, 67, 164, 111, 234, 83, 101, 64, 224, 84, 84, 54, 4 } });
+
+            migrationBuilder.InsertData(
+                table: "UserGroup",
+                columns: new[] { "UserGroupId", "AppGroupId", "BillProfileId", "BillingOptions", "CreatedById", "CreatedTime", "CreditLimit", "CreditLimitOptions", "Description", "IsAgeRatingEnabled", "IsDefault", "IsNegativeBalanceAllowed", "IsWaitingLinePriorityEnabled", "ModifiedById", "ModifiedTime", "Name", "Options", "Overrides", "Points", "PointsAwardOptions", "PointsMoneyRatio", "PointsTimeRatio", "RequiredUserInfo", "SecurityProfileId", "WaitingLinePriority" },
+                values: new object[] { 1, null, 1, 0, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0m, 0, null, false, true, false, false, null, null, "Members", 0, 0, null, 0, 0m, 0, 0, null, 0 });
+
+            migrationBuilder.InsertData(
+                table: "UserGroup",
+                columns: new[] { "UserGroupId", "AppGroupId", "BillProfileId", "BillingOptions", "CreatedById", "CreatedTime", "CreditLimit", "CreditLimitOptions", "Description", "IsAgeRatingEnabled", "IsDefault", "IsNegativeBalanceAllowed", "IsWaitingLinePriorityEnabled", "ModifiedById", "ModifiedTime", "Name", "Options", "Overrides", "Points", "PointsAwardOptions", "PointsMoneyRatio", "PointsTimeRatio", "RequiredUserInfo", "SecurityProfileId", "WaitingLinePriority" },
+                values: new object[] { 2, null, 2, 0, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0m, 0, null, false, false, false, false, null, null, "Guests", 8, 0, null, 0, 0m, 0, 0, null, 0 });
+
+            migrationBuilder.InsertData(
+                table: "UserOperator",
+                columns: new[] { "UserId", "Email", "ShiftOptions", "Username" },
+                values: new object[] { 1, null, 0, "Admin" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "CustomPrice" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "NonDefaultVat" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "PayLater" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidInvoices" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 6, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidUsedTimeInvoices" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 7, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidClosedShiftInvoices" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 8, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidOtherOperatorInvoices" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 9, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidPastDaysInvoices" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 10, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "Deposit" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 11, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "Withdraw" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 12, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidDeposits" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 13, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ManualOpenCashDrawer" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 14, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ModifyBillingOptions" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 15, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "AllowTimeCredit" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 16, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewInvoices" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 17, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPaidInvoices" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 18, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysInvoices" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 19, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewDeposits" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 20, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysDeposits" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 21, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewRegisterTransactions" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 22, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysRegisterTransactions" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 23, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "DeleteTimePurchases" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 24, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Shift", 1, "ViewExpected" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 25, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 26, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "Manage" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 27, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "ViewStockTransactions" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 28, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "ViewPastDaysStockTransactions" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 29, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 30, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Tasks" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 31, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Processes" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 32, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Files" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 33, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Maintenance" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 34, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Security" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 35, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "LockState" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 36, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "ModuleRestart" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 37, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Deployment", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 38, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Monitoring", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 39, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Reports", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 40, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Settings", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 41, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Apps", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 42, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "News", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 43, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserPasswordReset" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 44, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserEnable" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 45, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserDisable" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 46, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserManualLogin" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 47, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Add" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 48, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Delete" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 49, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "ChangeUserName" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 50, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "ChangeUserGroup" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 51, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Edit" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 52, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "AccessStats" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 53, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Log", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 54, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Log", 1, "Clear" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 55, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WaitingLines", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 56, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WaitingLines", 1, "Manage" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 57, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "RegisterTransactions", 1, "RegisterTransactionsPayIn" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 58, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "RegisterTransactions", 1, "RegisterTransactionsPayOut" });
+
+            migrationBuilder.InsertData(
+                table: "UserPermission",
+                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
+                values: new object[] { 59, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WebApi", 1, "*" });
+
+            migrationBuilder.InsertData(
+                table: "HostGroup",
+                columns: new[] { "HostGroupId", "AppGroupId", "CreatedById", "CreatedTime", "DefaultGuestGroupId", "ModifiedById", "ModifiedTime", "Name", "Options", "SecurityProfileId", "SkinName" },
+                values: new object[] { 1, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, null, null, "Computers", 0, null, null });
+
+            migrationBuilder.InsertData(
+                table: "HostGroup",
+                columns: new[] { "HostGroupId", "AppGroupId", "CreatedById", "CreatedTime", "DefaultGuestGroupId", "ModifiedById", "ModifiedTime", "Name", "Options", "SecurityProfileId", "SkinName" },
+                values: new object[] { 2, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, null, null, "Endpoints", 0, null, null });
+
+            migrationBuilder.InsertData(
+                table: "ProductBaseExtended",
+                column: "ProductId",
+                value: 1);
+
+            migrationBuilder.InsertData(
+                table: "ProductBaseExtended",
+                column: "ProductId",
+                value: 2);
+
+            migrationBuilder.InsertData(
+                table: "ProductBaseExtended",
+                column: "ProductId",
+                value: 3);
+
+            migrationBuilder.InsertData(
+                table: "ProductBaseExtended",
+                column: "ProductId",
+                value: 4);
+
+            migrationBuilder.InsertData(
+                table: "ProductBaseExtended",
+                column: "ProductId",
+                value: 5);
+
+            migrationBuilder.InsertData(
+                table: "ProductPeriod",
+                columns: new[] { "ProductId", "EndDate", "Options", "StartDate" },
+                values: new object[] { 7, null, 0, null });
+
+            migrationBuilder.InsertData(
+                table: "ProductTax",
+                columns: new[] { "ProductTaxId", "CreatedById", "CreatedTime", "IsEnabled", "ModifiedById", "ModifiedTime", "ProductId", "TaxId", "UseOrder" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 1, 1, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductTax",
+                columns: new[] { "ProductTaxId", "CreatedById", "CreatedTime", "IsEnabled", "ModifiedById", "ModifiedTime", "ProductId", "TaxId", "UseOrder" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 2, 1, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductTax",
+                columns: new[] { "ProductTaxId", "CreatedById", "CreatedTime", "IsEnabled", "ModifiedById", "ModifiedTime", "ProductId", "TaxId", "UseOrder" },
+                values: new object[] { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 3, 1, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductTax",
+                columns: new[] { "ProductTaxId", "CreatedById", "CreatedTime", "IsEnabled", "ModifiedById", "ModifiedTime", "ProductId", "TaxId", "UseOrder" },
+                values: new object[] { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 4, 1, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductTax",
+                columns: new[] { "ProductTaxId", "CreatedById", "CreatedTime", "IsEnabled", "ModifiedById", "ModifiedTime", "ProductId", "TaxId", "UseOrder" },
+                values: new object[] { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 5, 1, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductTax",
+                columns: new[] { "ProductTaxId", "CreatedById", "CreatedTime", "IsEnabled", "ModifiedById", "ModifiedTime", "ProductId", "TaxId", "UseOrder" },
+                values: new object[] { 6, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 6, 1, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductTax",
+                columns: new[] { "ProductTaxId", "CreatedById", "CreatedTime", "IsEnabled", "ModifiedById", "ModifiedTime", "ProductId", "TaxId", "UseOrder" },
+                values: new object[] { 7, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 7, 1, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductTime",
+                columns: new[] { "ProductId", "AppGroupId", "ExpirationOptions", "ExpireAfterType", "ExpireAtDayTimeMinute", "ExpireFromOptions", "ExpiresAfter", "Minutes", "UsageOptions", "UseOrder", "WeekDayMaxMinutes", "WeekEndMaxMinutes" },
+                values: new object[] { 6, null, 0, 0, 0, 0, 0, 360, 0, 0, null, null });
+
+            migrationBuilder.InsertData(
+                table: "ProductTime",
+                columns: new[] { "ProductId", "AppGroupId", "ExpirationOptions", "ExpireAfterType", "ExpireAtDayTimeMinute", "ExpireFromOptions", "ExpiresAfter", "Minutes", "UsageOptions", "UseOrder", "WeekDayMaxMinutes", "WeekEndMaxMinutes" },
+                values: new object[] { 7, null, 0, 0, 0, 0, 0, 360, 0, 0, null, null });
+
+            migrationBuilder.InsertData(
+                table: "UserMember",
+                columns: new[] { "UserId", "BillingOptions", "DisabledDate", "Email", "EnableDate", "IsNegativeBalanceAllowed", "IsPersonalInfoRequested", "UserGroupId", "Username" },
+                values: new object[] { 2, null, null, null, null, null, false, 1, "User" });
+
+            migrationBuilder.InsertData(
+                table: "Host",
+                columns: new[] { "HostId", "CreatedById", "CreatedTime", "Guid", "HostGroupId", "IconId", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Number", "State" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("cd41aa25-ac1f-4da9-8c8e-075032803871"), 2, null, false, null, null, "XBOX-ONE-1", 1, 0 });
+
+            migrationBuilder.InsertData(
+                table: "Host",
+                columns: new[] { "HostId", "CreatedById", "CreatedTime", "Guid", "HostGroupId", "IconId", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Number", "State" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("cd41aa25-ac1f-4da9-8c8e-075032803872"), 2, null, false, null, null, "XBOX-ONE-2", 2, 0 });
+
+            migrationBuilder.InsertData(
+                table: "Host",
+                columns: new[] { "HostId", "CreatedById", "CreatedTime", "Guid", "HostGroupId", "IconId", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Number", "State" },
+                values: new object[] { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("cd41aa25-ac1f-4da9-8c8e-075032803873"), 2, null, false, null, null, "PS4-1", 3, 0 });
+
+            migrationBuilder.InsertData(
+                table: "Host",
+                columns: new[] { "HostId", "CreatedById", "CreatedTime", "Guid", "HostGroupId", "IconId", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Number", "State" },
+                values: new object[] { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("cd41aa25-ac1f-4da9-8c8e-075032803874"), 2, null, false, null, null, "WII-1", 4, 0 });
+
+            migrationBuilder.InsertData(
+                table: "Product",
+                column: "ProductId",
+                value: 1);
+
+            migrationBuilder.InsertData(
+                table: "Product",
+                column: "ProductId",
+                value: 2);
+
+            migrationBuilder.InsertData(
+                table: "Product",
+                column: "ProductId",
+                value: 3);
+
+            migrationBuilder.InsertData(
+                table: "Product",
+                column: "ProductId",
+                value: 4);
+
+            migrationBuilder.InsertData(
+                table: "ProductBundle",
+                columns: new[] { "ProductId", "BundleStockOptions" },
+                values: new object[] { 5, 0 });
+
+            migrationBuilder.InsertData(
+                table: "ProductPeriodDay",
+                columns: new[] { "ProductPeriodDayId", "Day", "ProductPeriodId" },
+                values: new object[] { 7, 6, 7 });
+
+            migrationBuilder.InsertData(
+                table: "ProductPeriodDay",
+                columns: new[] { "ProductPeriodDayId", "Day", "ProductPeriodId" },
+                values: new object[] { 8, 0, 7 });
+
+            migrationBuilder.InsertData(
+                table: "ProductTimePeriod",
+                columns: new[] { "ProductId", "EndDate", "Options", "StartDate" },
+                values: new object[] { 6, null, 0, null });
+
+            migrationBuilder.InsertData(
+                table: "BundleProduct",
+                columns: new[] { "BundleProductId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Options", "Price", "ProductBundleId", "ProductId", "Quantity" },
+                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 0, 1m, 5, 3, 1m });
+
+            migrationBuilder.InsertData(
+                table: "BundleProduct",
+                columns: new[] { "BundleProductId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Options", "Price", "ProductBundleId", "ProductId", "Quantity" },
+                values: new object[] { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 0, 2m, 5, 4, 1m });
+
+            migrationBuilder.InsertData(
+                table: "HostEndpoint",
+                columns: new[] { "HostId", "MaximumUsers" },
+                values: new object[] { 1, 4 });
+
+            migrationBuilder.InsertData(
+                table: "HostEndpoint",
+                columns: new[] { "HostId", "MaximumUsers" },
+                values: new object[] { 2, 4 });
+
+            migrationBuilder.InsertData(
+                table: "HostEndpoint",
+                columns: new[] { "HostId", "MaximumUsers" },
+                values: new object[] { 3, 4 });
+
+            migrationBuilder.InsertData(
+                table: "HostEndpoint",
+                columns: new[] { "HostId", "MaximumUsers" },
+                values: new object[] { 4, 4 });
+
             migrationBuilder.CreateIndex(
-                name: "IX_AppCategoryId",
+                name: "IX_App_AppCategoryId",
                 table: "App",
                 column: "AppCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_App_CreatedById",
                 table: "App",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeveloperId",
+                name: "IX_App_DeveloperId",
                 table: "App",
                 column: "DeveloperId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_App_ModifiedById",
                 table: "App",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PublisherId",
+                name: "IX_App_PublisherId",
                 table: "App",
                 column: "PublisherId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_App",
                 table: "App",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppCategory_CreatedById",
                 table: "AppCategory",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppCategory_ModifiedById",
                 table: "AppCategory",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParentId",
+                name: "IX_AppCategory_ParentId",
                 table: "AppCategory",
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_AppCategory",
                 table: "AppCategory",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppEnterprise_CreatedById",
                 table: "AppEnterprise",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppEnterprise_ModifiedById",
                 table: "AppEnterprise",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_AppEnterprise",
                 table: "AppEnterprise",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_AppEnterprise",
                 table: "AppEnterprise",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppExe_AppId",
                 table: "AppExe",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExe_CreatedById",
                 table: "AppExe",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DefaultDeploymentId",
+                name: "IX_AppExe_DefaultDeploymentId",
                 table: "AppExe",
                 column: "DefaultDeploymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExe_ModifiedById",
                 table: "AppExe",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeCdImage_AppExeId",
                 table: "AppExeCdImage",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeCdImage_CreatedById",
                 table: "AppExeCdImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeCdImage_ModifiedById",
                 table: "AppExeCdImage",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_AppExeCdImage",
                 table: "AppExeCdImage",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeDeployment_AppExeId",
                 table: "AppExeDeployment",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeDeployment_CreatedById",
                 table: "AppExeDeployment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeploymentId",
+                name: "IX_AppExeDeployment_DeploymentId",
                 table: "AppExeDeployment",
                 column: "DeploymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeDeployment_ModifiedById",
                 table: "AppExeDeployment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeImage_AppExeId",
                 table: "AppExeImage",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeImage_CreatedById",
                 table: "AppExeImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeImage_ModifiedById",
                 table: "AppExeImage",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeLicense_AppExeId",
                 table: "AppExeLicense",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeLicense_CreatedById",
                 table: "AppExeLicense",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LicenseId",
+                name: "IX_AppExeLicense_LicenseId",
                 table: "AppExeLicense",
                 column: "LicenseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeLicense_ModifiedById",
                 table: "AppExeLicense",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeMaxUser_CreatedById",
                 table: "AppExeMaxUser",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeMaxUser_ModifiedById",
                 table: "AppExeMaxUser",
                 column: "ModifiedById");
 
@@ -4045,252 +4840,250 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExePersonalFile_AppExeId",
                 table: "AppExePersonalFile",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExePersonalFile_CreatedById",
                 table: "AppExePersonalFile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExePersonalFile_ModifiedById",
                 table: "AppExePersonalFile",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PersonalFileId",
+                name: "IX_AppExePersonalFile_PersonalFileId",
                 table: "AppExePersonalFile",
                 column: "PersonalFileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeTask_AppExeId",
                 table: "AppExeTask",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeTask_CreatedById",
                 table: "AppExeTask",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeTask_ModifiedById",
                 table: "AppExeTask",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskBaseId",
+                name: "IX_AppExeTask_TaskBaseId",
                 table: "AppExeTask",
                 column: "TaskBaseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppGroup_CreatedById",
                 table: "AppGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppGroup_ModifiedById",
                 table: "AppGroup",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_AppGroup",
                 table: "AppGroup",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_AppGroup",
                 table: "AppGroup",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroupId",
+                name: "IX_AppGroupApp_AppGroupId",
                 table: "AppGroupApp",
                 column: "AppGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppGroupApp_AppId",
                 table: "AppGroupApp",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppImage_AppId",
                 table: "AppImage",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppImage_CreatedById",
                 table: "AppImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppImage_ModifiedById",
                 table: "AppImage",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppLink_AppId",
                 table: "AppLink",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppLink_CreatedById",
                 table: "AppLink",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppLink_ModifiedById",
                 table: "AppLink",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_AppLink",
                 table: "AppLink",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppRating_AppId",
                 table: "AppRating",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_AppRating_UserId",
                 table: "AppRating",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppStat_AppExeId",
                 table: "AppStat",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppStat_AppId",
                 table: "AppStat",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_AppStat_HostId",
                 table: "AppStat",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_AppStat_UserId",
                 table: "AppStat",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssetTypeId",
+                name: "IX_Asset_AssetTypeId",
                 table: "Asset",
                 column: "AssetTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Asset_CreatedById",
                 table: "Asset",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Asset_ModifiedById",
                 table: "Asset",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Barcode",
+                name: "UQ_Barcode_Asset",
                 table: "Asset",
                 column: "Barcode",
-                unique: true,
-                filter: "[Barcode] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_SmartCardUID",
+                name: "UQ_SmartCardUID_Asset",
                 table: "Asset",
                 column: "SmartCardUID",
-                unique: true,
-                filter: "[SmartCardUID] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssetId",
+                name: "IX_AssetTransaction_AssetId",
                 table: "AssetTransaction",
                 column: "AssetId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssetTypeId",
+                name: "IX_AssetTransaction_AssetTypeId",
                 table: "AssetTransaction",
                 column: "AssetTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CheckedInById",
+                name: "IX_AssetTransaction_CheckedInById",
                 table: "AssetTransaction",
                 column: "CheckedInById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AssetTransaction_CreatedById",
                 table: "AssetTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AssetTransaction_ModifiedById",
                 table: "AssetTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_AssetTransaction_UserId",
                 table: "AssetTransaction",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AssetType_CreatedById",
                 table: "AssetType",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AssetType_ModifiedById",
                 table: "AssetType",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_AssetType",
                 table: "AssetType",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Attribute_CreatedById",
                 table: "Attribute",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Attribute_ModifiedById",
                 table: "Attribute",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_Attribute",
                 table: "Attribute",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_BillProfile_CreatedById",
                 table: "BillProfile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_BillProfile_ModifiedById",
                 table: "BillProfile",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_BillProfile",
                 table: "BillProfile",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillProfileId",
+                name: "IX_BillRate_BillProfileId",
                 table: "BillRate",
                 column: "BillProfileId");
 
@@ -4301,7 +5094,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PeriodDayId",
+                name: "IX_BillRatePeriodDayTime_PeriodDayId",
                 table: "BillRatePeriodDayTime",
                 column: "PeriodDayId");
 
@@ -4312,37 +5105,37 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_BundleProduct_CreatedById",
                 table: "BundleProduct",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_BundleProduct_ModifiedById",
                 table: "BundleProduct",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductBundleId",
+                name: "IX_BundleProduct_ProductBundleId",
                 table: "BundleProduct",
                 column: "ProductBundleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_BundleProduct_ProductId",
                 table: "BundleProduct",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_BundleProductUserPrice_CreatedById",
                 table: "BundleProductUserPrice",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_BundleProductUserPrice_ModifiedById",
                 table: "BundleProductUserPrice",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_BundleProductUserPrice_UserGroupId",
                 table: "BundleProductUserPrice",
                 column: "UserGroupId");
 
@@ -4353,146 +5146,145 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ClientTask_CreatedById",
                 table: "ClientTask",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ClientTask_ModifiedById",
                 table: "ClientTask",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskBaseId",
+                name: "IX_ClientTask_TaskBaseId",
                 table: "ClientTask",
                 column: "TaskBaseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Deployment_CreatedById",
                 table: "Deployment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Deployment_ModifiedById",
                 table: "Deployment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_Deployment",
                 table: "Deployment",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_Deployment",
                 table: "Deployment",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChildId",
+                name: "IX_DeploymentDeployment_ChildId",
                 table: "DeploymentDeployment",
                 column: "ChildId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_DeploymentDeployment_CreatedById",
                 table: "DeploymentDeployment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_DeploymentDeployment_ModifiedById",
                 table: "DeploymentDeployment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParentId",
+                name: "IX_DeploymentDeployment_ParentId",
                 table: "DeploymentDeployment",
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_DepositPayment_CreatedById",
                 table: "DepositPayment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DepositTransactionId",
+                name: "IX_DepositPayment_DepositTransactionId",
                 table: "DepositPayment",
                 column: "DepositTransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FiscalReceiptId",
+                name: "IX_DepositPayment_FiscalReceiptId",
                 table: "DepositPayment",
                 column: "FiscalReceiptId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_DepositPayment_ModifiedById",
                 table: "DepositPayment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentId",
+                name: "IX_DepositPayment_PaymentId",
                 table: "DepositPayment",
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_DepositPayment_RegisterId",
                 table: "DepositPayment",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_DepositPayment_ShiftId",
                 table: "DepositPayment",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_DepositPayment_UserId",
                 table: "DepositPayment",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_DepositTransaction_CreatedById",
                 table: "DepositTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_DepositTransaction_ModifiedById",
                 table: "DepositTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_DepositTransaction_RegisterId",
                 table: "DepositTransaction",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_DepositTransaction_ShiftId",
                 table: "DepositTransaction",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_DepositTransaction_UserId",
                 table: "DepositTransaction",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Device_CreatedById",
                 table: "Device",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Device_ModifiedById",
                 table: "Device",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_Device_DeviceHdmi",
                 table: "Device",
                 column: "Name",
-                unique: true,
-                filter: "[Name] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceId",
+                name: "IX_DeviceHdmi_DeviceId",
                 table: "DeviceHdmi",
                 column: "DeviceId",
                 unique: true);
@@ -4504,17 +5296,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_DeviceHost_CreatedById",
                 table: "DeviceHost",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_DeviceHost_HostId",
                 table: "DeviceHost",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_DeviceHost_ModifiedById",
                 table: "DeviceHost",
                 column: "ModifiedById");
 
@@ -4525,111 +5317,111 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Feed_CreatedById",
                 table: "Feed",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Feed_ModifiedById",
                 table: "Feed",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_FiscalReceipt_CreatedById",
                 table: "FiscalReceipt",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_FiscalReceipt_RegisterId",
                 table: "FiscalReceipt",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_FiscalReceipt_ShiftId",
                 table: "FiscalReceipt",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Host_CreatedById",
                 table: "Host",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_Host_HostGroupId",
                 table: "Host",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_IconId",
+                name: "IX_Host_IconId",
                 table: "Host",
                 column: "IconId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Host_ModifiedById",
                 table: "Host",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_Host_HostComputer_HostEndpoint",
                 table: "Host",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_HostComputer_HostId",
                 table: "HostComputer",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_MACAddress",
+                name: "UQ_MACAddress_HostComputer",
                 table: "HostComputer",
                 column: "MACAddress",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_HostEndpoint_HostId",
                 table: "HostEndpoint",
                 column: "HostId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroupId",
+                name: "IX_HostGroup_AppGroupId",
                 table: "HostGroup",
                 column: "AppGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostGroup_CreatedById",
                 table: "HostGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DefaultGuestGroupId",
+                name: "IX_HostGroup_DefaultGuestGroupId",
                 table: "HostGroup",
                 column: "DefaultGuestGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostGroup_ModifiedById",
                 table: "HostGroup",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SecurityProfileId",
+                name: "IX_HostGroup_SecurityProfileId",
                 table: "HostGroup",
                 column: "SecurityProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_HostGroup",
                 table: "HostGroup",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillProfileId",
+                name: "IX_HostGroupUserBillProfile_BillProfileId",
                 table: "HostGroupUserBillProfile",
                 column: "BillProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_HostGroupUserBillProfile_UserGroupId",
                 table: "HostGroupUserBillProfile",
                 column: "UserGroupId");
 
@@ -4640,84 +5432,84 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostGroupWaitingLine_CreatedById",
                 table: "HostGroupWaitingLine",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HosGroupId",
+                name: "IX_HostGroupWaitingLine_HosGroupId",
                 table: "HostGroupWaitingLine",
                 column: "HosGroupId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostGroupWaitingLine_ModifiedById",
                 table: "HostGroupWaitingLine",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostGroupWaitingLineEntry_CreatedById",
                 table: "HostGroupWaitingLineEntry",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_HostGroupWaitingLineEntry_HostGroupId",
                 table: "HostGroupWaitingLineEntry",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostGroupWaitingLineEntry_ModifiedById",
                 table: "HostGroupWaitingLineEntry",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_HostGroupWaitingLineEntry_UserId",
                 table: "HostGroupWaitingLineEntry",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostLayoutGroup_CreatedById",
                 table: "HostLayoutGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostLayoutGroup_ModifiedById",
                 table: "HostLayoutGroup",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_HostLayoutGroup",
                 table: "HostLayoutGroup",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostLayoutGroupImage_CreatedById",
                 table: "HostLayoutGroupImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostLayoutGroupId",
+                name: "IX_HostLayoutGroupImage_HostLayoutGroupId",
                 table: "HostLayoutGroupImage",
                 column: "HostLayoutGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostLayoutGroupImage_ModifiedById",
                 table: "HostLayoutGroupImage",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostLayoutGroupLayout_CreatedById",
                 table: "HostLayoutGroupLayout",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_HostLayoutGroupLayout_HostId",
                 table: "HostLayoutGroupLayout",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostLayoutGroupLayout_ModifiedById",
                 table: "HostLayoutGroupLayout",
                 column: "ModifiedById");
 
@@ -4728,62 +5520,62 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Icon_CreatedById",
                 table: "Icon",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Icon_ModifiedById",
                 table: "Icon",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Invoice_CreatedById",
                 table: "Invoice",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Invoice_ModifiedById",
                 table: "Invoice",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrderId",
+                name: "IX_Invoice_ProductOrderId",
                 table: "Invoice",
                 column: "ProductOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Invoice_RegisterId",
                 table: "Invoice",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Invoice_ShiftId",
                 table: "Invoice",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Invoice_UserId",
                 table: "Invoice",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_InvoiceFiscalReceipt_CreatedById",
                 table: "InvoiceFiscalReceipt",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceId",
+                name: "IX_InvoiceFiscalReceipt_InvoiceId",
                 table: "InvoiceFiscalReceipt",
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_InvoiceFiscalReceipt_RegisterId",
                 table: "InvoiceFiscalReceipt",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_InvoiceFiscalReceipt_ShiftId",
                 table: "InvoiceFiscalReceipt",
                 column: "ShiftId");
 
@@ -4794,92 +5586,89 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_InvoiceLine_CreatedById",
                 table: "InvoiceLine",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceId",
+                name: "IX_InvoiceLine_InvoiceId",
                 table: "InvoiceLine",
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_InvoiceLine_ModifiedById",
                 table: "InvoiceLine",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_InvoiceLine_RegisterId",
                 table: "InvoiceLine",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_InvoiceLine_ShiftId",
                 table: "InvoiceLine",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_InvoiceLine_UserId",
                 table: "InvoiceLine",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_PointsTransaction",
+                name: "UQ_PointsTransaction_InvoiceLine_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineSession_InvoiceLineTime_InvoiceLineTimeFixed",
                 table: "InvoiceLine",
                 column: "PointsTransactionId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BundleLineId",
+                name: "IX_InvoiceLineExtended_BundleLineId",
                 table: "InvoiceLineExtended",
                 column: "BundleLineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineExtended_InvoiceLineId",
                 table: "InvoiceLineExtended",
                 column: "InvoiceLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_StockReturnTransaction",
+                name: "UQ_StockReturnTransaction_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineTime",
                 table: "InvoiceLineExtended",
                 column: "StockReturnTransactionId",
-                unique: true,
-                filter: "[StockReturnTransactionId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_StockTransaction",
+                name: "UQ_StockTransaction_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineTime",
                 table: "InvoiceLineExtended",
                 column: "StockTransactionId",
-                unique: true,
-                filter: "[StockTransactionId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineProduct_InvoiceLineId",
                 table: "InvoiceLineProduct",
                 column: "InvoiceLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_InvoiceLineProduct_ProductId",
                 table: "InvoiceLineProduct",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_OrderLine",
+                name: "UQ_OrderLine_InvoiceLineProduct",
                 table: "InvoiceLineProduct",
                 column: "OrderLineId",
-                unique: true,
-                filter: "[OrderLineId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineSession_InvoiceLineId",
                 table: "InvoiceLineSession",
                 column: "InvoiceLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderLineId",
+                name: "IX_InvoiceLineSession_OrderLineId",
                 table: "InvoiceLineSession",
                 column: "OrderLineId");
 
@@ -4890,113 +5679,113 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineTime_InvoiceLineId",
                 table: "InvoiceLineTime",
                 column: "InvoiceLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductTimeId",
+                name: "IX_InvoiceLineTime_ProductTimeId",
                 table: "InvoiceLineTime",
                 column: "ProductTimeId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_OrderLine",
+                name: "UQ_OrderLine_InvoiceLineTime",
                 table: "InvoiceLineTime",
                 column: "OrderLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineTimeFixed_InvoiceLineId",
                 table: "InvoiceLineTimeFixed",
                 column: "InvoiceLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_OrderLine",
+                name: "UQ_OrderLine_InvoiceLineTimeFixed",
                 table: "InvoiceLineTimeFixed",
                 column: "OrderLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_InvoicePayment_CreatedById",
                 table: "InvoicePayment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceId",
+                name: "IX_InvoicePayment_InvoiceId",
                 table: "InvoicePayment",
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_InvoicePayment_ModifiedById",
                 table: "InvoicePayment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentId",
+                name: "IX_InvoicePayment_PaymentId",
                 table: "InvoicePayment",
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_InvoicePayment_RegisterId",
                 table: "InvoicePayment",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_InvoicePayment_ShiftId",
                 table: "InvoicePayment",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_InvoicePayment_UserId",
                 table: "InvoicePayment",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_License_CreatedById",
                 table: "License",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_License_ModifiedById",
                 table: "License",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_License",
                 table: "License",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_License",
                 table: "License",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssignedHostId",
+                name: "IX_LicenseKey_AssignedHostId",
                 table: "LicenseKey",
                 column: "AssignedHostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_LicenseKey_CreatedById",
                 table: "LicenseKey",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LicenseId",
+                name: "IX_LicenseKey_LicenseId",
                 table: "LicenseKey",
                 column: "LicenseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_LicenseKey_ModifiedById",
                 table: "LicenseKey",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_LicenseKey",
                 table: "LicenseKey",
                 column: "Guid",
                 unique: true);
@@ -5022,18 +5811,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "Time");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LogId",
+                name: "IX_LogException_LogId",
                 table: "LogException",
                 column: "LogId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Mapping_CreatedById",
                 table: "Mapping",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Mapping_ModifiedById",
                 table: "Mapping",
                 column: "ModifiedById");
 
@@ -5044,68 +5833,68 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_MonetaryUnit_CreatedById",
                 table: "MonetaryUnit",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_MonetaryUnit_ModifiedById",
                 table: "MonetaryUnit",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_MonetaryUnit",
                 table: "MonetaryUnit",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_News_CreatedById",
                 table: "News",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_News_ModifiedById",
                 table: "News",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Note_CreatedById",
                 table: "Note",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Note_ModifiedById",
                 table: "Note",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Payment_CreatedById",
                 table: "Payment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Payment_ModifiedById",
                 table: "Payment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentMethodId",
+                name: "IX_Payment_PaymentMethodId",
                 table: "Payment",
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Payment_RegisterId",
                 table: "Payment",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Payment_ShiftId",
                 table: "Payment",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Payment_UserId",
                 table: "Payment",
                 column: "UserId");
 
@@ -5113,118 +5902,114 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UQ_DepositTransaction",
                 table: "Payment",
                 column: "DepositTransactionId",
-                unique: true,
-                filter: "[DepositTransactionId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_PointsTransaction",
+                name: "UQ_PointsTransaction_Payment",
                 table: "Payment",
                 column: "PointTransactionId",
-                unique: true,
-                filter: "[PointTransactionId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PaymentIntent_CreatedById",
                 table: "PaymentIntent",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PaymentIntent_ModifiedById",
                 table: "PaymentIntent",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentMethodId",
+                name: "IX_PaymentIntent_PaymentMethodId",
                 table: "PaymentIntent",
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_PaymentIntent_UserId",
                 table: "PaymentIntent",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_PaymentIntent_PaymentIntentDeposit_PaymentIntentOrder",
                 table: "PaymentIntent",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentIntentId",
+                name: "IX_PaymentIntentDeposit_PaymentIntentId",
                 table: "PaymentIntentDeposit",
                 column: "PaymentIntentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositPayment",
+                name: "UQ_DepositPayment_PaymentIntentDeposit",
                 table: "PaymentIntentDeposit",
                 column: "DepositPaymentId",
-                unique: true,
-                filter: "[DepositPaymentId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentIntentId",
+                name: "IX_PaymentIntentOrder_PaymentIntentId",
                 table: "PaymentIntentOrder",
                 column: "PaymentIntentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrderId",
+                name: "IX_PaymentIntentOrder_ProductOrderId",
                 table: "PaymentIntentOrder",
                 column: "ProductOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_InvoicePayment",
+                name: "UQ_InvoicePayment_PaymentIntentOrder",
                 table: "PaymentIntentOrder",
                 column: "InvoicePaymentId",
-                unique: true,
-                filter: "[InvoicePaymentId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PaymentMethod_CreatedById",
                 table: "PaymentMethod",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PaymentMethod_ModifiedById",
                 table: "PaymentMethod",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_PaymentMethod",
                 table: "PaymentMethod",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PersonalFile_CreatedById",
                 table: "PersonalFile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PersonalFile_ModifiedById",
                 table: "PersonalFile",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_PersonalFile",
                 table: "PersonalFile",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_PersonalFile",
                 table: "PersonalFile",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PluginLibrary_CreatedById",
                 table: "PluginLibrary",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PluginLibrary_ModifiedById",
                 table: "PluginLibrary",
                 column: "ModifiedById");
 
@@ -5235,113 +6020,112 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PointTransaction_CreatedById",
                 table: "PointTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PointTransaction_ModifiedById",
                 table: "PointTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_PointTransaction_RegisterId",
                 table: "PointTransaction",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_PointTransaction_ShiftId",
                 table: "PointTransaction",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_PointTransaction_UserId",
                 table: "PointTransaction",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PresetTimeSale_CreatedById",
                 table: "PresetTimeSale",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PresetTimeSale_ModifiedById",
                 table: "PresetTimeSale",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PresetTimeSaleMoney_CreatedById",
                 table: "PresetTimeSaleMoney",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PresetTimeSaleMoney_ModifiedById",
                 table: "PresetTimeSaleMoney",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_Product_ProductId",
                 table: "Product",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductBase_CreatedById",
                 table: "ProductBase",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductBase_ModifiedById",
                 table: "ProductBase",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductGroupId",
+                name: "IX_ProductBase_ProductGroupId",
                 table: "ProductBase",
                 column: "ProductGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockProductId",
+                name: "IX_ProductBase_StockProductId",
                 table: "ProductBase",
                 column: "StockProductId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Barcode",
+                name: "UQ_Barcode_Product_ProductBase_ProductBaseExtended_ProductBundle_ProductTime",
                 table: "ProductBase",
                 column: "Barcode",
-                unique: true,
-                filter: "[Barcode] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_Product_ProductBase_ProductBaseExtended_ProductBundle_ProductTime",
                 table: "ProductBase",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductBaseExtended_ProductId",
                 table: "ProductBaseExtended",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductBundle_ProductId",
                 table: "ProductBundle",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductBundleUserPrice_CreatedById",
                 table: "ProductBundleUserPrice",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductBundleUserPrice_ModifiedById",
                 table: "ProductBundleUserPrice",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_ProductBundleUserPrice_UserGroupId",
                 table: "ProductBundleUserPrice",
                 column: "UserGroupId");
 
@@ -5352,38 +6136,38 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductGroup_CreatedById",
                 table: "ProductGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductGroup_ModifiedById",
                 table: "ProductGroup",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParentId",
+                name: "IX_ProductGroup_ParentId",
                 table: "ProductGroup",
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_ProductGroup",
                 table: "ProductGroup",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductHostHidden_CreatedById",
                 table: "ProductHostHidden",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_ProductHostHidden_HostGroupId",
                 table: "ProductHostHidden",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductHostHidden_ModifiedById",
                 table: "ProductHostHidden",
                 column: "ModifiedById");
 
@@ -5394,143 +6178,143 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductImage_CreatedById",
                 table: "ProductImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductImage_ModifiedById",
                 table: "ProductImage",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductImage_ProductId",
                 table: "ProductImage",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductOL_CreatedById",
                 table: "ProductOL",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductOL_ModifiedById",
                 table: "ProductOL",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOL_ProductOLId",
                 table: "ProductOL",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrderId",
+                name: "IX_ProductOL_ProductOrderId",
                 table: "ProductOL",
                 column: "ProductOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_ProductOL_RegisterId",
                 table: "ProductOL",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_ProductOL_ShiftId",
                 table: "ProductOL",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_ProductOL_UserId",
                 table: "ProductOL",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BundleLineId",
+                name: "IX_ProductOLExtended_BundleLineId",
                 table: "ProductOLExtended",
                 column: "BundleLineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLExtended_ProductOLId",
                 table: "ProductOLExtended",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductOLProduct_ProductId",
                 table: "ProductOLProduct",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLProduct_ProductOLId",
                 table: "ProductOLProduct",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLSession_ProductOLId",
                 table: "ProductOLSession",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageSessionId",
+                name: "IX_ProductOLSession_UsageSessionId",
                 table: "ProductOLSession",
                 column: "UsageSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLTime_ProductOLId",
                 table: "ProductOLTime",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductTimeId",
+                name: "IX_ProductOLTime_ProductTimeId",
                 table: "ProductOLTime",
                 column: "ProductTimeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLTimeFixed_ProductOLId",
                 table: "ProductOLTimeFixed",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductOrder_CreatedById",
                 table: "ProductOrder",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_ProductOrder_HostId",
                 table: "ProductOrder",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductOrder_ModifiedById",
                 table: "ProductOrder",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PreferedPaymentMethodId",
+                name: "IX_ProductOrder_PreferedPaymentMethodId",
                 table: "ProductOrder",
                 column: "PreferedPaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_ProductOrder_RegisterId",
                 table: "ProductOrder",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_ProductOrder_ShiftId",
                 table: "ProductOrder",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_ProductOrder_UserId",
                 table: "ProductOrder",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductPeriod_ProductId",
                 table: "ProductPeriod",
                 column: "ProductId");
 
@@ -5541,22 +6325,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PeriodDayId",
+                name: "IX_ProductPeriodDayTime_PeriodDayId",
                 table: "ProductPeriodDayTime",
                 column: "PeriodDayId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductTax_CreatedById",
                 table: "ProductTax",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductTax_ModifiedById",
                 table: "ProductTax",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaxId",
+                name: "IX_ProductTax_TaxId",
                 table: "ProductTax",
                 column: "TaxId");
 
@@ -5567,28 +6351,28 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroupId",
+                name: "IX_ProductTime_AppGroupId",
                 table: "ProductTime",
                 column: "AppGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductTime_ProductId",
                 table: "ProductTime",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductTimeHostDisallowed_CreatedById",
                 table: "ProductTimeHostDisallowed",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_ProductTimeHostDisallowed_HostGroupId",
                 table: "ProductTimeHostDisallowed",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductTimeHostDisallowed_ModifiedById",
                 table: "ProductTimeHostDisallowed",
                 column: "ModifiedById");
 
@@ -5599,13 +6383,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductTimePeriod_ProductId",
                 table: "ProductTimePeriod",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductTimePeriodDayId",
+                name: "IX_ProductTimePeriodDay_ProductTimePeriodDayId",
                 table: "ProductTimePeriodDay",
                 column: "ProductTimePeriodDayId");
 
@@ -5616,171 +6400,169 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PeriodDayId",
+                name: "IX_ProductTimePeriodDayTime_PeriodDayId",
                 table: "ProductTimePeriodDayTime",
                 column: "PeriodDayId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductUserDisallowed_CreatedById",
                 table: "ProductUserDisallowed",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductUserDisallowed_ModifiedById",
                 table: "ProductUserDisallowed",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_ProductUserDisallowed_UserGroupId",
                 table: "ProductUserDisallowed",
                 column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ProductUserGroup",
+                name: "UQ_ProductUserGroup_ProductUserDisallowed",
                 table: "ProductUserDisallowed",
                 columns: new[] { "ProductId", "UserGroupId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductUserPrice_CreatedById",
                 table: "ProductUserPrice",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductUserPrice_ModifiedById",
                 table: "ProductUserPrice",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_ProductUserPrice_UserGroupId",
                 table: "ProductUserPrice",
                 column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ProductUserGroup",
+                name: "UQ_ProductUserGroup_ProductUserPrice",
                 table: "ProductUserPrice",
                 columns: new[] { "ProductId", "UserGroupId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Refund_CreatedById",
                 table: "Refund",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DepositTransactionId",
+                name: "IX_Refund_DepositTransactionId",
                 table: "Refund",
                 column: "DepositTransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentId",
+                name: "IX_Refund_PaymentId",
                 table: "Refund",
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PointTransactionId",
+                name: "IX_Refund_PointTransactionId",
                 table: "Refund",
                 column: "PointTransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefundMethodId",
+                name: "IX_Refund_RefundMethodId",
                 table: "Refund",
                 column: "RefundMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Refund_RegisterId",
                 table: "Refund",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Refund_ShiftId",
                 table: "Refund",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FiscalReceiptId",
+                name: "IX_RefundDepositPayment_FiscalReceiptId",
                 table: "RefundDepositPayment",
                 column: "FiscalReceiptId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefundId",
+                name: "IX_RefundDepositPayment_RefundId",
                 table: "RefundDepositPayment",
                 column: "RefundId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositPayment",
+                name: "UQ_DepositPayment_RefundDepositPayment",
                 table: "RefundDepositPayment",
                 column: "DepositPaymentId",
-                unique: true,
-                filter: "[DepositPaymentId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceId",
+                name: "IX_RefundInvoicePayment_InvoiceId",
                 table: "RefundInvoicePayment",
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefundId",
+                name: "IX_RefundInvoicePayment_RefundId",
                 table: "RefundInvoicePayment",
                 column: "RefundId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_InvoicePayment",
+                name: "UQ_InvoicePayment_RefundInvoicePayment",
                 table: "RefundInvoicePayment",
                 column: "InvoicePaymentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Register_CreatedById",
                 table: "Register",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Register_ModifiedById",
                 table: "Register",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_MACAddress",
+                name: "UQ_MACAddress_Register",
                 table: "Register",
                 column: "MacAddress",
-                unique: true,
-                filter: "[MacAddress] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_RegisterTransaction_CreatedById",
                 table: "RegisterTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_RegisterTransaction_ModifiedById",
                 table: "RegisterTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_RegisterTransaction_RegisterId",
                 table: "RegisterTransaction",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_RegisterTransaction_ShiftId",
                 table: "RegisterTransaction",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Reservation_CreatedById",
                 table: "Reservation",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Reservation_ModifiedById",
                 table: "Reservation",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Reservation_UserId",
                 table: "Reservation",
                 column: "UserId");
 
@@ -5791,22 +6573,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ReservationHost_CreatedById",
                 table: "ReservationHost",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_ReservationHost_HostId",
                 table: "ReservationHost",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ReservationHost_ModifiedById",
                 table: "ReservationHost",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PreferedUserId",
+                name: "IX_ReservationHost_PreferedUserId",
                 table: "ReservationHost",
                 column: "PreferedUserId");
 
@@ -5817,17 +6599,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ReservationUser_CreatedById",
                 table: "ReservationUser",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ReservationUser_ModifiedById",
                 table: "ReservationUser",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_ReservationUser_UserId",
                 table: "ReservationUser",
                 column: "UserId");
 
@@ -5838,28 +6620,28 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_SecurityProfile_CreatedById",
                 table: "SecurityProfile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_SecurityProfile_ModifiedById",
                 table: "SecurityProfile",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_SecurityProfile",
                 table: "SecurityProfile",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_SecurityProfilePolicy_CreatedById",
                 table: "SecurityProfilePolicy",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_SecurityProfilePolicy_ModifiedById",
                 table: "SecurityProfilePolicy",
                 column: "ModifiedById");
 
@@ -5870,27 +6652,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_SecurityProfileRestriction_CreatedById",
                 table: "SecurityProfileRestriction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_SecurityProfileRestriction_ModifiedById",
                 table: "SecurityProfileRestriction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SecurityProfileId",
+                name: "IX_SecurityProfileRestriction_SecurityProfileId",
                 table: "SecurityProfileRestriction",
                 column: "SecurityProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Setting_CreatedById",
                 table: "Setting",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Setting_ModifiedById",
                 table: "Setting",
                 column: "ModifiedById");
 
@@ -5901,47 +6683,47 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Shift_CreatedById",
                 table: "Shift",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EndedById",
+                name: "IX_Shift_EndedById",
                 table: "Shift",
                 column: "EndedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Shift_ModifiedById",
                 table: "Shift",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OperatorId",
+                name: "IX_Shift_OperatorId",
                 table: "Shift",
                 column: "OperatorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Shift_RegisterId",
                 table: "Shift",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Shift_ShiftId",
                 table: "Shift",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ShiftCount_CreatedById",
                 table: "ShiftCount",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ShiftCount_ModifiedById",
                 table: "ShiftCount",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentMethodId",
+                name: "IX_ShiftCount_PaymentMethodId",
                 table: "ShiftCount",
                 column: "PaymentMethodId");
 
@@ -5952,105 +6734,105 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_StockTransaction_CreatedById",
                 table: "StockTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_StockTransaction_ModifiedById",
                 table: "StockTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_StockTransaction_ProductId",
                 table: "StockTransaction",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SourceProductId",
+                name: "IX_StockTransaction_SourceProductId",
                 table: "StockTransaction",
                 column: "SourceProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_TaskBase_CreatedById",
                 table: "TaskBase",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_TaskBase_ModifiedById",
                 table: "TaskBase",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskBase_TaskId",
                 table: "TaskBase",
                 column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_TaskBase_TaskJunction_TaskNotification_TaskProcess_TaskScript",
                 table: "TaskBase",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_TaskBase_TaskJunction_TaskNotification_TaskProcess_TaskScript",
                 table: "TaskBase",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskJunction_TaskId",
                 table: "TaskJunction",
                 column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskNotification_TaskId",
                 table: "TaskNotification",
                 column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskProcess_TaskId",
                 table: "TaskProcess",
                 column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskScript_TaskId",
                 table: "TaskScript",
                 column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Tax_CreatedById",
                 table: "Tax",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Tax_ModifiedById",
                 table: "Tax",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_Tax",
                 table: "Tax",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Token_CreatedById",
                 table: "Token",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Token_ModifiedById",
                 table: "Token",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Token_UserId",
                 table: "Token",
                 column: "UserId");
 
@@ -6061,126 +6843,124 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageSessionId",
+                name: "IX_Usage_UsageSessionId",
                 table: "Usage",
                 column: "UsageSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Usage_UserId",
                 table: "Usage",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillRateId",
+                name: "IX_UsageRate_BillRateId",
                 table: "UsageRate",
                 column: "BillRateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageId",
+                name: "IX_UsageRate_UsageId",
                 table: "UsageRate",
                 column: "UsageId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CurrentUsageId",
+                name: "IX_UsageSession_CurrentUsageId",
                 table: "UsageSession",
                 column: "CurrentUsageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageSessionId",
+                name: "IX_UsageSession_UsageSessionId",
                 table: "UsageSession",
                 column: "UsageSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UsageSession_UserId",
                 table: "UsageSession",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_UsageTime_InvoiceLineId",
                 table: "UsageTime",
                 column: "InvoiceLineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageId",
+                name: "IX_UsageTime_UsageId",
                 table: "UsageTime",
                 column: "UsageId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_UsageTimeFixed_InvoiceLineId",
                 table: "UsageTimeFixed",
                 column: "InvoiceLineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageId",
+                name: "IX_UsageTimeFixed_UsageId",
                 table: "UsageTimeFixed",
                 column: "UsageId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageId",
+                name: "IX_UsageUserSession_UsageId",
                 table: "UsageUserSession",
                 column: "UsageId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessionId",
+                name: "IX_UsageUserSession_UserSessionId",
                 table: "UsageUserSession",
                 column: "UserSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_User_CreatedById",
                 table: "User",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_User_ModifiedById",
                 table: "User",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "UQ_Guid_User_UserGuest_UserMember_UserOperator",
                 table: "User",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Identification",
+                name: "UQ_Identification_User_UserGuest_UserMember_UserOperator",
                 table: "User",
                 column: "Identification",
-                unique: true,
-                filter: "[Identification] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_SmartCardUID",
+                name: "UQ_SmartCardUID_User_UserGuest_UserMember_UserOperator",
                 table: "User",
                 column: "SmartCardUID",
-                unique: true,
-                filter: "[SmartCardUID] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserAgreement_CreatedById",
                 table: "UserAgreement",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserAgreement_ModifiedById",
                 table: "UserAgreement",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserAgreementState_CreatedById",
                 table: "UserAgreementState",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserAgreementState_ModifiedById",
                 table: "UserAgreementState",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserAgreementState_UserId",
                 table: "UserAgreementState",
                 column: "UserId");
 
@@ -6191,17 +6971,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttributeId",
+                name: "IX_UserAttribute_AttributeId",
                 table: "UserAttribute",
                 column: "AttributeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserAttribute_CreatedById",
                 table: "UserAttribute",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserAttribute_ModifiedById",
                 table: "UserAttribute",
                 column: "ModifiedById");
 
@@ -6212,79 +6992,79 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserCredential_CreatedById",
                 table: "UserCredential",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserCredential_ModifiedById",
                 table: "UserCredential",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserCredential_UserId",
                 table: "UserCredential",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserCreditLimit_CreatedById",
                 table: "UserCreditLimit",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserCreditLimit_ModifiedById",
                 table: "UserCreditLimit",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserCreditLimit_UserId",
                 table: "UserCreditLimit",
                 column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroupId",
+                name: "IX_UserGroup_AppGroupId",
                 table: "UserGroup",
                 column: "AppGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillProfileId",
+                name: "IX_UserGroup_BillProfileId",
                 table: "UserGroup",
                 column: "BillProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserGroup_CreatedById",
                 table: "UserGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserGroup_ModifiedById",
                 table: "UserGroup",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SecurityProfileId",
+                name: "IX_UserGroup_SecurityProfileId",
                 table: "UserGroup",
                 column: "SecurityProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_UserGroup",
                 table: "UserGroup",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserGroupHostDisallowed_CreatedById",
                 table: "UserGroupHostDisallowed",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_UserGroupHostDisallowed_HostGroupId",
                 table: "UserGroupHostDisallowed",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserGroupHostDisallowed_ModifiedById",
                 table: "UserGroupHostDisallowed",
                 column: "ModifiedById");
 
@@ -6295,7 +7075,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserGuest_UserId",
                 table: "UserGuest",
                 column: "UserId",
                 unique: true);
@@ -6304,70 +7084,67 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UQ_UserGuestHostSlot",
                 table: "UserGuest",
                 columns: new[] { "ReservedHostId", "ReservedSlot" },
-                unique: true,
-                filter: "[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_UserMember_UserGroupId",
                 table: "UserMember",
                 column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserMember_UserId",
                 table: "UserMember",
                 column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Email",
+                name: "UQ_Email_UserGuest_UserMember",
                 table: "UserMember",
                 column: "Email",
-                unique: true,
-                filter: "[Email] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Username",
+                name: "UQ_Username_UserGuest_UserMember",
                 table: "UserMember",
                 column: "Username",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_NoteId",
+                name: "IX_UserNote_NoteId",
                 table: "UserNote",
                 column: "NoteId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserNote_UserId",
                 table: "UserNote",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserOperator_UserId",
                 table: "UserOperator",
                 column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Email",
+                name: "UQ_Email_UserOperator",
                 table: "UserOperator",
                 column: "Email",
-                unique: true,
-                filter: "[Email] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Username",
+                name: "UQ_Username_UserOperator",
                 table: "UserOperator",
                 column: "Username",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserPermission_CreatedById",
                 table: "UserPermission",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserPermission_ModifiedById",
                 table: "UserPermission",
                 column: "ModifiedById");
 
@@ -6378,132 +7155,132 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserPicture_CreatedById",
                 table: "UserPicture",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserPicture_ModifiedById",
                 table: "UserPicture",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserPicture_UserId",
                 table: "UserPicture",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserSession_CreatedById",
                 table: "UserSession",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_UserSession_HostId",
                 table: "UserSession",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserSession_UserId",
                 table: "UserSession",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserSessionChange_CreatedById",
                 table: "UserSessionChange",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_UserSessionChange_HostId",
                 table: "UserSessionChange",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserSessionChange_UserId",
                 table: "UserSessionChange",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessionId",
+                name: "IX_UserSessionChange_UserSessionId",
                 table: "UserSessionChange",
                 column: "UserSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Variable_CreatedById",
                 table: "Variable",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Variable_ModifiedById",
                 table: "Variable",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "UQ_Name_Variable",
                 table: "Variable",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Verification_CreatedById",
                 table: "Verification",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Verification_ModifiedById",
                 table: "Verification",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TokenId",
+                name: "IX_Verification_TokenId",
                 table: "Verification",
                 column: "TokenId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Verification_UserId",
                 table: "Verification",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VerificationId",
+                name: "IX_VerificationEmail_VerificationId",
                 table: "VerificationEmail",
                 column: "VerificationId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_VerificationId",
+                name: "IX_VerificationMobilePhone_VerificationId",
                 table: "VerificationMobilePhone",
                 column: "VerificationId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Void_CreatedById",
                 table: "Void",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Void_RegisterId",
                 table: "Void",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Void_ShiftId",
                 table: "Void",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VoidId",
+                name: "IX_VoidDepositPayment_VoidId",
                 table: "VoidDepositPayment",
                 column: "VoidId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositPayment",
+                name: "UQ_DepositPayment_VoidDepositPayment",
                 table: "VoidDepositPayment",
                 column: "DepositPaymentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_VoidId",
+                name: "IX_VoidInvoice_VoidId",
                 table: "VoidInvoice",
                 column: "VoidId",
                 unique: true);
@@ -7819,7 +8596,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "Product",
                 column: "ProductId",
                 principalTable: "ProductBaseExtended",
-                principalColumn: "ProductId");
+                principalColumn: "ProductId",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductBase_ProductGroup_ProductGroupId",
@@ -8388,7 +9166,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "UsageRate",
                 column: "UsageId",
                 principalTable: "UsageUserSession",
-                principalColumn: "UsageId");
+                principalColumn: "UsageId",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_UsageSession_UserMember_UserId",
@@ -8402,14 +9181,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "UsageTime",
                 column: "UsageId",
                 principalTable: "UsageUserSession",
-                principalColumn: "UsageId");
+                principalColumn: "UsageId",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_UsageTimeFixed_UsageUserSession_UsageId",
                 table: "UsageTimeFixed",
                 column: "UsageId",
                 principalTable: "UsageUserSession",
-                principalColumn: "UsageId");
+                principalColumn: "UsageId",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_UsageUserSession_UserSession_UserSessionId",
