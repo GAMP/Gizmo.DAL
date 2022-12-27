@@ -1,0 +1,18 @@
+﻿- To add new migration:
+
+	1- Configure the dbcontext as the following :
+
+	   connectionString = "Data Source={Database File}";
+
+       builder.Services.AddDbContext<ApplicationDbContext>(options => 
+	   options.UseSqlite(connectionString, x => x.MigrationsAssembly("Gizmo.DAL.EFCore.Migrations.Sqlit"));
+	   
+	2- Open package manager console.
+	3- Select the default project Gizmo.DAL.EFCore.Migrations.Sqlit
+	4- Enter the command line > EntityFrameworkCore\Add-Migration {MigrationName}
+	
+
+- Remarks
+	
+	1- Sqlit requires the index name to be unique on database level not on table level so we are using this funtion "RenameDuplicatedIndexNames" in 
+	   DefaultDbContext to fix this.

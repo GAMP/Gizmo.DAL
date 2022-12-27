@@ -1,0 +1,12 @@
+﻿- To add new migration:
+
+	1- Configure the dbcontext as the following :
+
+	   connectionString = "Server={ServerName};Database={DatabaseName};User Id={UserId};Password={Password}";
+
+       builder.Services.AddDbContext<ApplicationDbContext>(options => 
+	   options.UseSqlServer(connectionString, x => x.MigrationsAssembly("Gizmo.DAL.EFCore.Migrations.MSSQL"));
+	   
+	2- Open package manager console.
+	3- Select the default project Gizmo.DAL.EFCore.Migrations.MSSQL
+	4- Enter the command line > EntityFrameworkCore\Add-Migration {MigrationName}
