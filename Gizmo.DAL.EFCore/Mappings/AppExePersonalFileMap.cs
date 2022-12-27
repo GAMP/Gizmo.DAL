@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.EFCore
 {
     public class AppExePersonalFileMap : IEntityTypeConfiguration<AppExePersonalFile>
     {

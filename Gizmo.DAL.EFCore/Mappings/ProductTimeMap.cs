@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedLib;
 using System;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.EFCore
 {
     public class ProductTimeMap : IEntityTypeConfiguration<ProductTime>
     {

@@ -17,8 +17,9 @@ using Microsoft.Data.SqlClient;
 using CoreLib;
 using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore.Metadata;
+using GizmoDALV2;
 
-namespace GizmoDALV2
+namespace Gizmo.DAL.EFCore
 {
     #region DEFAULTDBCONTEXT
 
@@ -271,7 +272,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets attributes.
         /// </summary>
-        public DbSet<Entities.Attribute> Attributes
+        public DbSet<GizmoDALV2.Entities.Attribute> Attributes
         {
             get;
             set;
@@ -686,7 +687,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets voids.
         /// </summary>
-        public DbSet<Entities.Void> Voids { get; set; }
+        public DbSet<GizmoDALV2.Entities.Void> Voids { get; set; }
 
         /// <summary>
         /// Gets waiting line entries.
@@ -1683,7 +1684,7 @@ namespace GizmoDALV2
         /// Change default generated index names of foreign keys to match the old database pattern 
         /// </summary>
         /// <param name="modelBuilder"></param>
-        public static void RenameIndexWithOldPattern(ModelBuilder modelBuilder)
+        private static void RenameIndexWithOldPattern(ModelBuilder modelBuilder)
         {
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
@@ -1709,7 +1710,7 @@ namespace GizmoDALV2
         /// Change default generated index names of foreign keys to match the old database pattern 
         /// </summary>
         /// <param name="modelBuilder"></param>
-        public static void RenameDuplicatedIndexNames(ModelBuilder modelBuilder)
+        private static void RenameDuplicatedIndexNames(ModelBuilder modelBuilder)
         {
             var indexes = new Dictionary<string, List<KeyValuePair<IMutableEntityType, IMutableIndex>>>();
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
@@ -1739,6 +1740,7 @@ namespace GizmoDALV2
                 }
             }
         }
+
         #endregion
 
         #region NOTIFICATIONS
@@ -2044,23 +2046,4 @@ namespace GizmoDALV2
     }
 
     #endregion
-
-    /// <summary>
-    /// Microsoft SQL Server retriable error codes.
-    /// </summary>
-    public enum MSSQLServerRetryableErrors
-    {
-        TimeoutExpired = -2,
-        EncryptionNotSupported = 20,
-        LoginError = 64,
-        ConnectionInitialization = 233,
-        Deadlock = 1205,
-        TransportLevelReceiving = 10053,
-        TransportLevelSending = 10054,
-        EstablishingConnection = 10060,
-        ProcessingRequest = 40143,
-        ServiceBusy = 40501,
-        DatabaseOrServerNotAvailable = 40613
-    }
-    //#endregion
 }

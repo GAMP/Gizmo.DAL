@@ -1,2 +1,0 @@
-﻿ //update existing host and add newly generated guid
- Sql("UPDATE [dbo].[Host] SET Guid = NEWID();");

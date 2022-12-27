@@ -1,4 +1,5 @@
-﻿using GizmoDALV2.Entities;
+﻿using GizmoDALV2;
+using GizmoDALV2.Entities;
 using IntegrationLib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.EFCore
 {
     public class UserPermissionMap : IEntityTypeConfiguration<UserPermission>
     {

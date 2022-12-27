@@ -4,8 +4,8 @@
     <Configurations>Debug;Release;</Configurations>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
-    <Product>GizmoDALV2</Product>
-    <Description>GizmoDALV2</Description>
+    <Product>Gizmo.DAL.EFCore</Product>
+    <Description>Gizmo.DAL.EFCore</Description>
     <Copyright>NETProjects</Copyright>
     <Authors />
     <Company>NETProjects</Company>
@@ -14,7 +14,7 @@
     <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
     <Optimize>true</Optimize>
     <!-- !IMPORTANT! will break compatibility with older builds if name is changed-->
-    <AssemblyName>GizmoDALV2</AssemblyName>
+    <AssemblyName>Gizmo.DAL.EFCore</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -48,6 +48,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\DataInterfaces\DataInterfaces\DataInterfaces.csproj" />
     <ProjectReference Include="..\..\Gizmo.DAL.Entities\Gizmo.DAL.Entities.csproj" />
+    <ProjectReference Include="..\Gizmo.DAL\Gizmo.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">

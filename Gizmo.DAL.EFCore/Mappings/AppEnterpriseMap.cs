@@ -1,9 +1,10 @@
-﻿using GizmoDALV2.Entities;
+﻿using GizmoDALV2;
+using GizmoDALV2.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.EFCore
 {
     public class AppEnterpriseMap : IEntityTypeConfiguration<AppEnterprise>
     {
