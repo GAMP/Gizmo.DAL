@@ -1,7 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
-using Gizmo.DAL.Mappings;
 using GizmoDALV2.Entities;
-using GizmoDALV2.Mappings;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,9 +13,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using CoreLib;
-using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore.Metadata;
 using GizmoDALV2;
+using Gizmo.DAL.EFCore.Mappings;
 
 namespace Gizmo.DAL.EFCore
 {
@@ -267,7 +265,7 @@ namespace Gizmo.DAL.EFCore
         /// <summary>
         /// Gets mappings.
         /// </summary>
-        public DbSet<Mapping> Mappings { get; set; }
+        public DbSet<GizmoDALV2.Entities.Mapping> Mappings { get; set; }
 
         /// <summary>
         /// Gets attributes.

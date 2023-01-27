@@ -5,7 +5,7 @@ using SharedLib;
 using System;
 using System.Reflection.Metadata;
 
-namespace Gizmo.DAL.EFCore
+namespace Gizmo.DAL.EFCore.Mappings
 {
     public class ProductBundleMap : IEntityTypeConfiguration<ProductBundle>
     {

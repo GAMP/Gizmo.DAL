@@ -3,7 +3,7 @@ using GizmoDALV2;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Gizmo.DAL.EFCore
+namespace Gizmo.DAL.EFCore.Mappings
 {
     public class DeviceHdmiMap : IEntityTypeConfiguration<DeviceHdmi>
     {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedLib;
 using System;
 
-namespace Gizmo.DAL.EFCore
+namespace Gizmo.DAL.EFCore.Mappings
 {
     public class ProductMap : IEntityTypeConfiguration<Product>
     {

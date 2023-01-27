@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Gizmo.DAL.EFCore
+namespace Gizmo.DAL.EFCore.Mappings
 {
     public class InvoiceLineTimeMap : IEntityTypeConfiguration<InvoiceLineTime>
     {

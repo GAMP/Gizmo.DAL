@@ -3,7 +3,7 @@ using GizmoDALV2.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Gizmo.DAL.EFCore
+namespace Gizmo.DAL.EFCore.Mappings
 {
     public class AppMap : IEntityTypeConfiguration<App>
     {
