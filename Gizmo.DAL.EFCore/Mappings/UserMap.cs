@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
-using System;
 using GizmoDALV2;
 
 namespace Gizmo.DAL.EFCore
@@ -65,107 +64,6 @@ namespace Gizmo.DAL.EFCore
 
             // Table & Column Mappings
             builder.ToTable("User");
-        }
-    }
-
-    public class UserOperatorMap : IEntityTypeConfiguration<UserOperator>
-    {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
-        public void Configure(EntityTypeBuilder<UserOperator> builder)
-        {
-            builder.Property(t => t.Username)
-                .IsRequired()
-                .HasMaxLength(30);
-
-            builder.Property(t => t.Email)
-                .HasMaxLength(254);
-
-            // Indexes
-            builder.HasIndex(t => t.Username).HasDatabaseName("UQ_Username").IsUnique().HasFilter(null);
-            builder.HasIndex(t => t.Email).HasDatabaseName("UQ_Email").IsUnique();
-            builder.HasIndex(t => t.Id);
-
-            // Table & Column Mappings
-            builder.ToTable("UserOperator");
-
-            // Seeds
-            builder.HasData(new UserOperator
-            {
-                Id = 1,
-                Username = "Admin",
-                CreatedTime = new DateTime(2023, 01, 01),
-                Guid = new Guid("691ea8b4-d794-4096-84ae-bbdb7bcc0b02"),
-            });
-        }
-    }
-
-    public class UserMemberMap : IEntityTypeConfiguration<UserMember>
-    {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
-        public void Configure(EntityTypeBuilder<UserMember> builder)
-        {
-            builder.Property(t => t.Username)
-                .IsRequired()
-                .HasMaxLength(30);
-
-            builder.Property(t => t.Email)
-                .HasMaxLength(254);
-
-            // Indexes
-            builder.HasIndex(t => t.Username).HasDatabaseName("UQ_Username").IsUnique().HasFilter(null);
-
-            builder.HasIndex(t => t.Email).HasDatabaseName("UQ_Email").IsUnique();
-            
-            builder.HasIndex(t => t.Id);
-
-            // Table & Column Mappings
-            builder.ToTable(nameof(UserMember));
-
-            // Relationships
-            builder.HasOne(t => t.UserGroup)
-                .WithMany(t => t.Users)
-                .HasForeignKey(d => d.UserGroupId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Seeds
-            builder.HasData(new UserMember() { Id = 2, Username = "User", UserGroupId = 1, Guid = new Guid("38753737-24f1-40d7-8ac4-ba61660d666a") });
-        }
-    }
-
-    public class UserGuestMap : IEntityTypeConfiguration<UserGuest>
-    {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
-        public void Configure(EntityTypeBuilder<UserGuest> builder)
-        {
-            // Table & Column Mappings
-            builder.ToTable("UserGuest");
-
-            builder.Property(x => x.IsJoined)
-                .HasColumnOrder(1);
-
-            builder.Property(x => x.IsReserved)
-                .HasColumnOrder(2);
-
-            builder.Property(x => x.ReservedHostId)
-                .HasColumnOrder(3);
-
-            builder.Property(x => x.ReservedSlot)
-                .HasColumnOrder(4);
-
-            // Indexes
-            builder.HasIndex(x => new { x.ReservedHostId, x.ReservedSlot }).HasDatabaseName("UQ_UserGuestHostSlot").IsUnique();
-            
-            builder.HasIndex(t => t.Id);
-
-            builder.HasOne(x => x.ReservedHost)
-                .WithMany(x => x.ReservedGuests)
-                .HasForeignKey(x => x.ReservedHostId);
         }
     }
 }

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedLib;
-using System;
 
 namespace Gizmo.DAL.EFCore
 {
@@ -36,60 +35,6 @@ namespace Gizmo.DAL.EFCore
 
             // Seeds
             builder.HasData(new ProductPeriod() { Id = 7, Options = PeriodOptionType.None });
-        }
-    }
-
-    public class ProductPeriodDayMap : IEntityTypeConfiguration<ProductPeriodDay>
-    {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
-        public void Configure(EntityTypeBuilder<ProductPeriodDay> builder)
-        {
-            // Key
-            builder.HasKey(x => x.Id);
-
-            // Table & Column Mappings
-            builder.ToTable("ProductPeriodDay");
-
-            builder.Property(x => x.Id)
-                .HasColumnName("ProductPeriodDayId");
-
-            builder.Property(x => x.ProductPeriodId)
-                .HasColumnName("ProductPeriodId");
-
-            // Indexes
-            builder.HasIndex(x => new { x.ProductPeriodId, x.Day }).HasDatabaseName("UQ_ProductPeriodDay").IsUnique();
-
-            builder.HasOne(x => x.Period)
-                .WithMany(x => x.Days)
-                .HasForeignKey(x => x.ProductPeriodId);
-
-            // Seeds
-            builder.HasData(new ProductPeriodDay() { Id = 7, ProductPeriodId = 7, Day = DayOfWeek.Saturday });
-            builder.HasData(new ProductPeriodDay() { Id = 8, ProductPeriodId = 7, Day = DayOfWeek.Sunday });
-        }
-    }
-
-    public class ProductPeriodDayTimeMap : IEntityTypeConfiguration<ProductPeriodDayTime>
-    {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
-        public void Configure(EntityTypeBuilder<ProductPeriodDayTime> builder)
-        {
-            // Key
-            builder.HasKey(x => new { x.PeriodDayId, x.StartSecond, x.EndSecond });
-
-            // Table & Column Mappings
-            builder.ToTable("ProductPeriodDayTime");
-
-            // Indexes
-            builder.HasIndex(t => t.PeriodDayId);
-
-            builder.HasOne(x => x.Day)
-                .WithMany(x => x.Times)
-                .HasForeignKey(x => x.PeriodDayId);
         }
     }
 }
