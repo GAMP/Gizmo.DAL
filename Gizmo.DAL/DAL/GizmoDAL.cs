@@ -1,6 +1,6 @@
 ﻿using CoreLib;
 using GizmoDALV2.DTO;
-using GizmoDALV2.Entities;
+using Gizmo.DAL.Entities;
 using IntegrationLib;
 using SharedLib;
 using System;
@@ -1198,7 +1198,7 @@ namespace GizmoDALV2
                             IgnoreUpdatedUpdate = true,
                         };
 
-                        var userCredentials = new Entities.UserCredential();
+                        var userCredentials = new Gizmo.DAL.Entities.UserCredential();
 
                         if (string.IsNullOrWhiteSpace(user.Password))
                         {
@@ -1230,7 +1230,7 @@ namespace GizmoDALV2
                                 User = userMember,
                                 IsDelivered = true,
                                 DeliveredTime = DateTime.Now,
-                                Status = OrderStatus.Completed,
+                                Status = Gizmo.OrderStatus.Completed,
                             };
 
                             //create time order line
@@ -1252,7 +1252,7 @@ namespace GizmoDALV2
                             {
                                 ProductOrder = order,
                                 User = order.User,
-                                Status = InvoiceStatus.Paid,
+                                Status = Gizmo.InvoiceStatus.Paid,
                             };
 
                             //create invoice line
@@ -1284,7 +1284,7 @@ namespace GizmoDALV2
                             {
                                 User = userMember,
                                 Amount = deposits,
-                                Type = DepositTransactionType.Credit,
+                                Type = Gizmo.DepositTransactionType.Credit,
                                 Balance = deposits,
                             };
 

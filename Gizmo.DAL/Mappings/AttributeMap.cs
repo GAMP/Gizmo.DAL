@@ -4,13 +4,13 @@ using System.Data.Entity.ModelConfiguration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GizmoDALV2.Entities;
+using Gizmo.DAL.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 
 namespace GizmoDALV2.Mappings
 {
-    public class AttributeMap : EntityTypeConfiguration<GizmoDALV2.Entities.Attribute>
+    public class AttributeMap : EntityTypeConfiguration<Gizmo.DAL.Entities.Attribute>
     {
         public AttributeMap()
         {
@@ -38,7 +38,7 @@ namespace GizmoDALV2.Mappings
                 .HasMaxLength(SQLStringSize.TINY); 
 
             // Table & Column Mappings
-            this.ToTable(nameof(GizmoDALV2.Entities.Attribute));
+            this.ToTable(nameof(Gizmo.DAL.Entities.Attribute));
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL;
+using Gizmo.DAL.Entities;
 using Gizmo.DAL.Mappings;
-using GizmoDALV2.Entities;
 using GizmoDALV2.Mappings;
 using GizmoDALV2.Migrations;
 using SharedLib;
@@ -302,7 +302,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets attributes.
         /// </summary>
-        public DbSet<Entities.Attribute> Attributes
+        public DbSet<Gizmo.DAL.Entities.Attribute> Attributes
         {
             get;
             set;
@@ -717,7 +717,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets voids.
         /// </summary>
-        public DbSet<Entities.Void> Voids { get; set; }
+        public DbSet<Gizmo.DAL.Entities.Void> Voids { get; set; }
 
         /// <summary>
         /// Gets waiting line entries.

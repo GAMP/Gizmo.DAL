@@ -1,4 +1,4 @@
-﻿using GizmoDALV2.Entities;
+﻿using Gizmo.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.ModelConfiguration;

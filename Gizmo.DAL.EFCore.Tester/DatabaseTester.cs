@@ -1,4 +1,4 @@
-﻿using GizmoDALV2.Entities;
+﻿using Gizmo.DAL.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

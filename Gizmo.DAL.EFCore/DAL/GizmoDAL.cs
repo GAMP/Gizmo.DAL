@@ -1,7 +1,6 @@
 ﻿using CoreLib;
 using GizmoDALV2;
 using GizmoDALV2.DTO;
-using GizmoDALV2.Entities;
 using IntegrationLib;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -1025,15 +1024,15 @@ namespace Gizmo.DAL.EFCore
                     await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserAgreement] Set CreatedById=NULL", ct);
                     await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserAgreement] Set ModifiedById=NULL", ct);
 
-                    cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is UserOperator));
+                    cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is Gizmo.DAL.Entities.UserOperator));
                     cx.UsersOperator.RemoveRange(cx.UsersOperator);
 
-                    var defaultOperator = new UserOperator();
+                    var defaultOperator = new Gizmo.DAL.Entities.UserOperator();
 
                     byte[] salt = DefaultDbContext.GetNewSalt();
                     byte[] password = DefaultDbContext.GetHashedPassword("admin", salt);
 
-                    defaultOperator.UserCredential = new UserCredential();
+                    defaultOperator.UserCredential = new Gizmo.DAL.Entities.UserCredential();
                     defaultOperator.Username = "Admin";
 
                     defaultOperator.CreatedTime = DateTime.Now;
@@ -1042,7 +1041,7 @@ namespace Gizmo.DAL.EFCore
 
                     var allPermissions = ClaimTypeBase.GetClaimTypes().Select(claim =>
                     {
-                        return new UserPermission() { Type = claim.Resource, Value = claim.Operation };
+                        return new Gizmo.DAL.Entities.UserPermission() { Type = claim.Resource, Value = claim.Operation };
                     });
 
                     defaultOperator.Permissions.UnionWith(allPermissions);
@@ -1201,7 +1200,7 @@ namespace Gizmo.DAL.EFCore
                     //add any missing user group
                     foreach (var userGroupName in validUserGroups)
                     {
-                        var userGroup = new UserGroup()
+                        var userGroup = new Gizmo.DAL.Entities.UserGroup()
                         {
                             Name = userGroupName,
                         };
@@ -1226,7 +1225,7 @@ namespace Gizmo.DAL.EFCore
                         var userGroupId = userGroupLookup[user.UserGroupName.ToLower()];
 
                         //create new user member
-                        var userMember = new UserMember()
+                        var userMember = new Gizmo.DAL.Entities.UserMember()
                         {
                             Username = user.Username,
                             FirstName = user.FirstName,
@@ -1251,7 +1250,7 @@ namespace Gizmo.DAL.EFCore
                             IgnoreUpdatedUpdate = true,
                         };
 
-                        var userCredentials = new GizmoDALV2.Entities.UserCredential();
+                        var userCredentials = new Gizmo.DAL.Entities.UserCredential();
 
                         if (string.IsNullOrWhiteSpace(user.Password))
                         {
@@ -1278,16 +1277,16 @@ namespace Gizmo.DAL.EFCore
                             var time = options.TreatTimeAsMinutes ? TimeSpan.FromMinutes(user.Time) : TimeSpan.FromSeconds(user.Time);
 
                             //create a product order
-                            var order = new ProductOrder
+                            var order = new Gizmo.DAL.Entities.ProductOrder
                             {
                                 User = userMember,
                                 IsDelivered = true,
                                 DeliveredTime = DateTime.Now,
-                                Status = SharedLib.OrderStatus.Completed,
+                                Status = OrderStatus.Completed,
                             };
 
                             //create time order line
-                            var orderLine = new ProductOLTimeFixed
+                            var orderLine = new Gizmo.DAL.Entities.ProductOLTimeFixed
                             {
                                 ProductOrder = order,
                                 ProductName = "Imported time",
@@ -1301,15 +1300,15 @@ namespace Gizmo.DAL.EFCore
                             order.OrderLines.Add(orderLine);
 
                             //create invoice
-                            var invoice = new Invoice
+                            var invoice = new Gizmo.DAL.Entities.Invoice
                             {
                                 ProductOrder = order,
                                 User = order.User,
-                                Status = SharedLib.InvoiceStatus.Paid,
+                                Status = InvoiceStatus.Paid,
                             };
 
                             //create invoice line
-                            var invoiceLine = new InvoiceLineTimeFixed
+                            var invoiceLine = new Gizmo.DAL.Entities.InvoiceLineTimeFixed
                             {
                                 Invoice = invoice,
                                 User = order.User,
@@ -1333,11 +1332,11 @@ namespace Gizmo.DAL.EFCore
                             var deposits = Math.Round(user.Deposits, 2);
 
                             //create deposit transaction
-                            var depositTransaction = new DepositTransaction()
+                            var depositTransaction = new Gizmo.DAL.Entities.DepositTransaction()
                             {
                                 User = userMember,
                                 Amount = deposits,
-                                Type = SharedLib.DepositTransactionType.Credit,
+                                Type = DepositTransactionType.Credit,
                                 Balance = deposits,
                             };
 
@@ -1348,7 +1347,7 @@ namespace Gizmo.DAL.EFCore
                         if (user.Points > 0)
                         {
                             //create points transaction
-                            var pointsTransaction = new PointTransaction()
+                            var pointsTransaction = new Gizmo.DAL.Entities.PointTransaction()
                             {
                                 User = userMember,
                                 Amount = user.Points,
@@ -1382,7 +1381,7 @@ namespace Gizmo.DAL.EFCore
         /// </summary>
         /// <typeparam name="T">Item type.</typeparam>
         /// <param name="item">Item.</param>
-        public void InsertOrUpdate<T>(T item) where T : EntityBase
+        public void InsertOrUpdate<T>(T item) where T : Gizmo.DAL.Entities.EntityBase
         {
             using (var cx = GetDbNonProxyContext())
             {
@@ -1399,7 +1398,7 @@ namespace Gizmo.DAL.EFCore
         /// </summary>
         /// <typeparam name="T">Item type.</typeparam>
         /// <param name="item">Item.</param>
-        public void Remove<T>(T item) where T : EntityBase
+        public void Remove<T>(T item) where T : Gizmo.DAL.Entities.EntityBase
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
@@ -1419,7 +1418,7 @@ namespace Gizmo.DAL.EFCore
         /// Gets all current settings.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Setting> SettingGet()
+        public IEnumerable<Gizmo.DAL.Entities.Setting> SettingGet()
         {
             using (var cx = GetDbContext())
             {
@@ -1432,7 +1431,7 @@ namespace Gizmo.DAL.EFCore
         /// </summary>
         /// <param name="name">Setting name.</param>
         /// <returns>Found setting, null in case no setting found.</returns>
-        public Setting SettingGet(string name)
+        public Gizmo.DAL.Entities.Setting SettingGet(string name)
         {
             using (var cx = GetDbContext())
             {
@@ -1471,7 +1470,7 @@ namespace Gizmo.DAL.EFCore
         /// Adds or updates specified setting.
         /// </summary>
         /// <param name="setting">Settng instance.</param>
-        public void SettingSet(Setting setting)
+        public void SettingSet(Gizmo.DAL.Entities.Setting setting)
         {
             if (setting == null)
                 throw new ArgumentNullException(nameof(setting));
@@ -1495,7 +1494,7 @@ namespace Gizmo.DAL.EFCore
                 var entity = cx.Settings.Where(x => x.Name == name).FirstOrDefault();
                 if (entity == null)
                 {
-                    entity = new Setting() { Name = name, Value = value, GroupName = group };
+                    entity = new Gizmo.DAL.Entities.Setting() { Name = name, Value = value, GroupName = group };
                     cx.Entry(entity).State = EntityState.Added;
                 }
                 else

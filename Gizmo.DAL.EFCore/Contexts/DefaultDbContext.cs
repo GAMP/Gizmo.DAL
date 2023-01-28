@@ -1,5 +1,4 @@
 ﻿using Gizmo.DAL.Entities;
-using GizmoDALV2.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -265,12 +264,12 @@ namespace Gizmo.DAL.EFCore
         /// <summary>
         /// Gets mappings.
         /// </summary>
-        public DbSet<GizmoDALV2.Entities.Mapping> Mappings { get; set; }
+        public DbSet<Mapping> Mappings { get; set; }
 
         /// <summary>
         /// Gets attributes.
         /// </summary>
-        public DbSet<GizmoDALV2.Entities.Attribute> Attributes
+        public DbSet<Gizmo.DAL.Entities.Attribute> Attributes
         {
             get;
             set;
@@ -685,7 +684,7 @@ namespace Gizmo.DAL.EFCore
         /// <summary>
         /// Gets voids.
         /// </summary>
-        public DbSet<GizmoDALV2.Entities.Void> Voids { get; set; }
+        public DbSet<Entities.Void> Voids { get; set; }
 
         /// <summary>
         /// Gets waiting line entries.
