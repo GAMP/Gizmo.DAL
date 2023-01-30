@@ -108,12 +108,12 @@ namespace GizmoDALV2
 
         #region IGizmoDbContextProvider
 
-        IGizmoDBContext IDbContextProvider<IGizmoDBContext>.GetDbContext()
+        IGizmoDBContext IGizmoDbContextProvider.GetDbContext()
         {
             return GetDbContext();
         }
 
-        IGizmoDBContext IDbContextProvider<IGizmoDBContext>.GetDbNonProxyContext()
+        IGizmoDBContext IGizmoDbContextProvider.GetDbNonProxyContext()
         {
             return GetDbNonProxyContext();
         }
@@ -1454,6 +1454,16 @@ namespace GizmoDALV2
                 }
                 cx.SaveChanges();
             }
+        }
+
+        public Task<IGizmoDBContext> GetDbContextAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IGizmoDBContext> GetDbNonProxyContextAsync()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
