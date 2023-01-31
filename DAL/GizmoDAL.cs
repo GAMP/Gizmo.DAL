@@ -1,8 +1,12 @@
 ﻿using CoreLib;
+
 using GizmoDALV2.DTO;
 using GizmoDALV2.Entities;
+
 using IntegrationLib;
+
 using SharedLib;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,8 +26,7 @@ namespace GizmoDALV2
     /// <summary>
     /// Gizmo database class.
     /// </summary>
-    [Export(typeof(IGizmoDbContextProvider))]
-    public partial class GizmoDatabase : IGizmoDbContextProvider
+    public partial class GizmoDatabase
     {
         #region CONSTRUCTOR
 
@@ -105,20 +108,6 @@ namespace GizmoDALV2
         #endregion
 
         #region CONTEXT
-
-        #region IGizmoDbContextProvider
-
-        IGizmoDBContext IGizmoDbContextProvider.GetDbContext()
-        {
-            return GetDbContext();
-        }
-
-        IGizmoDBContext IGizmoDbContextProvider.GetDbNonProxyContext()
-        {
-            return GetDbNonProxyContext();
-        }
-
-        #endregion
 
         public DefaultDbContext GetDbContext(string connectionString)
         {
@@ -1455,17 +1444,6 @@ namespace GizmoDALV2
                 cx.SaveChanges();
             }
         }
-
-        public Task<IGizmoDBContext> GetDbContextAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IGizmoDBContext> GetDbNonProxyContextAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
     }
     #endregion

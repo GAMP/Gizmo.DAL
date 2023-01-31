@@ -32,8 +32,7 @@ namespace GizmoDALV2
     /// Default db context.
     /// </summary>
     [DbConfigurationType(typeof(DefaultConfig))]
-    public class DefaultDbContext : DbContext,
-        IGizmoDBContext
+    public class DefaultDbContext : DbContext, IGizmoDBContext
     {
         #region CONSTRUCTOR
 
