@@ -2,8 +2,15 @@
 
 namespace Gizmo.DAL.Contexts
 {
-    public class SqlServerDbContext : DefaultDbContext
+    /// <summary>
+    /// Sql server context.
+    /// </summary>
+    public sealed class SqlServerDbContext : DefaultDbContext
     {
+        /// <summary>
+        /// Creates new instance.
+        /// </summary>
+        /// <param name="connectionString">Connection string.</param>
         public SqlServerDbContext(string connectionString) : base(connectionString) { }
     }
 }

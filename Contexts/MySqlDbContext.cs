@@ -6,14 +6,11 @@ using GizmoDALV2;
 
 namespace Gizmo.DAL.Contexts
 {
-    public class MySqlDbContext : IGizmoDBContext
+    /// <summary>
+    /// MySql context.
+    /// </summary>
+    public sealed class MySqlDbContext : IGizmoDBContext
     {
-        private readonly string _connectionString;
-
-        public MySqlDbContext(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
         public bool IsEventsCached { get; set; }
 
         public IDatabaseTransaction BeginTransaction()

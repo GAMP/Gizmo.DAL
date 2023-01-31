@@ -1,19 +1,20 @@
 ﻿using System.ComponentModel.Composition;
 
-using Gizmo.DAL.Interfaces;
-
 using GizmoDALV2;
 
 namespace Gizmo.DAL.Contexts.Providers
 {
     /// <summary>
-    /// DAL Initialization code.
+    /// Sql Server context provider
     /// </summary>
     [Export(typeof(IGizmoDbContextProvider))]
-    [Export(typeof(ISqlServerContextProvider))]
-    public class SqlServerContextProvider : IGizmoDbContextProvider, ISqlServerContextProvider
+    public sealed class SqlServerContextProvider : IGizmoDbContextProvider
     {
         private readonly string _connectionString;
+        /// <summary>
+        /// Sql server context provider initializer
+        /// </summary>
+        /// <param name="connectionString">Sql Server name or connection string</param>
         public SqlServerContextProvider(string connectionString) => _connectionString = connectionString;
 
         #region IGizmoDbContextProvider
@@ -25,14 +26,21 @@ namespace Gizmo.DAL.Contexts.Providers
 
         #region IGizmoDqlSqlServerContextProvider
 
+        /// <summary>
+        /// Gets database context.
+        /// </summary>
+        /// <returns>New context instance.</returns>
         public SqlServerDbContext GetDbContext()
         {
             return new SqlServerDbContext(_connectionString);
         }
 
+        /// <summary>
+        /// Gets non-proxy database context.
+        /// </summary>
+        /// <returns>New context instance.</returns>
         public SqlServerDbContext GetDbNonProxyContext()
         {
-
             var context = GetDbContext();
             context.Configuration.LazyLoadingEnabled = false;
             context.Configuration.ProxyCreationEnabled = false;

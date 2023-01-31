@@ -1,41 +1,32 @@
-﻿using System.ComponentModel.Composition;
-
-using Gizmo.DAL.Interfaces;
+﻿using System;
+using System.ComponentModel.Composition;
 
 using GizmoDALV2;
 
 namespace Gizmo.DAL.Contexts.Providers
 {
     /// <summary>
-    /// DAL Initialization code.
+    /// MySql context ptovider.
     /// </summary>
     [Export(typeof(IGizmoDbContextProvider))]
-    [Export(typeof(IMySqlContextProvider))]
-    public class MySqlContextProvider : IGizmoDbContextProvider, IMySqlContextProvider
+    public sealed class MySqlContextProvider : IGizmoDbContextProvider
     {
-        private readonly string _connectionString;
-        public MySqlContextProvider(string connectionString) => _connectionString = connectionString;
-
-        #region IGizmoDbContextProvider
-
-        IGizmoDBContext IGizmoDbContextProvider.GetDbContext() => GetDbContext();
-        IGizmoDBContext IGizmoDbContextProvider.GetDbNonProxyContext() => GetDbNonProxyContext();
-
-        #endregion
-
-        #region IGizmoDqlSqlServerContextProvider
-
-        public MySqlDbContext GetDbContext()
+        /// <summary>
+        /// Gets database context.
+        /// </summary>
+        /// <returns>New context instance.</returns>
+        public IGizmoDBContext GetDbContext()
         {
-            return new MySqlDbContext(_connectionString);
+            throw new NotImplementedException();
         }
 
-        public MySqlDbContext GetDbNonProxyContext()
+        /// <summary>
+        /// Gets non-proxy database context.
+        /// </summary>
+        /// <returns>New context instance.</returns>
+        public IGizmoDBContext GetDbNonProxyContext()
         {
-            var context = GetDbContext();
-            return context;
+            throw new NotImplementedException();
         }
-
-        #endregion
     }
 }
