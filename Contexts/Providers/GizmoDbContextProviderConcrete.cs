@@ -1,21 +1,23 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 
 using GizmoDALV2;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Gizmo.DAL.Contexts.Providers
 {
     /// <summary>
-    /// Sql Server context provider
+    /// Gizmo.DAL default db context ptovider.
     /// </summary>
-    [Export(typeof(IGizmoDbContextProvider))]
-    public sealed class SqlServerContextProvider : IGizmoDbContextProvider
+    public sealed class GizmoDbContextProviderConcrete : IGizmoDbContextProviderConcrete, IGizmoDbContextProvider
     {
-        private readonly string _connectionString;
+        private readonly IServiceProvider _serviceProvider;
         /// <summary>
-        /// Sql server context provider initializer
+        /// Gizmo.DAL default db context ptovider initializer
         /// </summary>
-        /// <param name="connectionString">Sql Server name or connection string</param>
-        public SqlServerContextProvider(string connectionString) => _connectionString = connectionString;
+        /// <param name="serviceProvider">DI Service provider</param>
+        public GizmoDbContextProviderConcrete(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
         #region IGizmoDbContextProvider
 
@@ -24,22 +26,22 @@ namespace Gizmo.DAL.Contexts.Providers
 
         #endregion
 
-        #region IGizmoDqlSqlServerContextProvider
+        #region IGizmoDbContextProviderConcrete
 
         /// <summary>
         /// Gets database context.
         /// </summary>
         /// <returns>New context instance.</returns>
-        public SqlServerDbContext GetDbContext()
+        public DefaultDbContext GetDbContext()
         {
-            return new SqlServerDbContext(_connectionString);
+            return _serviceProvider.GetRequiredService<DefaultDbContext>();
         }
 
         /// <summary>
         /// Gets non-proxy database context.
         /// </summary>
         /// <returns>New context instance.</returns>
-        public SqlServerDbContext GetDbNonProxyContext()
+        public DefaultDbContext GetDbNonProxyContext()
         {
             var context = GetDbContext();
             context.Configuration.LazyLoadingEnabled = false;
