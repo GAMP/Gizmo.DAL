@@ -1,9 +1,11 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 
 using GizmoDALV2;
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
+using SharedLib;
+using SharedLib.Configuration;
 
 namespace Gizmo.DAL.Contexts.Providers
 {
@@ -12,12 +14,12 @@ namespace Gizmo.DAL.Contexts.Providers
     /// </summary>
     public sealed class GizmoDbContextProviderConcrete : IGizmoDbContextProviderConcrete, IGizmoDbContextProvider
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly ServiceDatabaseConfig _dbConfig;
         /// <summary>
-        /// Gizmo.DAL default db context ptovider initializer
+        /// Gizmo.DAL default db context ptovider initializer.
         /// </summary>
-        /// <param name="serviceProvider">DI Service provider</param>
-        public GizmoDbContextProviderConcrete(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
+        /// <param name="options">DI options.</param>
+        public GizmoDbContextProviderConcrete(IOptions<ServiceDatabaseConfig> options) => _dbConfig = options.Value;
 
         #region IGizmoDbContextProvider
 
@@ -34,7 +36,11 @@ namespace Gizmo.DAL.Contexts.Providers
         /// <returns>New context instance.</returns>
         public DefaultDbContext GetDbContext()
         {
-            return _serviceProvider.GetRequiredService<DefaultDbContext>();
+            return _dbConfig.DbType switch
+            {
+                DatabaseType.LOCALDB or DatabaseType.MSSQLEXPRESS or DatabaseType.MSSQL => new(_dbConfig.DbConnectionString),
+                _ => throw new NotImplementedException(nameof(GetDbContext))
+            };
         }
 
         /// <summary>
