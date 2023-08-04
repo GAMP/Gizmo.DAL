@@ -81,7 +81,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets hosts.
         /// </summary>
-        public DbSet<Host> Hosts { get; set; }
+        public virtual DbSet<Host> Hosts { get; set; }
 
         /// <summary>
         /// Gets host computers.
@@ -116,12 +116,12 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets host groups.
         /// </summary>
-        public DbSet<HostGroup> HostGroups { get; set; }
+        public virtual DbSet<HostGroup> HostGroups { get; set; }
 
         /// <summary>
         /// Gets user groups.
         /// </summary>
-        public DbSet<UserGroup> UserGroups { get; set; }
+        public virtual DbSet<UserGroup> UserGroups { get; set; }
 
         /// <summary>
         /// Gets user group dissalowed host groups.
@@ -281,7 +281,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets user sessions.
         /// </summary>
-        public DbSet<UserSession> Sessions { get; set; }
+        public virtual DbSet<UserSession> Sessions { get; set; }
 
         /// <summary>
         /// Gets user session changes.
@@ -459,12 +459,12 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets bill profiles.
         /// </summary>
-        public DbSet<BillProfile> BillProfiles { get; set; }
+        public virtual DbSet<BillProfile> BillProfiles { get; set; }
 
         /// <summary>
         /// Gets bill rates.
         /// </summary>
-        public DbSet<BillRate> BillRates { get; set; }
+        public virtual DbSet<BillRate> BillRates { get; set; }
 
         /// <summary>
         /// Gets bill rate steps.
@@ -489,7 +489,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets usage.
         /// </summary>
-        public DbSet<Usage> Usage { get; set; }
+        public virtual DbSet<Usage> Usage { get; set; }
 
         /// <summary>
         /// Gets usage user sessions.
