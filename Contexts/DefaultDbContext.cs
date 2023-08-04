@@ -246,7 +246,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets member users.
         /// </summary>
-        public DbSet<UserMember> UsersMember { get; set; }
+        public virtual DbSet<UserMember> UsersMember { get; set; }
 
         /// <summary>
         /// Gets operator users.
@@ -484,7 +484,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets usage sessions.
         /// </summary>
-        public DbSet<UsageSession> UsageSessions { get; set; }
+        public virtual DbSet<UsageSession> UsageSessions { get; set; }
 
         /// <summary>
         /// Gets usage.
