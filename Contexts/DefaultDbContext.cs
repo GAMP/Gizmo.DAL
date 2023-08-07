@@ -596,7 +596,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets product times.
         /// </summary>
-        public DbSet<ProductTime> ProductTimes { get; set; }
+        public virtual DbSet<ProductTime> ProductTimes { get; set; }
 
         /// <summary>
         /// Gets or sets product disallowed user groups.
