@@ -504,7 +504,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets usage time.
         /// </summary>
-        public DbSet<UsageTime> UsageTime { get; set; }
+        public virtual DbSet<UsageTime> UsageTime { get; set; }
 
         /// <summary>
         /// Gets usage time fixed.
