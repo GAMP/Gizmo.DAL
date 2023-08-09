@@ -606,7 +606,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Get or sets product time dissalowed host groups.
         /// </summary>
-        public DbSet<ProductTimeHostDisallowed> ProductTimeHostDisallowed { get; set; }
+        public virtual DbSet<ProductTimeHostDisallowed> ProductTimeHostDisallowed { get; set; }
 
         /// <summary>
         /// Gets or sets product taxes.
