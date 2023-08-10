@@ -571,12 +571,12 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets time product invoice lines.
         /// </summary>
-        public DbSet<InvoiceLineTime> InvoiceLineTime { get; set; }
+        public virtual DbSet<InvoiceLineTime> InvoiceLineTime { get; set; }
 
         /// <summary>
         /// Gets time fixed invoice lines.
         /// </summary>
-        public DbSet<InvoiceLineTimeFixed> InvoiceLineTimeFixed { get; set; }
+        public virtual DbSet<InvoiceLineTimeFixed> InvoiceLineTimeFixed { get; set; }
 
         /// <summary>
         /// Gets product groups.
