@@ -499,7 +499,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets usage rate.
         /// </summary>
-        public DbSet<UsageRate> UsageRate { get; set; }
+        public virtual DbSet<UsageRate> UsageRate { get; set; }
 
         /// <summary>
         /// Gets usage time.
@@ -509,7 +509,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets usage time fixed.
         /// </summary>
-        public DbSet<UsageTimeFixed> UsageFixed { get; set; }
+        public virtual DbSet<UsageTimeFixed> UsageFixed { get; set; }
 
         /// <summary>
         /// Gets orders.
@@ -636,7 +636,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets product time periods.
         /// </summary>
-        public DbSet<ProductTimePeriod> ProductTimePeriods { get; set; }
+        public virtual DbSet<ProductTimePeriod> ProductTimePeriods { get; set; }
 
         /// <summary>
         /// Gets product time period days.
