@@ -641,12 +641,12 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets product time period days.
         /// </summary>
-        public DbSet<ProductTimePeriodDay> ProductTimePeriodDays { get; set; }
+        public virtual DbSet<ProductTimePeriodDay> ProductTimePeriodDays { get; set; }
 
         /// <summary>
         /// Gets product time priods times.
         /// </summary>
-        public DbSet<ProductTimePeriodDayTime> ProductTimePeriodsTimes { get; set; }
+        public virtual DbSet<ProductTimePeriodDayTime> ProductTimePeriodsTimes { get; set; }
 
         /// <summary>
         /// Gets product user prices.
