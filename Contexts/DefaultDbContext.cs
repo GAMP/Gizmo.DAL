@@ -429,7 +429,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets deposit transactions.
         /// </summary>
-        public DbSet<DepositTransaction> DepositTransactions { get; set; }
+        public virtual DbSet<DepositTransaction> DepositTransactions { get; set; }
 
         /// <summary>
         /// Gets payments.
@@ -469,12 +469,12 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets bill rate steps.
         /// </summary>
-        public DbSet<BillRateStep> BillRateSteps { get; set; }
+        public virtual DbSet<BillRateStep> BillRateSteps { get; set; }
 
         /// <summary>
         /// Gets bill rate period days.
         /// </summary>
-        public DbSet<BillRatePeriodDay> BillRatePeriodDays { get; set; }
+        public virtual DbSet<BillRatePeriodDay> BillRatePeriodDays { get; set; }
 
         /// <summary>
         /// Gets bill rates period times.
@@ -566,7 +566,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets usage session invoice lines.
         /// </summary>
-        public DbSet<InvoiceLineSession> InvoiceLineSession { get; set; }
+        public virtual DbSet<InvoiceLineSession> InvoiceLineSession { get; set; }
 
         /// <summary>
         /// Gets time product invoice lines.
