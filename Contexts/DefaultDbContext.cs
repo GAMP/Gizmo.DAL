@@ -479,7 +479,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets bill rates period times.
         /// </summary>
-        public DbSet<BillRatePeriodDayTime> BillRatePeriodTimes { get; set; }
+        public virtual DbSet<BillRatePeriodDayTime> BillRatePeriodTimes { get; set; }
 
         /// <summary>
         /// Gets usage sessions.
