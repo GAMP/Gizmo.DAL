@@ -546,7 +546,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets invoices.
         /// </summary>
-        public DbSet<Invoice> Invoices { get; set; }
+        public virtual DbSet<Invoice> Invoices { get; set; }
 
         /// <summary>
         /// Gets invoice lines.
