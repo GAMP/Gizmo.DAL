@@ -7,7 +7,6 @@ namespace Gizmo.DAL.Mappings
     {
         public AssistanceRequestTypeMap()
         {
-            // Primary Key
             HasKey(t => t.Id);
 
             Property(x => x.Id)
@@ -19,9 +18,12 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY45)
                 .IsRequired();
 
-        
+            Property(x => x.DisplayOrder)
+                .HasColumnOrder(2);
 
-            // Table & Column Mappings
+            Property(x => x.IsDeleted)
+                .HasColumnOrder(3);        
+
             ToTable(nameof(Entities.AssistanceRequestType));
         }
     }

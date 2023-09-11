@@ -783,6 +783,16 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<PaymentIntent> PaymentIntents { get; set; }
 
+        /// <summary>
+        /// Gets assistance requests.
+        /// </summary>
+        public DbSet<AssistanceRequest> AssistanceRequests { get; set; }
+
+        /// <summary>
+        /// Gets assistance request types.
+        /// </summary>
+        public DbSet<AssistanceRequestType> AssistanceRequestTypes { get; set; }
+
         #region DEVICES
 
         /// <summary>

@@ -7,20 +7,32 @@ namespace Gizmo.DAL.Mappings
     {
         public AssistanceRequestMap()
         {
-            // Primary Key
             HasKey(t => t.Id);
 
             Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("AssistanceRequestId");
 
+            Property(x => x.UserId)
+                .IsOptional()
+                .HasColumnOrder(1);
+
+            Property(x => x.HostId)
+                .IsRequired()
+                .HasColumnOrder(2);
+
+            Property(x => x.Status)
+                .HasColumnOrder(3);
+
             Property(x => x.Note)
-                .HasColumnOrder(1)
+                .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.TINY)
-                .IsRequired();
+                .IsOptional();
 
+            HasRequired(x => x.Host)
+                .WithMany(x => x.AssitanceRequests)
+                .HasForeignKey(x => x.HostId);
 
-            // Table & Column Mappings
             ToTable(nameof(Entities.AssistanceRequest));
         }
     }
