@@ -21,13 +21,17 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(2);
 
-            Property(x => x.Status)
+            Property(x => x.AssistanceRequestTypeId)
+                .IsRequired()
                 .HasColumnOrder(3);
 
             Property(x => x.Note)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsOptional();
+
+            Property(x => x.Status)
+                .HasColumnOrder(5);
 
             HasRequired(x => x.Host)
                 .WithMany(x => x.AssitanceRequests)
