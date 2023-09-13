@@ -51,6 +51,7 @@
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
             
+            AddColumn("dbo.ProductOLProduct", "Mark", c => c.String(maxLength: 126, unicode: false));
         }
         
         public override void Down()
@@ -67,6 +68,7 @@
             DropIndex("dbo.AssistanceRequest", new[] { "ModifiedById" });
             DropIndex("dbo.AssistanceRequest", new[] { "HostId" });
             DropIndex("dbo.AssistanceRequest", new[] { "UserId" });
+            DropColumn("dbo.ProductOLProduct", "Mark");
             DropTable("dbo.AssistanceRequestType");
             DropTable("dbo.AssistanceRequest");
         }
