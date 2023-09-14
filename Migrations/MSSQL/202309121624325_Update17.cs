@@ -52,6 +52,8 @@
                 .Index(t => t.CreatedById);
             
             AddColumn("dbo.ProductOLProduct", "Mark", c => c.String(maxLength: 126, unicode: false));
+            AddColumn("dbo.News", "BackgroundUrl", c => c.String(maxLength: 255));
+            AddColumn("dbo.News", "Options", c => c.Int(nullable: false));
         }
         
         public override void Down()
@@ -68,6 +70,8 @@
             DropIndex("dbo.AssistanceRequest", new[] { "ModifiedById" });
             DropIndex("dbo.AssistanceRequest", new[] { "HostId" });
             DropIndex("dbo.AssistanceRequest", new[] { "UserId" });
+            DropColumn("dbo.News", "Options");
+            DropColumn("dbo.News", "BackgroundUrl");
             DropColumn("dbo.ProductOLProduct", "Mark");
             DropTable("dbo.AssistanceRequestType");
             DropTable("dbo.AssistanceRequest");
