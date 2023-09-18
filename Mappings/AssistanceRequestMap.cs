@@ -33,6 +33,10 @@ namespace Gizmo.DAL.Mappings
             Property(x => x.Status)
                 .HasColumnOrder(5);
 
+            HasRequired(x => x.AssistanceRequestType)
+                .WithMany(x => x.AssistanceRequests)
+                .HasForeignKey(x => x.AssistanceRequestTypeId);
+
             HasRequired(x => x.Host)
                 .WithMany(x => x.AssitanceRequests)
                 .HasForeignKey(x => x.HostId);

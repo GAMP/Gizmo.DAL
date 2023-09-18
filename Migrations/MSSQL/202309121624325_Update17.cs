@@ -23,12 +23,14 @@
                         CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                     })
                 .PrimaryKey(t => t.AssistanceRequestId)
+                .ForeignKey("dbo.AssistanceRequestType", t => t.AssistanceRequestTypeId, cascadeDelete: true)
                 .ForeignKey("dbo.User", t => t.CreatedById)
                 .ForeignKey("dbo.Host", t => t.HostId, cascadeDelete: true)
                 .ForeignKey("dbo.User", t => t.ModifiedById)
                 .ForeignKey("dbo.UserMember", t => t.UserId)
                 .Index(t => t.UserId)
                 .Index(t => t.HostId)
+                .Index(t => t.AssistanceRequestTypeId)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
             
@@ -58,16 +60,18 @@
         
         public override void Down()
         {
-            DropForeignKey("dbo.AssistanceRequestType", "ModifiedById", "dbo.UserOperator");
-            DropForeignKey("dbo.AssistanceRequestType", "CreatedById", "dbo.UserOperator");
             DropForeignKey("dbo.AssistanceRequest", "UserId", "dbo.UserMember");
             DropForeignKey("dbo.AssistanceRequest", "ModifiedById", "dbo.User");
             DropForeignKey("dbo.AssistanceRequest", "HostId", "dbo.Host");
             DropForeignKey("dbo.AssistanceRequest", "CreatedById", "dbo.User");
+            DropForeignKey("dbo.AssistanceRequest", "AssistanceRequestTypeId", "dbo.AssistanceRequestType");
+            DropForeignKey("dbo.AssistanceRequestType", "ModifiedById", "dbo.UserOperator");
+            DropForeignKey("dbo.AssistanceRequestType", "CreatedById", "dbo.UserOperator");
             DropIndex("dbo.AssistanceRequestType", new[] { "CreatedById" });
             DropIndex("dbo.AssistanceRequestType", new[] { "ModifiedById" });
             DropIndex("dbo.AssistanceRequest", new[] { "CreatedById" });
             DropIndex("dbo.AssistanceRequest", new[] { "ModifiedById" });
+            DropIndex("dbo.AssistanceRequest", new[] { "AssistanceRequestTypeId" });
             DropIndex("dbo.AssistanceRequest", new[] { "HostId" });
             DropIndex("dbo.AssistanceRequest", new[] { "UserId" });
             DropColumn("dbo.News", "Options");
