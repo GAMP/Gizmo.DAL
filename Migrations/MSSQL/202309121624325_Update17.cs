@@ -56,6 +56,8 @@
             AddColumn("dbo.ProductOLProduct", "Mark", c => c.String(maxLength: 126, unicode: false));
             AddColumn("dbo.News", "BackgroundUrl", c => c.String(maxLength: 255));
             AddColumn("dbo.News", "Options", c => c.Int(nullable: false));
+
+            Sql("INSERT INTO [dbo].[UserPermission] ([UserId],[Type],[Value],[CreatedTime]) SELECT UserId, 'Sale', 'AllowDisableReceiptPrint', CURRENT_TIMESTAMP FROM UserOperator; ");
         }
         
         public override void Down()
