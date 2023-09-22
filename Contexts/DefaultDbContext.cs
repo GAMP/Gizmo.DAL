@@ -783,6 +783,16 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<PaymentIntent> PaymentIntents { get; set; }
 
+        /// <summary>
+        /// Gets assistance requests.
+        /// </summary>
+        public DbSet<AssistanceRequest> AssistanceRequests { get; set; }
+
+        /// <summary>
+        /// Gets assistance request types.
+        /// </summary>
+        public DbSet<AssistanceRequestType> AssistanceRequestTypes { get; set; }
+
         #region DEVICES
 
         /// <summary>
@@ -1011,6 +1021,9 @@ namespace GizmoDALV2
             modelBuilder.Configurations.Add(new PaymentIntentMap());
             modelBuilder.Configurations.Add(new PaymentIntentDepositMap());
             modelBuilder.Configurations.Add(new PaymentIntentOrderMap());
+
+            modelBuilder.Configurations.Add(new AssistanceRequestMap());
+            modelBuilder.Configurations.Add(new AssistanceRequestTypeMap());
 
             //IGNORES
             modelBuilder.Ignore<DiscountBase>();

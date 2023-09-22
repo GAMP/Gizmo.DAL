@@ -32,10 +32,20 @@ namespace GizmoDALV2.Mappings
                 .HasMaxLength(SQLStringSize.TINY);
 
             Property(x => x.StartDate)
+                .IsOptional()
                 .HasColumnOrder(5);
 
             Property(x => x.EndDate)
+                .IsOptional()
                 .HasColumnOrder(6);
+
+            Property(x => x.BackgroundUrl)
+                .IsOptional()
+                .HasMaxLength(SQLStringSize.TINY)
+                .HasColumnOrder(7);
+
+            Property(x => x.Options)
+                .HasColumnOrder(8);
 
             // Table & Column Mappings
             ToTable("News");
