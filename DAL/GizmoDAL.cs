@@ -504,6 +504,9 @@ namespace GizmoDALV2
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Reservation];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Reservation]', RESEED, 1);", ct);
+
+                    await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AssistanceRequest];", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[AssistanceRequest]', RESEED, 1);", ct);
                 }
 
                 if (deleteHosts && !deleteUsers)
@@ -752,6 +755,9 @@ namespace GizmoDALV2
                         await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[AssetTransaction] Set CreatedById=NULL", ct);
                         await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[AssetTransaction] Set ModifiedById=NULL", ct);
                         await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[AssetTransaction] Set CheckedInById=NULL", ct);
+
+                        await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[AssistanceRequest] Set CreatedById=NULL", ct);
+                        await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[AssistanceRequest] Set ModifiedById=NULL", ct);
                     }
 
                     if (!deleteHosts)
@@ -964,6 +970,9 @@ namespace GizmoDALV2
 
                     await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[UserAgreement] Set CreatedById=NULL", ct);
                     await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[UserAgreement] Set ModifiedById=NULL", ct);
+
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[AssistanceRequestType] Set CreatedById=NULL", ct);
+                    await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[AssistanceRequestType] Set ModifiedById=NULL", ct);
 
                     cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is UserOperator));
                     cx.UsersOperator.RemoveRange(cx.UsersOperator);
