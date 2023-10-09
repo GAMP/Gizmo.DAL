@@ -1024,12 +1024,6 @@ namespace GizmoDALV2
 
             modelBuilder.Configurations.Add(new AssistanceRequestMap());
             modelBuilder.Configurations.Add(new AssistanceRequestTypeMap());
-
-            //IGNORES
-            modelBuilder.Ignore<DiscountBase>();
-            modelBuilder.Ignore<DiscountTimePeriod>();
-            modelBuilder.Ignore<DiscountTimePeriodDayTime>();
-            modelBuilder.Ignore<DiscountTimePeriodWeekDay>();
         }
 
         public override int SaveChanges()
