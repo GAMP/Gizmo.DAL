@@ -521,6 +521,9 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<ProductOL> OrderLines { get; set; }
 
+        /// <summary>
+        /// Gets extended order lines.
+        /// </summary>
         public DbSet<ProductOLExtended> OrderLinesExtended { get; set; }
 
         /// <summary>
@@ -793,6 +796,11 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<AssistanceRequestType> AssistanceRequestTypes { get; set; }
 
+        /// <summary>
+        /// Gets branches.
+        /// </summary>
+        public DbSet<Branch> Branches { get; set; }
+
         #region DEVICES
 
         /// <summary>
@@ -817,6 +825,7 @@ namespace GizmoDALV2
         #endregion
 
         #region OVERRIDES
+        
         /// <inheritdoc/>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1024,8 +1033,11 @@ namespace GizmoDALV2
 
             modelBuilder.Configurations.Add(new AssistanceRequestMap());
             modelBuilder.Configurations.Add(new AssistanceRequestTypeMap());
-        }
 
+            modelBuilder.Ignore<Branch>();
+        }
+        
+        /// <inheritdoc/>
         public override int SaveChanges()
         {
             #region OBJECT CONTEXT
@@ -1224,6 +1236,7 @@ namespace GizmoDALV2
             #endregion
         }
 
+        /// <inheritdoc/>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             #region OBJECT CONTEXT
@@ -1462,6 +1475,15 @@ namespace GizmoDALV2
             }
         }
 
+        /// <summary>
+        /// Checks if credentials password is valid.
+        /// </summary>
+        /// <param name="password">Password.</param>
+        /// <param name="salt">Salt.</param>
+        /// <param name="pwdHash">Password hash.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public bool CredentialsIsPasswordValid(string password, byte[] salt, byte[] pwdHash)
         {
             if (string.IsNullOrWhiteSpace(password))
