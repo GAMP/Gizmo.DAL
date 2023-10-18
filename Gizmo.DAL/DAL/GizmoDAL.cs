@@ -1179,7 +1179,8 @@ namespace GizmoDALV2
                             FirstName = user.FirstName,
                             LastName = user.LastName,
                             Email = user.Email,
-                            Sex = user.Sex,
+                            //TODO: Inconsistent data
+                            //Sex = user.Sex,
                             Phone = user.Phone,
                             MobilePhone = user.MobilePhone,
                             BirthDate = user.BirthDate,

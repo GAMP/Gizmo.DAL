@@ -46,8 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DataInterfaces\DataInterfaces\DataInterfaces.csproj" />
-    <ProjectReference Include="..\..\Gizmo.DAL.Entities\Gizmo.DAL.Entities.csproj" />
     <ProjectReference Include="..\Gizmo.DAL\Gizmo.DAL.csproj" />
   </ItemGroup>
 

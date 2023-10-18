@@ -1,0 +1,16 @@
+[submodule "Submodules/Gizmo.DAL.Entities"]
+	path = Submodules/Gizmo.DAL.Entities
+	url = https://github.com/GAMP/Gizmo.DAL.Entities.git
+	branch = ef-Core
+[submodule "Submodules/DataInterfaces"]
+	path = Submodules/DataInterfaces
+	url = https://github.com/GAMP/DataInterfaces.git
+	branch = utc-expiration
+[submodule "Submodules/Gizmo.Shared"]
+	path = Submodules/Gizmo.Shared
+	url = https://github.com/GAMP/Gizmo.Shared.git
+	branch = dev
+[submodule "Submodules/Gizmo.Server.Shared"]
+	path = Submodules/Gizmo.Server.Shared
+	url = https://github.com/GAMP/Gizmo.Server.Shared.git
+	branch = dev
