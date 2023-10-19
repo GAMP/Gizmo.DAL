@@ -10,7 +10,3 @@
 	path = Submodules/Gizmo.Shared
 	url = https://github.com/GAMP/Gizmo.Shared.git
 	branch = dev
-[submodule "Submodules/Gizmo.Server.Shared"]
-	path = Submodules/Gizmo.Server.Shared
-	url = https://github.com/GAMP/Gizmo.Server.Shared.git
-	branch = dev
