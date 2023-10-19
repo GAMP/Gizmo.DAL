@@ -3,19 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL.EFCore", "Gizmo.DAL.EFCore\Gizmo.DAL.EFCore.csproj", "{3911321E-52A4-440E-AC21-A9297C62076C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL", "Gizmo.DAL\Gizmo.DAL.csproj", "{EF3D9EAA-753F-4B01-B89F-AB88777D4CFE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL.EFCore.Migrations.MSSQL", "Gizmo.DAL.EFCore.Migrations.MSSQL\Gizmo.DAL.EFCore.Migrations.MSSQL.csproj", "{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL.EFCore.Migrations.MySQL", "Gizmo.DAL.EFCore.Migrations.MySQL\Gizmo.DAL.EFCore.Migrations.MySQL.csproj", "{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL.EFCore.Migrations.Sqlit", "Gizmo.DAL.EFCore.Migrations.Sqlit\Gizmo.DAL.EFCore.Migrations.Sqlit.csproj", "{5DAB028D-004F-440B-A5F0-C7368111E3DA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL.EFCore.Migrations.Npgsql", "Gizmo.DAL.EFCore.Migrations.Npgsql\Gizmo.DAL.EFCore.Migrations.Npgsql.csproj", "{F13D0818-8674-4002-9E68-ECB4C9B1AD65}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL.EFCore.Tester", "Gizmo.DAL.EFCore.Tester\Gizmo.DAL.EFCore.Tester.csproj", "{33415F6C-688D-4B49-97D9-3B7E6EB59690}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{AA88793B-40D2-497C-A9CA-FB723AA8EF66}"
 EndProject
@@ -25,42 +13,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.DAL.Entities", "Submo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.Shared", "Submodules\Gizmo.Shared\Gizmo.Shared.csproj", "{55C867ED-EC36-41FA-996E-B3C6BF07578C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gizmo.Server.Shared", "Submodules\Gizmo.Server.Shared\Gizmo.Server.Shared\Gizmo.Server.Shared.csproj", "{AFB66AE1-4243-4EE5-9015-8B92240FC6F1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3911321E-52A4-440E-AC21-A9297C62076C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3911321E-52A4-440E-AC21-A9297C62076C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3911321E-52A4-440E-AC21-A9297C62076C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3911321E-52A4-440E-AC21-A9297C62076C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EF3D9EAA-753F-4B01-B89F-AB88777D4CFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF3D9EAA-753F-4B01-B89F-AB88777D4CFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF3D9EAA-753F-4B01-B89F-AB88777D4CFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF3D9EAA-753F-4B01-B89F-AB88777D4CFE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D2F78723-7F5F-44F4-BA60-43A8C0B2260B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B99E44EE-8FA7-4DC9-97F9-1C288824CA36}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5DAB028D-004F-440B-A5F0-C7368111E3DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5DAB028D-004F-440B-A5F0-C7368111E3DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5DAB028D-004F-440B-A5F0-C7368111E3DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5DAB028D-004F-440B-A5F0-C7368111E3DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F13D0818-8674-4002-9E68-ECB4C9B1AD65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F13D0818-8674-4002-9E68-ECB4C9B1AD65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F13D0818-8674-4002-9E68-ECB4C9B1AD65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F13D0818-8674-4002-9E68-ECB4C9B1AD65}.Release|Any CPU.Build.0 = Release|Any CPU
-		{33415F6C-688D-4B49-97D9-3B7E6EB59690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33415F6C-688D-4B49-97D9-3B7E6EB59690}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{33415F6C-688D-4B49-97D9-3B7E6EB59690}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33415F6C-688D-4B49-97D9-3B7E6EB59690}.Release|Any CPU.Build.0 = Release|Any CPU
 		{97289C94-836D-4009-8EDC-23BE0651A011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{97289C94-836D-4009-8EDC-23BE0651A011}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97289C94-836D-4009-8EDC-23BE0651A011}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -73,10 +35,6 @@ Global
 		{55C867ED-EC36-41FA-996E-B3C6BF07578C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55C867ED-EC36-41FA-996E-B3C6BF07578C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55C867ED-EC36-41FA-996E-B3C6BF07578C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AFB66AE1-4243-4EE5-9015-8B92240FC6F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AFB66AE1-4243-4EE5-9015-8B92240FC6F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AFB66AE1-4243-4EE5-9015-8B92240FC6F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AFB66AE1-4243-4EE5-9015-8B92240FC6F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,7 +43,6 @@ Global
 		{97289C94-836D-4009-8EDC-23BE0651A011} = {AA88793B-40D2-497C-A9CA-FB723AA8EF66}
 		{8CB7102E-08BE-4E1D-BAA5-E2C6610E9E5F} = {AA88793B-40D2-497C-A9CA-FB723AA8EF66}
 		{55C867ED-EC36-41FA-996E-B3C6BF07578C} = {AA88793B-40D2-497C-A9CA-FB723AA8EF66}
-		{AFB66AE1-4243-4EE5-9015-8B92240FC6F1} = {AA88793B-40D2-497C-A9CA-FB723AA8EF66}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7047766D-84F3-4B6B-990A-905FA801F1A8}
