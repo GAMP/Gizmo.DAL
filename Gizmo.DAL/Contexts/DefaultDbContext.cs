@@ -32,8 +32,7 @@ namespace GizmoDALV2
     /// Default db context.
     /// </summary>
     [DbConfigurationType(typeof(DefaultConfig))]
-    public class DefaultDbContext : DbContext,
-        IGizmoDBContext
+    public class DefaultDbContext : DbContext, IGizmoDBContext
     {
         #region CONSTRUCTOR
 
@@ -82,7 +81,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets hosts.
         /// </summary>
-        public DbSet<Host> Hosts { get; set; }
+        public virtual DbSet<Host> Hosts { get; set; }
 
         /// <summary>
         /// Gets host computers.
@@ -117,12 +116,12 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets host groups.
         /// </summary>
-        public DbSet<HostGroup> HostGroups { get; set; }
+        public virtual DbSet<HostGroup> HostGroups { get; set; }
 
         /// <summary>
         /// Gets user groups.
         /// </summary>
-        public DbSet<UserGroup> UserGroups { get; set; }
+        public virtual DbSet<UserGroup> UserGroups { get; set; }
 
         /// <summary>
         /// Gets user group dissalowed host groups.
@@ -247,7 +246,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets member users.
         /// </summary>
-        public DbSet<UserMember> UsersMember { get; set; }
+        public virtual DbSet<UserMember> UsersMember { get; set; }
 
         /// <summary>
         /// Gets operator users.
@@ -282,7 +281,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets user sessions.
         /// </summary>
-        public DbSet<UserSession> Sessions { get; set; }
+        public virtual DbSet<UserSession> Sessions { get; set; }
 
         /// <summary>
         /// Gets user session changes.
@@ -430,7 +429,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets deposit transactions.
         /// </summary>
-        public DbSet<DepositTransaction> DepositTransactions { get; set; }
+        public virtual DbSet<DepositTransaction> DepositTransactions { get; set; }
 
         /// <summary>
         /// Gets payments.
@@ -460,37 +459,37 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets bill profiles.
         /// </summary>
-        public DbSet<BillProfile> BillProfiles { get; set; }
+        public virtual DbSet<BillProfile> BillProfiles { get; set; }
 
         /// <summary>
         /// Gets bill rates.
         /// </summary>
-        public DbSet<BillRate> BillRates { get; set; }
+        public virtual DbSet<BillRate> BillRates { get; set; }
 
         /// <summary>
         /// Gets bill rate steps.
         /// </summary>
-        public DbSet<BillRateStep> BillRateSteps { get; set; }
+        public virtual DbSet<BillRateStep> BillRateSteps { get; set; }
 
         /// <summary>
         /// Gets bill rate period days.
         /// </summary>
-        public DbSet<BillRatePeriodDay> BillRatePeriodDays { get; set; }
+        public virtual DbSet<BillRatePeriodDay> BillRatePeriodDays { get; set; }
 
         /// <summary>
         /// Gets bill rates period times.
         /// </summary>
-        public DbSet<BillRatePeriodDayTime> BillRatePeriodTimes { get; set; }
+        public virtual DbSet<BillRatePeriodDayTime> BillRatePeriodTimes { get; set; }
 
         /// <summary>
         /// Gets usage sessions.
         /// </summary>
-        public DbSet<UsageSession> UsageSessions { get; set; }
+        public virtual DbSet<UsageSession> UsageSessions { get; set; }
 
         /// <summary>
         /// Gets usage.
         /// </summary>
-        public DbSet<Usage> Usage { get; set; }
+        public virtual DbSet<Usage> Usage { get; set; }
 
         /// <summary>
         /// Gets usage user sessions.
@@ -500,17 +499,17 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets usage rate.
         /// </summary>
-        public DbSet<UsageRate> UsageRate { get; set; }
+        public virtual DbSet<UsageRate> UsageRate { get; set; }
 
         /// <summary>
         /// Gets usage time.
         /// </summary>
-        public DbSet<UsageTime> UsageTime { get; set; }
+        public virtual DbSet<UsageTime> UsageTime { get; set; }
 
         /// <summary>
         /// Gets usage time fixed.
         /// </summary>
-        public DbSet<UsageTimeFixed> UsageFixed { get; set; }
+        public virtual DbSet<UsageTimeFixed> UsageFixed { get; set; }
 
         /// <summary>
         /// Gets orders.
@@ -522,6 +521,9 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<ProductOL> OrderLines { get; set; }
 
+        /// <summary>
+        /// Gets extended order lines.
+        /// </summary>
         public DbSet<ProductOLExtended> OrderLinesExtended { get; set; }
 
         /// <summary>
@@ -547,12 +549,12 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets invoices.
         /// </summary>
-        public DbSet<Invoice> Invoices { get; set; }
+        public virtual DbSet<Invoice> Invoices { get; set; }
 
         /// <summary>
         /// Gets invoice lines.
         /// </summary>
-        public DbSet<InvoiceLine> InvoiceLines { get; set; }
+        public virtual DbSet<InvoiceLine> InvoiceLines { get; set; }
 
         /// <summary>
         /// Gets extended invoice lines.
@@ -567,17 +569,17 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets usage session invoice lines.
         /// </summary>
-        public DbSet<InvoiceLineSession> InvoiceLineSession { get; set; }
+        public virtual DbSet<InvoiceLineSession> InvoiceLineSession { get; set; }
 
         /// <summary>
         /// Gets time product invoice lines.
         /// </summary>
-        public DbSet<InvoiceLineTime> InvoiceLineTime { get; set; }
+        public virtual DbSet<InvoiceLineTime> InvoiceLineTime { get; set; }
 
         /// <summary>
         /// Gets time fixed invoice lines.
         /// </summary>
-        public DbSet<InvoiceLineTimeFixed> InvoiceLineTimeFixed { get; set; }
+        public virtual DbSet<InvoiceLineTimeFixed> InvoiceLineTimeFixed { get; set; }
 
         /// <summary>
         /// Gets product groups.
@@ -597,7 +599,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets product times.
         /// </summary>
-        public DbSet<ProductTime> ProductTimes { get; set; }
+        public virtual DbSet<ProductTime> ProductTimes { get; set; }
 
         /// <summary>
         /// Gets or sets product disallowed user groups.
@@ -607,7 +609,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Get or sets product time dissalowed host groups.
         /// </summary>
-        public DbSet<ProductTimeHostDisallowed> ProductTimeHostDisallowed { get; set; }
+        public virtual DbSet<ProductTimeHostDisallowed> ProductTimeHostDisallowed { get; set; }
 
         /// <summary>
         /// Gets or sets product taxes.
@@ -637,17 +639,17 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets product time periods.
         /// </summary>
-        public DbSet<ProductTimePeriod> ProductTimePeriods { get; set; }
+        public virtual DbSet<ProductTimePeriod> ProductTimePeriods { get; set; }
 
         /// <summary>
         /// Gets product time period days.
         /// </summary>
-        public DbSet<ProductTimePeriodDay> ProductTimePeriodDays { get; set; }
+        public virtual DbSet<ProductTimePeriodDay> ProductTimePeriodDays { get; set; }
 
         /// <summary>
         /// Gets product time priods times.
         /// </summary>
-        public DbSet<ProductTimePeriodDayTime> ProductTimePeriodsTimes { get; set; }
+        public virtual DbSet<ProductTimePeriodDayTime> ProductTimePeriodsTimes { get; set; }
 
         /// <summary>
         /// Gets product user prices.
@@ -784,6 +786,21 @@ namespace GizmoDALV2
         /// </summary>
         public DbSet<PaymentIntent> PaymentIntents { get; set; }
 
+        /// <summary>
+        /// Gets assistance requests.
+        /// </summary>
+        public DbSet<AssistanceRequest> AssistanceRequests { get; set; }
+
+        /// <summary>
+        /// Gets assistance request types.
+        /// </summary>
+        public DbSet<AssistanceRequestType> AssistanceRequestTypes { get; set; }
+
+        /// <summary>
+        /// Gets branches.
+        /// </summary>
+        public DbSet<Branch> Branches { get; set; }
+
         #region DEVICES
 
         /// <summary>
@@ -808,6 +825,7 @@ namespace GizmoDALV2
         #endregion
 
         #region OVERRIDES
+        
         /// <inheritdoc/>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1013,13 +1031,13 @@ namespace GizmoDALV2
             modelBuilder.Configurations.Add(new PaymentIntentDepositMap());
             modelBuilder.Configurations.Add(new PaymentIntentOrderMap());
 
-            //IGNORES
-            modelBuilder.Ignore<DiscountBase>();
-            modelBuilder.Ignore<DiscountTimePeriod>();
-            modelBuilder.Ignore<DiscountTimePeriodDayTime>();
-            modelBuilder.Ignore<DiscountTimePeriodWeekDay>();
-        }
+            modelBuilder.Configurations.Add(new AssistanceRequestMap());
+            modelBuilder.Configurations.Add(new AssistanceRequestTypeMap());
 
+            modelBuilder.Ignore<Branch>();
+        }
+        
+        /// <inheritdoc/>
         public override int SaveChanges()
         {
             #region OBJECT CONTEXT
@@ -1218,6 +1236,7 @@ namespace GizmoDALV2
             #endregion
         }
 
+        /// <inheritdoc/>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             #region OBJECT CONTEXT
@@ -1456,6 +1475,15 @@ namespace GizmoDALV2
             }
         }
 
+        /// <summary>
+        /// Checks if credentials password is valid.
+        /// </summary>
+        /// <param name="password">Password.</param>
+        /// <param name="salt">Salt.</param>
+        /// <param name="pwdHash">Password hash.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public bool CredentialsIsPasswordValid(string password, byte[] salt, byte[] pwdHash)
         {
             if (string.IsNullOrWhiteSpace(password))

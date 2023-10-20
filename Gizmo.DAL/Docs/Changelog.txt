@@ -1,4 +1,11 @@
-﻿//UPDATE 11
+﻿//UPDATE 17
+Added BackgroundUrl on News
+Added Options on News
+Added Mark on ProductOlProduct
+Added AssistanceRequest
+Added AssistanceRequestType
+
+//UPDATE 11
 Added ProductHostHidden
 
 //UPDATE 10

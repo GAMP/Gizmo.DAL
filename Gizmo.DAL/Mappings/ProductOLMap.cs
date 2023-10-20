@@ -75,7 +75,7 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(19);
 
             Property(x => x.IsVoided)
-                .HasColumnOrder(20);
+                .HasColumnOrder(20);  
 
             HasRequired(x => x.ProductOrder)
                 .WithMany(x => x.OrderLines)
@@ -112,6 +112,12 @@ namespace GizmoDALV2.Mappings
         public ProductOLProductMap()
         {
             ToTable(nameof(ProductOLProduct));
+
+            Property(x => x.Mark)
+                .HasColumnType("VARCHAR")
+                .HasColumnOrder(1)
+                .HasMaxLength(126)
+                .IsOptional();
 
             HasRequired(x => x.Product)
                 .WithMany(x => x.OrderLines)
