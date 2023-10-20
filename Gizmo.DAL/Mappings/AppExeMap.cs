@@ -1,10 +1,6 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
+
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -25,7 +21,7 @@ namespace GizmoDALV2.Mappings
             this.Property(t => t.Caption)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
-            
+
             this.Property(t => t.Description)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY);
@@ -56,7 +52,7 @@ namespace GizmoDALV2.Mappings
                .HasColumnOrder(10);
 
             this.Property(x => x.DisplayOrder)
-                .HasColumnOrder(11);       
+                .HasColumnOrder(11);
 
             this.Property(x => x.Options)
                 .HasColumnOrder(12);

@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
@@ -23,9 +24,9 @@ namespace GizmoDALV2.Mappings
                 .HasMaxLength(SQLStringSize.TINY45)
                 .HasColumnOrder(1)
                 .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
+                    new IndexAttribute("UQ_Name") { IsUnique = true }
                 }));
 
             Property(x => x.Description)
@@ -61,7 +62,7 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(11);
 
             // Table & Column Mappings
-            ToTable("PaymentMethod");              
+            ToTable("PaymentMethod");
         }
     }
 }

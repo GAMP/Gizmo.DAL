@@ -1,12 +1,6 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
+
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -15,7 +9,7 @@ namespace GizmoDALV2.Mappings
         public AppRatingMap()
         {
             // Primary Key
-            this.HasKey(x => new { x.AppId,x.UserId});
+            this.HasKey(x => new { x.AppId, x.UserId });
 
             // Properties
             this.Property(x => x.AppId)
@@ -32,7 +26,7 @@ namespace GizmoDALV2.Mappings
 
             // Table & Column Mappings
             this.ToTable("AppRating");
-      
+
             // Relationships
             this.HasRequired(t => t.App)
                 .WithMany(t => t.AppRatings)

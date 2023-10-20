@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
@@ -20,7 +21,7 @@ namespace Gizmo.DAL.Mappings
                 }));
 
             HasRequired(t => t.DepositPayment)
-                .WithMany(t=>t.Voids)
+                .WithMany(t => t.Voids)
                 .HasForeignKey(t => t.DepositPaymentId);
 
             // Table & Column Mappings

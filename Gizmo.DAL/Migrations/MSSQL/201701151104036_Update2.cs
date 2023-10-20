@@ -1,8 +1,7 @@
 namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update2 : DbMigration
     {
         public override void Up()
@@ -16,7 +15,7 @@ namespace GizmoDALV2.Migrations.MSSQL
             AddColumn("dbo.ProductOL", "Points", c => c.Int());
             AddColumn("dbo.ProductOL", "PointsAward", c => c.Int(nullable: false));
         }
-        
+
         public override void Down()
         {
             DropColumn("dbo.ProductOL", "PointsAward");

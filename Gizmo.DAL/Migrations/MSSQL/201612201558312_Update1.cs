@@ -1,8 +1,7 @@
 namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update1 : DbMigration
     {
         public override void Up()
@@ -10,73 +9,73 @@ namespace GizmoDALV2.Migrations.MSSQL
             CreateTable(
                 "dbo.Note",
                 c => new
-                    {
-                        NoteId = c.Int(nullable: false, identity: true),
-                        Options = c.Int(nullable: false),
-                        Sevirity = c.Int(nullable: false),
-                        IsDeleted = c.Boolean(nullable: false),
-                        Text = c.String(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    NoteId = c.Int(nullable: false, identity: true),
+                    Options = c.Int(nullable: false),
+                    Sevirity = c.Int(nullable: false),
+                    IsDeleted = c.Boolean(nullable: false),
+                    Text = c.String(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.NoteId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.PresetTimeSale",
                 c => new
-                    {
-                        PresetTimeSaleId = c.Int(nullable: false, identity: true),
-                        Value = c.Int(nullable: false),
-                        DisplayOrder = c.Int(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    PresetTimeSaleId = c.Int(nullable: false, identity: true),
+                    Value = c.Int(nullable: false),
+                    DisplayOrder = c.Int(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.PresetTimeSaleId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.PresetTimeSaleMoney",
                 c => new
-                    {
-                        PresetTimeSaleMoneyId = c.Int(nullable: false, identity: true),
-                        Value = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        DisplayOrder = c.Int(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    PresetTimeSaleMoneyId = c.Int(nullable: false, identity: true),
+                    Value = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    DisplayOrder = c.Int(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.PresetTimeSaleMoneyId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.UserNote",
                 c => new
-                    {
-                        NoteId = c.Int(nullable: false),
-                        UserId = c.Int(nullable: false),
-                        UserNoteOptions = c.Int(nullable: false),
-                    })
+                {
+                    NoteId = c.Int(nullable: false),
+                    UserId = c.Int(nullable: false),
+                    UserNoteOptions = c.Int(nullable: false),
+                })
                 .PrimaryKey(t => t.NoteId)
                 .ForeignKey("dbo.Note", t => t.NoteId)
                 .ForeignKey("dbo.UserMember", t => t.UserId)
                 .Index(t => t.NoteId)
                 .Index(t => t.UserId);
-            
+
             AddColumn("dbo.User", "Identification", c => c.String(maxLength: 255));
             AddColumn("dbo.InvoiceLine", "PointsTotal", c => c.Int(nullable: false));
             AddColumn("dbo.ProductOL", "PointsTotal", c => c.Int(nullable: false));

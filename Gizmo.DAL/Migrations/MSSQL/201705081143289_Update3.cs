@@ -1,8 +1,7 @@
 namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update3 : DbMigration
     {
         public override void Up()
@@ -24,7 +23,7 @@ namespace GizmoDALV2.Migrations.MSSQL
 
             AddForeignKey("dbo.UserGuest", "ReservedHostId", "dbo.Host", "HostId");
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.UserGuest", "ReservedHostId", "dbo.Host");

@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.Data.Entity.ModelConfiguration;
 
 namespace GizmoDALV2.Mappings
@@ -8,6 +9,6 @@ namespace GizmoDALV2.Mappings
         public ProductMap()
         {
             ToTable("Product");
-        }        
+        }
     }
 }

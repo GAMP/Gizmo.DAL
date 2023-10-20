@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
@@ -24,7 +25,7 @@ namespace Gizmo.DAL.Mappings
 
             HasOptional(t => t.DepositPayment)
                 .WithMany()
-                .HasForeignKey(x=>x.DepositPaymentId)
+                .HasForeignKey(x => x.DepositPaymentId)
                 .WillCascadeOnDelete(false);
 
             HasOptional(x => x.FiscalReceipt)

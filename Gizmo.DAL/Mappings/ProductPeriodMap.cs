@@ -1,14 +1,11 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
 
 namespace GizmoDALV2.Mappings
-{ 
+{
     public class ProductPeriodMap : EntityTypeConfiguration<ProductPeriod>
     {
         public ProductPeriodMap()
@@ -49,7 +46,7 @@ namespace GizmoDALV2.Mappings
                 .HasColumnName("ProductPeriodId")
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_ProductPeriodDay") { IsUnique = true, Order = 0 } }));
 
-            this.Property(x=> x.Day)
+            this.Property(x => x.Day)
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_ProductPeriodDay") { IsUnique = true, Order = 1 } }));
 
             this.HasRequired(x => x.Period)

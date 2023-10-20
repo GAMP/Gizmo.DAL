@@ -1,7 +1,8 @@
 ﻿using CoreLib;
 
+using Gizmo.DAL.Entities;
+
 using GizmoDALV2.DTO;
-using GizmoDALV2.Entities;
 
 using IntegrationLib;
 
@@ -10,7 +11,6 @@ using SharedLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
@@ -548,7 +548,7 @@ namespace GizmoDALV2
 
                 //VOIDS
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VoidInvoice];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VoidDepositPayment];", ct);   
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VoidDepositPayment];", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Void];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Void]', RESEED, 1);", ct);
@@ -575,7 +575,7 @@ namespace GizmoDALV2
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineSession];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineTime];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineTimeFixed];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineExtended];", ct);               
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineExtended];", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLine];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[InvoiceLine]', RESEED, 1);", ct);
@@ -672,7 +672,7 @@ namespace GizmoDALV2
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriod];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriodDayTime];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriodDay];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimePeriodDay]', RESEED, 1);", ct);                    
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimePeriodDay]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductBundle];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Product];", ct);

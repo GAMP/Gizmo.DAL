@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
 

@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
@@ -25,22 +26,22 @@ namespace GizmoDALV2.Mappings
                 .HasMaxLength(SQLStringSize.TINY45)
                 .HasColumnAnnotation(
                 "Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
+                    new IndexAttribute("UQ_Name") { IsUnique = true }
                 }));
-            
+
             Property(t => t.Guid)
                 .HasColumnOrder(2)
                 .HasColumnAnnotation(
                 "Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
+                    new IndexAttribute("UQ_Guid") { IsUnique = true }
                 }));
 
             // Table & Column Mappings
-            ToTable("AppEnterprise");          
+            ToTable("AppEnterprise");
         }
     }
 }

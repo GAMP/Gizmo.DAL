@@ -1,8 +1,7 @@
 ﻿namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update12 : DbMigration
     {
         public override void Up()
@@ -10,15 +9,15 @@
             CreateTable(
                 "dbo.DeviceHost",
                 c => new
-                    {
-                        DeviceHostId = c.Int(nullable: false, identity: true),
-                        DeviceId = c.Int(nullable: false),
-                        HostId = c.Int(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    DeviceHostId = c.Int(nullable: false, identity: true),
+                    DeviceId = c.Int(nullable: false),
+                    HostId = c.Int(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.DeviceHostId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.Device", t => t.DeviceId, cascadeDelete: true)
@@ -27,37 +26,37 @@
                 .Index(t => new { t.DeviceId, t.HostId }, unique: true, name: "UQ_HostDevice")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.Device",
                 c => new
-                    {
-                        DeviceId = c.Int(nullable: false, identity: true),
-                        Name = c.String(maxLength: 45),
-                        IsEnabled = c.Boolean(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    DeviceId = c.Int(nullable: false, identity: true),
+                    Name = c.String(maxLength: 45),
+                    IsEnabled = c.Boolean(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.DeviceId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.DeviceHdmi",
                 c => new
-                    {
-                        DeviceId = c.Int(nullable: false),
-                        UniqueId = c.String(nullable: false, maxLength: 255),
-                    })
+                {
+                    DeviceId = c.Int(nullable: false),
+                    UniqueId = c.String(nullable: false, maxLength: 255),
+                })
                 .PrimaryKey(t => t.DeviceId)
                 .ForeignKey("dbo.Device", t => t.DeviceId)
                 .Index(t => t.DeviceId)
                 .Index(t => t.UniqueId, unique: true, name: "UQ_UniqueId");
-       
+
             //add guid column to host
             AddColumn("dbo.Host", "Guid", c => c.Guid(nullable: false));
 
@@ -70,7 +69,7 @@
             //create filtered index on unique name, this will allow nullable device nanes while retaining uniqueness
             Sql("CREATE UNIQUE NONCLUSTERED INDEX [UQ_Name] ON [dbo].[Device](Name) WHERE Name IS NOT NULL");
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.DeviceHdmi", "DeviceId", "dbo.Device");

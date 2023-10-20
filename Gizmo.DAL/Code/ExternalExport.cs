@@ -11,7 +11,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets exported users.
         /// </summary>
-        public IEnumerable<DTO.UserImportInfo> Users { get; set; } 
+        public IEnumerable<DTO.UserImportInfo> Users { get; set; }
         #endregion
     }
 }

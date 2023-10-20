@@ -1,6 +1,5 @@
 namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
 
     public partial class Update8 : DbMigration

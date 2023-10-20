@@ -1,4 +1,5 @@
 ﻿using GizmoDALV2;
+
 using System.Data.Entity.ModelConfiguration;
 
 namespace Gizmo.DAL.Mappings
@@ -22,7 +23,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2);
 
             Property(x => x.IsDeleted)
-                .HasColumnOrder(3);        
+                .HasColumnOrder(3);
 
             ToTable(nameof(Entities.AssistanceRequestType));
         }

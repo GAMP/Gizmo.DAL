@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
@@ -10,7 +11,7 @@ namespace GizmoDALV2.Mappings
         public ProductHostHiddenMap()
         {
             //Primary key
-            HasKey(x => x.Id);            
+            HasKey(x => x.Id);
 
             Property(x => x.Id)
                 .HasColumnOrder(0)

@@ -1,8 +1,7 @@
 ﻿namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update13 : DbMigration
     {
         public override void Up()
@@ -12,15 +11,15 @@
             CreateTable(
                 "dbo.InvoiceFiscalReceipt",
                 c => new
-                    {
-                        InvoiceId = c.Int(nullable: false),
-                        FiscalReceiptId = c.Int(nullable: false),
-                        InvoiceFiscalReceiptId = c.Int(nullable: false, identity: true),
-                        ShiftId = c.Int(),
-                        RegisterId = c.Int(),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    InvoiceId = c.Int(nullable: false),
+                    FiscalReceiptId = c.Int(nullable: false),
+                    InvoiceFiscalReceiptId = c.Int(nullable: false, identity: true),
+                    ShiftId = c.Int(),
+                    RegisterId = c.Int(),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.InvoiceFiscalReceiptId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.FiscalReceipt", t => t.FiscalReceiptId, cascadeDelete: true)
@@ -32,21 +31,21 @@
                 .Index(t => t.ShiftId)
                 .Index(t => t.RegisterId)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.FiscalReceipt",
                 c => new
-                    {
-                        FiscalReceiptId = c.Int(nullable: false, identity: true),
-                        Type = c.Int(nullable: false),
-                        TaxSystem = c.Int(),
-                        DocumentNumber = c.Int(),
-                        Signature = c.String(),
-                        ShiftId = c.Int(),
-                        RegisterId = c.Int(),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    FiscalReceiptId = c.Int(nullable: false, identity: true),
+                    Type = c.Int(nullable: false),
+                    TaxSystem = c.Int(),
+                    DocumentNumber = c.Int(),
+                    Signature = c.String(),
+                    ShiftId = c.Int(),
+                    RegisterId = c.Int(),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.FiscalReceiptId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.Register", t => t.RegisterId)
@@ -54,16 +53,16 @@
                 .Index(t => t.ShiftId)
                 .Index(t => t.RegisterId)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.RefundDepositPayment",
                 c => new
-                    {
-                        RefundId = c.Int(nullable: false),
-                        DepositPaymentId = c.Int(),
-                        FiscalReceiptStatus = c.Int(nullable: false),
-                        FiscalReceiptId = c.Int(),
-                    })
+                {
+                    RefundId = c.Int(nullable: false),
+                    DepositPaymentId = c.Int(),
+                    FiscalReceiptStatus = c.Int(nullable: false),
+                    FiscalReceiptId = c.Int(),
+                })
                 .PrimaryKey(t => t.RefundId)
                 .ForeignKey("dbo.Refund", t => t.RefundId)
                 .ForeignKey("dbo.DepositPayment", t => t.DepositPaymentId)
@@ -76,15 +75,15 @@
             CreateTable(
                 "dbo.VoidDepositPayment",
                 c => new
-                    {
-                        VoidId = c.Int(nullable: false),
-                        DepositPaymentId = c.Int(nullable: false),
-                    })
+                {
+                    VoidId = c.Int(nullable: false),
+                    DepositPaymentId = c.Int(nullable: false),
+                })
                 .PrimaryKey(t => t.VoidId)
                 .ForeignKey("dbo.Void", t => t.VoidId)
                 .ForeignKey("dbo.DepositPayment", t => t.DepositPaymentId, cascadeDelete: true)
                 .Index(t => t.VoidId)
-                .Index(t => t.DepositPaymentId, unique: true, name: "UQ_DepositPayment");    
+                .Index(t => t.DepositPaymentId, unique: true, name: "UQ_DepositPayment");
 
             AddColumn("dbo.Invoice", "SaleFiscalReceiptStatus", c => c.Int(nullable: false));
             AddColumn("dbo.Invoice", "ReturnFiscalReceiptStatus", c => c.Int(nullable: false));
@@ -101,7 +100,7 @@
 
             Sql(Gizmo.DAL.Scripts.SQLScripts.CREATE_DEPOSIT_PAYMENT_REFUNDS);
         }
-        
+
         public override void Down()
         {
             Sql("DELETE FROM [dbo].[RefundDepositPayment];"); //this table did not exist before so all records should be deleted

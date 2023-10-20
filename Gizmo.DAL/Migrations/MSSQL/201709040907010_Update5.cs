@@ -1,8 +1,7 @@
 namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update5 : DbMigration
     {
         public override void Up()
@@ -10,20 +9,20 @@ namespace GizmoDALV2.Migrations.MSSQL
             CreateTable(
                 "dbo.AssetTransaction",
                 c => new
-                    {
-                        AssetTransactionId = c.Int(nullable: false, identity: true),
-                        AssetTypeId = c.Int(nullable: false),
-                        AssetTypeName = c.String(nullable: false, maxLength: 45),
-                        AssetId = c.Int(nullable: false),
-                        IsActive = c.Boolean(nullable: false),
-                        CheckedOutById = c.Int(),
-                        CheckOutTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        UserId = c.Int(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    AssetTransactionId = c.Int(nullable: false, identity: true),
+                    AssetTypeId = c.Int(nullable: false),
+                    AssetTypeName = c.String(nullable: false, maxLength: 45),
+                    AssetId = c.Int(nullable: false),
+                    IsActive = c.Boolean(nullable: false),
+                    CheckedOutById = c.Int(),
+                    CheckOutTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    UserId = c.Int(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.AssetTransactionId)
                 .ForeignKey("dbo.Asset", t => t.AssetId, cascadeDelete: true)
                 .ForeignKey("dbo.AssetType", t => t.AssetTypeId)
@@ -37,24 +36,24 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => t.UserId)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.Asset",
                 c => new
-                    {
-                        AssetId = c.Int(nullable: false, identity: true),
-                        AssetTypeId = c.Int(nullable: false),
-                        Number = c.Int(nullable: false),
-                        Tag = c.String(maxLength: 255),
-                        SmartCardUID = c.String(maxLength: 255),
-                        Barcode = c.String(maxLength: 255),
-                        SerialNumber = c.String(maxLength: 255),
-                        IsEnabled = c.Boolean(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    AssetId = c.Int(nullable: false, identity: true),
+                    AssetTypeId = c.Int(nullable: false),
+                    Number = c.Int(nullable: false),
+                    Tag = c.String(maxLength: 255),
+                    SmartCardUID = c.String(maxLength: 255),
+                    Barcode = c.String(maxLength: 255),
+                    SerialNumber = c.String(maxLength: 255),
+                    IsEnabled = c.Boolean(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.AssetId)
                 .ForeignKey("dbo.AssetType", t => t.AssetTypeId, cascadeDelete: true)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
@@ -64,27 +63,27 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => t.Barcode, unique: true, name: "UQ_Barcode")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.AssetType",
                 c => new
-                    {
-                        AssetTypeId = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false, maxLength: 45),
-                        Description = c.String(),
-                        PartNumber = c.String(maxLength: 255),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    AssetTypeId = c.Int(nullable: false, identity: true),
+                    Name = c.String(nullable: false, maxLength: 45),
+                    Description = c.String(),
+                    PartNumber = c.String(maxLength: 255),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.AssetTypeId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
                 .Index(t => t.Name, unique: true, name: "UQ_Name")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             AddColumn("dbo.UserMember", "IsPersonalInfoRequested", c => c.Boolean(nullable: false));
             AddColumn("dbo.UserGroup", "IsAgeRatingEnabled", c => c.Boolean(nullable: false));
 
@@ -100,7 +99,7 @@ namespace GizmoDALV2.Migrations.MSSQL
             //FILTERED INDEX CREATION
             Sql("CREATE UNIQUE NONCLUSTERED INDEX [UQ_Barcode] ON [dbo].[Asset](Barcode) WHERE Barcode IS NOT NULL");
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.AssetTransaction", "UserId", "dbo.UserMember");

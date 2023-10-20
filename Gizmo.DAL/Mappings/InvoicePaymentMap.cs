@@ -1,12 +1,6 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
+
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -41,7 +35,7 @@ namespace GizmoDALV2.Mappings
                 .WillCascadeOnDelete(false);
 
             this.HasRequired(x => x.User)
-                .WithMany(x=>x.InvoicePayments)
+                .WithMany(x => x.InvoicePayments)
                 .HasForeignKey(x => x.UserId)
                 .WillCascadeOnDelete(false);
         }

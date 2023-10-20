@@ -1,9 +1,12 @@
 ﻿using Gizmo.DAL;
 using Gizmo.DAL.Entities;
 using Gizmo.DAL.Mappings;
+
 using GizmoDALV2.Mappings;
 using GizmoDALV2.Migrations;
+
 using SharedLib;
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -825,7 +828,7 @@ namespace GizmoDALV2
         #endregion
 
         #region OVERRIDES
-        
+
         /// <inheritdoc/>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1036,7 +1039,7 @@ namespace GizmoDALV2
 
             modelBuilder.Ignore<Branch>();
         }
-        
+
         /// <inheritdoc/>
         public override int SaveChanges()
         {
@@ -2016,7 +2019,7 @@ namespace GizmoDALV2
         {
             SetDefaultConnectionFactory(new SqlConnectionFactory());
             SetDatabaseInitializer(new MSSQLInitializer());
-        } 
+        }
         #endregion
     }
     #endregion

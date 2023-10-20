@@ -1,12 +1,6 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
+
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -23,7 +17,7 @@ namespace GizmoDALV2.Mappings
 
             this.Property(t => t.AppId)
                 .HasColumnOrder(1);
-            
+
             // Table & Column Mappings
             this.ToTable("AppGroupApp");
 
@@ -32,7 +26,7 @@ namespace GizmoDALV2.Mappings
                 .HasForeignKey(x => x.AppGroupId);
 
             this.HasRequired(x => x.App)
-                .WithMany(x=>x.AppGroups)
+                .WithMany(x => x.AppGroups)
                 .HasForeignKey(x => x.AppId)
                 .WillCascadeOnDelete(false);
         }

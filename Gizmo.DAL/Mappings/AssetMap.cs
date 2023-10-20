@@ -1,12 +1,8 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -40,7 +36,7 @@ namespace GizmoDALV2.Mappings
                 new IndexAnnotation(new[]
                 {
                     new IndexAttribute("UQ_SmartCardUID") { IsUnique = true }
-                })); 
+                }));
 
             this.Property(t => t.Barcode)
                 .HasMaxLength(SQLStringSize.TINY)
@@ -61,13 +57,13 @@ namespace GizmoDALV2.Mappings
             // Table & Column Mappings
             this.ToTable(nameof(Asset));
 
-            this.HasRequired(x=>x.AssetType)
+            this.HasRequired(x => x.AssetType)
                 .WithMany(x => x.Assets)
                 .HasForeignKey(x => x.AssetTypeId);
 
             this.HasMany(x => x.Transactions)
                 .WithRequired(x => x.Asset)
-                .HasForeignKey(x => x.AssetId);          
+                .HasForeignKey(x => x.AssetId);
         }
     }
 }

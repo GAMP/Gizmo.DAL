@@ -1,10 +1,6 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
+
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -50,11 +46,11 @@ namespace GizmoDALV2.Mappings
                 .WillCascadeOnDelete(false);
 
             this.HasOptional(t => t.CreatedBy)
-                .WithMany(t=>t.CreatedUserSessionChanges)
+                .WithMany(t => t.CreatedUserSessionChanges)
                 .HasForeignKey(t => t.CreatedById);
 
             this.HasRequired(t => t.Host)
-                .WithMany(t=>t.UserSessionsChanges)
+                .WithMany(t => t.UserSessionsChanges)
                 .HasForeignKey(d => d.HostId);
 
             this.HasRequired(t => t.User)

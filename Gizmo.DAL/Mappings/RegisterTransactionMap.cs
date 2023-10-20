@@ -1,10 +1,6 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
+
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -24,7 +20,7 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(1);
 
             this.Property(x => x.ShiftId)
-                .HasColumnOrder(2) ;
+                .HasColumnOrder(2);
 
             this.Property(x => x.Amount)
                 .HasColumnOrder(3);
@@ -44,7 +40,7 @@ namespace GizmoDALV2.Mappings
                 .HasForeignKey(x => x.RegisterId);
 
             this.HasOptional(x => x.Shift)
-                .WithMany(x=>x.RegisterTransactions)
+                .WithMany(x => x.RegisterTransactions)
                 .HasForeignKey(x => x.ShiftId);
 
             this.HasOptional(x => x.CreatedBy)

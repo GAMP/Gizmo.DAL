@@ -1,8 +1,7 @@
 namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update4 : DbMigration
     {
         public override void Up()
@@ -10,45 +9,45 @@ namespace GizmoDALV2.Migrations.MSSQL
             CreateTable(
                 "dbo.Register",
                 c => new
-                    {
-                        RegisterId = c.Int(nullable: false, identity: true),
-                        Number = c.Int(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 45),
-                        MacAddress = c.String(maxLength: 255),
-                        StartCash = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        IdleTimeout = c.Int(),
-                        Options = c.Int(nullable: false),
-                        IsDeleted = c.Boolean(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    RegisterId = c.Int(nullable: false, identity: true),
+                    Number = c.Int(nullable: false),
+                    Name = c.String(nullable: false, maxLength: 45),
+                    MacAddress = c.String(maxLength: 255),
+                    StartCash = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    IdleTimeout = c.Int(),
+                    Options = c.Int(nullable: false),
+                    IsDeleted = c.Boolean(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.RegisterId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
                 .Index(t => t.MacAddress, unique: true, name: "UQ_MACAddress")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.Shift",
                 c => new
-                    {
-                        ShiftId = c.Int(nullable: false, identity: true),
-                        IsActive = c.Boolean(nullable: false),
-                        OperatorId = c.Int(nullable: false),
-                        RegisterId = c.Int(nullable: false),
-                        Start = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                        StartCash = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        IsEnding = c.Boolean(nullable: false),
-                        EndedById = c.Int(),
-                        EndTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    ShiftId = c.Int(nullable: false, identity: true),
+                    IsActive = c.Boolean(nullable: false),
+                    OperatorId = c.Int(nullable: false),
+                    RegisterId = c.Int(nullable: false),
+                    Start = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                    StartCash = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    IsEnding = c.Boolean(nullable: false),
+                    EndedById = c.Int(),
+                    EndTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.ShiftId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.EndedById)
@@ -60,22 +59,22 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => t.EndedById)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.RegisterTransaction",
                 c => new
-                    {
-                        RegisterTransactionId = c.Int(nullable: false, identity: true),
-                        RegisterId = c.Int(nullable: false),
-                        ShiftId = c.Int(),
-                        Amount = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Type = c.Int(nullable: false),
-                        Note = c.String(),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    RegisterTransactionId = c.Int(nullable: false, identity: true),
+                    RegisterId = c.Int(nullable: false),
+                    ShiftId = c.Int(),
+                    Amount = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Type = c.Int(nullable: false),
+                    Note = c.String(),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.RegisterTransactionId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
@@ -85,31 +84,31 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => t.ShiftId)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.ShiftCount",
                 c => new
-                    {
-                        ShiftCountId = c.Int(nullable: false, identity: true),
-                        ShiftId = c.Int(nullable: false),
-                        PaymentMethodId = c.Int(nullable: false),
-                        StartCash = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Sales = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Deposits = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        PayIns = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Withdrawals = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        PayOuts = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Refunds = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Voids = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Expected = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Actual = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Difference = c.Decimal(nullable: false, precision: 19, scale: 4),
-                        Note = c.String(),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    ShiftCountId = c.Int(nullable: false, identity: true),
+                    ShiftId = c.Int(nullable: false),
+                    PaymentMethodId = c.Int(nullable: false),
+                    StartCash = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Sales = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Deposits = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    PayIns = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Withdrawals = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    PayOuts = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Refunds = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Voids = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Expected = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Actual = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Difference = c.Decimal(nullable: false, precision: 19, scale: 4),
+                    Note = c.String(),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.ShiftCountId)
                 .ForeignKey("dbo.UserOperator", t => t.CreatedById)
                 .ForeignKey("dbo.UserOperator", t => t.ModifiedById)
@@ -118,7 +117,7 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => new { t.ShiftId, t.PaymentMethodId }, unique: true, name: "UQ_ShiftCountPaymentMethod")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             AddColumn("dbo.UserOperator", "ShiftOptions", c => c.Int(nullable: false));
             AddColumn("dbo.ProductUserPrice", "IsEnabled", c => c.Boolean(nullable: false));
             AddColumn("dbo.InvoiceLine", "UnitPointsPrice", c => c.Int(nullable: false));
@@ -194,7 +193,7 @@ namespace GizmoDALV2.Migrations.MSSQL
             //FILTERED INDEX CREATION
             Sql("CREATE UNIQUE NONCLUSTERED INDEX [UQ_MACAddress] ON [dbo].[Register](MacAddress) WHERE MacAddress IS NOT NULL");
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.ProductOrder", "ShiftId", "dbo.Shift");

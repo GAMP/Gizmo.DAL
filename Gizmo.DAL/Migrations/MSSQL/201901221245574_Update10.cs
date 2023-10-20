@@ -1,8 +1,7 @@
 namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update10 : DbMigration
     {
         public override void Up()
@@ -10,21 +9,21 @@ namespace GizmoDALV2.Migrations.MSSQL
             CreateTable(
                 "dbo.Reservation",
                 c => new
-                    {
-                        ReservationId = c.Int(nullable: false, identity: true),
-                        UserId = c.Int(),
-                        Pin = c.String(nullable: false, maxLength: 6),
-                        Date = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                        Duration = c.Int(nullable: false),
-                        ContactPhone = c.String(maxLength: 20),
-                        ContactEmail = c.String(maxLength: 254),
-                        Note = c.String(),
-                        Status = c.Int(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    ReservationId = c.Int(nullable: false, identity: true),
+                    UserId = c.Int(),
+                    Pin = c.String(nullable: false, maxLength: 6),
+                    Date = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                    Duration = c.Int(nullable: false),
+                    ContactPhone = c.String(maxLength: 20),
+                    ContactEmail = c.String(maxLength: 254),
+                    Note = c.String(),
+                    Status = c.Int(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.ReservationId)
                 .ForeignKey("dbo.User", t => t.CreatedById)
                 .ForeignKey("dbo.User", t => t.ModifiedById)
@@ -33,20 +32,20 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => t.Pin, unique: true, name: "UQ_Pin")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.ReservationHost",
                 c => new
-                    {
-                        ReservationHostId = c.Int(nullable: false, identity: true),
-                        ReservationId = c.Int(nullable: false),
-                        HostId = c.Int(nullable: false),
-                        PreferedUserId = c.Int(),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    ReservationHostId = c.Int(nullable: false, identity: true),
+                    ReservationId = c.Int(nullable: false),
+                    HostId = c.Int(nullable: false),
+                    PreferedUserId = c.Int(),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.ReservationHostId)
                 .ForeignKey("dbo.User", t => t.CreatedById)
                 .ForeignKey("dbo.Host", t => t.HostId)
@@ -57,19 +56,19 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => t.PreferedUserId)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.ReservationUser",
                 c => new
-                    {
-                        ReservationUserId = c.Int(nullable: false, identity: true),
-                        ReservationId = c.Int(nullable: false),
-                        UserId = c.Int(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    ReservationUserId = c.Int(nullable: false, identity: true),
+                    ReservationId = c.Int(nullable: false),
+                    UserId = c.Int(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.ReservationUserId)
                 .ForeignKey("dbo.User", t => t.CreatedById)
                 .ForeignKey("dbo.User", t => t.ModifiedById)
@@ -78,23 +77,23 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => new { t.ReservationId, t.UserId }, unique: true, name: "UQ_Reservation_User")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.Token",
                 c => new
-                    {
-                        TokenId = c.Int(nullable: false, identity: true),
-                        UserId = c.Int(),
-                        Value = c.String(nullable: false, maxLength: 32),
-                        ConfirmationCode = c.String(maxLength: 6),
-                        Type = c.Int(nullable: false),
-                        Status = c.Int(nullable: false),
-                        Expires = c.DateTime(precision: 7, storeType: "datetime2"),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    TokenId = c.Int(nullable: false, identity: true),
+                    UserId = c.Int(),
+                    Value = c.String(nullable: false, maxLength: 32),
+                    ConfirmationCode = c.String(maxLength: 6),
+                    Type = c.Int(nullable: false),
+                    Status = c.Int(nullable: false),
+                    Expires = c.DateTime(precision: 7, storeType: "datetime2"),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.TokenId)
                 .ForeignKey("dbo.User", t => t.CreatedById)
                 .ForeignKey("dbo.User", t => t.ModifiedById)
@@ -103,20 +102,20 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => t.Value, unique: true, name: "UQ_Value")
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.Verification",
                 c => new
-                    {
-                        VerificationId = c.Int(nullable: false, identity: true),
-                        TokenId = c.Int(nullable: false),
-                        UserId = c.Int(),
-                        Status = c.Int(nullable: false),
-                        ModifiedById = c.Int(),
-                        ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
-                        CreatedById = c.Int(),
-                        CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    })
+                {
+                    VerificationId = c.Int(nullable: false, identity: true),
+                    TokenId = c.Int(nullable: false),
+                    UserId = c.Int(),
+                    Status = c.Int(nullable: false),
+                    ModifiedById = c.Int(),
+                    ModifiedTime = c.DateTime(precision: 7, storeType: "datetime2"),
+                    CreatedById = c.Int(),
+                    CreatedTime = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                })
                 .PrimaryKey(t => t.VerificationId)
                 .ForeignKey("dbo.User", t => t.CreatedById)
                 .ForeignKey("dbo.User", t => t.ModifiedById)
@@ -126,29 +125,29 @@ namespace GizmoDALV2.Migrations.MSSQL
                 .Index(t => t.UserId)
                 .Index(t => t.ModifiedById)
                 .Index(t => t.CreatedById);
-            
+
             CreateTable(
                 "dbo.VerificationEmail",
                 c => new
-                    {
-                        VerificationId = c.Int(nullable: false),
-                        Email = c.String(nullable: false, maxLength: 254),
-                    })
+                {
+                    VerificationId = c.Int(nullable: false),
+                    Email = c.String(nullable: false, maxLength: 254),
+                })
                 .PrimaryKey(t => t.VerificationId)
                 .ForeignKey("dbo.Verification", t => t.VerificationId)
                 .Index(t => t.VerificationId);
-            
+
             CreateTable(
                 "dbo.VerificationMobilePhone",
                 c => new
-                    {
-                        VerificationId = c.Int(nullable: false),
-                        PhoneNumber = c.String(nullable: false, maxLength: 20),
-                    })
+                {
+                    VerificationId = c.Int(nullable: false),
+                    PhoneNumber = c.String(nullable: false, maxLength: 20),
+                })
                 .PrimaryKey(t => t.VerificationId)
                 .ForeignKey("dbo.Verification", t => t.VerificationId)
                 .Index(t => t.VerificationId);
-            
+
             AddColumn("dbo.ProductOrder", "PreferedPaymentMethodId", c => c.Int());
             AddColumn("dbo.ProductOrder", "IsDelivered", c => c.Boolean(nullable: false));
             AddColumn("dbo.ProductOrder", "DeliveredTime", c => c.DateTime(precision: 7, storeType: "datetime2"));
@@ -165,10 +164,10 @@ namespace GizmoDALV2.Migrations.MSSQL
             AddForeignKey("dbo.ProductOrder", "PreferedPaymentMethodId", "dbo.PaymentMethod", "PaymentMethodId");
 
             Sql("UPDATE[dbo].[ProductOrder] SET IsDelivered = 1, DeliveredTime = CreatedTime;");
-            Sql("UPDATE[dbo].[ProductOL] SET IsDelivered = 1, DeliveredTime = CreatedTime;");          
+            Sql("UPDATE[dbo].[ProductOL] SET IsDelivered = 1, DeliveredTime = CreatedTime;");
             Sql("UPDATE[dbo].[PaymentMethod] SET IsEnabled = 1, IsClient = 1, IsManager = 1;");
         }
-        
+
         public override void Down()
         {
             DropForeignKey("dbo.VerificationMobilePhone", "VerificationId", "dbo.Verification");

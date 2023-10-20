@@ -24,7 +24,7 @@ namespace Gizmo.DAL.Mappings
 
             Property(x => x.Signature)
                 .HasColumnOrder(4)
-                .IsOptional();            
+                .IsOptional();
 
             //Table name
             ToTable(nameof(Entities.FiscalReceipt));

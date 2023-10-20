@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.Data.Entity.ModelConfiguration;
 
 namespace GizmoDALV2.Mappings
@@ -55,7 +56,7 @@ namespace GizmoDALV2.Mappings
             this.ToTable(nameof(UsageTime));
 
             this.HasRequired(x => x.InvoiceLine)
-                .WithMany(x=>x.Usages)
+                .WithMany(x => x.Usages)
                 .HasForeignKey(x => x.InvoiceLineId);
         }
     }
@@ -67,7 +68,7 @@ namespace GizmoDALV2.Mappings
             this.ToTable(nameof(UsageTimeFixed));
 
             this.HasRequired(x => x.InvoiceLine)
-                .WithMany(x=>x.Usages)
+                .WithMany(x => x.Usages)
                 .HasForeignKey(x => x.InvoiceLineId);
         }
     }
@@ -91,7 +92,7 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(3);
 
             this.HasRequired(x => x.BillRate)
-                .WithMany(x=>x.Usage)
+                .WithMany(x => x.Usage)
                 .HasForeignKey(x => x.BillRateId);
         }
     }

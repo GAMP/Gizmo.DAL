@@ -6,7 +6,7 @@
     public class ImportOptions
     {
         #region PROPERTIES
-        
+
         /// <summary>
         /// Gets or sets if time values should be treated as minutes.
         /// Default value is true.

@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
@@ -56,7 +57,7 @@ namespace GizmoDALV2.Mappings
 
             this.HasMany(x => x.Transactions)
                 .WithRequired(x => x.Register)
-                .HasForeignKey(x => x.RegisterId);            
+                .HasForeignKey(x => x.RegisterId);
         }
     }
 }

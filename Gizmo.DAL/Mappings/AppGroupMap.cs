@@ -1,12 +1,8 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -27,23 +23,23 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45)
                 .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
+                    new IndexAttribute("UQ_Name") { IsUnique = true }
                 }));
 
             this.Property(x => x.Guid)
                 .HasColumnOrder(2)
                 .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
+                    new IndexAttribute("UQ_Guid") { IsUnique = true }
                 }));
 
             // Table & Column Mappings
             this.ToTable("AppGroup");
 
-            this.Property(t => t.Id);                
+            this.Property(t => t.Id);
         }
     }
 }

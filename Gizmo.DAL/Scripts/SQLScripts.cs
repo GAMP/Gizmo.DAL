@@ -44,15 +44,15 @@ namespace Gizmo.DAL.Scripts
           "SELECT @OVER_LIMIT;" +
           "END;";
 
-        public static string CreateUniqueNullableIndex(string indexName,string tableName,string columnName)
+        public static string CreateUniqueNullableIndex(string indexName, string tableName, string columnName)
         {
-            if(string.IsNullOrEmpty(indexName))
+            if (string.IsNullOrEmpty(indexName))
                 throw new ArgumentNullException(nameof(indexName));
 
-            if(string.IsNullOrEmpty(tableName))
+            if (string.IsNullOrEmpty(tableName))
                 throw new ArgumentNullException(nameof(tableName));
 
-            if(string.IsNullOrEmpty(columnName))
+            if (string.IsNullOrEmpty(columnName))
                 throw new ArgumentNullException(nameof(columnName));
 
             return $"CREATE UNIQUE NONCLUSTERED INDEX[{indexName}] ON[dbo].[{tableName}]({columnName}) WHERE {columnName} IS NOT NULL";

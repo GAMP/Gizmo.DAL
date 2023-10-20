@@ -1,12 +1,8 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -24,17 +20,17 @@ namespace GizmoDALV2.Mappings
             this.Property(x => x.Time)
                 .HasColumnOrder(1)
                 .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("IX_Time") 
+                    new IndexAttribute("IX_Time")
                 }));
 
             this.Property(x => x.HostNumber)
                 .HasColumnOrder(2)
                 .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("IX_HostNumber") 
+                    new IndexAttribute("IX_HostNumber")
                 })); ;
 
             this.Property(t => t.Hostname)
@@ -51,17 +47,17 @@ namespace GizmoDALV2.Mappings
             this.Property(x => x.Category)
                 .HasColumnOrder(6)
                 .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("IX_Category") 
+                    new IndexAttribute("IX_Category")
                 }));
 
             this.Property(x => x.MessageType)
                 .HasColumnOrder(7)
                 .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("IX_MessageType") 
+                    new IndexAttribute("IX_MessageType")
                 }));
 
             this.Property(t => t.Message)

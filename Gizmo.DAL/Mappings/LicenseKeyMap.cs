@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
@@ -34,14 +35,14 @@ namespace GizmoDALV2.Mappings
 
             Property(t => t.Comment)
                 .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnOrder(3);            
+                .HasColumnOrder(3);
 
             Property(x => x.Guid)
                 .HasColumnOrder(4)
                 .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
+                    new IndexAttribute("UQ_Guid") { IsUnique = true }
                 }));
 
             Property(x => x.IsEnabled)
@@ -52,7 +53,7 @@ namespace GizmoDALV2.Mappings
                 .IsOptional();
 
             // Table & Column Mappings
-            ToTable(nameof(LicenseKey));      
+            ToTable(nameof(LicenseKey));
 
             // Relationships
             HasRequired(t => t.License)

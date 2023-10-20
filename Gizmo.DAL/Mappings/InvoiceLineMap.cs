@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
@@ -217,7 +218,7 @@ namespace GizmoDALV2.Mappings
                 .HasForeignKey(x => x.OrderLineId);
 
             HasRequired(x => x.UsageSession)
-                .WithMany(x=>x.InvoiceLines)
+                .WithMany(x => x.InvoiceLines)
                 .HasForeignKey(x => x.UsageSessionId);
         }
     }

@@ -1,11 +1,8 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
 
 namespace GizmoDALV2.Mappings
 {
@@ -24,9 +21,9 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45)
                 .HasColumnAnnotation("Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("UQ_Name") { IsUnique = true } 
+                    new IndexAttribute("UQ_Name") { IsUnique = true }
                 }));
 
             this.Property(x => x.Guid)
@@ -34,16 +31,16 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(2)
                 .HasColumnAnnotation(
                 "Index",
-                new IndexAnnotation(new[] 
+                new IndexAnnotation(new[]
                 {
-                    new IndexAttribute("UQ_Guid") { IsUnique = true } 
+                    new IndexAttribute("UQ_Guid") { IsUnique = true }
                 }));
 
             // Table & Column Mappings
             this.ToTable("TaskBase");
 
             this.Property(t => t.Id)
-                .HasColumnName("TaskId");     
+                .HasColumnName("TaskId");
         }
     }
 
@@ -144,7 +141,7 @@ namespace GizmoDALV2.Mappings
 
             // Table & Column Mappings
             this.HasRequired(x => x.TaskBase)
-                .WithMany(x=>x.UsedByTask)
+                .WithMany(x => x.UsedByTask)
                 .HasForeignKey(x => x.TaskBaseId);
 
             this.ToTable("ClientTask");

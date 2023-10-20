@@ -1,8 +1,7 @@
 namespace GizmoDALV2.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class MSSQLInitialCreate : DbMigration
     {
         public override void Up()
@@ -2322,7 +2321,7 @@ namespace GizmoDALV2.Migrations.MSSQL
 
             Sql("DROP INDEX [UQ_SmartCardUID] ON [dbo].[User]");
             Sql("CREATE UNIQUE NONCLUSTERED INDEX [UQ_SmartCardUID] ON [dbo].[User](SmartCardUID) WHERE SmartCardUID IS NOT NULL");
-            
+
             #endregion
         }
 

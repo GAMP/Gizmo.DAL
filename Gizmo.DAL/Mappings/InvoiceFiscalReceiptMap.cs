@@ -8,7 +8,7 @@ namespace Gizmo.DAL.Mappings
     {
         public InvoiceFiscalReceiptMap()
         {
-            HasKey(x=>x.Id);
+            HasKey(x => x.Id);
 
             Property(x => x.Id)
                 .HasColumnName("InvoiceFiscalReceiptId");

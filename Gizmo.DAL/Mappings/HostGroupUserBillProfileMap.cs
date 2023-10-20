@@ -1,12 +1,8 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -37,8 +33,8 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(4);
 
             this.HasRequired(x => x.HostGroup)
-                .WithMany(x=>x.UserBillProfiles)
-                .HasForeignKey(x=>x.HostGroupId)
+                .WithMany(x => x.UserBillProfiles)
+                .HasForeignKey(x => x.HostGroupId)
                 .WillCascadeOnDelete(true);
 
             this.HasRequired(x => x.BillProfile)

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Gizmo.DAL.Entities;
+﻿using System.Data.Entity.ModelConfiguration;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 
@@ -35,7 +29,7 @@ namespace GizmoDALV2.Mappings
 
             this.Property(x => x.FriendlyName)
                 .HasColumnOrder(2)
-                .HasMaxLength(SQLStringSize.TINY); 
+                .HasMaxLength(SQLStringSize.TINY);
 
             // Table & Column Mappings
             this.ToTable(nameof(Gizmo.DAL.Entities.Attribute));

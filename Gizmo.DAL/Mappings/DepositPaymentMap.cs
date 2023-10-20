@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.Data.Entity.ModelConfiguration;
 
 namespace GizmoDALV2.Mappings
@@ -52,7 +53,7 @@ namespace GizmoDALV2.Mappings
                 .WithMany(x => x.DepositPayments)
                 .HasForeignKey(x => x.UserId)
                 .WillCascadeOnDelete(false);
-            
+
             ToTable(nameof(DepositPayment));
         }
     }

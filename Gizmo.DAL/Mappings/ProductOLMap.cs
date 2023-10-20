@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
+
 using System.Data.Entity.ModelConfiguration;
 
 namespace GizmoDALV2.Mappings
@@ -75,7 +76,7 @@ namespace GizmoDALV2.Mappings
                 .HasColumnOrder(19);
 
             Property(x => x.IsVoided)
-                .HasColumnOrder(20);  
+                .HasColumnOrder(20);
 
             HasRequired(x => x.ProductOrder)
                 .WithMany(x => x.OrderLines)

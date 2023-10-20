@@ -1,12 +1,6 @@
 ﻿using Gizmo.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
+
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GizmoDALV2.Mappings
 {
@@ -47,7 +41,7 @@ namespace GizmoDALV2.Mappings
             // Table & Column Mappings
             this.ToTable(nameof(AssetTransaction));
 
-            this.HasRequired(x=>x.User)
+            this.HasRequired(x => x.User)
                 .WithMany(x => x.AssetTransactions)
                 .HasForeignKey(x => x.UserId);
 
@@ -56,9 +50,9 @@ namespace GizmoDALV2.Mappings
                 .HasForeignKey(x => x.AssetTypeId)
                 .WillCascadeOnDelete(false);
 
-            this.HasRequired(x=>x.Asset)
+            this.HasRequired(x => x.Asset)
                 .WithMany(x => x.Transactions)
-                .HasForeignKey(x => x.AssetId);        
+                .HasForeignKey(x => x.AssetId);
         }
     }
 }
