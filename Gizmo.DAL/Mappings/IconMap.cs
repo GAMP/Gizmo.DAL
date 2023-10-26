@@ -2,27 +2,27 @@
 
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class IconMap : EntityTypeConfiguration<Icon>
     {
         public IconMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Image)
+            Property(x => x.Image)
                 .HasMaxLength(GizmoDALV2.SQLByteArraySize.MEDIUM)
                 .IsRequired();
 
             // Table & Column Mappings
-            this.ToTable("Icon");
+            ToTable("Icon");
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("IconId");
         }
     }

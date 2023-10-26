@@ -1,32 +1,34 @@
 ﻿using Gizmo.DAL.Entities;
 
+using GizmoDALV2;
+
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class ProductImageMap : EntityTypeConfiguration<ProductImage>
     {
         public ProductImageMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Image)
+            Property(x => x.Image)
                 .HasColumnOrder(1)
                 .IsRequired()
                 .HasMaxLength(SQLByteArraySize.MEDIUM);
 
             // Table & Column Mappings
-            this.ToTable(nameof(ProductImage));
+            ToTable(nameof(ProductImage));
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("ProductImageId");
 
-            this.HasRequired(x => x.Product)
+            HasRequired(x => x.Product)
                 .WithMany(x => x.Images)
                 .HasForeignKey(x => x.ProductId);
         }

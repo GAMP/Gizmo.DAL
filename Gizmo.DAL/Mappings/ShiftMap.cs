@@ -2,55 +2,55 @@
 
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class ShiftMap : EntityTypeConfiguration<Shift>
     {
         public ShiftMap()
         {
-            this.ToTable(nameof(Shift));
+            ToTable(nameof(Shift));
 
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("ShiftId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.IsActive)
+            Property(x => x.IsActive)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.OperatorId)
+            Property(x => x.OperatorId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.RegisterId)
+            Property(x => x.RegisterId)
                 .HasColumnOrder(3);
 
-            this.Property(x => x.Start)
+            Property(x => x.Start)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.StartCash)
+            Property(x => x.StartCash)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.IsEnding)
+            Property(x => x.IsEnding)
                 .HasColumnOrder(6);
 
-            this.Property(x => x.EndedById)
+            Property(x => x.EndedById)
                 .IsOptional()
                 .HasColumnOrder(7);
 
-            this.Property(x => x.EndTime)
+            Property(x => x.EndTime)
                 .IsOptional()
                 .HasColumnOrder(8);
 
-            this.HasOptional(x => x.EndedBy)
+            HasOptional(x => x.EndedBy)
                 .WithMany()
                 .HasForeignKey(x => x.EndedById);
 
-            this.HasRequired(x => x.Register)
+            HasRequired(x => x.Register)
                 .WithMany(x => x.Shifts)
                 .HasForeignKey(x => x.RegisterId);
 
-            this.HasRequired(x => x.Operator)
+            HasRequired(x => x.Operator)
                 .WithMany(x => x.Shifts)
                 .HasForeignKey(x => x.OperatorId);
         }

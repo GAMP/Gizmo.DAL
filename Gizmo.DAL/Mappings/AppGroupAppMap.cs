@@ -2,30 +2,30 @@
 
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class AppGroupAppMap : EntityTypeConfiguration<AppGroupApp>
     {
         public AppGroupAppMap()
         {
             // Primary Key
-            this.HasKey(t => new { t.AppGroupId, t.AppId });
+            HasKey(t => new { t.AppGroupId, t.AppId });
 
             // Properties
-            this.Property(x => x.AppGroupId)
+            Property(x => x.AppGroupId)
                 .HasColumnOrder(0);
 
-            this.Property(t => t.AppId)
+            Property(t => t.AppId)
                 .HasColumnOrder(1);
 
             // Table & Column Mappings
-            this.ToTable("AppGroupApp");
+            ToTable("AppGroupApp");
 
-            this.HasRequired(x => x.AppGroup)
+            HasRequired(x => x.AppGroup)
                 .WithMany(x => x.Apps)
                 .HasForeignKey(x => x.AppGroupId);
 
-            this.HasRequired(x => x.App)
+            HasRequired(x => x.App)
                 .WithMany(x => x.AppGroups)
                 .HasForeignKey(x => x.AppId)
                 .WillCascadeOnDelete(false);

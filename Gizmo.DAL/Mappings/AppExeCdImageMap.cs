@@ -1,41 +1,43 @@
 ﻿using Gizmo.DAL.Entities;
 
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class AppExeCdImageMap : EntityTypeConfiguration<AppExeCdImage>
     {
         public AppExeCdImageMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.AppExeId)
+            Property(x => x.AppExeId)
                 .HasColumnOrder(1);
 
-            this.Property(t => t.Path)
+            Property(t => t.Path)
                 .IsRequired()
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.MountOptions)
+            Property(t => t.MountOptions)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(x => x.DeviceId)
+            Property(x => x.DeviceId)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.CheckExitCode)
+            Property(x => x.CheckExitCode)
                 .HasColumnOrder(5);
 
-            this.Property(t => t.Guid)
+            Property(t => t.Guid)
                 .HasColumnOrder(6)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[]
@@ -44,13 +46,13 @@ namespace GizmoDALV2.Mappings
                 }));
 
             // Table & Column Mappings
-            this.ToTable("AppExeCdImage");
+            ToTable("AppExeCdImage");
 
-            this.Property(t => t.Id)
+            Property(t => t.Id)
                 .HasColumnName("AppExeCdImageId");
 
             // Relationships
-            this.HasRequired(t => t.AppExe)
+            HasRequired(t => t.AppExe)
                 .WithMany(t => t.AppExeCdImages)
                 .HasForeignKey(d => d.AppExeId);
         }

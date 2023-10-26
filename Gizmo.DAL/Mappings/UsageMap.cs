@@ -2,34 +2,34 @@
 
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class UsageBaseMap : EntityTypeConfiguration<Usage>
     {
         public UsageBaseMap()
         {
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("UsageId");
 
-            this.Property(x => x.UsageSessionId)
+            Property(x => x.UsageSessionId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.UserId)
+            Property(x => x.UserId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Seconds)
+            Property(x => x.Seconds)
                 .HasColumnOrder(3);
 
-            this.ToTable(nameof(Usage));
+            ToTable(nameof(Usage));
 
-            this.HasRequired(x => x.UsageSession)
+            HasRequired(x => x.UsageSession)
                 .WithMany(x => x.Usage)
                 .HasForeignKey(x => x.UsageSessionId);
 
-            this.HasRequired(x => x.User)
+            HasRequired(x => x.User)
                 .WithMany(x => x.Usage)
                 .HasForeignKey(x => x.UserId)
                 .WillCascadeOnDelete(false);
@@ -40,9 +40,9 @@ namespace GizmoDALV2.Mappings
     {
         public UsageUserSessionMap()
         {
-            this.ToTable(nameof(UsageUserSession));
+            ToTable(nameof(UsageUserSession));
 
-            this.HasRequired(x => x.UserSession)
+            HasRequired(x => x.UserSession)
                 .WithMany(x => x.Usage)
                 .HasForeignKey(x => x.UserSessionId)
                 .WillCascadeOnDelete(false);
@@ -53,9 +53,9 @@ namespace GizmoDALV2.Mappings
     {
         public UsageTimeMap()
         {
-            this.ToTable(nameof(UsageTime));
+            ToTable(nameof(UsageTime));
 
-            this.HasRequired(x => x.InvoiceLine)
+            HasRequired(x => x.InvoiceLine)
                 .WithMany(x => x.Usages)
                 .HasForeignKey(x => x.InvoiceLineId);
         }
@@ -65,9 +65,9 @@ namespace GizmoDALV2.Mappings
     {
         public UsageTimeFixedMap()
         {
-            this.ToTable(nameof(UsageTimeFixed));
+            ToTable(nameof(UsageTimeFixed));
 
-            this.HasRequired(x => x.InvoiceLine)
+            HasRequired(x => x.InvoiceLine)
                 .WithMany(x => x.Usages)
                 .HasForeignKey(x => x.InvoiceLineId);
         }
@@ -77,21 +77,21 @@ namespace GizmoDALV2.Mappings
     {
         public UsageRateMap()
         {
-            this.ToTable(nameof(UsageRate));
+            ToTable(nameof(UsageRate));
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.BillRateId)
+            Property(x => x.BillRateId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.Total)
+            Property(x => x.Total)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Rate)
+            Property(x => x.Rate)
                 .HasColumnOrder(3);
 
-            this.HasRequired(x => x.BillRate)
+            HasRequired(x => x.BillRate)
                 .WithMany(x => x.Usage)
                 .HasForeignKey(x => x.BillRateId);
         }

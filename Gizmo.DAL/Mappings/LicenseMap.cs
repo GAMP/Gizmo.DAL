@@ -1,24 +1,26 @@
 ﻿using Gizmo.DAL.Entities;
 
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class LicenseMap : EntityTypeConfiguration<License>
     {
         public LicenseMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(t => t.Id)
+            Property(t => t.Id)
                 .HasColumnName("LicenseId")
                 .HasColumnOrder(0);
 
-            this.Property(t => t.Name)
+            Property(t => t.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY)
@@ -28,21 +30,21 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("UQ_Name") { IsUnique = true }
                 }));
 
-            this.Property(t => t.Assembly)
+            Property(t => t.Assembly)
                 .IsRequired()
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Plugin)
+            Property(t => t.Plugin)
                 .IsRequired()
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Settings)
+            Property(t => t.Settings)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLByteArraySize.NORMAL);
 
-            this.Property(t => t.Guid)
+            Property(t => t.Guid)
                 .HasColumnOrder(5)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[]
@@ -51,7 +53,7 @@ namespace GizmoDALV2.Mappings
                 }));
 
             // Table & Column Mappings
-            this.ToTable("License");
+            ToTable("License");
         }
     }
 }

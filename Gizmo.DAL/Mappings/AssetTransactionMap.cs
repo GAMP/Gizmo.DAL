@@ -1,56 +1,58 @@
 ﻿using Gizmo.DAL.Entities;
 
+using GizmoDALV2;
+
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class AssetTransactionMap : EntityTypeConfiguration<AssetTransaction>
     {
         public AssetTransactionMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("AssetTransactionId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.AssetTypeId)
+            Property(x => x.AssetTypeId)
                 .IsRequired()
                 .HasColumnOrder(1);
 
-            this.Property(x => x.AssetTypeName)
+            Property(x => x.AssetTypeName)
                 .HasMaxLength(SQLStringSize.TINY45)
                 .IsRequired()
                 .HasColumnOrder(2);
 
-            this.Property(x => x.AssetId)
+            Property(x => x.AssetId)
                 .IsRequired()
                 .HasColumnOrder(3);
 
-            this.Property(x => x.IsActive)
+            Property(x => x.IsActive)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.CheckedInById)
+            Property(x => x.CheckedInById)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.CheckInTime)
+            Property(x => x.CheckInTime)
                 .HasColumnOrder(6);
 
             // Table & Column Mappings
-            this.ToTable(nameof(AssetTransaction));
+            ToTable(nameof(AssetTransaction));
 
-            this.HasRequired(x => x.User)
+            HasRequired(x => x.User)
                 .WithMany(x => x.AssetTransactions)
                 .HasForeignKey(x => x.UserId);
 
-            this.HasRequired(x => x.AssetType)
+            HasRequired(x => x.AssetType)
                 .WithMany(x => x.Transactions)
                 .HasForeignKey(x => x.AssetTypeId)
                 .WillCascadeOnDelete(false);
 
-            this.HasRequired(x => x.Asset)
+            HasRequired(x => x.Asset)
                 .WithMany(x => x.Transactions)
                 .HasForeignKey(x => x.AssetId);
         }

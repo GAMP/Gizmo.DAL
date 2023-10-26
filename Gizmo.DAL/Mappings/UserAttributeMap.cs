@@ -1,24 +1,26 @@
 ﻿using Gizmo.DAL.Entities;
 
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class UserAttributeMap : EntityTypeConfiguration<UserAttribute>
     {
         public UserAttributeMap()
         {
             // Primary Key
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("UserAttributeId"); ;
 
-            this.Property(x => x.UserId)
+            Property(x => x.UserId)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[]
                 {
@@ -26,7 +28,7 @@ namespace GizmoDALV2.Mappings
                 }))
                 .HasColumnOrder(1);
 
-            this.Property(x => x.AttributeId)
+            Property(x => x.AttributeId)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[]
                 {
@@ -34,16 +36,16 @@ namespace GizmoDALV2.Mappings
                 }))
                 .HasColumnOrder(2);
 
-            this.Property(x => x.Value)
+            Property(x => x.Value)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY)
                 .HasColumnOrder(3);
 
             // Table & Column Mappings
-            this.ToTable(nameof(UserAttribute));
+            ToTable(nameof(UserAttribute));
 
             //Relations
-            this.HasRequired(x => x.User)
+            HasRequired(x => x.User)
                 .WithMany(x => x.Attributes);
         }
     }

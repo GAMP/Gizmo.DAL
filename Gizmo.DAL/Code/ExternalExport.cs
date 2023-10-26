@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Gizmo.DAL.DTO;
 
-namespace GizmoDALV2
+using System.Collections.Generic;
+
+namespace Gizmo.DAL
 {
     /// <summary>
     /// External export class.
@@ -11,7 +13,7 @@ namespace GizmoDALV2
         /// <summary>
         /// Gets exported users.
         /// </summary>
-        public IEnumerable<DTO.UserImportInfo> Users { get; set; }
+        public IEnumerable<UserImportInfo> Users { get; set; }
         #endregion
     }
 }

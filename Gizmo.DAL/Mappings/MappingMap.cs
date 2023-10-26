@@ -1,32 +1,34 @@
 ﻿using Gizmo.DAL.Entities;
 
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class MappingMap : EntityTypeConfiguration<Mapping>
     {
         public MappingMap()
         {
             //Primary key
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
             //Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Label)
+            Property(x => x.Label)
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Source)
+            Property(x => x.Source)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired();
 
-            this.Property(x => x.MountPoint)
+            Property(x => x.MountPoint)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired()
@@ -37,27 +39,27 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("UQ_MountPoint") { IsUnique = true }
                 })); ;
 
-            this.Property(x => x.Type)
+            Property(x => x.Type)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.Size)
+            Property(x => x.Size)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.Username)
+            Property(x => x.Username)
                 .HasColumnOrder(6)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Password)
+            Property(x => x.Password)
                 .HasColumnOrder(7)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Options)
+            Property(x => x.Options)
                 .HasColumnOrder(8);
 
             //Table & Column mappings
-            this.ToTable("Mapping");
+            ToTable("Mapping");
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("MappingId");
         }
     }

@@ -4,21 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class HostLayoutGroupMap : EntityTypeConfiguration<HostLayoutGroup>
     {
         public HostLayoutGroupMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("HostLayoutGroupId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Name)
+            Property(x => x.Name)
                 .HasMaxLength(GizmoDALV2.SQLStringSize.TINY45)
                 .HasColumnOrder(1)
                 .HasColumnAnnotation("Index",
@@ -27,11 +27,11 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("UQ_Name") { IsUnique = true }
                 }));
 
-            this.Property(x => x.DisplayOrder)
+            Property(x => x.DisplayOrder)
                 .HasColumnOrder(2);
 
             // Table & Column Mappings
-            this.ToTable("HostLayoutGroup");
+            ToTable("HostLayoutGroup");
         }
     }
 }

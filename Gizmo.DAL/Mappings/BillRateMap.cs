@@ -2,54 +2,54 @@
 
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class BillRateMap : EntityTypeConfiguration<BillRate>
     {
         public BillRateMap()
         {
             // Primary Key
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.BillProfileId)
+            Property(x => x.BillProfileId)
                 .IsRequired()
                 .HasColumnOrder(1);
 
-            this.Property(x => x.StartFee)
+            Property(x => x.StartFee)
                 .HasColumnOrder(2)
                 .IsRequired();
 
-            this.Property(x => x.MinimumFee)
+            Property(x => x.MinimumFee)
                 .HasColumnOrder(3)
                 .IsRequired();
 
-            this.Property(x => x.Rate)
+            Property(x => x.Rate)
                 .HasColumnOrder(4)
                 .IsRequired();
 
-            this.Property(x => x.ChargeEvery)
+            Property(x => x.ChargeEvery)
                 .HasColumnOrder(5)
                 .IsRequired();
 
-            this.Property(x => x.ChargeAfter)
+            Property(x => x.ChargeAfter)
                 .HasColumnOrder(6)
                 .IsRequired();
 
-            this.Property(x => x.Options)
+            Property(x => x.Options)
                 .HasColumnOrder(7)
                 .IsRequired();
 
             // Relations
-            this.ToTable("BillRate");
+            ToTable("BillRate");
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("BillRateId");
 
-            this.HasRequired(x => x.BillProfile)
+            HasRequired(x => x.BillProfile)
                 .WithMany(x => x.BillRates)
                 .HasForeignKey(x => x.BillProfileId);
         }

@@ -1,4 +1,4 @@
-namespace GizmoDALV2.Migrations.MSSQL
+namespace Gizmo.DAL.Migrations.MSSQL
 {
     using System.Data.Entity.Migrations;
 

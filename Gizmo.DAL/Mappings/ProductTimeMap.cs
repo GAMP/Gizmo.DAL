@@ -2,16 +2,16 @@
 
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class ProductTimeMap : EntityTypeConfiguration<ProductTime>
     {
         public ProductTimeMap()
         {
             // Table & Column Mappings
-            this.ToTable("ProductTime");
+            ToTable("ProductTime");
 
-            this.HasOptional(x => x.AppGroup)
+            HasOptional(x => x.AppGroup)
                 .WithMany(x => x.TimeOffers)
                 .HasForeignKey(x => x.AppGroupId);
         }

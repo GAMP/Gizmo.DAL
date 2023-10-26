@@ -1,23 +1,25 @@
 ﻿using Gizmo.DAL.Entities;
 
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class DeploymentMap : EntityTypeConfiguration<Deployment>
     {
         public DeploymentMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(t => t.Id).
+            Property(t => t.Id).
                 HasColumnOrder(0);
 
-            this.Property(t => t.Name)
+            Property(t => t.Name)
                 .HasColumnOrder(1)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY)
@@ -27,37 +29,37 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("UQ_Name") { IsUnique = true }
                 }));
 
-            this.Property(t => t.Source)
+            Property(t => t.Source)
                 .HasColumnOrder(2)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Destination)
+            Property(t => t.Destination)
                 .HasColumnOrder(3)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.ExcludeDirectories)
+            Property(t => t.ExcludeDirectories)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(t => t.ExcludeFiles)
+            Property(t => t.ExcludeFiles)
                 .HasColumnOrder(5)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(t => t.IncludeDirectories)
+            Property(t => t.IncludeDirectories)
                 .HasColumnOrder(6)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(t => t.IncludeFiles)
+            Property(t => t.IncludeFiles)
                 .HasColumnOrder(7)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(t => t.RegistryString)
+            Property(t => t.RegistryString)
                 .HasColumnOrder(8)
                 .HasMaxLength(SQLStringSize.MEDIUM);
 
-            this.Property(t => t.Guid)
+            Property(t => t.Guid)
                 .HasColumnOrder(9)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[]
@@ -65,16 +67,16 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("UQ_Guid") { IsUnique = true }
                 }));
 
-            this.Property(t => t.ComparisonLevel)
+            Property(t => t.ComparisonLevel)
                 .HasColumnOrder(10);
 
-            this.Property(t => t.Options)
+            Property(t => t.Options)
                 .HasColumnOrder(11);
 
             // Table & Column Mappings
-            this.ToTable("Deployment");
+            ToTable("Deployment");
 
-            this.Property(t => t.Id)
+            Property(t => t.Id)
                 .HasColumnName("DeploymentId");
         }
     }

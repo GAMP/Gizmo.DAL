@@ -3,34 +3,34 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class AppExePersonalFileMap : EntityTypeConfiguration<AppExePersonalFile>
     {
         public AppExePersonalFileMap()
         {
             // Primary Key
-            this.HasKey(t => new { AppExeId = t.AppExeId, PersonalFileId = t.PersonalFileId });
+            HasKey(t => new { AppExeId = t.AppExeId, PersonalFileId = t.PersonalFileId });
 
             // Properties
-            this.Property(t => t.AppExeId)
+            Property(t => t.AppExeId)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
-            this.Property(t => t.PersonalFileId)
+            Property(t => t.PersonalFileId)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
             // Table & Column Mappings
-            this.ToTable("AppExePersonalFile");
+            ToTable("AppExePersonalFile");
 
             // Ignores
-            this.Ignore(x => x.Id);
+            Ignore(x => x.Id);
 
             // Relationships
-            this.HasRequired(t => t.AppExe)
+            HasRequired(t => t.AppExe)
                 .WithMany(t => t.PersonalFiles)
                 .HasForeignKey(d => d.AppExeId);
 
-            this.HasRequired(t => t.PersonalFile)
+            HasRequired(t => t.PersonalFile)
                 .WithMany(t => t.AppExes)
                 .HasForeignKey(d => d.PersonalFileId);
         }

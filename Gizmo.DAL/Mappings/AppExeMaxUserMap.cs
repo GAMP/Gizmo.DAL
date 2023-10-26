@@ -4,36 +4,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class AppExeMaxUserMap : EntityTypeConfiguration<AppExeMaxUser>
     {
         public AppExeMaxUserMap()
         {
             // Primary Key
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("AppExeMaxUserId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.AppExeId)
+            Property(x => x.AppExeId)
                 .HasColumnOrder(1)
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_AppExeAppExeMode") { IsUnique = true, Order = 0 } }));
 
-            this.Property(x => x.Mode)
+            Property(x => x.Mode)
                 .HasColumnOrder(2)
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_AppExeAppExeMode") { IsUnique = true, Order = 1 } }));
 
-            this.Property(x => x.MaxUsers)
+            Property(x => x.MaxUsers)
                 .HasColumnOrder(3);
 
             // Table & Column Mappings
-            this.ToTable("AppExeMaxUser");
+            ToTable("AppExeMaxUser");
 
             // Relationships
-            this.HasRequired(t => t.AppExe)
+            HasRequired(t => t.AppExe)
                 .WithMany(t => t.MaxUsers)
                 .HasForeignKey(d => d.AppExeId);
         }

@@ -1,6 +1,4 @@
-﻿using GizmoDALV2;
-
-namespace Gizmo.DAL.Contexts.Providers
+﻿namespace Gizmo.DAL.Contexts
 {
     /// <summary>
     /// Gizmo.DALl default db context ptovider.

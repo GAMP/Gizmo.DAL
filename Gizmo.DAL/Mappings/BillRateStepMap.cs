@@ -4,49 +4,49 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class BillProfileRateStepMap : EntityTypeConfiguration<BillRateStep>
     {
         public BillProfileRateStepMap()
         {
             // Primary Key
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.BillRateId)
+            Property(x => x.BillRateId)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_BillRateMinute") { IsUnique = true, Order = 0 } }));
 
-            this.Property(x => x.Minute)
+            Property(x => x.Minute)
                 .HasColumnOrder(2)
                 .IsRequired()
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_BillRateMinute") { IsUnique = true, Order = 1 } }));
 
-            this.Property(x => x.Action)
+            Property(x => x.Action)
                 .HasColumnOrder(3)
                 .IsRequired();
 
-            this.Property(x => x.Charge)
+            Property(x => x.Charge)
                 .HasColumnOrder(4);
 
-            this.Property(x => x.Rate)
+            Property(x => x.Rate)
                 .HasColumnOrder(5);
 
-            this.Property(x => x.TargetMinute)
+            Property(x => x.TargetMinute)
                 .HasColumnOrder(6);
 
-            this.ToTable("BillRateStep");
+            ToTable("BillRateStep");
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("BillRateStepId");
 
             // Relations
-            this.HasRequired(x => x.BillRate)
+            HasRequired(x => x.BillRate)
                 .WithMany(x => x.BillRateSteps)
                 .HasForeignKey(x => x.BillRateId);
         }

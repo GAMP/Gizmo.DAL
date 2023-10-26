@@ -3,30 +3,30 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class HostLayoutGroupImageMap : EntityTypeConfiguration<HostLayoutGroupImage>
     {
         public HostLayoutGroupImageMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
-            this.Property(x => x.Image)
+            Property(x => x.Image)
                 .HasMaxLength(GizmoDALV2.SQLByteArraySize.MEDIUM);
 
             // Table & Column Mappings
-            this.ToTable("HostLayoutGroupImage");
+            ToTable("HostLayoutGroupImage");
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("HostLayoutGroupId");
 
-            this.HasRequired(x => x.HostLayoutGroup)
+            HasRequired(x => x.HostLayoutGroup)
                 .WithRequiredDependent(x => x.Image)
                 .WillCascadeOnDelete(true);
         }

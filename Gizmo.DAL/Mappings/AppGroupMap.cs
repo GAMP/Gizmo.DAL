@@ -1,24 +1,26 @@
 ﻿using Gizmo.DAL.Entities;
 
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class AppGroupMap : EntityTypeConfiguration<AppGroup>
     {
         public AppGroupMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("AppGroupId")
                 .HasColumnOrder(0);
 
-            this.Property(t => t.Name)
+            Property(t => t.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45)
@@ -28,7 +30,7 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("UQ_Name") { IsUnique = true }
                 }));
 
-            this.Property(x => x.Guid)
+            Property(x => x.Guid)
                 .HasColumnOrder(2)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[]
@@ -37,9 +39,9 @@ namespace GizmoDALV2.Mappings
                 }));
 
             // Table & Column Mappings
-            this.ToTable("AppGroup");
+            ToTable("AppGroup");
 
-            this.Property(t => t.Id);
+            Property(t => t.Id);
         }
     }
 }

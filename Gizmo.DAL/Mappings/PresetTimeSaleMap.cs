@@ -2,25 +2,25 @@
 
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class PresetTimeSaleMap : EntityTypeConfiguration<PresetTimeSale>
     {
         public PresetTimeSaleMap()
         {
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("PresetTimeSaleId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Value)
+            Property(x => x.Value)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.DisplayOrder)
+            Property(x => x.DisplayOrder)
                 .HasColumnOrder(2);
 
-            this.ToTable(nameof(PresetTimeSale));
+            ToTable(nameof(PresetTimeSale));
         }
     }
 }

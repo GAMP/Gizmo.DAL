@@ -1,7 +1,9 @@
-﻿using System;
+﻿using GizmoDALV2;
+
+using System;
 using System.Data.Entity;
 
-namespace GizmoDALV2
+namespace Gizmo.DAL
 {
     /// <summary>
     /// Database transaction wrapper class.

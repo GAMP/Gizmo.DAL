@@ -4,36 +4,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class UserGroupHostDisallowedMap : EntityTypeConfiguration<UserGroupHostDisallowed>
     {
         public UserGroupHostDisallowedMap()
         {
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
-            this.ToTable("UserGroupHostDisallowed");
+            ToTable("UserGroupHostDisallowed");
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("UserGroupHostDisallowedId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.UserGroupId)
+            Property(x => x.UserGroupId)
                 .HasColumnOrder(1)
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_UserGroupHostGroup") { IsUnique = true, Order = 0 } }));
 
-            this.Property(x => x.HostGroupId)
+            Property(x => x.HostGroupId)
                 .HasColumnOrder(2)
                 .HasColumnAnnotation("Index", new IndexAnnotation(new[] { new IndexAttribute("UQ_UserGroupHostGroup") { IsUnique = true, Order = 1 } }));
 
-            this.Property(x => x.IsDisallowed)
+            Property(x => x.IsDisallowed)
                 .HasColumnOrder(3);
 
-            this.HasRequired(x => x.UserGroup)
+            HasRequired(x => x.UserGroup)
                 .WithMany(x => x.DissalowedHostGroups)
                 .HasForeignKey(x => x.UserGroupId);
 
-            this.HasRequired(x => x.HostGroup)
+            HasRequired(x => x.HostGroup)
                 .WithMany(x => x.DisallowedUserGroups)
                 .HasForeignKey(x => x.HostGroupId);
         }

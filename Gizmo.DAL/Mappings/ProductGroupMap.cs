@@ -1,20 +1,22 @@
 ﻿using Gizmo.DAL.Entities;
 
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class ProductGroupMap : EntityTypeConfiguration<ProductGroup>
     {
         public ProductGroupMap()
         {
             // Key
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
             //Properties
-            this.Property(x => x.Name)
+            Property(x => x.Name)
                 .HasMaxLength(SQLStringSize.TINY45)
                 .IsRequired()
                 .HasColumnAnnotation("Index",
@@ -24,12 +26,12 @@ namespace GizmoDALV2.Mappings
                 }));
 
             // Relations
-            this.ToTable("ProductGroup");
+            ToTable("ProductGroup");
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("ProductGroupId");
 
-            this.HasMany(x => x.ChildGroups)
+            HasMany(x => x.ChildGroups)
                 .WithOptional(x => x.Parent)
                 .HasForeignKey(x => x.ParentId);
         }

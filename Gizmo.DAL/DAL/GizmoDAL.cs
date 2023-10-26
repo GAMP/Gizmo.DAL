@@ -1,8 +1,9 @@
 ﻿using CoreLib;
 
+using Gizmo.DAL.Contexts;
+using Gizmo.DAL.DTO;
 using Gizmo.DAL.Entities;
-
-using GizmoDALV2.DTO;
+using Gizmo.DAL.Migrations.MSSQL;
 
 using IntegrationLib;
 
@@ -20,7 +21,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GizmoDALV2
+namespace Gizmo.DAL
 {
     #region GIZMODATABASE
     /// <summary>
@@ -256,7 +257,7 @@ namespace GizmoDALV2
                 case DatabaseType.LOCALDB:
                 case DatabaseType.MSSQL:
                 case DatabaseType.MSSQLEXPRESS:
-                    return new DbMigrator(new Migrations.MSSQLConfiguration());
+                    return new DbMigrator(new MSSQLConfiguration());
                 default:
                     throw new ArgumentException("Invalid database type", nameof(DatabaseType));
             }

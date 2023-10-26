@@ -1,9 +1,8 @@
-﻿using Gizmo.DAL;
-using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Entities;
 using Gizmo.DAL.Mappings;
+using Gizmo.DAL.Migrations.MSSQL;
 
-using GizmoDALV2.Mappings;
-using GizmoDALV2.Migrations;
+using GizmoDALV2;
 
 using SharedLib;
 
@@ -27,7 +26,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GizmoDALV2
+namespace Gizmo.DAL.Contexts
 {
     #region DEFAULTDBCONTEXT
 
