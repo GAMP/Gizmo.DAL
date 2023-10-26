@@ -42,7 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Submodules\Gizmo.DAL.Entities\Gizmo.DAL.Entities.csproj" />
+	  <ProjectReference Include="..\..\Gizmo.DAL.Entities\Gizmo.DAL.Entities.csproj" />
 	</ItemGroup>
 
 </Project>
