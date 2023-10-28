@@ -2,9 +2,8 @@
 using Gizmo.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.ServiceModel.Channels;
 
-namespace Gizmo.DAL.EFCore.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class LogMap : IEntityTypeConfiguration<Log>
     {

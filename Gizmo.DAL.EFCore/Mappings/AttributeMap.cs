@@ -3,7 +3,7 @@ using Gizmo.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Gizmo.DAL.EFCore.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class AttributeMap : IEntityTypeConfiguration<Attribute>
     {

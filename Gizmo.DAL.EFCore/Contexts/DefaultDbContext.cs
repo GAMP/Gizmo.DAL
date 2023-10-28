@@ -14,9 +14,9 @@ using Microsoft.Data.SqlClient;
 using CoreLib;
 using Microsoft.EntityFrameworkCore.Metadata;
 using GizmoDALV2;
-using Gizmo.DAL.EFCore.Mappings;
+using Gizmo.DAL.Mappings;
 
-namespace Gizmo.DAL.EFCore
+namespace Gizmo.DAL.Contexts
 {
     #region DEFAULTDBCONTEXT
 
@@ -269,7 +269,7 @@ namespace Gizmo.DAL.EFCore
         /// <summary>
         /// Gets attributes.
         /// </summary>
-        public DbSet<Gizmo.DAL.Entities.Attribute> Attributes
+        public DbSet<Entities.Attribute> Attributes
         {
             get;
             set;
@@ -970,12 +970,6 @@ namespace Gizmo.DAL.EFCore
             modelBuilder.ApplyConfiguration(new PaymentIntentDepositMap());
             modelBuilder.ApplyConfiguration(new PaymentIntentOrderMap());
 
-            //IGNORES
-            modelBuilder.Ignore<DiscountBase>();
-            modelBuilder.Ignore<DiscountTimePeriod>();
-            modelBuilder.Ignore<DiscountTimePeriodDayTime>();
-            modelBuilder.Ignore<DiscountTimePeriodWeekDay>();
-
             //GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
 
@@ -1665,12 +1659,12 @@ namespace Gizmo.DAL.EFCore
             }
 
 
-            if (Database.IsSqlServer() || Database.IsMySql())
+            if (Database.IsSqlServer())
             {
                 // Change default generated index names of foreign keys to match the old database pattern 
                 RenameIndexWithOldPattern(modelBuilder);
             }
-            else if (Database.IsSqlite() || Database.IsNpgsql())
+            else if (Database.IsNpgsql())
             {
                 // Remove duplicated index name to be unique on database level not the table level
                 RenameDuplicatedIndexNames(modelBuilder);
@@ -2040,6 +2034,27 @@ namespace Gizmo.DAL.EFCore
         }
 
         #endregion
+
+        #region MSSQLSERVERRETRYABLEERRORS
+        /// <summary>
+        /// Microsoft SQL Server retriable error codes.
+        /// </summary>
+        public enum MSSQLServerRetryableErrors
+        {
+            TimeoutExpired = -2,
+            EncryptionNotSupported = 20,
+            LoginError = 64,
+            ConnectionInitialization = 233,
+            Deadlock = 1205,
+            TransportLevelReceiving = 10053,
+            TransportLevelSending = 10054,
+            EstablishingConnection = 10060,
+            ProcessingRequest = 40143,
+            ServiceBusy = 40501,
+            DatabaseOrServerNotAvailable = 40613
+        }
+        #endregion
+
     }
 
     #endregion

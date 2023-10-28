@@ -1,11 +1,13 @@
 ﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedLib;
-using System;
-using System.Reflection.Metadata;
 
-namespace Gizmo.DAL.EFCore.Mappings
+using SharedLib;
+
+using System;
+
+namespace Gizmo.DAL.Mappings
 {
     public class ProductBundleMap : IEntityTypeConfiguration<ProductBundle>
     {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Globalization;
 
-namespace Gizmo.DAL.EFCore.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class MonetaryUnitMap : IEntityTypeConfiguration<MonetaryUnit>
     {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace Gizmo.DAL.EFCore.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class UserMemberMap : IEntityTypeConfiguration<UserMember>
     {

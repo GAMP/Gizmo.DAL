@@ -2,9 +2,8 @@
 using Gizmo.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Gizmo.DAL.EFCore.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class AppEnterpriseMap : IEntityTypeConfiguration<AppEnterprise>
     {

@@ -1,8 +1,9 @@
-﻿using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Contexts;
+using Gizmo.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Gizmo.DAL.EFCore.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class UserCredentialMap : IEntityTypeConfiguration<UserCredential>
     {

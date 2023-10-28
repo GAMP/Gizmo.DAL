@@ -2,7 +2,7 @@
 using GizmoDALV2;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Gizmo.DAL.EFCore
+namespace Gizmo.DAL
 {
     /// <summary>
     /// Database transaction wrapper class.
