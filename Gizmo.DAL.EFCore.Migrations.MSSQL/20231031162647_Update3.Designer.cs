@@ -3,110 +3,118 @@ using System;
 using Gizmo.DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace _
 {
     [DbContext(typeof(DefaultDbContext))]
-    partial class DefaultDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231031162647_Update3")]
+    partial class Update3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.13")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Gizmo.DAL.Entities.App", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AgeRating")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<int>("AppCategoryId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DefaultExecutableId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(11);
 
                     b.Property<string>("Description")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("DeveloperId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(10);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("PublisherId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<DateTime?>("ReleaseDate")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Version")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(7);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppCategoryId");
+                    b.HasIndex("AppCategoryId")
+                        .HasDatabaseName("IX_AppCategoryId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("DeveloperId");
+                    b.HasIndex("DeveloperId")
+                        .HasDatabaseName("IX_DeveloperId");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_App");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("PublisherId");
+                    b.HasIndex("PublisherId")
+                        .HasDatabaseName("IX_PublisherId");
 
                     b.ToTable("App", (string)null);
                 });
@@ -115,49 +123,52 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppCategoryId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ParentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppCategory");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("ParentId");
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("IX_ParentId");
 
                     b.ToTable("AppCategory", (string)null);
                 });
@@ -166,47 +177,49 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppEnterpriseId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppEnterprise");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_AppEnterprise");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("AppEnterprise", (string)null);
                 });
@@ -215,95 +228,99 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Accessible")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(14);
 
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Arguments")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Caption")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DefaultDeploymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(11);
 
                     b.Property<string>("ExecutablePath")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(13);
 
                     b.Property<int>("Modes")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(12);
 
                     b.Property<int>("ReservationType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(10);
 
                     b.Property<int>("RunMode")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<string>("WorkingDirectory")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(6);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppId");
+                    b.HasIndex("AppId")
+                        .HasDatabaseName("IX_AppId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("DefaultDeploymentId");
+                    b.HasIndex("DefaultDeploymentId")
+                        .HasDatabaseName("IX_DefaultDeploymentId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("AppExe", (string)null);
                 });
@@ -312,63 +329,66 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeCdImageId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("CheckExitCode")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DeviceId")
                         .HasMaxLength(3)
-                        .HasColumnType("character varying(3)")
+                        .HasColumnType("nvarchar(3)")
                         .HasColumnOrder(4);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("MountOptions")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppExeId");
+                    b.HasIndex("AppExeId")
+                        .HasDatabaseName("IX_AppExeId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppExeCdImage");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("AppExeCdImage", (string)null);
                 });
@@ -376,35 +396,39 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExeDeployment", b =>
                 {
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("DeploymentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("AppExeId", "DeploymentId");
 
-                    b.HasIndex("AppExeId");
+                    b.HasIndex("AppExeId")
+                        .HasDatabaseName("IX_AppExeId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("DeploymentId");
+                    b.HasIndex("DeploymentId")
+                        .HasDatabaseName("IX_DeploymentId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("AppExeDeployment", (string)null);
                 });
@@ -412,33 +436,36 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExeImage", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_AppExeId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("AppExeImage", (string)null);
                 });
@@ -446,35 +473,39 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExeLicense", b =>
                 {
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("LicenseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("AppExeId", "LicenseId");
 
-                    b.HasIndex("AppExeId");
+                    b.HasIndex("AppExeId")
+                        .HasDatabaseName("IX_AppExeId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("LicenseId");
+                    b.HasIndex("LicenseId")
+                        .HasDatabaseName("IX_LicenseId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("AppExeLicense", (string)null);
                 });
@@ -483,41 +514,43 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeMaxUserId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("MaxUsers")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Mode")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex(new[] { "AppExeId", "Mode" }, "UQ_AppExeAppExeMode")
                         .IsUnique();
@@ -528,35 +561,39 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExePersonalFile", b =>
                 {
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("PersonalFileId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("AppExeId", "PersonalFileId");
 
-                    b.HasIndex("AppExeId");
+                    b.HasIndex("AppExeId")
+                        .HasDatabaseName("IX_AppExeId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("PersonalFileId");
+                    b.HasIndex("PersonalFileId")
+                        .HasDatabaseName("IX_PersonalFileId");
 
                     b.ToTable("AppExePersonalFile", (string)null);
                 });
@@ -565,47 +602,51 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeTaskId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Activation")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("TaskBaseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppExeId");
+                    b.HasIndex("AppExeId")
+                        .HasDatabaseName("IX_AppExeId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("TaskBaseId");
+                    b.HasIndex("TaskBaseId")
+                        .HasDatabaseName("IX_TaskBaseId");
 
                     b.ToTable("AppExeTask", (string)null);
                 });
@@ -614,47 +655,49 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppGroupId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppGroup");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_AppGroup");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("AppGroup", (string)null);
                 });
@@ -662,18 +705,20 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.AppGroupApp", b =>
                 {
                     b.Property<int>("AppGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(0);
 
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("AppGroupId", "AppId");
 
-                    b.HasIndex("AppGroupId");
+                    b.HasIndex("AppGroupId")
+                        .HasDatabaseName("IX_AppGroupId");
 
-                    b.HasIndex("AppId");
+                    b.HasIndex("AppId")
+                        .HasDatabaseName("IX_AppId");
 
                     b.ToTable("AppGroupApp", (string)null);
                 });
@@ -681,33 +726,36 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.AppImage", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_AppId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("AppImage", (string)null);
                 });
@@ -716,63 +764,66 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppLinkId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Caption")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppId");
+                    b.HasIndex("AppId")
+                        .HasDatabaseName("IX_AppId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppLink");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("AppLink", (string)null);
                 });
@@ -780,26 +831,28 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.AppRating", b =>
                 {
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(0);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Value")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("AppId", "UserId");
 
-                    b.HasIndex("AppId");
+                    b.HasIndex("AppId")
+                        .HasDatabaseName("IX_AppId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("AppRating", (string)null);
                 });
@@ -808,45 +861,49 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppStatId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<double>("Span")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(5);
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppExeId");
+                    b.HasIndex("AppExeId")
+                        .HasDatabaseName("IX_AppExeId");
 
-                    b.HasIndex("AppId");
+                    b.HasIndex("AppId")
+                        .HasDatabaseName("IX_AppId");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("HostId")
+                        .HasDatabaseName("IX_HostId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("AppStat", (string)null);
                 });
@@ -855,71 +912,76 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AssetId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AssetTypeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Barcode")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Number")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<string>("SerialNumber")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(6);
 
                     b.Property<string>("SmartCardUID")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<string>("Tag")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssetTypeId");
+                    b.HasIndex("AssetTypeId")
+                        .HasDatabaseName("IX_AssetTypeId");
 
                     b.HasIndex("Barcode")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Barcode_Asset");
+                        .HasDatabaseName("UQ_Barcode")
+                        .HasFilter("[Barcode] IS NOT NULL");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("SmartCardUID")
                         .IsUnique()
-                        .HasDatabaseName("UQ_SmartCardUID_Asset");
+                        .HasDatabaseName("UQ_SmartCardUID")
+                        .HasFilter("[SmartCardUID] IS NOT NULL");
 
                     b.ToTable("Asset", (string)null);
                 });
@@ -928,72 +990,78 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AssetTransactionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AssetId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("AssetTypeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("AssetTypeName")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<DateTime?>("CheckInTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("CheckedInById")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssetId");
+                    b.HasIndex("AssetId")
+                        .HasDatabaseName("IX_AssetId");
 
-                    b.HasIndex("AssetTypeId");
+                    b.HasIndex("AssetTypeId")
+                        .HasDatabaseName("IX_AssetTypeId");
 
-                    b.HasIndex("CheckedInById");
+                    b.HasIndex("CheckedInById")
+                        .HasDatabaseName("IX_CheckedInById");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("AssetTransaction", (string)null);
                 });
@@ -1002,49 +1070,51 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AssetTypeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("PartNumber")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_AssetType");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("AssetType", (string)null);
                 });
@@ -1053,132 +1123,141 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AssistanceRequestTypeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssistanceRequestTypeId");
+                    b.HasIndex("AssistanceRequestTypeId")
+                        .HasDatabaseName("IX_AssistanceRequestTypeId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("HostId")
+                        .HasDatabaseName("IX_HostId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
-                    b.ToTable("AssistanceRequest", (string)null);
+                    b.ToTable("AssistanceRequest");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AssistanceRequestType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.ToTable("AssistanceRequestType", (string)null);
+                    b.ToTable("AssistanceRequestType");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Attribute", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AttributeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FriendlyName")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_Attribute");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("Attribute", (string)null);
                 });
@@ -1187,39 +1266,41 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BillProfileId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_BillProfile");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("BillProfile", (string)null);
 
@@ -1242,49 +1323,50 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BillRateId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BillProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("ChargeAfter")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int>("ChargeEvery")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("MinimumFee")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<decimal>("Rate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("StartFee")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BillProfileId");
+                    b.HasIndex("BillProfileId")
+                        .HasDatabaseName("IX_BillProfileId");
 
                     b.ToTable("BillRate", (string)null);
 
@@ -1319,16 +1401,16 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BillRatePeriodDayId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BillRateId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Day")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1342,17 +1424,18 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.BillRatePeriodDayTime", b =>
                 {
                     b.Property<int>("PeriodDayId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("StartSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("EndSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("PeriodDayId", "StartSecond", "EndSecond");
 
-                    b.HasIndex("PeriodDayId");
+                    b.HasIndex("PeriodDayId")
+                        .HasDatabaseName("IX_PeriodDayId");
 
                     b.ToTable("BillRatePeriodDayTime", (string)null);
                 });
@@ -1361,36 +1444,36 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BillRateStepId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Action")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("BillRateId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("Charge")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Minute")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<decimal>("Rate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("TargetMinute")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.HasKey("Id");
@@ -1406,56 +1489,60 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BundleProductId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("ProductBundleId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("ProductBundleId");
+                    b.HasIndex("ProductBundleId")
+                        .HasDatabaseName("IX_ProductBundleId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("BundleProduct", (string)null);
 
@@ -1488,42 +1575,45 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BundleProductUserPriceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BundleProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserGroupId");
+                    b.HasIndex("UserGroupId")
+                        .HasDatabaseName("IX_UserGroupId");
 
                     b.HasIndex("BundleProductId", "UserGroupId")
                         .IsUnique()
@@ -1536,42 +1626,45 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ClientTaskId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Activation")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("TaskBaseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("TaskBaseId");
+                    b.HasIndex("TaskBaseId")
+                        .HasDatabaseName("IX_TaskBaseId");
 
                     b.ToTable("ClientTask", (string)null);
                 });
@@ -1580,92 +1673,94 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DeploymentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ComparisonLevel")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(10);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Destination")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("ExcludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(4);
 
                     b.Property<string>("ExcludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(5);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(9);
 
                     b.Property<string>("IncludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(6);
 
                     b.Property<string>("IncludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(11);
 
                     b.Property<string>("RegistryString")
                         .HasMaxLength(16777215)
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(8);
 
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_Deployment");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_Deployment");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("Deployment", (string)null);
                 });
@@ -1673,35 +1768,39 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.DeploymentDeployment", b =>
                 {
                     b.Property<int>("ParentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ChildId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("ParentId", "ChildId");
 
-                    b.HasIndex("ChildId");
+                    b.HasIndex("ChildId")
+                        .HasDatabaseName("IX_ChildId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("ParentId");
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("IX_ParentId");
 
                     b.ToTable("DeploymentDeployment", (string)null);
                 });
@@ -1710,81 +1809,89 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DepositPaymentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DepositTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("FiscalReceiptId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int>("FiscalReceiptStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(9);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("RefundStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<decimal>("RefundedAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("DepositTransactionId");
+                    b.HasIndex("DepositTransactionId")
+                        .HasDatabaseName("IX_DepositTransactionId");
 
-                    b.HasIndex("FiscalReceiptId");
+                    b.HasIndex("FiscalReceiptId")
+                        .HasDatabaseName("IX_FiscalReceiptId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("PaymentId");
+                    b.HasIndex("PaymentId")
+                        .HasDatabaseName("IX_PaymentId");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("DepositPayment", (string)null);
                 });
@@ -1793,63 +1900,68 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DepositTransactionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Balance")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("DepositTransaction", (string)null);
                 });
@@ -1858,43 +1970,46 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DeviceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnName("Name")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_Device_DeviceHdmi");
+                        .HasDatabaseName("UQ_Name")
+                        .HasFilter("[Name] IS NOT NULL");
 
                     b.ToTable("Device", (string)null);
 
@@ -1905,41 +2020,44 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DeviceHostId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DeviceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DeviceId")
                         .HasColumnOrder(1);
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostId")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("HostId")
+                        .HasDatabaseName("IX_HostId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex(new[] { "DeviceId", "HostId" }, "UQ_HostDevice")
                         .IsUnique();
@@ -1951,45 +2069,47 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("FeedId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Maximum")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("Feed", (string)null);
                 });
@@ -1998,47 +2118,50 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("FiscalReceiptId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DocumentNumber")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Signature")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("TaxSystem")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
                     b.ToTable("FiscalReceipt", (string)null);
                 });
@@ -2047,67 +2170,71 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("IconId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Number")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_Host_HostComputer_HostEndpoint");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("HostGroupId");
+                    b.HasIndex("HostGroupId")
+                        .HasDatabaseName("IX_HostGroupId");
 
-                    b.HasIndex("IconId");
+                    b.HasIndex("IconId")
+                        .HasDatabaseName("IX_IconId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("Host", (string)null);
 
@@ -2118,66 +2245,71 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostGroupId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AppGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DefaultGuestGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("SecurityProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<string>("SkinName")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppGroupId");
+                    b.HasIndex("AppGroupId")
+                        .HasDatabaseName("IX_AppGroupId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("DefaultGuestGroupId");
+                    b.HasIndex("DefaultGuestGroupId")
+                        .HasDatabaseName("IX_DefaultGuestGroupId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_HostGroup");
+                        .HasDatabaseName("UQ_Name");
 
-                    b.HasIndex("SecurityProfileId");
+                    b.HasIndex("SecurityProfileId")
+                        .HasDatabaseName("IX_SecurityProfileId");
 
                     b.ToTable("HostGroup", (string)null);
 
@@ -2204,31 +2336,33 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostGroupUserBillProfileId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BillProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BillProfileId");
+                    b.HasIndex("BillProfileId")
+                        .HasDatabaseName("IX_BillProfileId");
 
-                    b.HasIndex("UserGroupId");
+                    b.HasIndex("UserGroupId")
+                        .HasDatabaseName("IX_UserGroupId");
 
                     b.HasIndex("HostGroupId", "UserGroupId")
                         .IsUnique()
@@ -2240,38 +2374,41 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.HostGroupWaitingLine", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HosGroupId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("EnablePriorities")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("TimeOutOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_HosGroupId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("HostGroupWaitingLine", (string)null);
                 });
@@ -2280,64 +2417,68 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsManualPosition")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<bool>("IsReadyTimedOut")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Position")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<double>("ReadyTime")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(6);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<double>("TimeInLine")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(5);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostGroupId");
+                    b.HasIndex("HostGroupId")
+                        .HasDatabaseName("IX_HostGroupId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("HostGroupWaitingLineEntry", (string)null);
                 });
@@ -2346,43 +2487,45 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostLayoutGroupId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_HostLayoutGroup");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("HostLayoutGroup", (string)null);
 
@@ -2399,33 +2542,36 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.HostLayoutGroupImage", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostLayoutGroupId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_HostLayoutGroupId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("HostLayoutGroupImage", (string)null);
                 });
@@ -2434,59 +2580,62 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostLayoutGroupLayoutId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Height")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("HostLayoutGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsHidden")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Width")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int>("X")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Y")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("HostId")
+                        .HasDatabaseName("IX_HostId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("HostLayoutGroupId", "HostId")
                         .IsUnique()
@@ -2499,34 +2648,36 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("IconId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .IsRequired()
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("Icon", (string)null);
                 });
@@ -2535,97 +2686,103 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("InvoiceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(12);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Outstanding")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(8);
 
                     b.Property<int>("OutstandngPoints")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<int>("PointsTotal")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int>("ProductOrderId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(11);
 
                     b.Property<int>("ReturnFiscalReceiptStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.Property<int>("SaleFiscalReceiptStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(13);
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(10);
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("SubTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("TaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(7);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("ProductOrderId");
+                    b.HasIndex("ProductOrderId")
+                        .HasDatabaseName("IX_ProductOrderId");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("Invoice", (string)null);
                 });
@@ -2634,44 +2791,48 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("InvoiceFiscalReceiptId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("FiscalReceiptId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("FiscalReceiptId")
                         .IsUnique()
                         .HasDatabaseName("UQ_FiscalReceipt");
 
-                    b.HasIndex("InvoiceId");
+                    b.HasIndex("InvoiceId")
+                        .HasDatabaseName("IX_InvoiceId");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
                     b.ToTable("InvoiceFiscalReceipt", (string)null);
                 });
@@ -2680,142 +2841,148 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("InvoiceLineId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("Cost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(10);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(20);
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(21);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PayType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(18);
 
                     b.Property<int?>("Points")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(15);
 
                     b.Property<int>("PointsAward")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(16);
 
                     b.Property<int>("PointsTotal")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.Property<int?>("PointsTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(19);
 
                     b.Property<decimal>("PreTaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(12);
 
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TaxRate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(11);
 
                     b.Property<decimal>("TaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(17);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(13);
 
                     b.Property<decimal?>("UnitCost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(9);
 
                     b.Property<decimal>("UnitListPrice")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("UnitPointsListPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int>("UnitPointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("InvoiceId");
+                    b.HasIndex("InvoiceId")
+                        .HasDatabaseName("IX_InvoiceId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("PointsTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_PointsTransaction_InvoiceLine_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineSession_InvoiceLineTime_InvoiceLineTimeFixed");
+                        .HasDatabaseName("UQ_PointsTransaction");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("InvoiceLine", (string)null);
 
@@ -2826,68 +2993,75 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("InvoicePaymentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("RefundStatus")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("RefundedAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("InvoiceId");
+                    b.HasIndex("InvoiceId")
+                        .HasDatabaseName("IX_InvoiceId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("PaymentId");
+                    b.HasIndex("PaymentId")
+                        .HasDatabaseName("IX_PaymentId");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("InvoicePayment", (string)null);
                 });
@@ -2896,64 +3070,66 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("LicenseId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Assembly")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Plugin")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<byte[]>("Settings")
                         .HasMaxLength(65535)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_License");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_License");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("License", (string)null);
                 });
@@ -2962,64 +3138,68 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("LicenseKeyId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AssignedHostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Comment")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(4);
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int>("LicenseId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Value")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignedHostId");
+                    b.HasIndex("AssignedHostId")
+                        .HasDatabaseName("IX_AssignedHostId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_LicenseKey");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("LicenseId");
+                    b.HasIndex("LicenseId")
+                        .HasDatabaseName("IX_LicenseId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("LicenseKey", (string)null);
                 });
@@ -3028,46 +3208,46 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("LogId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Category")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("HostNumber")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<string>("Hostname")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(8);
 
                     b.Property<int>("MessageType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<int>("ModuleType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<string>("ModuleVersion")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(5);
 
                     b.Property<DateTime>("Time")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -3086,20 +3266,21 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.LogException", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("LogId")
                         .HasColumnOrder(0);
 
                     b.Property<byte[]>("ExceptionData")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_LogId");
 
                     b.ToTable("LogException", (string)null);
                 });
@@ -3108,68 +3289,70 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("MappingId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Label")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("MountPoint")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<string>("Password")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(7);
 
                     b.Property<int>("Size")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<string>("Username")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(6);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("MountPoint")
                         .IsUnique()
@@ -3182,51 +3365,53 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("MonetaryUnitId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("Value")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_MonetaryUnit");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("MonetaryUnit", (string)null);
 
@@ -3336,65 +3521,67 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("NewsId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BackgroundUrl")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Data")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(2);
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<string>("MediaUrl")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Url")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("News", (string)null);
                 });
@@ -3403,46 +3590,48 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("NoteId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Sevirity")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(16777215)
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("Note", (string)null);
 
@@ -3453,92 +3642,100 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PaymentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("AmountReceived")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DepositTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("PointTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<int>("RefundStatus")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("RefundedAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("DepositTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositTransaction");
+                        .HasDatabaseName("UQ_DepositTransaction")
+                        .HasFilter("[DepositTransactionId] IS NOT NULL");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("PaymentMethodId");
+                    b.HasIndex("PaymentMethodId")
+                        .HasDatabaseName("IX_PaymentMethodId");
 
                     b.HasIndex("PointTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_PointsTransaction_Payment");
+                        .HasDatabaseName("UQ_PointsTransaction")
+                        .HasFilter("[PointTransactionId] IS NOT NULL");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("Payment", (string)null);
                 });
@@ -3547,71 +3744,75 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PaymentIntentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<Guid>("Provider")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(7);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<string>("TransactionId")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(5);
 
                     b.Property<DateTime?>("TransactionTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_PaymentIntent_PaymentIntentDeposit_PaymentIntentOrder");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("PaymentMethodId");
+                    b.HasIndex("PaymentMethodId")
+                        .HasDatabaseName("IX_PaymentMethodId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("PaymentIntent", (string)null);
 
@@ -3621,79 +3822,81 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.PaymentMethod", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PaymentMethodId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<bool>("IsClient")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(10);
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsManager")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(8);
 
                     b.Property<bool>("IsPortal")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(9);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<Guid?>("PaymentProvider")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(11);
 
                     b.Property<decimal>("Surcharge")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_PaymentMethod");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("PaymentMethod", (string)null);
 
@@ -3760,111 +3963,113 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PersonalFileId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Accessible")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(16);
 
                     b.Property<int>("Activation")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Caption")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("CompressionLevel")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Deactivation")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("ExcludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(9);
 
                     b.Property<string>("ExcludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(10);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(13);
 
                     b.Property<string>("IncludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(11);
 
                     b.Property<string>("IncludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(12);
 
                     b.Property<int>("MaxQuota")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(15);
 
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_PersonalFile");
+                        .HasDatabaseName("UQ_Guid");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_PersonalFile");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("PersonalFile", (string)null);
                 });
@@ -3873,43 +4078,45 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PluginLibraryId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Scope")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("FileName")
                         .IsUnique()
                         .HasDatabaseName("UQ_FileName");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("PluginLibrary", (string)null);
                 });
@@ -3918,61 +4125,66 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PointTransactionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Amount")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Balance")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("PointTransaction", (string)null);
                 });
@@ -3981,37 +4193,39 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PresetTimeSaleId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Value")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("PresetTimeSale", (string)null);
 
@@ -4057,38 +4271,40 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PresetTimeSaleMoneyId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Value")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("PresetTimeSaleMoney", (string)null);
 
@@ -4134,108 +4350,113 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Barcode")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(8);
 
                     b.Property<decimal?>("Cost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("OrderOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("Points")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("PointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<decimal>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("ProductGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("PurchaseOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("StockAlert")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("StockOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("StockProductAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("StockProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Barcode")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Barcode_Product_ProductBase_ProductBaseExtended_ProductBundle_ProductTime");
+                        .HasDatabaseName("UQ_Barcode")
+                        .HasFilter("[Barcode] IS NOT NULL");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_Product_ProductBase_ProductBaseExtended_ProductBundle_ProductTime");
+                        .HasDatabaseName("UQ_Name");
 
-                    b.HasIndex("ProductGroupId");
+                    b.HasIndex("ProductGroupId")
+                        .HasDatabaseName("IX_ProductGroupId");
 
-                    b.HasIndex("StockProductId");
+                    b.HasIndex("StockProductId")
+                        .HasDatabaseName("IX_StockProductId");
 
                     b.ToTable("ProductBase", (string)null);
 
@@ -4246,52 +4467,55 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductBundleUserPriceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("PointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("ProductBundleId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("PurchaseOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserGroupId");
+                    b.HasIndex("UserGroupId")
+                        .HasDatabaseName("IX_UserGroupId");
 
                     b.HasIndex("ProductBundleId", "UserGroupId")
                         .IsUnique()
@@ -4304,51 +4528,54 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductGroupId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<int?>("ParentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("SortOption")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_ProductGroup");
+                        .HasDatabaseName("UQ_Name");
 
-                    b.HasIndex("ParentId");
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("IX_ParentId");
 
                     b.ToTable("ProductGroup", (string)null);
 
@@ -4395,43 +4622,46 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductHostHiddenId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsHidden")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostGroupId");
+                    b.HasIndex("HostGroupId")
+                        .HasDatabaseName("IX_HostGroupId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("ProductId", "HostGroupId")
                         .IsUnique()
@@ -4444,40 +4674,43 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductImageId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .IsRequired()
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("ProductImage", (string)null);
                 });
@@ -4486,147 +4719,154 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductOLId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("Cost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(10);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("DeliveredQuantity")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<DateTime?>("DeliveredTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(19);
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(20);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PayType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(18);
 
                     b.Property<int?>("Points")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(15);
 
                     b.Property<int>("PointsAward")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(16);
 
                     b.Property<int>("PointsTotal")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.Property<decimal>("PreTaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(12);
 
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("ProductOrderId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TaxRate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(11);
 
                     b.Property<decimal>("TaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(17);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(13);
 
                     b.Property<decimal?>("UnitCost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(9);
 
                     b.Property<decimal>("UnitListPrice")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("UnitPointsListPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int>("UnitPointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_ProductOLId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("ProductOrderId");
+                    b.HasIndex("ProductOrderId")
+                        .HasDatabaseName("IX_ProductOrderId");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("ProductOL", (string)null);
 
@@ -4637,98 +4877,105 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductOrderId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeliveredTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PointsTotal")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("PreferedPaymentMethodId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Source")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<decimal>("SubTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Tax")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("UserNote")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("HostId")
+                        .HasDatabaseName("IX_HostId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("PreferedPaymentMethodId");
+                    b.HasIndex("PreferedPaymentMethodId")
+                        .HasDatabaseName("IX_PreferedPaymentMethodId");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("ProductOrder", (string)null);
                 });
@@ -4736,21 +4983,22 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductPeriod", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductId");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("ProductPeriod", (string)null);
 
@@ -4766,16 +5014,16 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductPeriodDayId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Day")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductPeriodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductPeriodId");
 
                     b.HasKey("Id");
@@ -4804,17 +5052,18 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductPeriodDayTime", b =>
                 {
                     b.Property<int>("PeriodDayId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("StartSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("EndSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("PeriodDayId", "StartSecond", "EndSecond");
 
-                    b.HasIndex("PeriodDayId");
+                    b.HasIndex("PeriodDayId")
+                        .HasDatabaseName("IX_PeriodDayId");
 
                     b.ToTable("ProductPeriodDayTime", (string)null);
                 });
@@ -4823,47 +5072,50 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductTaxId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("TaxId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("TaxId");
+                    b.HasIndex("TaxId")
+                        .HasDatabaseName("IX_TaxId");
 
                     b.HasIndex(new[] { "ProductId", "TaxId" }, "UQ_TaxProduct")
                         .IsUnique();
@@ -4940,43 +5192,46 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductTimeHostDisallowedId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsDisallowed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductTimeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostGroupId");
+                    b.HasIndex("HostGroupId")
+                        .HasDatabaseName("IX_HostGroupId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("ProductTimeId", "HostGroupId")
                         .IsUnique()
@@ -4988,22 +5243,23 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductTimePeriod", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductId");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("ProductTimePeriod", (string)null);
 
@@ -5019,21 +5275,22 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductTimePeriodDayId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Day")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductTimePeriodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductTimePeriodId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_ProductTimePeriodDayId");
 
                     b.HasIndex(new[] { "ProductTimePeriodId", "Day" }, "UQ_ProductTimePeriodDay")
                         .IsUnique();
@@ -5044,17 +5301,18 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductTimePeriodDayTime", b =>
                 {
                     b.Property<int>("PeriodDayId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("StartSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("EndSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("PeriodDayId", "StartSecond", "EndSecond");
 
-                    b.HasIndex("PeriodDayId");
+                    b.HasIndex("PeriodDayId")
+                        .HasDatabaseName("IX_PeriodDayId");
 
                     b.ToTable("ProductTimePeriodDayTime", (string)null);
                 });
@@ -5063,47 +5321,50 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductUserDisallowedId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDisallowed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserGroupId");
+                    b.HasIndex("UserGroupId")
+                        .HasDatabaseName("IX_UserGroupId");
 
                     b.HasIndex("ProductId", "UserGroupId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_ProductUserGroup_ProductUserDisallowed");
+                        .HasDatabaseName("UQ_ProductUserGroup");
 
                     b.ToTable("ProductUserDisallowed", (string)null);
                 });
@@ -5112,59 +5373,62 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductUserPriceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("PointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("PurchaseOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserGroupId");
+                    b.HasIndex("UserGroupId")
+                        .HasDatabaseName("IX_UserGroupId");
 
                     b.HasIndex("ProductId", "UserGroupId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_ProductUserGroup_ProductUserPrice");
+                        .HasDatabaseName("UQ_ProductUserGroup");
 
                     b.ToTable("ProductUserPrice", (string)null);
                 });
@@ -5173,60 +5437,67 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("RefundId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DepositTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("PaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("PointTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("RefundMethodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("DepositTransactionId");
+                    b.HasIndex("DepositTransactionId")
+                        .HasDatabaseName("IX_DepositTransactionId");
 
-                    b.HasIndex("PaymentId");
+                    b.HasIndex("PaymentId")
+                        .HasDatabaseName("IX_PaymentId");
 
-                    b.HasIndex("PointTransactionId");
+                    b.HasIndex("PointTransactionId")
+                        .HasDatabaseName("IX_PointTransactionId");
 
-                    b.HasIndex("RefundMethodId");
+                    b.HasIndex("RefundMethodId")
+                        .HasDatabaseName("IX_RefundMethodId");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
                     b.ToTable("Refund", (string)null);
 
@@ -5237,65 +5508,68 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("RegisterId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("IdleTimeout")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<string>("MacAddress")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Number")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("MacAddress")
                         .IsUnique()
-                        .HasDatabaseName("UQ_MACAddress_Register");
+                        .HasDatabaseName("UQ_MACAddress")
+                        .HasFilter("[MacAddress] IS NOT NULL");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("Register", (string)null);
                 });
@@ -5304,54 +5578,58 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("RegisterTransactionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("RegisterId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
                     b.ToTable("RegisterTransaction", (string)null);
                 });
@@ -5360,58 +5638,61 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ReservationId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ContactEmail")
                         .HasMaxLength(254)
-                        .HasColumnType("character varying(254)");
+                        .HasColumnType("nvarchar(254)");
 
                     b.Property<string>("ContactPhone")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Duration")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Pin")
                         .IsRequired()
                         .HasMaxLength(6)
-                        .HasColumnType("character varying(6)");
+                        .HasColumnType("nvarchar(6)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.HasIndex(new[] { "Pin" }, "UQ_Pin")
                         .IsUnique();
@@ -5423,41 +5704,45 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ReservationHostId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("PreferedUserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ReservationId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("HostId")
+                        .HasDatabaseName("IX_HostId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("PreferedUserId");
+                    b.HasIndex("PreferedUserId")
+                        .HasDatabaseName("IX_PreferedUserId");
 
                     b.HasIndex("ReservationId", "HostId")
                         .IsUnique()
@@ -5470,36 +5755,39 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ReservationUserId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ReservationId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.HasIndex("ReservationId", "UserId")
                         .IsUnique()
@@ -5512,43 +5800,45 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("SecurityProfileId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisabledDrives")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_SecurityProfile");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("SecurityProfile", (string)null);
                 });
@@ -5557,37 +5847,39 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("SecurityProfilePolicyId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SecurityProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("SecurityProfileId", "Type")
                         .IsUnique()
@@ -5600,45 +5892,48 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("SecurityProfileRestrictionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Parameter")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("SecurityProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("SecurityProfileId");
+                    b.HasIndex("SecurityProfileId")
+                        .HasDatabaseName("IX_SecurityProfileId");
 
                     b.ToTable("SecurityProfileRestriction", (string)null);
                 });
@@ -5647,44 +5942,46 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("SettingId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("GroupName")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Value")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name", "GroupName")
                         .IsUnique()
@@ -5697,70 +5994,76 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ShiftId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("EndTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("EndedById")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsEnding")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("OperatorId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("RegisterId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<DateTime>("Start")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("EndedById");
+                    b.HasIndex("EndedById")
+                        .HasDatabaseName("IX_EndedById");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_ShiftId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("OperatorId");
+                    b.HasIndex("OperatorId")
+                        .HasDatabaseName("IX_OperatorId");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
                     b.ToTable("Shift", (string)null);
                 });
@@ -5769,98 +6072,101 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ShiftCountId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Actual")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(12);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Deposits")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<decimal>("Difference")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(13);
 
                     b.Property<decimal>("Expected")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(11);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(14);
 
                     b.Property<decimal>("PayIns")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<decimal>("PayOuts")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(8);
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<decimal>("Refunds")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(9);
 
                     b.Property<decimal>("Sales")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("ShiftId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Voids")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(10);
 
                     b.Property<decimal>("Withdrawals")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(7);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("PaymentMethodId");
+                    b.HasIndex("PaymentMethodId")
+                        .HasDatabaseName("IX_PaymentMethodId");
 
                     b.HasIndex("ShiftId", "PaymentMethodId")
                         .IsUnique()
@@ -5873,66 +6179,70 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("StockTransactionId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("OnHand")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("SourceProductAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("SourceProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("SourceProductOnHand")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("IX_ProductId");
 
-                    b.HasIndex("SourceProductId");
+                    b.HasIndex("SourceProductId")
+                        .HasDatabaseName("IX_SourceProductId");
 
                     b.ToTable("StockTransaction", (string)null);
                 });
@@ -5941,50 +6251,53 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("TaskId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_TaskBase_TaskJunction_TaskNotification_TaskProcess_TaskScript");
+                        .HasDatabaseName("UQ_Guid");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_TaskId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_TaskBase_TaskJunction_TaskNotification_TaskProcess_TaskScript");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("TaskBase", (string)null);
 
@@ -5995,44 +6308,46 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("TaxId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Value")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_Tax");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("Tax", (string)null);
 
@@ -6067,51 +6382,54 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("TokenId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConfirmationCode")
                         .HasMaxLength(6)
-                        .HasColumnType("character varying(6)");
+                        .HasColumnType("nvarchar(6)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("Expires")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
+                        .HasColumnType("nvarchar(32)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.HasIndex("Value")
                         .IsUnique()
@@ -6124,35 +6442,37 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UsageId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("Seconds")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UsageSessionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsageSessionId");
+                    b.HasIndex("UsageSessionId")
+                        .HasDatabaseName("IX_UsageSessionId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("Usage", (string)null);
 
@@ -6163,56 +6483,59 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UsageSessionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("CurrentSecond")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CurrentUsageId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("MinimumFee")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("NegativeSeconds")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<decimal>("RatesTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<decimal>("StartFee")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CurrentUsageId");
+                    b.HasIndex("CurrentUsageId")
+                        .HasDatabaseName("IX_CurrentUsageId");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_UsageSessionId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("UsageSession", (string)null);
                 });
@@ -6221,95 +6544,99 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime?>("BirthDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("City")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("Country")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Identification")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDisabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("MobilePhone")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PostCode")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("Sex")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SmartCardUID")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Guid")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Guid_User_UserGuest_UserMember_UserOperator");
+                        .HasDatabaseName("UQ_Guid");
 
                     b.HasIndex("Identification")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Identification_User_UserGuest_UserMember_UserOperator");
+                        .HasDatabaseName("UQ_Identification")
+                        .HasFilter("[Identification] IS NOT NULL");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("SmartCardUID")
                         .IsUnique()
-                        .HasDatabaseName("UQ_SmartCardUID_User_UserGuest_UserMember_UserOperator");
+                        .HasDatabaseName("UQ_SmartCardUID")
+                        .HasFilter("[SmartCardUID] IS NOT NULL");
 
                     b.ToTable("User", (string)null);
 
@@ -6320,56 +6647,58 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserAgreementId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Agreement")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("UserAgreement", (string)null);
                 });
@@ -6378,42 +6707,45 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserAgreementStateId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AcceptState")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserAgreementId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.HasIndex("UserAgreementId", "UserId")
                         .IsUnique()
@@ -6426,45 +6758,48 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserAttributeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AttributeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AttributeId");
+                    b.HasIndex("AttributeId")
+                        .HasDatabaseName("IX_AttributeId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("UserId", "AttributeId")
                         .IsUnique()
@@ -6476,41 +6811,44 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.UserCredential", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Password")
                         .HasMaxLength(64)
-                        .HasColumnType("bytea")
+                        .HasColumnType("binary(64)")
                         .HasColumnOrder(3)
                         .IsFixedLength();
 
                     b.Property<byte[]>("Salt")
                         .HasMaxLength(100)
-                        .HasColumnType("bytea")
+                        .HasColumnType("binary(100)")
                         .HasColumnOrder(4)
                         .IsFixedLength();
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_UserId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("UserCredential", (string)null);
 
@@ -6527,37 +6865,40 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.UserCreditLimit", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("CreditLimit")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_UserId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("UserCreditLimit", (string)null);
                 });
@@ -6566,120 +6907,125 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserGroupId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AppGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("BillProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int>("BillingOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("CreditLimit")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(11);
 
                     b.Property<int>("CreditLimitOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsAgeRatingEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(16);
 
                     b.Property<bool>("IsNegativeBalanceAllowed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(10);
 
                     b.Property<bool>("IsWaitingLinePriorityEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int>("Overrides")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("Points")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(15);
 
                     b.Property<int>("PointsAwardOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(12);
 
                     b.Property<decimal>("PointsMoneyRatio")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(13);
 
                     b.Property<int>("PointsTimeRatio")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.Property<int>("RequiredUserInfo")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("SecurityProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("WaitingLinePriority")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppGroupId");
+                    b.HasIndex("AppGroupId")
+                        .HasDatabaseName("IX_AppGroupId");
 
-                    b.HasIndex("BillProfileId");
+                    b.HasIndex("BillProfileId")
+                        .HasDatabaseName("IX_BillProfileId");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_UserGroup");
+                        .HasDatabaseName("UQ_Name");
 
-                    b.HasIndex("SecurityProfileId");
+                    b.HasIndex("SecurityProfileId")
+                        .HasDatabaseName("IX_SecurityProfileId");
 
                     b.ToTable("UserGroup", (string)null);
 
@@ -6732,43 +7078,46 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserGroupHostDisallowedId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsDisallowed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostGroupId");
+                    b.HasIndex("HostGroupId")
+                        .HasDatabaseName("IX_HostGroupId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("UserGroupId", "HostGroupId")
                         .IsUnique()
@@ -6781,45 +7130,47 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserPermissionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("UserId", "Type", "Value")
                         .IsUnique()
@@ -7321,34 +7672,37 @@ namespace _
             modelBuilder.Entity("Gizmo.DAL.Entities.UserPicture", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Picture")
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_UserId");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("UserPicture", (string)null);
                 });
@@ -7357,79 +7711,82 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserSessionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<double>("BilledSpan")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("EndTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(9);
 
                     b.Property<double>("GraceSpan")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<double>("GraceSpanTotal")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("GraceTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<double>("PauseSpan")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<double>("PauseSpanTotal")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<double>("PendSpan")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(8);
 
                     b.Property<double>("PendSpanTotal")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("PendTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(7);
 
                     b.Property<int>("Slot")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<double>("Span")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(5);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("HostId")
+                        .HasDatabaseName("IX_HostId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("UserSession", (string)null);
                 });
@@ -7438,51 +7795,55 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserSessionChangeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Slot")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<double>("Span")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(6);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UserSessionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("HostId")
+                        .HasDatabaseName("IX_HostId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
-                    b.HasIndex("UserSessionId");
+                    b.HasIndex("UserSessionId")
+                        .HasDatabaseName("IX_UserSessionId");
 
                     b.ToTable("UserSessionChange", (string)null);
                 });
@@ -7491,53 +7852,55 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("VariableId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Scope")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name_Variable");
+                        .HasDatabaseName("UQ_Name");
 
                     b.ToTable("Variable", (string)null);
                 });
@@ -7546,41 +7909,45 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("VerificationId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("TokenId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("ModifiedById");
+                    b.HasIndex("ModifiedById")
+                        .HasDatabaseName("IX_ModifiedById");
 
-                    b.HasIndex("TokenId");
+                    b.HasIndex("TokenId")
+                        .HasDatabaseName("IX_TokenId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("Verification", (string)null);
 
@@ -7591,31 +7958,34 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("VoidId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_CreatedById");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("RegisterId")
+                        .HasDatabaseName("IX_RegisterId");
 
-                    b.HasIndex("ShiftId");
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_ShiftId");
 
                     b.ToTable("Void", (string)null);
 
@@ -7629,11 +7999,12 @@ namespace _
                     b.Property<string>("UniqueId")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_DeviceId");
 
                     b.HasIndex("UniqueId")
                         .IsUnique()
@@ -7649,20 +8020,21 @@ namespace _
                     b.Property<string>("Hostname")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<string>("MACAddress")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
-                    b.HasIndex("Id");
+                    b.HasIndex("Id")
+                        .HasDatabaseName("IX_HostId");
 
                     b.HasIndex("MACAddress")
                         .IsUnique()
-                        .HasDatabaseName("UQ_MACAddress_HostComputer");
+                        .HasDatabaseName("UQ_MACAddress");
 
                     b.ToTable("HostComputer", (string)null);
                 });
@@ -7672,10 +8044,11 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.Host");
 
                     b.Property<int>("MaximumUsers")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_HostId");
 
                     b.ToTable("HostEndpoint", (string)null);
 
@@ -7735,29 +8108,33 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLine");
 
                     b.Property<int?>("BundleLineId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("StockReturnTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("StockTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
-                    b.HasIndex("BundleLineId");
+                    b.HasIndex("BundleLineId")
+                        .HasDatabaseName("IX_BundleLineId");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_InvoiceLineId");
 
                     b.HasIndex("StockReturnTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_StockReturnTransaction_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineTime");
+                        .HasDatabaseName("UQ_StockReturnTransaction")
+                        .HasFilter("[StockReturnTransactionId] IS NOT NULL");
 
                     b.HasIndex("StockTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_StockTransaction_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineTime");
+                        .HasDatabaseName("UQ_StockTransaction")
+                        .HasFilter("[StockTransactionId] IS NOT NULL");
 
                     b.ToTable("InvoiceLineExtended", (string)null);
                 });
@@ -7767,15 +8144,17 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLine");
 
                     b.Property<int>("OrderLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UsageSessionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_InvoiceLineId");
 
-                    b.HasIndex("OrderLineId");
+                    b.HasIndex("OrderLineId")
+                        .HasDatabaseName("IX_OrderLineId");
 
                     b.HasIndex("UsageSessionId")
                         .IsUnique()
@@ -7789,17 +8168,18 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLine");
 
                     b.Property<bool>("IsDepleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int>("OrderLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_InvoiceLineId");
 
                     b.HasIndex("OrderLineId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine_InvoiceLineTimeFixed");
+                        .HasDatabaseName("UQ_OrderLine");
 
                     b.ToTable("InvoiceLineTimeFixed", (string)null);
                 });
@@ -7809,15 +8189,17 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.Note");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserNoteOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_NoteId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_UserId");
 
                     b.ToTable("UserNote", (string)null);
                 });
@@ -7827,15 +8209,17 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.PaymentIntent");
 
                     b.Property<int?>("DepositPaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("DepositPaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment_PaymentIntentDeposit");
+                        .HasDatabaseName("UQ_DepositPayment")
+                        .HasFilter("[DepositPaymentId] IS NOT NULL");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_PaymentIntentId");
 
                     b.ToTable("PaymentIntentDeposit", (string)null);
                 });
@@ -7845,21 +8229,24 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.PaymentIntent");
 
                     b.Property<int?>("InvoicePaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("ProductOrderId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_PaymentIntentId");
 
                     b.HasIndex("InvoicePaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_InvoicePayment_PaymentIntentOrder");
+                        .HasDatabaseName("UQ_InvoicePayment")
+                        .HasFilter("[InvoicePaymentId] IS NOT NULL");
 
-                    b.HasIndex("ProductOrderId");
+                    b.HasIndex("ProductOrderId")
+                        .HasDatabaseName("IX_ProductOrderId");
 
                     b.ToTable("PaymentIntentOrder", (string)null);
                 });
@@ -7869,7 +8256,8 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.ProductBase");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("ProductBaseExtended", (string)null);
                 });
@@ -7879,42 +8267,44 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.ProductBase");
 
                     b.Property<int?>("AppGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpirationOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpireAfterType")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpireAtDayTimeMinute")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpireFromOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpiresAfter")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Minutes")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UsageOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("WeekDayMaxMinutes")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("WeekEndMaxMinutes")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    b.HasIndex("AppGroupId");
+                    b.HasIndex("AppGroupId")
+                        .HasDatabaseName("IX_AppGroupId");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("ProductTime", (string)null);
 
@@ -7974,9 +8364,10 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.ProductOL");
 
                     b.Property<int?>("BundleLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    b.HasIndex("BundleLineId");
+                    b.HasIndex("BundleLineId")
+                        .HasDatabaseName("IX_BundleLineId");
 
                     b.ToTable("ProductOLExtended", (string)null);
                 });
@@ -7986,9 +8377,10 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.ProductOL");
 
                     b.Property<int>("UsageSessionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    b.HasIndex("UsageSessionId");
+                    b.HasIndex("UsageSessionId")
+                        .HasDatabaseName("IX_UsageSessionId");
 
                     b.ToTable("ProductOLSession", (string)null);
                 });
@@ -8005,25 +8397,28 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.Refund");
 
                     b.Property<int?>("DepositPaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("FiscalReceiptId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("FiscalReceiptStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasIndex("DepositPaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment_RefundDepositPayment");
+                        .HasDatabaseName("UQ_DepositPayment")
+                        .HasFilter("[DepositPaymentId] IS NOT NULL");
 
-                    b.HasIndex("FiscalReceiptId");
+                    b.HasIndex("FiscalReceiptId")
+                        .HasDatabaseName("IX_FiscalReceiptId");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_RefundId");
 
                     b.ToTable("RefundDepositPayment", (string)null);
                 });
@@ -8033,21 +8428,23 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.Refund");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("InvoicePaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_RefundId");
 
-                    b.HasIndex("InvoiceId");
+                    b.HasIndex("InvoiceId")
+                        .HasDatabaseName("IX_InvoiceId");
 
                     b.HasIndex("InvoicePaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_InvoicePayment_RefundInvoicePayment");
+                        .HasDatabaseName("UQ_InvoicePayment");
 
                     b.ToTable("RefundInvoicePayment", (string)null);
                 });
@@ -8059,15 +8456,15 @@ namespace _
                     b.Property<string>("DestinationDirectory")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SourceDirectory")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.ToTable("TaskJunction", (string)null);
                 });
@@ -8079,15 +8476,15 @@ namespace _
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NotificationOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.ToTable("TaskNotification", (string)null);
                 });
@@ -8098,32 +8495,32 @@ namespace _
 
                     b.Property<string>("Arguments")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Password")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("ProcessOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Username")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<string>("WorkingDirectory")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.ToTable("TaskProcess", (string)null);
@@ -8136,13 +8533,13 @@ namespace _
                     b.Property<string>("Data")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProcessOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ScriptType")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.ToTable("TaskScript", (string)null);
                 });
@@ -8152,12 +8549,14 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.Usage");
 
                     b.Property<int>("UserSessionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_UsageId");
 
-                    b.HasIndex("UserSessionId");
+                    b.HasIndex("UserSessionId")
+                        .HasDatabaseName("IX_UserSessionId");
 
                     b.ToTable("UsageUserSession", (string)null);
                 });
@@ -8167,44 +8566,47 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.User");
 
                     b.Property<int?>("BillingOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DisabledDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(254)
-                        .HasColumnType("character varying(254)");
+                        .HasColumnType("nvarchar(254)");
 
                     b.Property<DateTime?>("EnableDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsNegativeBalanceAllowed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsPersonalInfoRequested")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Email_UserGuest_UserMember");
+                        .HasDatabaseName("UQ_Email")
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_UserId");
 
-                    b.HasIndex("UserGroupId");
+                    b.HasIndex("UserGroupId")
+                        .HasDatabaseName("IX_UserGroupId");
 
                     b.HasIndex("Username")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Username_UserGuest_UserMember");
+                        .HasDatabaseName("UQ_Username");
 
                     b.ToTable("UserMember", (string)null);
 
@@ -8229,26 +8631,28 @@ namespace _
 
                     b.Property<string>("Email")
                         .HasMaxLength(254)
-                        .HasColumnType("character varying(254)");
+                        .HasColumnType("nvarchar(254)");
 
                     b.Property<int>("ShiftOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Email_UserOperator");
+                        .HasDatabaseName("UQ_Email")
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_UserId");
 
                     b.HasIndex("Username")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Username_UserOperator");
+                        .HasDatabaseName("UQ_Username");
 
                     b.ToTable("UserOperator", (string)null);
 
@@ -8273,10 +8677,11 @@ namespace _
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(254)
-                        .HasColumnType("character varying(254)");
+                        .HasColumnType("nvarchar(254)");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_VerificationId");
 
                     b.ToTable("VerificationEmail", (string)null);
                 });
@@ -8288,10 +8693,11 @@ namespace _
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_VerificationId");
 
                     b.ToTable("VerificationMobilePhone", (string)null);
                 });
@@ -8301,15 +8707,16 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.Void");
 
                     b.Property<int>("DepositPaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("DepositPaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment_VoidDepositPayment");
+                        .HasDatabaseName("UQ_DepositPayment");
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_VoidId");
 
                     b.ToTable("VoidDepositPayment", (string)null);
                 });
@@ -8319,11 +8726,12 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.Void");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("Id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_VoidId");
 
                     b.HasIndex("InvoiceId")
                         .IsUnique()
@@ -8337,16 +8745,18 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLineExtended");
 
                     b.Property<int>("OrderLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("OrderLineId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine_InvoiceLineProduct");
+                        .HasDatabaseName("UQ_OrderLine")
+                        .HasFilter("[OrderLineId] IS NOT NULL");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("InvoiceLineProduct", (string)null);
                 });
@@ -8356,19 +8766,20 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLineExtended");
 
                     b.Property<bool>("IsDepleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int>("OrderLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductTimeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("OrderLineId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine_InvoiceLineTime");
+                        .HasDatabaseName("UQ_OrderLine");
 
-                    b.HasIndex("ProductTimeId");
+                    b.HasIndex("ProductTimeId")
+                        .HasDatabaseName("IX_ProductTimeId");
 
                     b.ToTable("InvoiceLineTime", (string)null);
                 });
@@ -8457,7 +8868,7 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.ProductBaseExtended");
 
                     b.Property<int>("BundleStockOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.ToTable("ProductBundle", (string)null);
 
@@ -8487,12 +8898,13 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.ProductOLExtended");
 
                     b.Property<string>("Mark")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("ProductOLProduct", (string)null);
                 });
@@ -8502,9 +8914,10 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.ProductOLExtended");
 
                     b.Property<int>("ProductTimeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    b.HasIndex("ProductTimeId");
+                    b.HasIndex("ProductTimeId")
+                        .HasDatabaseName("IX_ProductTimeId");
 
                     b.ToTable("ProductOLTime", (string)null);
                 });
@@ -8514,23 +8927,24 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.UsageUserSession");
 
                     b.Property<DateTime>("BillProfileStamp")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("BillRateId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("Rate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(2);
 
-                    b.HasIndex("BillRateId");
+                    b.HasIndex("BillRateId")
+                        .HasDatabaseName("IX_BillRateId");
 
                     b.ToTable("UsageRate", (string)null);
                 });
@@ -8540,9 +8954,10 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.UsageUserSession");
 
                     b.Property<int>("InvoiceLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    b.HasIndex("InvoiceLineId");
+                    b.HasIndex("InvoiceLineId")
+                        .HasDatabaseName("IX_InvoiceLineId");
 
                     b.ToTable("UsageTime", (string)null);
                 });
@@ -8552,9 +8967,10 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.UsageUserSession");
 
                     b.Property<int>("InvoiceLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
-                    b.HasIndex("InvoiceLineId");
+                    b.HasIndex("InvoiceLineId")
+                        .HasDatabaseName("IX_InvoiceLineId");
 
                     b.ToTable("UsageTimeFixed", (string)null);
                 });
@@ -8564,24 +8980,25 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.UserMember");
 
                     b.Property<bool>("IsJoined")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsReserved")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ReservedHostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ReservedSlot")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasIndex("ReservedHostId", "ReservedSlot")
                         .IsUnique()
-                        .HasDatabaseName("UQ_UserGuestHostSlot");
+                        .HasDatabaseName("UQ_UserGuestHostSlot")
+                        .HasFilter("[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
 
                     b.ToTable("UserGuest", (string)null);
                 });
