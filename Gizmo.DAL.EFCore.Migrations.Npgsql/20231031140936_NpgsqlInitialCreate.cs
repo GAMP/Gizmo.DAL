@@ -4,10 +4,14 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Gizmo.DAL.EFCore.Migrations.Npgsql
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace _
 {
-    public partial class Initial : Migration
+    /// <inheritdoc />
+    public partial class NpgsqlInitialCreate : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -353,17 +357,17 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 {
                     table.PrimaryKey("PK_AppGroupApp", x => new { x.AppGroupId, x.AppId });
                     table.ForeignKey(
-                        name: "FK_AppGroupApp_App_AppId",
-                        column: x => x.AppId,
-                        principalTable: "App",
-                        principalColumn: "AppId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_AppGroupApp_AppGroup_AppGroupId",
                         column: x => x.AppGroupId,
                         principalTable: "AppGroup",
                         principalColumn: "AppGroupId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppGroupApp_App_AppId",
+                        column: x => x.AppId,
+                        principalTable: "App",
+                        principalColumn: "AppId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -453,16 +457,16 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 {
                     table.PrimaryKey("PK_AppStat", x => x.AppStatId);
                     table.ForeignKey(
-                        name: "FK_AppStat_App_AppId",
-                        column: x => x.AppId,
-                        principalTable: "App",
-                        principalColumn: "AppId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_AppStat_AppExe_AppExeId",
                         column: x => x.AppExeId,
                         principalTable: "AppExe",
                         principalColumn: "AppExeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AppStat_App_AppId",
+                        column: x => x.AppId,
+                        principalTable: "App",
+                        principalColumn: "AppId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -537,6 +541,46 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AssetType", x => x.AssetTypeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AssistanceRequest",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AssistanceRequestTypeId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: true),
+                    HostId = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Note = table.Column<string>(type: "text", nullable: true),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssistanceRequest", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AssistanceRequestType",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    DisplayOrder = table.Column<int>(type: "integer", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssistanceRequestType", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1095,17 +1139,17 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 {
                     table.PrimaryKey("PK_HostGroupWaitingLineEntry", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_HostGroupWaitingLineEntry_HostGroup_HostGroupId",
-                        column: x => x.HostGroupId,
-                        principalTable: "HostGroup",
-                        principalColumn: "HostGroupId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_HostGroupWaitingLineEntry_HostGroupWaitingLine_HostGroupId",
                         column: x => x.HostGroupId,
                         principalTable: "HostGroupWaitingLine",
                         principalColumn: "HosGroupId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_HostGroupWaitingLineEntry_HostGroup_HostGroupId",
+                        column: x => x.HostGroupId,
+                        principalTable: "HostGroup",
+                        principalColumn: "HostGroupId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1170,16 +1214,16 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 {
                     table.PrimaryKey("PK_HostLayoutGroupLayout", x => x.HostLayoutGroupLayoutId);
                     table.ForeignKey(
-                        name: "FK_HostLayoutGroupLayout_Host_HostId",
-                        column: x => x.HostId,
-                        principalTable: "Host",
-                        principalColumn: "HostId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_HostLayoutGroupLayout_HostLayoutGroup_HostLayoutGroupId",
                         column: x => x.HostLayoutGroupId,
                         principalTable: "HostLayoutGroup",
                         principalColumn: "HostLayoutGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_HostLayoutGroupLayout_Host_HostId",
+                        column: x => x.HostId,
+                        principalTable: "Host",
+                        principalColumn: "HostId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -1542,6 +1586,8 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                     MediaUrl = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    BackgroundUrl = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Options = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -2235,7 +2281,8 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 columns: table => new
                 {
                     ProductOLId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    Mark = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2470,16 +2517,16 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                         principalTable: "DepositTransaction",
                         principalColumn: "DepositTransactionId");
                     table.ForeignKey(
-                        name: "FK_Refund_Payment_PaymentId",
-                        column: x => x.PaymentId,
-                        principalTable: "Payment",
-                        principalColumn: "PaymentId");
-                    table.ForeignKey(
                         name: "FK_Refund_PaymentMethod_RefundMethodId",
                         column: x => x.RefundMethodId,
                         principalTable: "PaymentMethod",
                         principalColumn: "PaymentMethodId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Refund_Payment_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payment",
+                        principalColumn: "PaymentId");
                     table.ForeignKey(
                         name: "FK_Refund_PointTransaction_PointTransactionId",
                         column: x => x.PointTransactionId,
@@ -2531,16 +2578,16 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 {
                     table.PrimaryKey("PK_RefundInvoicePayment", x => x.RefundId);
                     table.ForeignKey(
-                        name: "FK_RefundInvoicePayment_Invoice_InvoiceId",
-                        column: x => x.InvoiceId,
-                        principalTable: "Invoice",
-                        principalColumn: "InvoiceId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_RefundInvoicePayment_InvoicePayment_InvoicePaymentId",
                         column: x => x.InvoicePaymentId,
                         principalTable: "InvoicePayment",
                         principalColumn: "InvoicePaymentId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_RefundInvoicePayment_Invoice_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoice",
+                        principalColumn: "InvoiceId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_RefundInvoicePayment_Refund_RefundId",
@@ -3320,12 +3367,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                         principalColumn: "AttributeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserAttribute_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_UserAttribute_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
@@ -3335,6 +3376,12 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserAttribute_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -3353,6 +3400,11 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 {
                     table.PrimaryKey("PK_UserCredential", x => x.UserId);
                     table.ForeignKey(
+                        name: "FK_UserCredential_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
                         name: "FK_UserCredential_User_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "User",
@@ -3363,11 +3415,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserCredential_UserOperator_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "UserOperator",
-                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -3449,12 +3496,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 {
                     table.PrimaryKey("PK_UserPermission", x => x.UserPermissionId);
                     table.ForeignKey(
-                        name: "FK_UserPermission_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_UserPermission_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
@@ -3464,6 +3505,12 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserPermission_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -3581,6 +3628,12 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 {
                     table.PrimaryKey("PK_UserAgreementState", x => x.UserAgreementStateId);
                     table.ForeignKey(
+                        name: "FK_UserAgreementState_UserAgreement_UserAgreementId",
+                        column: x => x.UserAgreementId,
+                        principalTable: "UserAgreement",
+                        principalColumn: "UserAgreementId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_UserAgreementState_User_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "User",
@@ -3595,12 +3648,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserAgreementState_UserAgreement_UserAgreementId",
-                        column: x => x.UserAgreementId,
-                        principalTable: "UserAgreement",
-                        principalColumn: "UserAgreementId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -3661,17 +3708,17 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 {
                     table.PrimaryKey("PK_UserMember", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_UserMember_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_UserMember_UserGroup_UserGroupId",
                         column: x => x.UserGroupId,
                         principalTable: "UserGroup",
                         principalColumn: "UserGroupId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserMember_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -3839,14 +3886,14 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                         principalColumn: "HostId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserSession_User_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "User",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
                         name: "FK_UserSession_UserMember_UserId",
                         column: x => x.UserId,
                         principalTable: "UserMember",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserSession_User_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "User",
                         principalColumn: "UserId");
                 });
 
@@ -3875,11 +3922,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                         principalColumn: "HostId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserSessionChange_User_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "User",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
                         name: "FK_UserSessionChange_UserMember_UserId",
                         column: x => x.UserId,
                         principalTable: "UserMember",
@@ -3890,6 +3932,11 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                         principalTable: "UserSession",
                         principalColumn: "UserSessionId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserSessionChange_User_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "User",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.InsertData(
@@ -3985,8 +4032,8 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 columns: new[] { "UserId", "Address", "BirthDate", "City", "Country", "CreatedById", "CreatedTime", "FirstName", "Guid", "Identification", "IsDeleted", "IsDisabled", "LastName", "MobilePhone", "ModifiedById", "ModifiedTime", "Phone", "PostCode", "Sex", "SmartCardUID" },
                 values: new object[,]
                 {
-                    { 2, null, null, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, new Guid("38753737-24f1-40d7-8ac4-ba61660d666a"), null, false, false, null, null, null, null, null, null, 0, null },
-                    { 1, null, null, null, null, null, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, new Guid("691ea8b4-d794-4096-84ae-bbdb7bcc0b02"), null, false, false, null, null, null, null, null, null, 0, null }
+                    { 1, null, null, null, null, null, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, new Guid("691ea8b4-d794-4096-84ae-bbdb7bcc0b02"), null, false, false, null, null, null, null, null, null, 0, null },
+                    { 2, null, null, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, new Guid("38753737-24f1-40d7-8ac4-ba61660d666a"), null, false, false, null, null, null, null, null, null, 0, null }
                 });
 
             migrationBuilder.InsertData(
@@ -4051,50 +4098,52 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                     { 13, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ManualOpenCashDrawer" },
                     { 14, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ModifyBillingOptions" },
                     { 15, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "AllowTimeCredit" },
-                    { 16, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewInvoices" },
-                    { 17, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPaidInvoices" },
-                    { 18, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysInvoices" },
-                    { 19, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewDeposits" },
-                    { 20, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysDeposits" },
-                    { 21, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewRegisterTransactions" },
-                    { 22, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysRegisterTransactions" },
-                    { 23, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "DeleteTimePurchases" },
-                    { 24, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Shift", 1, "ViewExpected" },
-                    { 25, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "*" },
-                    { 26, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "Manage" },
-                    { 27, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "ViewStockTransactions" },
-                    { 28, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "ViewPastDaysStockTransactions" },
-                    { 29, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "*" },
-                    { 30, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Tasks" },
-                    { 31, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Processes" },
-                    { 32, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Files" },
-                    { 33, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Maintenance" },
-                    { 34, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Security" },
-                    { 35, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "LockState" },
-                    { 36, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "ModuleRestart" },
-                    { 37, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Deployment", 1, "*" },
-                    { 38, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Monitoring", 1, "*" },
-                    { 39, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Reports", 1, "*" },
-                    { 40, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Settings", 1, "*" },
-                    { 41, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Apps", 1, "*" },
-                    { 42, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "News", 1, "*" },
-                    { 43, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserPasswordReset" },
-                    { 44, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserEnable" },
-                    { 45, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserDisable" },
-                    { 46, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserManualLogin" },
-                    { 47, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Add" },
-                    { 48, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Delete" },
-                    { 49, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "ChangeUserName" },
-                    { 50, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "ChangeUserGroup" },
-                    { 51, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Edit" },
-                    { 52, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "AccessStats" },
-                    { 53, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Log", 1, "*" },
-                    { 54, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Log", 1, "Clear" },
-                    { 55, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WaitingLines", 1, "*" },
-                    { 56, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WaitingLines", 1, "Manage" },
-                    { 57, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "RegisterTransactions", 1, "RegisterTransactionsPayIn" },
-                    { 58, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "RegisterTransactions", 1, "RegisterTransactionsPayOut" },
-                    { 59, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WebApi", 1, "*" }
+                    { 16, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "AllowDisableReceiptPrint" },
+                    { 17, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewInvoices" },
+                    { 18, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPaidInvoices" },
+                    { 19, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysInvoices" },
+                    { 20, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewDeposits" },
+                    { 21, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysDeposits" },
+                    { 22, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewRegisterTransactions" },
+                    { 23, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysRegisterTransactions" },
+                    { 24, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "DeleteTimePurchases" },
+                    { 25, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Shift", 1, "ViewExpected" },
+                    { 26, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "*" },
+                    { 27, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "Manage" },
+                    { 28, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "ViewStockTransactions" },
+                    { 29, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "ViewPastDaysStockTransactions" },
+                    { 30, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "*" },
+                    { 31, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Tasks" },
+                    { 32, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Processes" },
+                    { 33, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Files" },
+                    { 34, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Maintenance" },
+                    { 35, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Security" },
+                    { 36, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "LockState" },
+                    { 37, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "ModuleRestart" },
+                    { 38, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "PowerOnEndpoints" },
+                    { 39, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Deployment", 1, "*" },
+                    { 40, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Monitoring", 1, "*" },
+                    { 41, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Reports", 1, "*" },
+                    { 42, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Settings", 1, "*" },
+                    { 43, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Apps", 1, "*" },
+                    { 44, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "News", 1, "*" },
+                    { 45, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserPasswordReset" },
+                    { 46, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserEnable" },
+                    { 47, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserDisable" },
+                    { 48, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserManualLogin" },
+                    { 49, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Add" },
+                    { 50, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Delete" },
+                    { 51, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "ChangeUserName" },
+                    { 52, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "ChangeUserGroup" },
+                    { 53, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Edit" },
+                    { 54, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "AccessStats" },
+                    { 55, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Log", 1, "*" },
+                    { 56, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Log", 1, "Clear" },
+                    { 57, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WaitingLines", 1, "*" },
+                    { 58, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WaitingLines", 1, "Manage" },
+                    { 59, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "RegisterTransactions", 1, "RegisterTransactionsPayIn" },
+                    { 60, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "RegisterTransactions", 1, "RegisterTransactionsPayOut" },
+                    { 61, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WebApi", 1, "*" }
                 });
 
             migrationBuilder.InsertData(
@@ -4608,6 +4657,41 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 table: "AssetType",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssistanceRequest_AssistanceRequestTypeId",
+                table: "AssistanceRequest",
+                column: "AssistanceRequestTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssistanceRequest_CreatedById",
+                table: "AssistanceRequest",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssistanceRequest_HostId",
+                table: "AssistanceRequest",
+                column: "HostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssistanceRequest_ModifiedById",
+                table: "AssistanceRequest",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssistanceRequest_UserId",
+                table: "AssistanceRequest",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssistanceRequestType_CreatedById",
+                table: "AssistanceRequestType",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssistanceRequestType_ModifiedById",
+                table: "AssistanceRequestType",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Attribute_CreatedById",
@@ -7202,6 +7286,57 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_AssistanceRequest_AssistanceRequestType_AssistanceRequestTy~",
+                table: "AssistanceRequest",
+                column: "AssistanceRequestTypeId",
+                principalTable: "AssistanceRequestType",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AssistanceRequest_Host_HostId",
+                table: "AssistanceRequest",
+                column: "HostId",
+                principalTable: "Host",
+                principalColumn: "HostId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AssistanceRequest_UserMember_UserId",
+                table: "AssistanceRequest",
+                column: "UserId",
+                principalTable: "UserMember",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AssistanceRequest_User_CreatedById",
+                table: "AssistanceRequest",
+                column: "CreatedById",
+                principalTable: "User",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AssistanceRequest_User_ModifiedById",
+                table: "AssistanceRequest",
+                column: "ModifiedById",
+                principalTable: "User",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AssistanceRequestType_UserOperator_CreatedById",
+                table: "AssistanceRequestType",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AssistanceRequestType_UserOperator_ModifiedById",
+                table: "AssistanceRequestType",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Attribute_UserOperator_CreatedById",
                 table: "Attribute",
                 column: "CreatedById",
@@ -7573,13 +7708,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_HostGroupWaitingLineEntry_User_ModifiedById",
-                table: "HostGroupWaitingLineEntry",
-                column: "ModifiedById",
-                principalTable: "User",
-                principalColumn: "UserId");
-
-            migrationBuilder.AddForeignKey(
                 name: "FK_HostGroupWaitingLineEntry_UserMember_UserId",
                 table: "HostGroupWaitingLineEntry",
                 column: "UserId",
@@ -7591,6 +7719,13 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 table: "HostGroupWaitingLineEntry",
                 column: "CreatedById",
                 principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_HostGroupWaitingLineEntry_User_ModifiedById",
+                table: "HostGroupWaitingLineEntry",
+                column: "ModifiedById",
+                principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
@@ -8018,6 +8153,13 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_PaymentIntent_UserMember_UserId",
+                table: "PaymentIntent",
+                column: "UserId",
+                principalTable: "UserMember",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_PaymentIntent_User_CreatedById",
                 table: "PaymentIntent",
                 column: "CreatedById",
@@ -8029,13 +8171,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 table: "PaymentIntent",
                 column: "ModifiedById",
                 principalTable: "User",
-                principalColumn: "UserId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_PaymentIntent_UserMember_UserId",
-                table: "PaymentIntent",
-                column: "UserId",
-                principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
@@ -8475,6 +8610,13 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Reservation_UserMember_UserId",
+                table: "Reservation",
+                column: "UserId",
+                principalTable: "UserMember",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Reservation_User_CreatedById",
                 table: "Reservation",
                 column: "CreatedById",
@@ -8491,11 +8633,12 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Reservation_UserMember_UserId",
-                table: "Reservation",
-                column: "UserId",
+                name: "FK_ReservationHost_UserMember_PreferedUserId",
+                table: "ReservationHost",
+                column: "PreferedUserId",
                 principalTable: "UserMember",
-                principalColumn: "UserId");
+                principalColumn: "UserId",
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ReservationHost_User_CreatedById",
@@ -8512,9 +8655,9 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ReservationHost_UserMember_PreferedUserId",
-                table: "ReservationHost",
-                column: "PreferedUserId",
+                name: "FK_ReservationUser_UserMember_UserId",
+                table: "ReservationUser",
+                column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId",
                 onDelete: ReferentialAction.Restrict);
@@ -8532,14 +8675,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 column: "ModifiedById",
                 principalTable: "User",
                 principalColumn: "UserId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ReservationUser_UserMember_UserId",
-                table: "ReservationUser",
-                column: "UserId",
-                principalTable: "UserMember",
-                principalColumn: "UserId",
-                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_SecurityProfile_UserOperator_CreatedById",
@@ -8767,6 +8902,7 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 principalColumn: "UserId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
@@ -8962,8 +9098,8 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 table: "UsageSession");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_UserGroup_BillProfile_BillProfileId",
-                table: "UserGroup");
+                name: "FK_ProductOrder_Host_HostId",
+                table: "ProductOrder");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductBaseExtended_ProductBase_ProductId",
@@ -8976,10 +9112,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
             migrationBuilder.DropForeignKey(
                 name: "FK_StockTransaction_ProductBase_SourceProductId",
                 table: "StockTransaction");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_HostGroup_UserGroup_DefaultGuestGroupId",
-                table: "HostGroup");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Invoice_Register_RegisterId",
@@ -9026,10 +9158,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 table: "ProductOrder");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_ProductOrder_Host_HostId",
-                table: "ProductOrder");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_Invoice_ProductOrder_ProductOrderId",
                 table: "Invoice");
 
@@ -9044,10 +9172,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
             migrationBuilder.DropForeignKey(
                 name: "FK_InvoiceLine_PointTransaction_PointsTransactionId",
                 table: "InvoiceLine");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_InvoiceLineExtended_InvoiceLine_InvoiceLineId",
-                table: "InvoiceLineExtended");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_InvoiceLineExtended_InvoiceLineProduct_BundleLineId",
@@ -9103,6 +9227,9 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
 
             migrationBuilder.DropTable(
                 name: "AssetTransaction");
+
+            migrationBuilder.DropTable(
+                name: "AssistanceRequest");
 
             migrationBuilder.DropTable(
                 name: "BillRatePeriodDayTime");
@@ -9312,6 +9439,9 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 name: "Asset");
 
             migrationBuilder.DropTable(
+                name: "AssistanceRequestType");
+
+            migrationBuilder.DropTable(
                 name: "BillRatePeriodDay");
 
             migrationBuilder.DropTable(
@@ -9453,24 +9583,6 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 name: "User");
 
             migrationBuilder.DropTable(
-                name: "BillProfile");
-
-            migrationBuilder.DropTable(
-                name: "ProductBase");
-
-            migrationBuilder.DropTable(
-                name: "ProductGroup");
-
-            migrationBuilder.DropTable(
-                name: "UserGroup");
-
-            migrationBuilder.DropTable(
-                name: "Register");
-
-            migrationBuilder.DropTable(
-                name: "Shift");
-
-            migrationBuilder.DropTable(
                 name: "Host");
 
             migrationBuilder.DropTable(
@@ -9480,7 +9592,25 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 name: "Icon");
 
             migrationBuilder.DropTable(
+                name: "UserGroup");
+
+            migrationBuilder.DropTable(
+                name: "BillProfile");
+
+            migrationBuilder.DropTable(
                 name: "SecurityProfile");
+
+            migrationBuilder.DropTable(
+                name: "ProductBase");
+
+            migrationBuilder.DropTable(
+                name: "ProductGroup");
+
+            migrationBuilder.DropTable(
+                name: "Register");
+
+            migrationBuilder.DropTable(
+                name: "Shift");
 
             migrationBuilder.DropTable(
                 name: "ProductOrder");
@@ -9495,13 +9625,13 @@ namespace Gizmo.DAL.EFCore.Migrations.Npgsql
                 name: "PointTransaction");
 
             migrationBuilder.DropTable(
-                name: "InvoiceLine");
-
-            migrationBuilder.DropTable(
                 name: "InvoiceLineProduct");
 
             migrationBuilder.DropTable(
                 name: "InvoiceLineExtended");
+
+            migrationBuilder.DropTable(
+                name: "InvoiceLine");
 
             migrationBuilder.DropTable(
                 name: "StockTransaction");
