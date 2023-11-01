@@ -973,6 +973,16 @@ namespace Gizmo.DAL.Contexts
             //GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
 
+            if(Database.IsNpgsql())
+            {
+                foreach (var property in modelBuilder.Model.GetEntityTypes()
+                 .SelectMany(t => t.GetProperties())
+                 .Where(x => x.ClrType == typeof(DateTime) || x.ClrType == typeof(DateTime?)))
+                {
+                    property.SetColumnType("timestamp without time zone");
+                }
+            }
+
             //BASE MODEL CREATION
             base.OnModelCreating(modelBuilder);
         }
