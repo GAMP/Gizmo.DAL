@@ -1168,7 +1168,7 @@ namespace _
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_UserId");
 
-                    b.ToTable("AssistanceRequest");
+                    b.ToTable("AssistanceRequest", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AssistanceRequestType", b =>
@@ -1208,7 +1208,7 @@ namespace _
                     b.HasIndex("ModifiedById")
                         .HasDatabaseName("IX_ModifiedById");
 
-                    b.ToTable("AssistanceRequestType");
+                    b.ToTable("AssistanceRequestType", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Attribute", b =>
