@@ -974,15 +974,8 @@ namespace Gizmo.DAL.Contexts
             //GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
 
-            if (Database.IsNpgsql())
-            {
-                foreach (var property in modelBuilder.Model.GetEntityTypes()
-                 .SelectMany(t => t.GetProperties())
-                 .Where(x => x.ClrType == typeof(DateTime) || x.ClrType == typeof(DateTime?)))
-                {
-                    property.SetColumnType("timestamp without time zone");
-                }
-            }
+            //SEED
+            Seed(modelBuilder);
 
             //BASE MODEL CREATION
             base.OnModelCreating(modelBuilder);
@@ -1679,6 +1672,14 @@ namespace Gizmo.DAL.Contexts
             {
                 // Remove duplicated index name to be unique on database level not the table level
                 RenameDuplicatedIndexNames(modelBuilder);
+
+                // Set all DateTime properties to be mapped as timestamp without time zone
+                foreach (var property in modelBuilder.Model.GetEntityTypes()
+                                                                             .SelectMany(t => t.GetProperties())
+                                                                             .Where(x => x.ClrType == typeof(DateTime) || x.ClrType == typeof(DateTime?)))
+                {
+                    property.SetColumnType("timestamp without time zone");
+                }
             }
         }
 
@@ -1745,10 +1746,12 @@ namespace Gizmo.DAL.Contexts
 
         #endregion
 
-        #region SEED METHODS
+        #region SEED
 
-        private static void AddPaymentMethods(ModelBuilder builder)
+        private static void Seed(ModelBuilder builder)
         {
+            #region AddPaymentMethods
+
             builder.Entity<PaymentMethod>().HasData(new PaymentMethod[]
             {
                 new() { Id = (int)PaymentMethodType.Cash, Name = "Cash", DisplayOrder = 0, IsEnabled = true, IsClient = true, IsManager = true },
@@ -1756,13 +1759,12 @@ namespace Gizmo.DAL.Contexts
                 new() { Id = (int)PaymentMethodType.Deposit, Name = "Deposit", DisplayOrder = 3, IsEnabled = true, IsClient = true, IsManager = true },
                 new() { Id = (int)PaymentMethodType.CreditCard, Name = "Credit Card", DisplayOrder = 4, IsEnabled = true, IsClient = true, IsManager = true },
             });
-        }
 
-        private static void AddMonetaryUnits(ModelBuilder builder)
-        {
-            string isoCurrencySymbol = RegionInfo.CurrentRegion.ISOCurrencySymbol;
+            #endregion
 
-            if (isoCurrencySymbol == "EUR")
+            #region AddMonetaryUnits
+
+            if (RegionInfo.CurrentRegion.ISOCurrencySymbol == "EUR")
             {
                 builder.Entity<MonetaryUnit>().HasData(new MonetaryUnit[]
                 {
@@ -1799,34 +1801,35 @@ namespace Gizmo.DAL.Contexts
                     new() { Id = 11, DisplayOrder = 10, Name = "100 Dollar", Value = 100.00M }
                 });
             }
-        }
 
-        private static void AddDefaultOperator(ModelBuilder builder)
-        {
-            var defaultOperator = new UserOperator();
+            #endregion
+
+            #region AddDefaultOperator
 
             byte[] salt = GetNewSalt();
             byte[] password = GetHashedPassword("admin", salt);
 
-            defaultOperator.UserCredential = new UserCredential();
-            defaultOperator.Username = "Admin";
-
-            defaultOperator.CreatedTime = DateTime.Now;
-            defaultOperator.UserCredential.Salt = salt;
-            defaultOperator.UserCredential.Password = password;
-
-            var allPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes().Select(claim =>
+            var admin = new UserOperator
             {
-                return new UserPermission() { Type = claim.Resource, Value = claim.Operation };
-            });
+                Id = 1,
+                Username = "Admin",
+                CreatedTime = DateTimeOffset.UtcNow.DateTime,
+                Guid = new("691ea8b4-d794-4096-84ae-bbdb7bcc0b02")
+            };
 
-            defaultOperator.Permissions.UnionWith(allPermissions);
+            var adminCredential = new UserCredential() { Id = 1, Salt = salt, Password = password };
 
-            builder.Entity<UserOperator>().HasData(defaultOperator);
-        }
+            var adminPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes()
+                .Select((claim, id) => new UserPermission() { Id = id + 1, UserId = admin.Id, Type = claim.Resource, Value = claim.Operation });
 
-        private static void AddProducts(ModelBuilder builder)
-        {
+            builder.Entity<UserCredential>().HasData(adminCredential);
+            builder.Entity<UserPermission>().HasData(adminPermissions);
+            builder.Entity<UserOperator>().HasData(admin);
+
+            #endregion
+
+            #region AddTaxes
+
             var taxes = new Tax[]
             {
                 new() {Id = 1, Name = "24%", Value = 23, UseOrder = 0 },
@@ -1834,104 +1837,113 @@ namespace Gizmo.DAL.Contexts
                 new() {Id = 3, Name = "None", Value = 0, UseOrder = 2 }
             };
 
+            builder.Entity<Tax>().HasData(taxes);
+
+            #endregion
+
+            #region AddProducts
+
             var tax = taxes[0];
 
-            var productGroupTime = new ProductGroup() { Id = 1, Name = "Time Offers", DisplayOrder = 0 };
-            var productGroupFood = new ProductGroup() { Id = 2, Name = "Food", DisplayOrder = 1 };
-            var productGroupDrinks = new ProductGroup() { Id = 3, Name = "Drinks", DisplayOrder = 2 };
-            var productGroupSweets = new ProductGroup() { Id = 4, Name = "Sweets", DisplayOrder = 3 };
+            var productGroupTime = new ProductGroup() { Id = 1, Name = "Time Offers", DisplayOrder = 0, Guid = new("e798a7fb-448b-4825-8b32-c5ea6db70271") };
+            var productGroupFood = new ProductGroup() { Id = 2, Name = "Food", DisplayOrder = 1, Guid = new("e798a7fb-448b-4825-8b32-c5ea6db70272") };
+            var productGroupDrinks = new ProductGroup() { Id = 3, Name = "Drinks", DisplayOrder = 2, Guid = new("e798a7fb-448b-4825-8b32-c5ea6db70273") };
+            var productGroupSweets = new ProductGroup() { Id = 4, Name = "Sweets", DisplayOrder = 3, Guid = new("e798a7fb-448b-4825-8b32-c5ea6db70274") };
 
             var productGroups = new ProductGroup[] { productGroupTime, productGroupFood, productGroupDrinks, productGroupSweets };
 
             var productMars = new Product()
             {
                 Id = 1,
+                ProductGroupId = productGroupSweets.Id,
                 Name = "Mars Bar",
                 Cost = 0.90m,
                 Price = 1.10m,
                 Points = 10,
                 StockOptions = StockOptionType.EnableStock,
-                ProductGroupId = productGroupSweets.Id
+                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba1")
             };
             var productSnickers = new Product()
             {
                 Id = 2,
+                ProductGroupId = productGroupSweets.Id,
                 Name = "Snickers Bar",
                 Points = 15,
                 StockOptions = StockOptionType.EnableStock,
                 Cost = 1.20m,
                 Price = 2.0m,
-                ProductGroupId = productGroupSweets.Id
+                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba2")
             };
             var productPizza = new Product()
             {
                 Id = 3,
+                ProductGroupId = productGroupFood.Id,
                 Name = "Pizza (Small)",
                 Cost = 2.20m,
                 Price = 6.0m,
-                ProductGroupId = productGroupFood.Id
+                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba3")
             };
             var productCocaCola = new Product()
             {
                 Id = 4,
+                ProductGroupId = productGroupDrinks.Id,
                 Name = "Coca Cola (Can)",
                 Points = 20,
                 StockOptions = StockOptionType.EnableStock,
                 Cost = 1.20m,
                 Price = 2.0m,
-                ProductGroupId = productGroupDrinks.Id
-            };
-            
-            var products = new Product[] { productMars, productSnickers, productCocaCola, productPizza };
-            
-            var bundleProducts = new BundleProduct[]
-            {
-                new(){Id = 1, ProductId = productCocaCola.Id, Price = 1, Quantity = 1 },
-                new(){Id = 2, ProductId = productPizza.Id, Price = 2, Quantity = 1 }
+                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba4")
             };
 
+            var products = new Product[] { productMars, productSnickers, productCocaCola, productPizza };
+            
             var productBundlePizzaAndCola = new ProductBundle()
             {
-                Id = 1,
+                Id = 5,
+                ProductGroupId = productGroupFood.Id,
                 Name = "Pizza and Cola",
                 StockOptions = StockOptionType.EnableStock,
                 Points = 200,
                 Price = 3.40m, //pizza plus cola
-                ProductGroupId = productGroupFood.Id
+                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba5")
+            };
+
+            var bundleProducts = new BundleProduct[]
+            {
+                new(){Id = 1, ProductId = productCocaCola.Id, ProductBundleId = productBundlePizzaAndCola.Id, Price = 1, Quantity = 1 },
+                new(){Id = 2, ProductId = productPizza.Id, ProductBundleId = productBundlePizzaAndCola.Id, Price = 2, Quantity = 1 }
             };
 
             var productPeriod = new ProductPeriod()
             {
-                Id = 1,
+                Id = 1  ,
                 Options = PeriodOptionType.None
             };
             var productPeriodDays = new ProductPeriodDay[]
             {
-                new(){Id = 1, Day = DayOfWeek.Saturday, ProductPeriodId = productPeriod.Id },
-                new(){Id = 2, Day = DayOfWeek.Sunday, ProductPeriodId = productPeriod.Id },
+                new(){Id = 1, ProductPeriodId = productPeriod.Id, Day = DayOfWeek.Saturday },
+                new(){Id = 2, ProductPeriodId = productPeriod.Id, Day = DayOfWeek.Sunday },
             };
 
             var productTimeSixHours = new ProductTime()
             {
-                Id = 1,
+                Id = 6,
+                ProductGroupId = productGroupTime.Id,
                 Name = "Six Hours (6)",
                 Minutes = 360,
                 Price = 12,
                 WeekEndMaxMinutes = null,
-                UsePeriod = new ProductTimePeriod()
-                {
-                    Id = 1,
-                },
-                ProductGroupId = productGroupTime.Id
+                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba6")
             };
             var productTimeSixHoursWeekends = new ProductTime()
             {
-                Id = 2,
+                Id = 7,
+                ProductGroupId = productGroupTime.Id,
                 Name = "Six Hours (6 Weekends)",
                 Minutes = 360,
                 Price = 16,
                 WeekEndMaxMinutes = null,
-                Period = productPeriod,
+                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba7")
             };
 
             var productTimes = new ProductTime[] { productTimeSixHours, productTimeSixHoursWeekends };
@@ -1947,7 +1959,6 @@ namespace Gizmo.DAL.Contexts
                 new() { Id = 7, ProductId = productTimeSixHoursWeekends.Id, TaxId = tax.Id },
             };
 
-            builder.Entity<Tax>().HasData(taxes);
             builder.Entity<ProductGroup>().HasData(productGroups);
             builder.Entity<Product>().HasData(products);
             builder.Entity<ProductBundle>().HasData(productBundlePizzaAndCola);
@@ -1956,104 +1967,122 @@ namespace Gizmo.DAL.Contexts
             builder.Entity<ProductPeriodDay>().HasData(productPeriodDays);
             builder.Entity<ProductTime>().HasData(productTimes);
             builder.Entity<ProductTax>().HasData(productTaxes);
-        }
 
-        private static void AddLayoutGroups(ModelBuilder builder)
-        {
+            #endregion
+
+            #region AddLayoutGroups
+
             builder.Entity<HostLayoutGroup>().HasData(new HostLayoutGroup()
             {
                 Id = 1,
                 Name = "Default",
                 DisplayOrder = 0
             });
-        }
-        /*
-        private void AddBillProfiles(ModelBuilder cx)
-        {
-            var billProfile = cx.BillProfiles.Add(new BillProfile() { Name = "Member Prices" });
-            var rate = new BillRate()
+
+            #endregion
+
+            #region AddBillProfiles
+
+            var billProfileMemberPrices = new BillProfile() { Id = 1, Name = "Member Prices" };
+            var billProfileGuestsPrices = new BillProfile() { Id = 2, Name = "Guests Prices" };
+
+            var billProfiles = new BillProfile[] { billProfileMemberPrices, billProfileGuestsPrices };
+            var billRates = new BillRate[]
             {
-                BillProfile = billProfile,
-                IsDefault = true,
-                MinimumFee = 2,
-                ChargeAfter = 1,
-                ChargeEvery = 5,
-                Rate = 2,
-                StartFee = 1
+                new()
+                {
+                    Id = 1,
+                    BillProfileId = billProfileMemberPrices.Id,
+                    IsDefault = true,
+                    MinimumFee = 2,
+                    ChargeAfter = 1,
+                    ChargeEvery = 5,
+                    Rate = 2,
+                    StartFee = 1
+                },
+                new()
+                {
+                    Id = 2,
+                    BillProfileId = billProfileGuestsPrices.Id,
+                    IsDefault = true,
+                    MinimumFee = 2,
+                    ChargeAfter = 1,
+                    ChargeEvery = 5,
+                    Rate = 2,
+                    StartFee = 1
+                }
             };
 
-            billProfile.BillRates.Add(rate);
-            cx.BillRates.Add(rate);
+            builder.Entity<BillRate>().HasData(billRates);
+            builder.Entity<BillProfile>().HasData(billProfiles);
 
-            billProfile = cx.BillProfiles.Add(new BillProfile() { Name = "Guests Prices" });
-            rate = new BillRate()
+            #endregion
+
+            #region AddUserGroups
+
+            var userGroupMember = new UserGroup() { Id = 1, Name = "Members", BillProfileId = billProfileMemberPrices.Id, IsDefault = true };
+            var userGroupGuest = new UserGroup() { Id = 2, Name = "Guests", BillProfileId = billProfileGuestsPrices.Id, Options = UserGroupOptionType.GuestUse };
+
+            var userGroups = new UserGroup[] { userGroupMember, userGroupGuest };
+
+            builder.Entity<UserGroup>().HasData(userGroups);
+
+            #endregion
+
+            #region AddUsers
+
+            var userMember = new UserMember() { Id = 2, Username = "User", UserGroupId = userGroupMember.Id, Guid = new("38753737-24f1-40d7-8ac4-ba61660d666a") };
+
+            builder.Entity<UserMember>().HasData(userMember);
+
+            #endregion
+
+            #region AddHostGroups
+
+            var hostGroupComputers = new HostGroup() { Id = 1, Name = "Computers", DefaultGuestGroupId = userGroupGuest.Id };
+            var hostGroupEndpoints = new HostGroup() { Id = 2, Name = "Endpoints", DefaultGuestGroupId = userGroupGuest.Id };
+
+            var hostGroups = new HostGroup[] { hostGroupComputers, hostGroupEndpoints };
+
+            builder.Entity<HostGroup>().HasData(hostGroups);
+
+            #endregion
+
+            #region AddHosts
+
+            builder.Entity<HostEndpoint>().HasData(new HostEndpoint[]
             {
-                BillProfile = billProfile,
-                IsDefault = true,
-                MinimumFee = 2,
-                ChargeAfter = 1,
-                ChargeEvery = 5,
-                Rate = 2,
-                StartFee = 1
-            };
+                new() { Id = 1, Name = "XBOX-ONE-1", Number = 1, MaximumUsers = 4, HostGroupId = hostGroupEndpoints.Id, Guid = new("cd41aa25-ac1f-4da9-8c8e-075032803871") },
+                new() { Id = 2, Name = "XBOX-ONE-2", Number = 2, MaximumUsers = 4, HostGroupId = hostGroupEndpoints.Id, Guid = new("cd41aa25-ac1f-4da9-8c8e-075032803872") },
+                new() { Id = 3, Name = "PS4-1", Number = 3, MaximumUsers = 4, HostGroupId = hostGroupEndpoints.Id, Guid = new("cd41aa25-ac1f-4da9-8c8e-075032803873") },
+                new() { Id = 4, Name = "WII-1", Number = 4, MaximumUsers = 4, HostGroupId = hostGroupEndpoints.Id, Guid = new("cd41aa25-ac1f-4da9-8c8e-075032803874") }
+            });
 
-            billProfile.BillRates.Add(rate);
-            cx.BillRates.Add(rate);
-        }
+            #endregion
 
-        private void AddUserGroups(ModelBuilder cx)
-        {
-            var memberPrices = cx.BillProfiles.Local.Where(x => x.Name == "Member Prices").First();
-            var guestPrices = cx.BillProfiles.Local.Where(x => x.Name == "Guests Prices").First();
+            #region AddPresetTime
 
-            cx.UserGroups.Add(new UserGroup() { Name = "Members", BillProfile = memberPrices, IsDefault = true });
-            cx.UserGroups.Add(new UserGroup() { Name = "Guests", Options = UserGroupOptionType.GuestUse, BillProfile = guestPrices });
-        }
-
-        private void AddUsers(ModelBuilder cx)
-        {
-            var group = cx.UserGroups.Local.Where(x => x.Name == "Members").FirstOrDefault();
-            cx.Users.Add(new UserMember() { Username = "User", UserGroup = group });
-        }
-
-        private void AddHostGroups(ModelBuilder cx)
-        {
-            var defaultGuestGroup = cx.UserGroups.Local.Where(x => x.Name == "Guests").FirstOrDefault();
-
-            cx.HostGroups.AddOrUpdate(new HostGroup() { Name = "Computers", DefaultGuestGroup = defaultGuestGroup });
-            cx.HostGroups.AddOrUpdate(new HostGroup() { Name = "Endpoints", DefaultGuestGroup = defaultGuestGroup });
-        }
-
-        private void AddHosts(ModelBuilder cx)
-        {
-            var hostGroup = cx.HostGroups.Local.LastOrDefault();
-
-            if (hostGroup != null)
+            builder.Entity<PresetTimeSale>().HasData(new PresetTimeSale[]
+           {
+                new() {Id = 1, Value = 1 },
+                new() {Id = 2, Value = 5 },
+                new() {Id = 3, Value = 15 },
+                new() {Id = 4, Value = 30 },
+                new() {Id = 5, Value = 60 }
+           });
+            builder.Entity<PresetTimeSaleMoney>().HasData(new PresetTimeSaleMoney[]
             {
-                cx.HostEndpoint.Add(new HostEndpoint() { Name = "XBOX-ONE-1", Number = 1, MaximumUsers = 4, HostGroup = hostGroup });
-                cx.HostEndpoint.Add(new HostEndpoint() { Name = "XBOX-ONE-2", Number = 2, MaximumUsers = 4, HostGroup = hostGroup });
-                cx.HostEndpoint.Add(new HostEndpoint() { Name = "PS4-1", Number = 3, MaximumUsers = 4, HostGroup = hostGroup });
-                cx.HostEndpoint.Add(new HostEndpoint() { Name = "WII-1", Number = 4, MaximumUsers = 4, HostGroup = hostGroup });
-            }
+                new() {Id = 1, Value = 1 },
+                new() {Id = 2, Value = 2 },
+                new() {Id = 3, Value = 5 },
+                new() {Id = 4, Value = 10 },
+                new() {Id = 5, Value = 20 }
+            });
+
+            #endregion
         }
 
-        private void AddPresetTime(ModelBuilder cx)
-        {
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 1 });
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 5 });
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 15 });
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 30 });
-            cx.PresetTimeSale.Add(new PresetTimeSale() { Value = 60 });
-
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 1 });
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 2 });
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 5 });
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 10 });
-            cx.PresetTimeSaleMoney.Add(new PresetTimeSaleMoney() { Value = 20 });
-        }
-        */
         #endregion
-
 
         #region NOTIFICATIONS
 

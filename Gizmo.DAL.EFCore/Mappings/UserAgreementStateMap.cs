@@ -38,7 +38,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);
             builder.HasOne(x => x.ModifiedBy).WithMany().HasForeignKey(x => x.ModifiedById);
 
-            builder.ToTable(nameof(Entities.UserAgreementState));
+            builder.ToTable(nameof(UserAgreementState));
         }
     }
 }

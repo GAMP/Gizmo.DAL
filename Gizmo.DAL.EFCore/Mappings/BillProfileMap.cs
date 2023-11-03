@@ -31,9 +31,6 @@ namespace Gizmo.DAL.Mappings
             builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
 
             builder.ToTable("BillProfile");
-
-            builder.HasData(new BillProfile() { Id = 1, Name = "Member Prices" });
-            builder.HasData(new BillProfile() { Id = 2, Name = "Guests Prices" });
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 
 namespace Gizmo.DAL.Mappings
 {
@@ -30,10 +30,6 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(x => x.Period)
                 .WithMany(x => x.Days)
                 .HasForeignKey(x => x.ProductPeriodId);
-
-            // Seeds
-            builder.HasData(new ProductPeriodDay() { Id = 7, ProductPeriodId = 7, Day = DayOfWeek.Saturday });
-            builder.HasData(new ProductPeriodDay() { Id = 8, ProductPeriodId = 7, Day = DayOfWeek.Sunday });
         }
     }
 }

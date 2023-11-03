@@ -31,15 +31,6 @@ namespace Gizmo.DAL.Mappings
 
             // Table & Column Mappings
             builder.ToTable("HostLayoutGroup");
-
-            // Seeds
-            var hostLayoutGroup = new HostLayoutGroup()
-            {
-                Id  = 1,
-                Name = "Default",
-                DisplayOrder = 0
-            };
-            builder.HasData(hostLayoutGroup);
         }
     }
 }

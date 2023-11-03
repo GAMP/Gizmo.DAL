@@ -29,7 +29,7 @@ namespace Gizmo.DAL.Mappings
                 .WithMany(x => x.FiscalReceipts)
                 .HasForeignKey(x => x.InvoiceId);
 
-            builder.ToTable(nameof(Entities.InvoiceFiscalReceipt));
+            builder.ToTable(nameof(InvoiceFiscalReceipt));
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false);            
 
             //Table name
-            builder.ToTable(nameof(Entities.FiscalReceipt));
+            builder.ToTable(nameof(FiscalReceipt));
         }
     }
 }

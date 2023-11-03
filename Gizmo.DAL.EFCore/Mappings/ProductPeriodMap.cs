@@ -1,7 +1,7 @@
 ﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedLib;
 
 namespace Gizmo.DAL.Mappings
 {
@@ -32,9 +32,6 @@ namespace Gizmo.DAL.Mappings
                 .WithOne(x => x.Period)
                 .HasForeignKey<ProductPeriod>(x => x.Id)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // Seeds
-            builder.HasData(new ProductPeriod() { Id = 7, Options = PeriodOptionType.None });
         }
     }
 }

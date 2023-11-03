@@ -2,7 +2,6 @@
 using Gizmo.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedLib;
 
 namespace Gizmo.DAL.Mappings
 {
@@ -93,10 +92,6 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(x => x.BillProfile)
                 .WithMany(x => x.UserGroups)
                 .HasForeignKey(x => x.BillProfileId);
-
-            // Seeds
-            builder.HasData(new UserGroup() { Id = 1, Name = "Members", BillProfileId = 1, IsDefault = true });
-            builder.HasData(new UserGroup() { Id = 2, Name = "Guests", Options = UserGroupOptionType.GuestUse, BillProfileId = 2 });
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 
 namespace Gizmo.DAL.Mappings
 {
@@ -34,9 +34,6 @@ namespace Gizmo.DAL.Mappings
                 .WithMany(t => t.Users)
                 .HasForeignKey(d => d.UserGroupId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            // Seeds
-            builder.HasData(new UserMember() { Id = 2, Username = "User", UserGroupId = 1, Guid = new Guid("38753737-24f1-40d7-8ac4-ba61660d666a") });
         }
     }
 }

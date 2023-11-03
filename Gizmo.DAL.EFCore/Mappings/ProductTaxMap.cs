@@ -42,15 +42,6 @@ namespace Gizmo.DAL.Mappings
                 .WithMany(x=>x.Products)
                 .HasForeignKey(x => x.TaxId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            // Seeds
-            builder.HasData(new ProductTax() { Id = 1, ProductId = 1, TaxId = 1});
-            builder.HasData(new ProductTax() { Id = 2, ProductId = 2, TaxId = 1});
-            builder.HasData(new ProductTax() { Id = 3, ProductId = 3, TaxId = 1});
-            builder.HasData(new ProductTax() { Id = 4, ProductId = 4, TaxId = 1});
-            builder.HasData(new ProductTax() { Id = 5, ProductId = 5, TaxId = 1});
-            builder.HasData(new ProductTax() { Id = 6, ProductId = 6, TaxId = 1});
-            builder.HasData(new ProductTax() { Id = 7, ProductId = 7, TaxId = 1});
         }
     }
 }
