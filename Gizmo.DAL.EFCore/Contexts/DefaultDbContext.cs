@@ -779,6 +779,7 @@ namespace Gizmo.DAL.Contexts
         /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region COMMON
             modelBuilder.ApplyConfiguration(new SettingMap());
             modelBuilder.ApplyConfiguration(new NewsMap());
             modelBuilder.ApplyConfiguration(new FeedMap());
@@ -786,16 +787,18 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new MappingMap());
             modelBuilder.ApplyConfiguration(new IconMap());
             modelBuilder.ApplyConfiguration(new AttributeMap());
+            #endregion
 
-            //TASK
+            #region TASK
             modelBuilder.ApplyConfiguration(new TaskBaseMap());
             modelBuilder.ApplyConfiguration(new TaskJunctionMap());
             modelBuilder.ApplyConfiguration(new TaskNotificationMap());
             modelBuilder.ApplyConfiguration(new TaskScriptMap());
             modelBuilder.ApplyConfiguration(new TaskProcessMap());
             modelBuilder.ApplyConfiguration(new ClientTaskMap());
+            #endregion
 
-            //USER
+            #region USER
             modelBuilder.ApplyConfiguration(new UserGroupMap());
             modelBuilder.ApplyConfiguration(new UserGroupHostDisallowedMap());
             modelBuilder.ApplyConfiguration(new UserMap());
@@ -808,8 +811,9 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new UserSessionChangeMap());
             modelBuilder.ApplyConfiguration(new UserPictureMap());
             modelBuilder.ApplyConfiguration(new UserCreditLimitMap());
+            #endregion
 
-            //HOST
+            #region HOST
             modelBuilder.ApplyConfiguration(new HostMap());
             modelBuilder.ApplyConfiguration(new HostEndpointMap());
             modelBuilder.ApplyConfiguration(new HostComputerMap());
@@ -817,15 +821,18 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new HostLayoutGroupMap());
             modelBuilder.ApplyConfiguration(new HostLayoutGroupImageMap());
             modelBuilder.ApplyConfiguration(new HostLayoutGroupLayoutMap());
+            #endregion
 
-            //LOG
+            #region LOG
             modelBuilder.ApplyConfiguration(new LogMap());
             modelBuilder.ApplyConfiguration(new LogExceptionMap());
+            #endregion
 
-            //PLUGIN LIBRARY
+            #region PLUGIN LIBRARY
             modelBuilder.ApplyConfiguration(new PluginLibraryMap());
+            #endregion
 
-            //APP
+            #region APP
             modelBuilder.ApplyConfiguration(new AppEnterpriseMap());
             modelBuilder.ApplyConfiguration(new AppCategoryMap());
             modelBuilder.ApplyConfiguration(new AppGroupMap());
@@ -853,8 +860,9 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new UserAttributeMap());
             modelBuilder.ApplyConfiguration(new NoteMap());
             modelBuilder.ApplyConfiguration(new UserNoteMap());
+            #endregion
 
-            //SEC
+            #region SEC
             modelBuilder.ApplyConfiguration(new SecurityProfileMap());
             modelBuilder.ApplyConfiguration(new SecurityProfilePolicyMap());
             modelBuilder.ApplyConfiguration(new SecurityProfileRestrictionMap());
@@ -908,16 +916,19 @@ namespace Gizmo.DAL.Contexts
 
             modelBuilder.ApplyConfiguration(new PresetTimeSaleMap());
             modelBuilder.ApplyConfiguration(new PresetTimeSaleMoneyMap());
+            #endregion
 
-            //TRANSACTIONS
+            #region TRANSACTIONS
             modelBuilder.ApplyConfiguration(new DepositTransactionMap());
             modelBuilder.ApplyConfiguration(new PointTransactionMap());
             modelBuilder.ApplyConfiguration(new StockTransactionMap());
+            #endregion
 
-            //PAYMENT
+            #region PAYMENT
             modelBuilder.ApplyConfiguration(new DepositPaymentMap());
+            #endregion
 
-            //INVOICING
+            #region INVOICING
             modelBuilder.ApplyConfiguration(new InvoiceMap());
             modelBuilder.ApplyConfiguration(new InvoicePaymentMap());
             modelBuilder.ApplyConfiguration(new InvoiceLineMap());
@@ -953,8 +964,9 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new ReservationMap());
             modelBuilder.ApplyConfiguration(new ReservationUserMap());
             modelBuilder.ApplyConfiguration(new ReservationHostMap());
+            #endregion
 
-            //devices
+            #region DEVICES
             modelBuilder.ApplyConfiguration(new DeviceMap());
             modelBuilder.ApplyConfiguration(new DeviceHdmiMap());
             modelBuilder.ApplyConfiguration(new DeviceHostMap());
@@ -970,15 +982,19 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new PaymentIntentMap());
             modelBuilder.ApplyConfiguration(new PaymentIntentDepositMap());
             modelBuilder.ApplyConfiguration(new PaymentIntentOrderMap());
+            #endregion
 
-            //GLOBAL CONFIGURATIONS
+            #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
+            #endregion
 
-            //SEED
+            #region SEED
             Seed(modelBuilder);
+            #endregion
 
-            //BASE MODEL CREATION
+            #region BASE MODEL CREATION
             base.OnModelCreating(modelBuilder);
+            #endregion
         }
 
         /// <summary>
@@ -1896,7 +1912,7 @@ namespace Gizmo.DAL.Contexts
             };
 
             var products = new Product[] { productMars, productSnickers, productCocaCola, productPizza };
-            
+
             var productBundlePizzaAndCola = new ProductBundle()
             {
                 Id = 5,
@@ -1916,7 +1932,7 @@ namespace Gizmo.DAL.Contexts
 
             var productPeriod = new ProductPeriod()
             {
-                Id = 1  ,
+                Id = 1,
                 Options = PeriodOptionType.None
             };
             var productPeriodDays = new ProductPeriodDay[]
