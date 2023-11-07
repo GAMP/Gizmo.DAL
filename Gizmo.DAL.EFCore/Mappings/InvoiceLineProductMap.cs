@@ -14,9 +14,12 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(InvoiceLineProduct));
 
             // Indexes
-            builder.HasIndex(t => t.OrderLineId).HasDatabaseName("UQ_OrderLine").IsUnique();
             builder.HasIndex(t => t.Id);
-            
+            builder.HasIndex(t => t.OrderLineId)
+                .HasDatabaseName("UQ_OrderLine")
+                .IsUnique()
+                .HasFilter(null);
+
             builder.HasOne(x => x.Product)
                 .WithMany(x => x.InvoiceLines)
                 .HasForeignKey(x => x.ProductId)

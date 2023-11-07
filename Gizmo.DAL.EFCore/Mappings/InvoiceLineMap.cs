@@ -83,7 +83,9 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(21);
 
             // Indexes
-            builder.HasIndex(t => t.PointsTransactionId).HasDatabaseName("UQ_PointsTransaction").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.PointsTransactionId)
+                .HasDatabaseName("UQ_PointsTransaction")
+                .IsUnique();
 
             builder.HasOne(x => x.Invoice)
                 .WithMany(x => x.InvoiceLines)

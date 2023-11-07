@@ -35,6 +35,7 @@ namespace Gizmo.DAL.Contexts
         /// <param name="options">Default database options</param>
         public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)
         {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
