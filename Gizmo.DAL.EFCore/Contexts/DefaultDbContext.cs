@@ -17,6 +17,7 @@ using GizmoDALV2;
 using Gizmo.DAL.Mappings;
 using SharedLib;
 using System.Globalization;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Gizmo.DAL.Contexts
 {
@@ -1708,6 +1709,19 @@ namespace Gizmo.DAL.Contexts
         {
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
+                foreach(var fk in entity.GetForeignKeys())
+                {
+                    var fkName = fk.GetDefaultName();
+
+                    var splitted = fkName.Split('_').ToList();
+                    if (splitted.Count < 4)
+                        continue;
+
+                    string constraintName = $"{splitted[0]}_dbo.{splitted[1]}_dbo.{splitted[2]}_{splitted[3]}";
+
+                    fk.SetConstraintName(constraintName);
+                }
+
                 foreach (var index in entity.GetIndexes())
                 {
                     var indexName = index.GetDatabaseName();
