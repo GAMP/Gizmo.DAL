@@ -1,3 +1,12 @@
 ﻿HasData will have problems with subequent migrations when any dynamic values such as CreationTime, Password used
 This is because ModelSnapshot will have different values thus any new migration will generate update for them
 
+Tasks
+
+1) Find duplicate indexes that will collide in Postgre and rename them to unique names for both database types.
+   Review unique index convention, we should prefer using standard naming instead of using our own custom UQ_ prefix.
+2) Find any indexes or collumns that exceed Postgre limits and rename them to compatible names for both database types.
+3) Come up with an EF6 existing datbase migration strategy, an custom migration or update scrip is acceptable.
+   The goal is to have existing EF6 database to match the EF Core based database 100% so there will be no future conflicts
+   when new migration will try to modify the database structure.
+
