@@ -984,6 +984,12 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new PaymentIntentOrderMap());
             #endregion
 
+            #region ASSISTANCE REQUEST
+            modelBuilder.ApplyConfiguration(new AssistanceRequestMap());
+            modelBuilder.ApplyConfiguration(new AssistanceRequestTypeMap()); 
+            #endregion
+
+
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
             #endregion
