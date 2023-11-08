@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace _
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20231101092547_MSSQLInitialCreate")]
+    [Migration("20231108071633_MSSQLInitialCreate")]
     partial class MSSQLInitialCreate
     {
         /// <inheritdoc />
@@ -1555,7 +1555,7 @@ namespace _
                             Options = 0,
                             Price = 1m,
                             ProductBundleId = 5,
-                            ProductId = 3,
+                            ProductId = 4,
                             Quantity = 1m
                         },
                         new
@@ -1566,7 +1566,7 @@ namespace _
                             Options = 0,
                             Price = 2m,
                             ProductBundleId = 5,
-                            ProductId = 4,
+                            ProductId = 3,
                             Quantity = 1m
                         });
                 });
@@ -2973,7 +2973,8 @@ namespace _
 
                     b.HasIndex("PointsTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_PointsTransaction");
+                        .HasDatabaseName("UQ_PointsTransaction")
+                        .HasFilter("[PointsTransactionId] IS NOT NULL");
 
                     b.HasIndex("RegisterId")
                         .HasDatabaseName("IX_RegisterId");
@@ -5005,7 +5006,7 @@ namespace _
                     b.HasData(
                         new
                         {
-                            Id = 7,
+                            Id = 1,
                             Options = 0
                         });
                 });
@@ -5037,15 +5038,15 @@ namespace _
                     b.HasData(
                         new
                         {
-                            Id = 7,
+                            Id = 1,
                             Day = 6,
-                            ProductPeriodId = 7
+                            ProductPeriodId = 1
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 2,
                             Day = 0,
-                            ProductPeriodId = 7
+                            ProductPeriodId = 1
                         });
                 });
 
@@ -5262,13 +5263,6 @@ namespace _
                         .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("ProductTimePeriod", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 6,
-                            Options = 0
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductTimePeriodDay", b =>
@@ -6857,8 +6851,8 @@ namespace _
                         {
                             Id = 1,
                             CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = new byte[] { 227, 190, 117, 189, 14, 131, 27, 251, 244, 196, 14, 55, 126, 183, 143, 152, 146, 122, 121, 195, 5, 57, 241, 24, 184, 41, 122, 231, 166, 174, 210, 155, 233, 8, 83, 128, 145, 208, 28, 139, 149, 46, 168, 246, 21, 38, 126, 197, 29, 147, 234, 81, 253, 218, 217, 136, 216, 237, 206, 196, 113, 231, 152, 52 },
-                            Salt = new byte[] { 213, 217, 89, 164, 125, 194, 157, 170, 86, 35, 202, 5, 236, 165, 229, 151, 191, 209, 130, 41, 234, 120, 64, 104, 216, 200, 194, 9, 221, 163, 100, 236, 125, 143, 49, 114, 227, 161, 166, 20, 120, 7, 250, 81, 128, 236, 241, 116, 231, 235, 216, 208, 131, 155, 104, 218, 249, 75, 34, 190, 62, 160, 147, 82, 158, 78, 172, 74, 131, 17, 26, 236, 95, 7, 190, 245, 165, 235, 103, 17, 172, 55, 141, 182, 51, 96, 212, 209, 67, 164, 111, 234, 83, 101, 64, 224, 84, 84, 54, 4 }
+                            Password = new byte[] { 83, 85, 227, 15, 78, 232, 180, 20, 79, 103, 15, 129, 10, 3, 147, 126, 239, 126, 93, 160, 96, 159, 159, 171, 75, 146, 156, 64, 102, 115, 131, 210, 243, 219, 214, 200, 104, 163, 120, 128, 217, 173, 12, 84, 51, 200, 142, 86, 133, 24, 98, 54, 195, 158, 10, 216, 230, 203, 100, 128, 223, 32, 7, 134 },
+                            Salt = new byte[] { 122, 20, 170, 207, 168, 134, 14, 116, 132, 207, 72, 238, 236, 130, 222, 250, 181, 146, 250, 184, 202, 112, 56, 82, 103, 23, 34, 243, 224, 174, 161, 14, 142, 244, 60, 245, 219, 79, 33, 181, 48, 74, 108, 244, 211, 197, 191, 120, 86, 58, 255, 225, 4, 59, 42, 86, 91, 159, 213, 202, 225, 155, 196, 188, 16, 26, 133, 226, 69, 188, 244, 43, 23, 65, 152, 246, 180, 11, 171, 65, 169, 52, 86, 192, 92, 75, 151, 142, 130, 26, 183, 149, 14, 247, 125, 118, 169, 71, 193, 27 }
                         });
                 });
 
@@ -8660,7 +8654,7 @@ namespace _
                         new
                         {
                             Id = 1,
-                            CreatedTime = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedTime = new DateTime(2023, 11, 8, 7, 16, 30, 216, DateTimeKind.Unspecified).AddTicks(6704),
                             Guid = new Guid("691ea8b4-d794-4096-84ae-bbdb7bcc0b02"),
                             IsDeleted = false,
                             IsDisabled = false,
@@ -8752,8 +8746,7 @@ namespace _
 
                     b.HasIndex("OrderLineId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine")
-                        .HasFilter("[OrderLineId] IS NOT NULL");
+                        .HasDatabaseName("UQ_OrderLine");
 
                     b.HasIndex("ProductId")
                         .HasDatabaseName("IX_ProductId");
@@ -8829,6 +8822,24 @@ namespace _
                         },
                         new
                         {
+                            Id = 4,
+                            Cost = 1.20m,
+                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 0,
+                            Guid = new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba4"),
+                            IsDeleted = false,
+                            Name = "Coca Cola (Can)",
+                            OrderOptions = 0,
+                            Points = 20,
+                            Price = 2.0m,
+                            ProductGroupId = 3,
+                            PurchaseOptions = 0,
+                            StockAlert = 0m,
+                            StockOptions = 1,
+                            StockProductAmount = 0m
+                        },
+                        new
+                        {
                             Id = 3,
                             Cost = 2.20m,
                             CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -8839,23 +8850,6 @@ namespace _
                             OrderOptions = 0,
                             Price = 6.0m,
                             ProductGroupId = 2,
-                            PurchaseOptions = 0,
-                            StockAlert = 0m,
-                            StockOptions = 0,
-                            StockProductAmount = 0m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Cost = 1.20m,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Guid = new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba4"),
-                            IsDeleted = false,
-                            Name = "Coca Cola (Can)",
-                            OrderOptions = 0,
-                            Price = 2.0m,
-                            ProductGroupId = 3,
                             PurchaseOptions = 0,
                             StockAlert = 0m,
                             StockOptions = 0,
@@ -9009,23 +9003,28 @@ namespace _
                         .WithMany("Apps")
                         .HasForeignKey("AppCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.App_dbo.AppCategory_AppCategoryId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.App_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.AppEnterprise", "Developer")
                         .WithMany("DevelopedApps")
-                        .HasForeignKey("DeveloperId");
+                        .HasForeignKey("DeveloperId")
+                        .HasConstraintName("FK_dbo.App_dbo.AppEnterprise_DeveloperId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.App_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.AppEnterprise", "Publisher")
                         .WithMany("PublishedApps")
-                        .HasForeignKey("PublisherId");
+                        .HasForeignKey("PublisherId")
+                        .HasConstraintName("FK_dbo.App_dbo.AppEnterprise_PublisherId");
 
                     b.Navigation("AppCategory");
 
@@ -9042,15 +9041,18 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppCategory_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppCategory_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.AppCategory", "Parent")
                         .WithMany("Children")
-                        .HasForeignKey("ParentId");
+                        .HasForeignKey("ParentId")
+                        .HasConstraintName("FK_dbo.AppCategory_dbo.AppCategory_ParentId");
 
                     b.Navigation("CreatedBy");
 
@@ -9063,11 +9065,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppEnterprise_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppEnterprise_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9080,19 +9084,23 @@ namespace _
                         .WithMany("AppExes")
                         .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExe_dbo.App_AppId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppExe_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Deployment", "DefaultDeployment")
                         .WithMany("DefaultedAppExes")
-                        .HasForeignKey("DefaultDeploymentId");
+                        .HasForeignKey("DefaultDeploymentId")
+                        .HasConstraintName("FK_dbo.AppExe_dbo.Deployment_DefaultDeploymentId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppExe_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("App");
 
@@ -9109,15 +9117,18 @@ namespace _
                         .WithMany("AppExeCdImages")
                         .HasForeignKey("AppExeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExeCdImage_dbo.AppExe_AppExeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppExeCdImage_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppExeCdImage_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("AppExe");
 
@@ -9132,21 +9143,25 @@ namespace _
                         .WithMany("Deployments")
                         .HasForeignKey("AppExeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExeDeployment_dbo.AppExe_AppExeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppExeDeployment_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Deployment", "Deployment")
                         .WithMany("DependentAppExes")
                         .HasForeignKey("DeploymentId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExeDeployment_dbo.Deployment_DeploymentId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppExeDeployment_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("AppExe");
 
@@ -9161,17 +9176,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppExeImage_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.AppExe", "AppExe")
                         .WithOne("Image")
                         .HasForeignKey("Gizmo.DAL.Entities.AppExeImage", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExeImage_dbo.AppExe_AppExeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppExeImage_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("AppExe");
 
@@ -9186,21 +9204,25 @@ namespace _
                         .WithMany("Licenses")
                         .HasForeignKey("AppExeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExeLicense_dbo.AppExe_AppExeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppExeLicense_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.License", "License")
                         .WithMany("AppExes")
                         .HasForeignKey("LicenseId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExeLicense_dbo.License_LicenseId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppExeLicense_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("AppExe");
 
@@ -9217,15 +9239,18 @@ namespace _
                         .WithMany("MaxUsers")
                         .HasForeignKey("AppExeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExeMaxUser_dbo.AppExe_AppExeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppExeMaxUser_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppExeMaxUser_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("AppExe");
 
@@ -9240,21 +9265,25 @@ namespace _
                         .WithMany("PersonalFiles")
                         .HasForeignKey("AppExeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExePersonalFile_dbo.AppExe_AppExeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppExePersonalFile_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppExePersonalFile_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.PersonalFile", "PersonalFile")
                         .WithMany("AppExes")
                         .HasForeignKey("PersonalFileId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExePersonalFile_dbo.PersonalFile_PersonalFileId");
 
                     b.Navigation("AppExe");
 
@@ -9271,21 +9300,25 @@ namespace _
                         .WithMany("Tasks")
                         .HasForeignKey("AppExeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExeTask_dbo.AppExe_AppExeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppExeTask_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppExeTask_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.TaskBase", "TaskBase")
                         .WithMany("UsedByAppExe")
                         .HasForeignKey("TaskBaseId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppExeTask_dbo.TaskBase_TaskBaseId");
 
                     b.Navigation("AppExe");
 
@@ -9300,11 +9333,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppGroup_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppGroup_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9317,13 +9352,15 @@ namespace _
                         .WithMany("Apps")
                         .HasForeignKey("AppGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppGroupApp_dbo.AppGroup_AppGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.App", "App")
                         .WithMany("AppGroups")
                         .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppGroupApp_dbo.App_AppId");
 
                     b.Navigation("App");
 
@@ -9334,17 +9371,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppImage_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.App", "App")
                         .WithOne("Image")
                         .HasForeignKey("Gizmo.DAL.Entities.AppImage", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppImage_dbo.App_AppId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppImage_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("App");
 
@@ -9359,15 +9399,18 @@ namespace _
                         .WithMany("AppLinks")
                         .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppLink_dbo.App_AppId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AppLink_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AppLink_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("App");
 
@@ -9382,13 +9425,15 @@ namespace _
                         .WithMany("AppRatings")
                         .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppRating_dbo.App_AppId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("AppRatings")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppRating_dbo.UserMember_UserId");
 
                     b.Navigation("App");
 
@@ -9401,25 +9446,29 @@ namespace _
                         .WithMany("AppStats")
                         .HasForeignKey("AppExeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppStat_dbo.AppExe_AppExeId");
 
                     b.HasOne("Gizmo.DAL.Entities.App", "App")
                         .WithMany("AppStats")
                         .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppStat_dbo.App_AppId");
 
                     b.HasOne("Gizmo.DAL.Entities.HostComputer", "Host")
                         .WithMany("AppStats")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppStat_dbo.HostComputer_HostId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("AppStats")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AppStat_dbo.UserMember_UserId");
 
                     b.Navigation("App");
 
@@ -9436,15 +9485,18 @@ namespace _
                         .WithMany("Assets")
                         .HasForeignKey("AssetTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Asset_dbo.AssetType_AssetTypeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Asset_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Asset_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("AssetType");
 
@@ -9459,31 +9511,37 @@ namespace _
                         .WithMany("Transactions")
                         .HasForeignKey("AssetId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AssetTransaction_dbo.Asset_AssetId");
 
                     b.HasOne("Gizmo.DAL.Entities.AssetType", "AssetType")
                         .WithMany("Transactions")
                         .HasForeignKey("AssetTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AssetTransaction_dbo.AssetType_AssetTypeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CheckedInBy")
                         .WithMany()
-                        .HasForeignKey("CheckedInById");
+                        .HasForeignKey("CheckedInById")
+                        .HasConstraintName("FK_dbo.AssetTransaction_dbo.UserOperator_CheckedInById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AssetTransaction_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AssetTransaction_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("AssetTransactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AssetTransaction_dbo.UserMember_UserId");
 
                     b.Navigation("Asset");
 
@@ -9502,11 +9560,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AssetType_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AssetType_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9519,25 +9579,30 @@ namespace _
                         .WithMany("AssistanceRequests")
                         .HasForeignKey("AssistanceRequestTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AssistanceRequest_dbo.AssistanceRequestType_AssistanceRequestTypeId");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AssistanceRequest_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "Host")
                         .WithMany("AssitanceRequests")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.AssistanceRequest_dbo.Host_HostId");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AssistanceRequest_dbo.User_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_dbo.AssistanceRequest_dbo.UserMember_UserId");
 
                     b.Navigation("AssistanceRequestType");
 
@@ -9554,11 +9619,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.AssistanceRequestType_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.AssistanceRequestType_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9569,11 +9636,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Attribute_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Attribute_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9584,11 +9653,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.BillProfile_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.BillProfile_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9601,7 +9672,8 @@ namespace _
                         .WithMany("BillRates")
                         .HasForeignKey("BillProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.BillRate_dbo.BillProfile_BillProfileId");
 
                     b.Navigation("BillProfile");
                 });
@@ -9612,7 +9684,8 @@ namespace _
                         .WithMany("Days")
                         .HasForeignKey("BillRateId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.BillRatePeriodDay_dbo.BillRate_BillRateId");
 
                     b.Navigation("BillRate");
                 });
@@ -9623,7 +9696,8 @@ namespace _
                         .WithMany("Times")
                         .HasForeignKey("PeriodDayId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.BillRatePeriodDayTime_dbo.BillRatePeriodDay_PeriodDayId");
 
                     b.Navigation("Day");
                 });
@@ -9634,7 +9708,8 @@ namespace _
                         .WithMany("BillRateSteps")
                         .HasForeignKey("BillRateId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.BillRateStep_dbo.BillRate_BillRateId");
 
                     b.Navigation("BillRate");
                 });
@@ -9643,23 +9718,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.BundleProduct_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.BundleProduct_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBundle", "ProductBundle")
                         .WithMany("BundledProducts")
                         .HasForeignKey("ProductBundleId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.BundleProduct_dbo.ProductBundle_ProductBundleId");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.BundleProduct_dbo.ProductBase_ProductId");
 
                     b.Navigation("CreatedBy");
 
@@ -9676,21 +9755,25 @@ namespace _
                         .WithMany("UserPrices")
                         .HasForeignKey("BundleProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.BundleProductUserPrice_dbo.BundleProduct_BundleProductId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.BundleProductUserPrice_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.BundleProductUserPrice_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserGroup", "UserGroup")
                         .WithMany()
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.BundleProductUserPrice_dbo.UserGroup_UserGroupId");
 
                     b.Navigation("BundleProduct");
 
@@ -9705,17 +9788,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ClientTask_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ClientTask_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.TaskBase", "TaskBase")
                         .WithMany("UsedByTask")
                         .HasForeignKey("TaskBaseId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ClientTask_dbo.TaskBase_TaskBaseId");
 
                     b.Navigation("CreatedBy");
 
@@ -9728,11 +9814,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Deployment_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Deployment_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9745,21 +9833,25 @@ namespace _
                         .WithMany("Dependent")
                         .HasForeignKey("ChildId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.DeploymentDeployment_dbo.Deployment_ChildId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.DeploymentDeployment_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.DeploymentDeployment_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Deployment", "Parent")
                         .WithMany("Dependencies")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.DeploymentDeployment_dbo.Deployment_ParentId");
 
                     b.Navigation("Child");
 
@@ -9774,41 +9866,49 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.DepositPayment_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.DepositTransaction", "DepositTransaction")
                         .WithMany()
                         .HasForeignKey("DepositTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.DepositPayment_dbo.DepositTransaction_DepositTransactionId");
 
                     b.HasOne("Gizmo.DAL.Entities.FiscalReceipt", "FiscalReceipt")
                         .WithMany()
-                        .HasForeignKey("FiscalReceiptId");
+                        .HasForeignKey("FiscalReceiptId")
+                        .HasConstraintName("FK_dbo.DepositPayment_dbo.FiscalReceipt_FiscalReceiptId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.DepositPayment_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Payment", "Payment")
                         .WithMany()
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.DepositPayment_dbo.Payment_PaymentId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.DepositPayment_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany("DepositPayments")
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.DepositPayment_dbo.Shift_ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("DepositPayments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.DepositPayment_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -9831,25 +9931,30 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany("CreatedDeposits")
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.DepositTransaction_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany("ModifiedDeposits")
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.DepositTransaction_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.DepositTransaction_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany("Deposits")
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.DepositTransaction_dbo.Shift_ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("Deposits")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.DepositTransaction_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -9866,11 +9971,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Device_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Device_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9881,23 +9988,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.DeviceHost_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Device", "Device")
                         .WithMany("Hosts")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.DeviceHost_dbo.Device_DeviceId");
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "Host")
                         .WithMany("Devices")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.DeviceHost_dbo.Host_HostId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.DeviceHost_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9912,11 +10023,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Feed_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Feed_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9927,15 +10040,18 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.FiscalReceipt_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.FiscalReceipt_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany()
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.FiscalReceipt_dbo.Shift_ShiftId");
 
                     b.Navigation("CreatedBy");
 
@@ -9948,19 +10064,23 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Host_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.HostGroup", "HostGroup")
                         .WithMany("Hosts")
-                        .HasForeignKey("HostGroupId");
+                        .HasForeignKey("HostGroupId")
+                        .HasConstraintName("FK_dbo.Host_dbo.HostGroup_HostGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.Icon", "Icon")
                         .WithMany()
-                        .HasForeignKey("IconId");
+                        .HasForeignKey("IconId")
+                        .HasConstraintName("FK_dbo.Host_dbo.Icon_IconId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Host_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -9975,23 +10095,28 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.AppGroup", "AppGroup")
                         .WithMany("HostGroups")
-                        .HasForeignKey("AppGroupId");
+                        .HasForeignKey("AppGroupId")
+                        .HasConstraintName("FK_dbo.HostGroup_dbo.AppGroup_AppGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.HostGroup_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserGroup", "DefaultGuestGroup")
                         .WithMany()
-                        .HasForeignKey("DefaultGuestGroupId");
+                        .HasForeignKey("DefaultGuestGroupId")
+                        .HasConstraintName("FK_dbo.HostGroup_dbo.UserGroup_DefaultGuestGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.HostGroup_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.SecurityProfile", "SecurityProfile")
                         .WithMany("HostGroups")
-                        .HasForeignKey("SecurityProfileId");
+                        .HasForeignKey("SecurityProfileId")
+                        .HasConstraintName("FK_dbo.HostGroup_dbo.SecurityProfile_SecurityProfileId");
 
                     b.Navigation("AppGroup");
 
@@ -10010,19 +10135,22 @@ namespace _
                         .WithMany()
                         .HasForeignKey("BillProfileId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostGroupUserBillProfile_dbo.BillProfile_BillProfileId");
 
                     b.HasOne("Gizmo.DAL.Entities.HostGroup", "HostGroup")
                         .WithMany("UserBillProfiles")
                         .HasForeignKey("HostGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostGroupUserBillProfile_dbo.HostGroup_HostGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserGroup", "UserGroup")
                         .WithMany()
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostGroupUserBillProfile_dbo.UserGroup_UserGroupId");
 
                     b.Navigation("BillProfile");
 
@@ -10035,17 +10163,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.HostGroupWaitingLine_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.HostGroup", "HostGroup")
                         .WithOne("WaitingLine")
                         .HasForeignKey("Gizmo.DAL.Entities.HostGroupWaitingLine", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostGroupWaitingLine_dbo.HostGroup_HosGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.HostGroupWaitingLine_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10058,29 +10189,34 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.HostGroupWaitingLineEntry_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.HostGroup", "HostGroup")
                         .WithMany("WaitingLineEntries")
                         .HasForeignKey("HostGroupId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostGroupWaitingLineEntry_dbo.HostGroup_HostGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.HostGroupWaitingLine", "WatingLine")
                         .WithMany("Entries")
                         .HasForeignKey("HostGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostGroupWaitingLineEntry_dbo.HostGroupWaitingLine_HostGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.HostGroupWaitingLineEntry_dbo.User_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostGroupWaitingLineEntry_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -10097,11 +10233,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.HostLayoutGroup_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.HostLayoutGroup_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10112,17 +10250,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.HostLayoutGroupImage_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.HostLayoutGroup", "HostLayoutGroup")
                         .WithOne("Image")
                         .HasForeignKey("Gizmo.DAL.Entities.HostLayoutGroupImage", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostLayoutGroupImage_dbo.HostLayoutGroup_HostLayoutGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.HostLayoutGroupImage_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10135,23 +10276,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.HostLayoutGroupLayout_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "Host")
                         .WithMany("Layouts")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostLayoutGroupLayout_dbo.Host_HostId");
 
                     b.HasOne("Gizmo.DAL.Entities.HostLayoutGroup", "HostLayoutGroup")
                         .WithMany("Layouts")
                         .HasForeignKey("HostLayoutGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.HostLayoutGroupLayout_dbo.HostLayoutGroup_HostLayoutGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.HostLayoutGroupLayout_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10166,11 +10311,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Icon_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Icon_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10181,31 +10328,37 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Invoice_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Invoice_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductOrder", "ProductOrder")
                         .WithMany("Invoices")
                         .HasForeignKey("ProductOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Invoice_dbo.ProductOrder_ProductOrderId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.Invoice_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany()
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.Invoice_dbo.Shift_ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("Invoices")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Invoice_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -10224,27 +10377,32 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.InvoiceFiscalReceipt_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.FiscalReceipt", "FiscalReceipt")
                         .WithMany()
                         .HasForeignKey("FiscalReceiptId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceFiscalReceipt_dbo.FiscalReceipt_FiscalReceiptId");
 
                     b.HasOne("Gizmo.DAL.Entities.Invoice", "Invoice")
                         .WithMany("FiscalReceipts")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceFiscalReceipt_dbo.Invoice_InvoiceId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.InvoiceFiscalReceipt_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany()
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.InvoiceFiscalReceipt_dbo.Shift_ShiftId");
 
                     b.Navigation("CreatedBy");
 
@@ -10261,36 +10419,43 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.InvoiceLine_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Invoice", "Invoice")
                         .WithMany("InvoiceLines")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceLine_dbo.Invoice_InvoiceId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.InvoiceLine_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.PointTransaction", "PointsTransaction")
                         .WithMany()
                         .HasForeignKey("PointsTransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.InvoiceLine_dbo.PointTransaction_PointsTransactionId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.InvoiceLine_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany()
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.InvoiceLine_dbo.Shift_ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("InvoiceLines")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceLine_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -10311,37 +10476,44 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.InvoicePayment_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Invoice", "Invoice")
                         .WithMany("InvoicePayments")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoicePayment_dbo.Invoice_InvoiceId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.InvoicePayment_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Payment", "Payment")
                         .WithMany()
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoicePayment_dbo.Payment_PaymentId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.InvoicePayment_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany("InvoicePayment")
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.InvoicePayment_dbo.Shift_ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("InvoicePayments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoicePayment_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -10362,11 +10534,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.License_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.License_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10377,21 +10551,25 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.HostComputer", "AssignedHost")
                         .WithMany()
-                        .HasForeignKey("AssignedHostId");
+                        .HasForeignKey("AssignedHostId")
+                        .HasConstraintName("FK_dbo.LicenseKey_dbo.HostComputer_AssignedHostId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.LicenseKey_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.License", "License")
                         .WithMany("LicenseKeys")
                         .HasForeignKey("LicenseId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.LicenseKey_dbo.License_LicenseId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.LicenseKey_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("AssignedHost");
 
@@ -10408,7 +10586,8 @@ namespace _
                         .WithOne("Exception")
                         .HasForeignKey("Gizmo.DAL.Entities.LogException", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.LogException_dbo.Log_LogId");
 
                     b.Navigation("Message");
                 });
@@ -10417,11 +10596,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Mapping_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Mapping_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10432,11 +10613,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.MonetaryUnit_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.MonetaryUnit_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10447,11 +10630,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.News_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.News_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10462,11 +10647,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Note_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Note_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10477,39 +10664,47 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany("CreatedPayments")
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Payment_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.DepositTransaction", "DepositTransaction")
                         .WithMany()
-                        .HasForeignKey("DepositTransactionId");
+                        .HasForeignKey("DepositTransactionId")
+                        .HasConstraintName("FK_dbo.Payment_dbo.DepositTransaction_DepositTransactionId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany("ModifiedPayments")
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Payment_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Payment_dbo.PaymentMethod_PaymentMethodId");
 
                     b.HasOne("Gizmo.DAL.Entities.PointTransaction", "PointTransaction")
                         .WithMany()
-                        .HasForeignKey("PointTransactionId");
+                        .HasForeignKey("PointTransactionId")
+                        .HasConstraintName("FK_dbo.Payment_dbo.PointTransaction_PointTransactionId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.Payment_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany("Payments")
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.Payment_dbo.Shift_ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("Payments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Payment_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -10532,23 +10727,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.PaymentIntent_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.PaymentIntent_dbo.User_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany("PaymentIntents")
                         .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.PaymentIntent_dbo.PaymentMethod_PaymentMethodId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("PaymentIntents")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.PaymentIntent_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -10563,11 +10762,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.PaymentMethod_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.PaymentMethod_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10578,11 +10779,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.PersonalFile_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.PersonalFile_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10593,11 +10796,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.PluginLibrary_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.PluginLibrary_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10608,25 +10813,30 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.PointTransaction_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.PointTransaction_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.PointTransaction_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany()
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.PointTransaction_dbo.Shift_ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("LoayalityPoints")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.PointTransaction_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -10643,11 +10853,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.PresetTimeSale_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.PresetTimeSale_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10658,11 +10870,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.PresetTimeSaleMoney_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.PresetTimeSaleMoney_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -10673,21 +10887,25 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductBase_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductBase_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductGroup", "ProductGroup")
                         .WithMany("Products")
                         .HasForeignKey("ProductGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductBase_dbo.ProductGroup_ProductGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "StockProduct")
                         .WithMany()
-                        .HasForeignKey("StockProductId");
+                        .HasForeignKey("StockProductId")
+                        .HasConstraintName("FK_dbo.ProductBase_dbo.ProductBase_StockProductId");
 
                     b.Navigation("CreatedBy");
 
@@ -10702,23 +10920,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductBundleUserPrice_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductBundleUserPrice_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBundle", "ProductBundle")
                         .WithMany("UserPrices")
                         .HasForeignKey("ProductBundleId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductBundleUserPrice_dbo.ProductBundle_ProductBundleId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserGroup", "UserGroup")
                         .WithMany()
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductBundleUserPrice_dbo.UserGroup_UserGroupId");
 
                     b.Navigation("CreatedBy");
 
@@ -10733,15 +10955,18 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductGroup_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductGroup_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductGroup", "Parent")
                         .WithMany("ChildGroups")
-                        .HasForeignKey("ParentId");
+                        .HasForeignKey("ParentId")
+                        .HasConstraintName("FK_dbo.ProductGroup_dbo.ProductGroup_ParentId");
 
                     b.Navigation("CreatedBy");
 
@@ -10754,23 +10979,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductHostHidden_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.HostGroup", "HostGroup")
                         .WithMany("HiddenProducts")
                         .HasForeignKey("HostGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductHostHidden_dbo.HostGroup_HostGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductHostHidden_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
                         .WithMany("HiddenHostGroups")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductHostHidden_dbo.ProductBase_ProductId");
 
                     b.Navigation("CreatedBy");
 
@@ -10785,17 +11014,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductImage_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductImage_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
                         .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductImage_dbo.ProductBase_ProductId");
 
                     b.Navigation("CreatedBy");
 
@@ -10808,31 +11040,37 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductOL_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductOL_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductOrder", "ProductOrder")
                         .WithMany("OrderLines")
                         .HasForeignKey("ProductOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductOL_dbo.ProductOrder_ProductOrderId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.ProductOL_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany()
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.ProductOL_dbo.Shift_ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("ProductOrdersLines")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductOL_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -10851,33 +11089,40 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany("CreatedOrders")
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductOrder_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "Host")
                         .WithMany("ProductOrders")
-                        .HasForeignKey("HostId");
+                        .HasForeignKey("HostId")
+                        .HasConstraintName("FK_dbo.ProductOrder_dbo.Host_HostId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany("ModifiedOrders")
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductOrder_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.PaymentMethod", "PreferedPaymentMethod")
                         .WithMany()
-                        .HasForeignKey("PreferedPaymentMethodId");
+                        .HasForeignKey("PreferedPaymentMethodId")
+                        .HasConstraintName("FK_dbo.ProductOrder_dbo.PaymentMethod_PreferedPaymentMethodId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.ProductOrder_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany()
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.ProductOrder_dbo.Shift_ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("ProductOrders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductOrder_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -10900,7 +11145,8 @@ namespace _
                         .WithOne("Period")
                         .HasForeignKey("Gizmo.DAL.Entities.ProductPeriod", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductPeriod_dbo.ProductBase_ProductId");
 
                     b.Navigation("Product");
                 });
@@ -10911,7 +11157,8 @@ namespace _
                         .WithMany("Days")
                         .HasForeignKey("ProductPeriodId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductPeriodDay_dbo.ProductPeriod_ProductPeriodId");
 
                     b.Navigation("Period");
                 });
@@ -10922,7 +11169,8 @@ namespace _
                         .WithMany("Times")
                         .HasForeignKey("PeriodDayId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductPeriodDayTime_dbo.ProductPeriodDay_PeriodDayId");
 
                     b.Navigation("Day");
                 });
@@ -10931,23 +11179,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductTax_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductTax_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
                         .WithMany("Taxes")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductTax_dbo.ProductBase_ProductId");
 
                     b.HasOne("Gizmo.DAL.Entities.Tax", "Tax")
                         .WithMany("Products")
                         .HasForeignKey("TaxId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductTax_dbo.Tax_TaxId");
 
                     b.Navigation("CreatedBy");
 
@@ -10962,23 +11214,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductTimeHostDisallowed_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.HostGroup", "HostGroup")
                         .WithMany("DisallowedTimeOffers")
                         .HasForeignKey("HostGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductTimeHostDisallowed_dbo.HostGroup_HostGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductTimeHostDisallowed_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductTime", "ProductTime")
                         .WithMany("DisallowedHostsGroup")
                         .HasForeignKey("ProductTimeId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductTimeHostDisallowed_dbo.ProductTime_ProductTimeId");
 
                     b.Navigation("CreatedBy");
 
@@ -10995,7 +11251,8 @@ namespace _
                         .WithOne("UsePeriod")
                         .HasForeignKey("Gizmo.DAL.Entities.ProductTimePeriod", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductTimePeriod_dbo.ProductTime_ProductId");
 
                     b.Navigation("ProductTime");
                 });
@@ -11006,7 +11263,8 @@ namespace _
                         .WithMany("Days")
                         .HasForeignKey("ProductTimePeriodId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductTimePeriodDay_dbo.ProductTimePeriod_ProductTimePeriodId");
 
                     b.Navigation("Period");
                 });
@@ -11017,7 +11275,8 @@ namespace _
                         .WithMany("Times")
                         .HasForeignKey("PeriodDayId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductTimePeriodDayTime_dbo.ProductTimePeriodDay_PeriodDayId");
 
                     b.Navigation("Day");
                 });
@@ -11026,23 +11285,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductUserDisallowed_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductUserDisallowed_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
                         .WithMany("DisallowedUserGroups")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductUserDisallowed_dbo.ProductBase_ProductId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserGroup", "UserGroup")
                         .WithMany("DissalowedProducts")
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductUserDisallowed_dbo.UserGroup_UserGroupId");
 
                     b.Navigation("CreatedBy");
 
@@ -11057,23 +11320,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ProductUserPrice_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ProductUserPrice_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
                         .WithMany("UserGroupPrices")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductUserPrice_dbo.ProductBase_ProductId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserGroup", "UserGroup")
                         .WithMany("ProductPrices")
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductUserPrice_dbo.UserGroup_UserGroupId");
 
                     b.Navigation("CreatedBy");
 
@@ -11088,34 +11355,41 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Refund_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.DepositTransaction", "DepositTransaction")
                         .WithMany()
-                        .HasForeignKey("DepositTransactionId");
+                        .HasForeignKey("DepositTransactionId")
+                        .HasConstraintName("FK_dbo.Refund_dbo.DepositTransaction_DepositTransactionId");
 
                     b.HasOne("Gizmo.DAL.Entities.Payment", "Payment")
                         .WithMany()
-                        .HasForeignKey("PaymentId");
+                        .HasForeignKey("PaymentId")
+                        .HasConstraintName("FK_dbo.Refund_dbo.Payment_PaymentId");
 
                     b.HasOne("Gizmo.DAL.Entities.PointTransaction", "PointTransaction")
                         .WithMany()
-                        .HasForeignKey("PointTransactionId");
+                        .HasForeignKey("PointTransactionId")
+                        .HasConstraintName("FK_dbo.Refund_dbo.PointTransaction_PointTransactionId");
 
                     b.HasOne("Gizmo.DAL.Entities.PaymentMethod", "RefundMethod")
                         .WithMany()
                         .HasForeignKey("RefundMethodId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Refund_dbo.PaymentMethod_RefundMethodId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.Refund_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany("Refunds")
                         .HasForeignKey("ShiftId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.Refund_dbo.Shift_ShiftId");
 
                     b.Navigation("CreatedBy");
 
@@ -11136,11 +11410,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Register_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Register_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11151,21 +11427,25 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany("RegisterTransactions")
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.RegisterTransaction_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.RegisterTransaction_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany("Transactions")
                         .HasForeignKey("RegisterId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.RegisterTransaction_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany("RegisterTransactions")
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.RegisterTransaction_dbo.Shift_ShiftId");
 
                     b.Navigation("CreatedBy");
 
@@ -11181,16 +11461,19 @@ namespace _
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.Reservation_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.Reservation_dbo.User_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("Reservations")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_dbo.Reservation_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -11203,28 +11486,33 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ReservationHost_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "Host")
                         .WithMany()
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ReservationHost_dbo.Host_HostId");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ReservationHost_dbo.User_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "PreferedUser")
                         .WithMany()
                         .HasForeignKey("PreferedUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.ReservationHost_dbo.UserMember_PreferedUserId");
 
                     b.HasOne("Gizmo.DAL.Entities.Reservation", "Reservation")
                         .WithMany("Hosts")
                         .HasForeignKey("ReservationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ReservationHost_dbo.Reservation_ReservationId");
 
                     b.Navigation("CreatedBy");
 
@@ -11241,23 +11529,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ReservationUser_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ReservationUser_dbo.User_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Reservation", "Reservation")
                         .WithMany("Users")
                         .HasForeignKey("ReservationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ReservationUser_dbo.Reservation_ReservationId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ReservationUser_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -11272,11 +11564,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.SecurityProfile_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.SecurityProfile_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11287,17 +11581,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.SecurityProfilePolicy_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.SecurityProfilePolicy_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.SecurityProfile", "SecurityProfile")
                         .WithMany("Policies")
                         .HasForeignKey("SecurityProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.SecurityProfilePolicy_dbo.SecurityProfile_SecurityProfileId");
 
                     b.Navigation("CreatedBy");
 
@@ -11310,17 +11607,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.SecurityProfileRestriction_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.SecurityProfileRestriction_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.SecurityProfile", "SecurityProfile")
                         .WithMany("Restrictions")
                         .HasForeignKey("SecurityProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.SecurityProfileRestriction_dbo.SecurityProfile_SecurityProfileId");
 
                     b.Navigation("CreatedBy");
 
@@ -11333,11 +11633,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Setting_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Setting_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11348,27 +11650,32 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Shift_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "EndedBy")
                         .WithMany()
-                        .HasForeignKey("EndedById");
+                        .HasForeignKey("EndedById")
+                        .HasConstraintName("FK_dbo.Shift_dbo.UserOperator_EndedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Shift_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "Operator")
                         .WithMany("Shifts")
                         .HasForeignKey("OperatorId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Shift_dbo.UserOperator_OperatorId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany("Shifts")
                         .HasForeignKey("RegisterId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Shift_dbo.Register_RegisterId");
 
                     b.Navigation("CreatedBy");
 
@@ -11385,23 +11692,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.ShiftCount_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.ShiftCount_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany()
                         .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ShiftCount_dbo.PaymentMethod_PaymentMethodId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany("ShiftCounts")
                         .HasForeignKey("ShiftId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ShiftCount_dbo.Shift_ShiftId");
 
                     b.Navigation("CreatedBy");
 
@@ -11416,21 +11727,25 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.StockTransaction_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.StockTransaction_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
                         .WithMany("StockTransactions")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.StockTransaction_dbo.ProductBase_ProductId");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "SourceProduct")
                         .WithMany("StockTransactionsSource")
-                        .HasForeignKey("SourceProductId");
+                        .HasForeignKey("SourceProductId")
+                        .HasConstraintName("FK_dbo.StockTransaction_dbo.ProductBase_SourceProductId");
 
                     b.Navigation("CreatedBy");
 
@@ -11445,11 +11760,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.TaskBase_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.TaskBase_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11460,11 +11777,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Tax_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Tax_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11476,16 +11795,19 @@ namespace _
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.Token_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.Token_dbo.User_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "User")
                         .WithMany("Tokens")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_dbo.Token_dbo.User_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -11500,13 +11822,15 @@ namespace _
                         .WithMany("Usage")
                         .HasForeignKey("UsageSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Usage_dbo.UsageSession_UsageSessionId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("Usage")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Usage_dbo.UserMember_UserId");
 
                     b.Navigation("UsageSession");
 
@@ -11518,13 +11842,15 @@ namespace _
                     b.HasOne("Gizmo.DAL.Entities.Usage", "CurrentUsage")
                         .WithMany()
                         .HasForeignKey("CurrentUsageId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.UsageSession_dbo.Usage_CurrentUsageId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("UsageSessions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UsageSession_dbo.UserMember_UserId");
 
                     b.Navigation("CurrentUsage");
 
@@ -11535,11 +11861,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.User_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.User_dbo.User_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11550,11 +11878,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserAgreement_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.UserAgreement_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11565,23 +11895,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserAgreementState_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.UserAgreementState_dbo.User_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserAgreement", "UserAgreement")
                         .WithMany("UserAgreementStates")
                         .HasForeignKey("UserAgreementId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserAgreementState_dbo.UserAgreement_UserAgreementId");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "User")
                         .WithMany("UserAgreementStates")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserAgreementState_dbo.User_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -11598,21 +11932,25 @@ namespace _
                         .WithMany()
                         .HasForeignKey("AttributeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserAttribute_dbo.Attribute_AttributeId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserAttribute_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.UserAttribute_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "User")
                         .WithMany("Attributes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserAttribute_dbo.User_UserId");
 
                     b.Navigation("Attribute");
 
@@ -11627,17 +11965,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserCredential_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "User")
                         .WithOne("UserCredential")
                         .HasForeignKey("Gizmo.DAL.Entities.UserCredential", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserCredential_dbo.User_UserId");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.UserCredential_dbo.User_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11650,17 +11991,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserCreditLimit_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithOne("UserCreditLimit")
                         .HasForeignKey("Gizmo.DAL.Entities.UserCreditLimit", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserCreditLimit_dbo.UserMember_UserId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.UserCreditLimit_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11673,23 +12017,28 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.AppGroup", "AppGroup")
                         .WithMany("UserGroups")
-                        .HasForeignKey("AppGroupId");
+                        .HasForeignKey("AppGroupId")
+                        .HasConstraintName("FK_dbo.UserGroup_dbo.AppGroup_AppGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.BillProfile", "BillProfile")
                         .WithMany("UserGroups")
-                        .HasForeignKey("BillProfileId");
+                        .HasForeignKey("BillProfileId")
+                        .HasConstraintName("FK_dbo.UserGroup_dbo.BillProfile_BillProfileId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserGroup_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.UserGroup_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.SecurityProfile", "SecurityProfile")
                         .WithMany("UserGroups")
-                        .HasForeignKey("SecurityProfileId");
+                        .HasForeignKey("SecurityProfileId")
+                        .HasConstraintName("FK_dbo.UserGroup_dbo.SecurityProfile_SecurityProfileId");
 
                     b.Navigation("AppGroup");
 
@@ -11706,23 +12055,27 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserGroupHostDisallowed_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.HostGroup", "HostGroup")
                         .WithMany("DisallowedUserGroups")
                         .HasForeignKey("HostGroupId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserGroupHostDisallowed_dbo.HostGroup_HostGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.UserGroupHostDisallowed_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserGroup", "UserGroup")
                         .WithMany("DissalowedHostGroups")
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserGroupHostDisallowed_dbo.UserGroup_UserGroupId");
 
                     b.Navigation("CreatedBy");
 
@@ -11737,17 +12090,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserPermission_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.UserPermission_dbo.UserOperator_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "User")
                         .WithMany("Permissions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserPermission_dbo.User_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -11760,17 +12116,20 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserPicture_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "User")
                         .WithOne("UserPicture")
                         .HasForeignKey("Gizmo.DAL.Entities.UserPicture", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserPicture_dbo.User_UserId");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.UserPicture_dbo.User_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11783,19 +12142,22 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany("CreatedUserSessions")
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserSession_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "Host")
                         .WithMany("UserSessions")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserSession_dbo.Host_HostId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("UserSessions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserSession_dbo.UserMember_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -11808,25 +12170,29 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany("CreatedUserSessionChanges")
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.UserSessionChange_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "Host")
                         .WithMany("UserSessionsChanges")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserSessionChange_dbo.Host_HostId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("UserSessionsChanges")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserSessionChange_dbo.UserMember_UserId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserSession", "UserSession")
                         .WithMany("UserSessionChanges")
                         .HasForeignKey("UserSessionId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserSessionChange_dbo.UserSession_UserSessionId");
 
                     b.Navigation("CreatedBy");
 
@@ -11841,11 +12207,13 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Variable_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
-                        .HasForeignKey("ModifiedById");
+                        .HasForeignKey("ModifiedById")
+                        .HasConstraintName("FK_dbo.Variable_dbo.UserOperator_ModifiedById");
 
                     b.Navigation("CreatedBy");
 
@@ -11857,22 +12225,26 @@ namespace _
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.Verification_dbo.User_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.Verification_dbo.User_ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Token", "Token")
                         .WithMany()
                         .HasForeignKey("TokenId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.Verification_dbo.Token_TokenId");
 
                     b.HasOne("Gizmo.DAL.Entities.User", "User")
                         .WithMany("Verifications")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_dbo.Verification_dbo.User_UserId");
 
                     b.Navigation("CreatedBy");
 
@@ -11887,15 +12259,18 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById");
+                        .HasForeignKey("CreatedById")
+                        .HasConstraintName("FK_dbo.Void_dbo.UserOperator_CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
+                        .HasForeignKey("RegisterId")
+                        .HasConstraintName("FK_dbo.Void_dbo.Register_RegisterId");
 
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany()
-                        .HasForeignKey("ShiftId");
+                        .HasForeignKey("ShiftId")
+                        .HasConstraintName("FK_dbo.Void_dbo.Shift_ShiftId");
 
                     b.Navigation("CreatedBy");
 
@@ -11936,7 +12311,8 @@ namespace _
                     b.HasOne("Gizmo.DAL.Entities.InvoiceLineProduct", "BundleLine")
                         .WithMany()
                         .HasForeignKey("BundleLineId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.InvoiceLineExtended_dbo.InvoiceLineProduct_BundleLineId");
 
                     b.HasOne("Gizmo.DAL.Entities.InvoiceLine", null)
                         .WithOne()
@@ -11946,12 +12322,14 @@ namespace _
 
                     b.HasOne("Gizmo.DAL.Entities.StockTransaction", "StockReturnTransaction")
                         .WithMany()
-                        .HasForeignKey("StockReturnTransactionId");
+                        .HasForeignKey("StockReturnTransactionId")
+                        .HasConstraintName("FK_dbo.InvoiceLineExtended_dbo.StockTransaction_StockReturnTransactionId");
 
                     b.HasOne("Gizmo.DAL.Entities.StockTransaction", "StockTransaction")
                         .WithMany()
                         .HasForeignKey("StockTransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.InvoiceLineExtended_dbo.StockTransaction_StockTransactionId");
 
                     b.Navigation("BundleLine");
 
@@ -11972,13 +12350,15 @@ namespace _
                         .WithMany()
                         .HasForeignKey("OrderLineId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceLineSession_dbo.ProductOLSession_OrderLineId");
 
                     b.HasOne("Gizmo.DAL.Entities.UsageSession", "UsageSession")
                         .WithMany("InvoiceLines")
                         .HasForeignKey("UsageSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceLineSession_dbo.UsageSession_UsageSessionId");
 
                     b.Navigation("OrderLine");
 
@@ -11997,7 +12377,8 @@ namespace _
                         .WithMany()
                         .HasForeignKey("OrderLineId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceLineTimeFixed_dbo.ProductOLTimeFixed_OrderLineId");
 
                     b.Navigation("OrderLine");
                 });
@@ -12014,7 +12395,8 @@ namespace _
                         .WithMany("Notes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserNote_dbo.UserMember_UserId");
 
                     b.Navigation("User");
                 });
@@ -12023,7 +12405,8 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.DepositPayment", "DepositPayment")
                         .WithMany()
-                        .HasForeignKey("DepositPaymentId");
+                        .HasForeignKey("DepositPaymentId")
+                        .HasConstraintName("FK_dbo.PaymentIntentDeposit_dbo.DepositPayment_DepositPaymentId");
 
                     b.HasOne("Gizmo.DAL.Entities.PaymentIntent", null)
                         .WithOne()
@@ -12044,13 +12427,15 @@ namespace _
 
                     b.HasOne("Gizmo.DAL.Entities.InvoicePayment", "InvoicePayment")
                         .WithMany()
-                        .HasForeignKey("InvoicePaymentId");
+                        .HasForeignKey("InvoicePaymentId")
+                        .HasConstraintName("FK_dbo.PaymentIntentOrder_dbo.InvoicePayment_InvoicePaymentId");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductOrder", "ProductOrder")
                         .WithMany("PaymentIntents")
                         .HasForeignKey("ProductOrderId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.PaymentIntentOrder_dbo.ProductOrder_ProductOrderId");
 
                     b.Navigation("InvoicePayment");
 
@@ -12070,7 +12455,8 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.AppGroup", "AppGroup")
                         .WithMany("TimeOffers")
-                        .HasForeignKey("AppGroupId");
+                        .HasForeignKey("AppGroupId")
+                        .HasConstraintName("FK_dbo.ProductTime_dbo.AppGroup_AppGroupId");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", null)
                         .WithOne()
@@ -12085,7 +12471,8 @@ namespace _
                 {
                     b.HasOne("Gizmo.DAL.Entities.ProductOLProduct", "BundleLine")
                         .WithMany()
-                        .HasForeignKey("BundleLineId");
+                        .HasForeignKey("BundleLineId")
+                        .HasConstraintName("FK_dbo.ProductOLExtended_dbo.ProductOLProduct_BundleLineId");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductOL", null)
                         .WithOne()
@@ -12108,7 +12495,8 @@ namespace _
                         .WithMany()
                         .HasForeignKey("UsageSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductOLSession_dbo.UsageSession_UsageSessionId");
 
                     b.Navigation("UsageSession");
                 });
@@ -12127,12 +12515,14 @@ namespace _
                     b.HasOne("Gizmo.DAL.Entities.DepositPayment", "DepositPayment")
                         .WithMany()
                         .HasForeignKey("DepositPaymentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.RefundDepositPayment_dbo.DepositPayment_DepositPaymentId");
 
                     b.HasOne("Gizmo.DAL.Entities.FiscalReceipt", "FiscalReceipt")
                         .WithMany()
                         .HasForeignKey("FiscalReceiptId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_dbo.RefundDepositPayment_dbo.FiscalReceipt_FiscalReceiptId");
 
                     b.HasOne("Gizmo.DAL.Entities.Refund", null)
                         .WithOne()
@@ -12157,13 +12547,15 @@ namespace _
                         .WithMany()
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.RefundInvoicePayment_dbo.Invoice_InvoiceId");
 
                     b.HasOne("Gizmo.DAL.Entities.InvoicePayment", "InvoicePayment")
                         .WithMany()
                         .HasForeignKey("InvoicePaymentId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.RefundInvoicePayment_dbo.InvoicePayment_InvoicePaymentId");
 
                     b.Navigation("Invoice");
 
@@ -12218,7 +12610,8 @@ namespace _
                         .WithMany("Usage")
                         .HasForeignKey("UserSessionId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UsageUserSession_dbo.UserSession_UserSessionId");
 
                     b.Navigation("UserSession");
                 });
@@ -12235,7 +12628,8 @@ namespace _
                         .WithMany("Users")
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UserMember_dbo.UserGroup_UserGroupId");
 
                     b.Navigation("UserGroup");
                 });
@@ -12273,7 +12667,8 @@ namespace _
                         .WithMany("Voids")
                         .HasForeignKey("DepositPaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.VoidDepositPayment_dbo.DepositPayment_DepositPaymentId");
 
                     b.HasOne("Gizmo.DAL.Entities.Void", null)
                         .WithOne()
@@ -12296,7 +12691,8 @@ namespace _
                         .WithMany("Voids")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.VoidInvoice_dbo.Invoice_InvoiceId");
 
                     b.Navigation("Invoice");
                 });
@@ -12313,13 +12709,15 @@ namespace _
                         .WithMany()
                         .HasForeignKey("OrderLineId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceLineProduct_dbo.ProductOLProduct_OrderLineId");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBaseExtended", "Product")
                         .WithMany("InvoiceLines")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceLineProduct_dbo.ProductBaseExtended_ProductId");
 
                     b.Navigation("OrderLine");
 
@@ -12338,13 +12736,15 @@ namespace _
                         .WithMany()
                         .HasForeignKey("OrderLineId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceLineTime_dbo.ProductOLTime_OrderLineId");
 
                     b.HasOne("Gizmo.DAL.Entities.ProductTime", "Product")
                         .WithMany("InvoiceLines")
                         .HasForeignKey("ProductTimeId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.InvoiceLineTime_dbo.ProductTime_ProductTimeId");
 
                     b.Navigation("OrderLine");
 
@@ -12381,7 +12781,8 @@ namespace _
                         .WithMany("OrderLines")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductOLProduct_dbo.ProductBaseExtended_ProductId");
 
                     b.Navigation("Product");
                 });
@@ -12398,7 +12799,8 @@ namespace _
                         .WithMany("OrderLines")
                         .HasForeignKey("ProductTimeId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.ProductOLTime_dbo.ProductTime_ProductTimeId");
 
                     b.Navigation("ProductTime");
                 });
@@ -12409,7 +12811,8 @@ namespace _
                         .WithMany("Usage")
                         .HasForeignKey("BillRateId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UsageRate_dbo.BillRate_BillRateId");
 
                     b.HasOne("Gizmo.DAL.Entities.UsageUserSession", null)
                         .WithOne()
@@ -12432,7 +12835,8 @@ namespace _
                         .WithMany("Usages")
                         .HasForeignKey("InvoiceLineId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UsageTime_dbo.InvoiceLineTime_InvoiceLineId");
 
                     b.Navigation("InvoiceLine");
                 });
@@ -12449,7 +12853,8 @@ namespace _
                         .WithMany("Usages")
                         .HasForeignKey("InvoiceLineId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_dbo.UsageTimeFixed_dbo.InvoiceLineTimeFixed_InvoiceLineId");
 
                     b.Navigation("InvoiceLine");
                 });
@@ -12464,7 +12869,8 @@ namespace _
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "ReservedHost")
                         .WithMany("ReservedGuests")
-                        .HasForeignKey("ReservedHostId");
+                        .HasForeignKey("ReservedHostId")
+                        .HasConstraintName("FK_dbo.UserGuest_dbo.Host_ReservedHostId");
 
                     b.Navigation("ReservedHost");
                 });

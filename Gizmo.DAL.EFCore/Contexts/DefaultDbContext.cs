@@ -36,8 +36,7 @@ namespace Gizmo.DAL.Contexts
         /// <param name="options">Default database options</param>
         public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)
         {
-            Database.EnsureDeleted();
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         #endregion
@@ -1683,7 +1682,7 @@ namespace Gizmo.DAL.Contexts
 
             if (Database.IsSqlServer())
             {
-                // Change default generated index names of foreign keys to match the old database pattern 
+                // Change default generated index names of foreign keys to match the old database pattern
                 RenameIndexWithOldPattern(modelBuilder);
             }
             else if (Database.IsNpgsql())
