@@ -14,7 +14,7 @@ namespace Gizmo.DAL.EFCore.Contexts
     /// <summary>
     /// Database initializer.
     /// </summary>
-    public sealed class DataBaseInitializer
+    public sealed class DatabaseInitializer
     {
         private readonly DefaultDbContext _context;
         /// <summary>
@@ -23,7 +23,7 @@ namespace Gizmo.DAL.EFCore.Contexts
         /// <param name="context">
         /// Database context.
         /// </param>
-        public DataBaseInitializer(DefaultDbContext context) => _context = context;
+        public DatabaseInitializer(DefaultDbContext context) => _context = context;
 
         /// <summary>
         /// Initialize database.
