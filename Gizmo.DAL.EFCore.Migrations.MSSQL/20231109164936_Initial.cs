@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace _
 {
     /// <inheritdoc />
-    public partial class MSSQLInitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -546,13 +544,13 @@ namespace _
                 name: "AssistanceRequest",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    AssistanceRequestId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AssistanceRequestTypeId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true),
                     HostId = table.Column<int>(type: "int", nullable: false),
+                    AssistanceRequestTypeId = table.Column<int>(type: "int", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedById = table.Column<int>(type: "int", nullable: true),
@@ -560,16 +558,16 @@ namespace _
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AssistanceRequest", x => x.Id);
+                    table.PrimaryKey("PK_AssistanceRequest", x => x.AssistanceRequestId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AssistanceRequestType",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    AssistanceRequestTypeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     DisplayOrder = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
@@ -579,7 +577,7 @@ namespace _
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AssistanceRequestType", x => x.Id);
+                    table.PrimaryKey("PK_AssistanceRequestType", x => x.AssistanceRequestTypeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -3938,323 +3936,6 @@ namespace _
                         principalColumn: "UserId");
                 });
 
-            migrationBuilder.InsertData(
-                table: "BillProfile",
-                columns: new[] { "BillProfileId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Name" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Member Prices" },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Guests Prices" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "HostLayoutGroup",
-                columns: new[] { "HostLayoutGroupId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Name" },
-                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, "Default" });
-
-            migrationBuilder.InsertData(
-                table: "MonetaryUnit",
-                columns: new[] { "MonetaryUnitId", "CreatedById", "CreatedTime", "DisplayOrder", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Value" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, false, null, null, "1 Cent", 0.01m },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, false, null, null, "5 Cent", 0.05m },
-                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, false, null, null, "10 Cent", 0.10m },
-                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, false, null, null, "25 Cent", 0.25m },
-                    { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, false, null, null, "1 Dollar", 1.00m },
-                    { 6, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, false, null, null, "2 Dollar", 2.00m },
-                    { 7, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, false, null, null, "5 Dollar", 5.00m },
-                    { 8, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, false, null, null, "10 Dollar", 10.00m },
-                    { 9, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 8, false, null, null, "20 Dollar", 20.00m },
-                    { 10, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 9, false, null, null, "50 Dollar", 50.00m },
-                    { 11, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 10, false, null, null, "100 Dollar", 100.00m }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PaymentMethod",
-                columns: new[] { "PaymentMethodId", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "IsClient", "IsDeleted", "IsEnabled", "IsManager", "IsPortal", "ModifiedById", "ModifiedTime", "Name", "Options", "PaymentProvider", "Surcharge" },
-                values: new object[,]
-                {
-                    { -4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 2, true, false, true, true, false, null, null, "Points", 0, null, 0m },
-                    { -3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 3, true, false, true, true, false, null, null, "Deposit", 0, null, 0m },
-                    { -2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 4, true, false, true, true, false, null, null, "Credit Card", 0, null, 0m },
-                    { -1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, true, false, true, true, false, null, null, "Cash", 0, null, 0m }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PresetTimeSale",
-                columns: new[] { "PresetTimeSaleId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 1 },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 5 },
-                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 15 },
-                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 30 },
-                    { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 60 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PresetTimeSaleMoney",
-                columns: new[] { "PresetTimeSaleMoneyId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Value" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 1m },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 2m },
-                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 5m },
-                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 10m },
-                    { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 20m }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductGroup",
-                columns: new[] { "ProductGroupId", "CreatedById", "CreatedTime", "DisplayOrder", "Guid", "ModifiedById", "ModifiedTime", "Name", "ParentId", "SortOption" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, new Guid("e798a7fb-448b-4825-8b32-c5ea6db70271"), null, null, "Time Offers", null, 0 },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new Guid("e798a7fb-448b-4825-8b32-c5ea6db70272"), null, null, "Food", null, 0 },
-                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new Guid("e798a7fb-448b-4825-8b32-c5ea6db70273"), null, null, "Drinks", null, 0 },
-                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, new Guid("e798a7fb-448b-4825-8b32-c5ea6db70274"), null, null, "Sweets", null, 0 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Tax",
-                columns: new[] { "TaxId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Name", "UseOrder", "Value" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "24%", 0, 23m },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "16%", 1, 16m },
-                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "None", 2, 0m }
-                });
-
-            migrationBuilder.InsertData(
-                table: "User",
-                columns: new[] { "UserId", "Address", "BirthDate", "City", "Country", "CreatedById", "CreatedTime", "FirstName", "Guid", "Identification", "IsDeleted", "IsDisabled", "LastName", "MobilePhone", "ModifiedById", "ModifiedTime", "Phone", "PostCode", "Sex", "SmartCardUID" },
-                values: new object[,]
-                {
-                    { 1, null, null, null, null, null, new DateTime(2023, 11, 8, 7, 16, 30, 216, DateTimeKind.Unspecified).AddTicks(6704), null, new Guid("691ea8b4-d794-4096-84ae-bbdb7bcc0b02"), null, false, false, null, null, null, null, null, null, 0, null },
-                    { 2, null, null, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, new Guid("38753737-24f1-40d7-8ac4-ba61660d666a"), null, false, false, null, null, null, null, null, null, 0, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "BillRate",
-                columns: new[] { "BillRateId", "BillProfileId", "ChargeAfter", "ChargeEvery", "IsDefault", "MinimumFee", "Options", "Rate", "StartFee" },
-                values: new object[,]
-                {
-                    { 1, 1, 1, 5, true, 2m, 0, 2m, 1m },
-                    { 2, 2, 1, 5, true, 2m, 0, 2m, 1m }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductBase",
-                columns: new[] { "ProductId", "Barcode", "Cost", "CreatedById", "CreatedTime", "Description", "DisplayOrder", "Guid", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "OrderOptions", "Points", "PointsPrice", "Price", "ProductGroupId", "PurchaseOptions", "StockAlert", "StockOptions", "StockProductAmount", "StockProductId" },
-                values: new object[,]
-                {
-                    { 1, null, 0.90m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba1"), false, null, null, "Mars Bar", 0, 10, null, 1.10m, 4, 0, 0m, 1, 0m, null },
-                    { 2, null, 1.20m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba2"), false, null, null, "Snickers Bar", 0, 15, null, 2.0m, 4, 0, 0m, 1, 0m, null },
-                    { 3, null, 2.20m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba3"), false, null, null, "Pizza (Small)", 0, null, null, 6.0m, 2, 0, 0m, 0, 0m, null },
-                    { 4, null, 1.20m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba4"), false, null, null, "Coca Cola (Can)", 0, 20, null, 2.0m, 3, 0, 0m, 1, 0m, null },
-                    { 5, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba5"), false, null, null, "Pizza and Cola", 0, 200, null, 3.40m, 2, 0, 0m, 1, 0m, null },
-                    { 6, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba6"), false, null, null, "Six Hours (6)", 0, null, null, 12m, 1, 0, 0m, 0, 0m, null },
-                    { 7, null, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, 0, new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba7"), false, null, null, "Six Hours (6 Weekends)", 0, null, null, 16m, 1, 0, 0m, 0, 0m, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "UserCredential",
-                columns: new[] { "UserId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Password", "Salt" },
-                values: new object[] { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, new byte[] { 83, 85, 227, 15, 78, 232, 180, 20, 79, 103, 15, 129, 10, 3, 147, 126, 239, 126, 93, 160, 96, 159, 159, 171, 75, 146, 156, 64, 102, 115, 131, 210, 243, 219, 214, 200, 104, 163, 120, 128, 217, 173, 12, 84, 51, 200, 142, 86, 133, 24, 98, 54, 195, 158, 10, 216, 230, 203, 100, 128, 223, 32, 7, 134 }, new byte[] { 122, 20, 170, 207, 168, 134, 14, 116, 132, 207, 72, 238, 236, 130, 222, 250, 181, 146, 250, 184, 202, 112, 56, 82, 103, 23, 34, 243, 224, 174, 161, 14, 142, 244, 60, 245, 219, 79, 33, 181, 48, 74, 108, 244, 211, 197, 191, 120, 86, 58, 255, 225, 4, 59, 42, 86, 91, 159, 213, 202, 225, 155, 196, 188, 16, 26, 133, 226, 69, 188, 244, 43, 23, 65, 152, 246, 180, 11, 171, 65, 169, 52, 86, 192, 92, 75, 151, 142, 130, 26, 183, 149, 14, 247, 125, 118, 169, 71, 193, 27 } });
-
-            migrationBuilder.InsertData(
-                table: "UserGroup",
-                columns: new[] { "UserGroupId", "AppGroupId", "BillProfileId", "BillingOptions", "CreatedById", "CreatedTime", "CreditLimit", "CreditLimitOptions", "Description", "IsAgeRatingEnabled", "IsDefault", "IsNegativeBalanceAllowed", "IsWaitingLinePriorityEnabled", "ModifiedById", "ModifiedTime", "Name", "Options", "Overrides", "Points", "PointsAwardOptions", "PointsMoneyRatio", "PointsTimeRatio", "RequiredUserInfo", "SecurityProfileId", "WaitingLinePriority" },
-                values: new object[,]
-                {
-                    { 1, null, 1, 0, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0m, 0, null, false, true, false, false, null, null, "Members", 0, 0, null, 0, 0m, 0, 0, null, 0 },
-                    { 2, null, 2, 0, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0m, 0, null, false, false, false, false, null, null, "Guests", 8, 0, null, 0, 0m, 0, 0, null, 0 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "UserOperator",
-                columns: new[] { "UserId", "Email", "ShiftOptions", "Username" },
-                values: new object[] { 1, null, 0, "Admin" });
-
-            migrationBuilder.InsertData(
-                table: "UserPermission",
-                columns: new[] { "UserPermissionId", "CreatedById", "CreatedTime", "ModifiedById", "ModifiedTime", "Type", "UserId", "Value" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "*" },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "CustomPrice" },
-                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "NonDefaultVat" },
-                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "PayLater" },
-                    { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidInvoices" },
-                    { 6, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidUsedTimeInvoices" },
-                    { 7, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidClosedShiftInvoices" },
-                    { 8, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidOtherOperatorInvoices" },
-                    { 9, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidPastDaysInvoices" },
-                    { 10, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "Deposit" },
-                    { 11, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "Withdraw" },
-                    { 12, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "VoidDeposits" },
-                    { 13, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ManualOpenCashDrawer" },
-                    { 14, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ModifyBillingOptions" },
-                    { 15, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "AllowTimeCredit" },
-                    { 16, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "AllowDisableReceiptPrint" },
-                    { 17, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewInvoices" },
-                    { 18, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPaidInvoices" },
-                    { 19, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysInvoices" },
-                    { 20, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewDeposits" },
-                    { 21, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysDeposits" },
-                    { 22, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewRegisterTransactions" },
-                    { 23, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "ViewPastDaysRegisterTransactions" },
-                    { 24, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Sale", 1, "DeleteTimePurchases" },
-                    { 25, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Shift", 1, "ViewExpected" },
-                    { 26, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "*" },
-                    { 27, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "Manage" },
-                    { 28, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "ViewStockTransactions" },
-                    { 29, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Stock", 1, "ViewPastDaysStockTransactions" },
-                    { 30, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "*" },
-                    { 31, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Tasks" },
-                    { 32, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Processes" },
-                    { 33, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Files" },
-                    { 34, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Maintenance" },
-                    { 35, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "Security" },
-                    { 36, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "LockState" },
-                    { 37, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "ModuleRestart" },
-                    { 38, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Management", 1, "PowerOnEndpoints" },
-                    { 39, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Deployment", 1, "*" },
-                    { 40, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Monitoring", 1, "*" },
-                    { 41, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Reports", 1, "*" },
-                    { 42, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Settings", 1, "*" },
-                    { 43, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Apps", 1, "*" },
-                    { 44, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "News", 1, "*" },
-                    { 45, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserPasswordReset" },
-                    { 46, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserEnable" },
-                    { 47, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserDisable" },
-                    { 48, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "UserManualLogin" },
-                    { 49, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Add" },
-                    { 50, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Delete" },
-                    { 51, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "ChangeUserName" },
-                    { 52, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "ChangeUserGroup" },
-                    { 53, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "Edit" },
-                    { 54, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "User", 1, "AccessStats" },
-                    { 55, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Log", 1, "*" },
-                    { 56, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Log", 1, "Clear" },
-                    { 57, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WaitingLines", 1, "*" },
-                    { 58, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WaitingLines", 1, "Manage" },
-                    { 59, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "RegisterTransactions", 1, "RegisterTransactionsPayIn" },
-                    { 60, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "RegisterTransactions", 1, "RegisterTransactionsPayOut" },
-                    { 61, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "WebApi", 1, "*" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "HostGroup",
-                columns: new[] { "HostGroupId", "AppGroupId", "CreatedById", "CreatedTime", "DefaultGuestGroupId", "ModifiedById", "ModifiedTime", "Name", "Options", "SecurityProfileId", "SkinName" },
-                values: new object[,]
-                {
-                    { 1, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, null, null, "Computers", 0, null, null },
-                    { 2, null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, null, null, "Endpoints", 0, null, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductBaseExtended",
-                column: "ProductId",
-                values: new object[]
-                {
-                    1,
-                    2,
-                    3,
-                    4,
-                    5
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductPeriod",
-                columns: new[] { "ProductId", "EndDate", "Options", "StartDate" },
-                values: new object[] { 1, null, 0, null });
-
-            migrationBuilder.InsertData(
-                table: "ProductTax",
-                columns: new[] { "ProductTaxId", "CreatedById", "CreatedTime", "IsEnabled", "ModifiedById", "ModifiedTime", "ProductId", "TaxId", "UseOrder" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 1, 1, 0 },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 2, 1, 0 },
-                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 3, 1, 0 },
-                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 4, 1, 0 },
-                    { 5, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 5, 1, 0 },
-                    { 6, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 6, 1, 0 },
-                    { 7, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, null, null, 7, 1, 0 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductTime",
-                columns: new[] { "ProductId", "AppGroupId", "ExpirationOptions", "ExpireAfterType", "ExpireAtDayTimeMinute", "ExpireFromOptions", "ExpiresAfter", "Minutes", "UsageOptions", "UseOrder", "WeekDayMaxMinutes", "WeekEndMaxMinutes" },
-                values: new object[,]
-                {
-                    { 6, null, 0, 0, 0, 0, 0, 360, 0, 0, null, null },
-                    { 7, null, 0, 0, 0, 0, 0, 360, 0, 0, null, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "UserMember",
-                columns: new[] { "UserId", "BillingOptions", "DisabledDate", "Email", "EnableDate", "IsNegativeBalanceAllowed", "IsPersonalInfoRequested", "UserGroupId", "Username" },
-                values: new object[] { 2, null, null, null, null, null, false, 1, "User" });
-
-            migrationBuilder.InsertData(
-                table: "Host",
-                columns: new[] { "HostId", "CreatedById", "CreatedTime", "Guid", "HostGroupId", "IconId", "IsDeleted", "ModifiedById", "ModifiedTime", "Name", "Number", "State" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("cd41aa25-ac1f-4da9-8c8e-075032803871"), 2, null, false, null, null, "XBOX-ONE-1", 1, 0 },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("cd41aa25-ac1f-4da9-8c8e-075032803872"), 2, null, false, null, null, "XBOX-ONE-2", 2, 0 },
-                    { 3, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("cd41aa25-ac1f-4da9-8c8e-075032803873"), 2, null, false, null, null, "PS4-1", 3, 0 },
-                    { 4, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("cd41aa25-ac1f-4da9-8c8e-075032803874"), 2, null, false, null, null, "WII-1", 4, 0 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Product",
-                column: "ProductId",
-                values: new object[]
-                {
-                    1,
-                    2,
-                    3,
-                    4
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductBundle",
-                columns: new[] { "ProductId", "BundleStockOptions" },
-                values: new object[] { 5, 0 });
-
-            migrationBuilder.InsertData(
-                table: "ProductPeriodDay",
-                columns: new[] { "ProductPeriodDayId", "Day", "ProductPeriodId" },
-                values: new object[,]
-                {
-                    { 1, 6, 1 },
-                    { 2, 0, 1 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "BundleProduct",
-                columns: new[] { "BundleProductId", "CreatedById", "CreatedTime", "DisplayOrder", "ModifiedById", "ModifiedTime", "Options", "Price", "ProductBundleId", "ProductId", "Quantity" },
-                values: new object[,]
-                {
-                    { 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 0, 1m, 5, 4, 1m },
-                    { 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, null, null, 0, 2m, 5, 3, 1m }
-                });
-
-            migrationBuilder.InsertData(
-                table: "HostEndpoint",
-                columns: new[] { "HostId", "MaximumUsers" },
-                values: new object[,]
-                {
-                    { 1, 4 },
-                    { 2, 4 },
-                    { 3, 4 },
-                    { 4, 4 }
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AppCategoryId",
                 table: "App",
@@ -7302,7 +6983,7 @@ namespace _
                 table: "AssistanceRequest",
                 column: "AssistanceRequestTypeId",
                 principalTable: "AssistanceRequestType",
-                principalColumn: "Id",
+                principalColumn: "AssistanceRequestTypeId",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(

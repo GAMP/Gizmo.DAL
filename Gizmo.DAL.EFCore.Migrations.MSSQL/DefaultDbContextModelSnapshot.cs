@@ -1120,12 +1120,15 @@ namespace _
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("AssistanceRequestId")
+                        .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AssistanceRequestTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
@@ -1134,7 +1137,8 @@ namespace _
                         .HasColumnType("datetime2");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
@@ -1143,13 +1147,17 @@ namespace _
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(5);
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
@@ -1168,14 +1176,16 @@ namespace _
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_UserId");
 
-                    b.ToTable("AssistanceRequest");
+                    b.ToTable("AssistanceRequest", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AssistanceRequestType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("AssistanceRequestTypeId")
+                        .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -1186,10 +1196,12 @@ namespace _
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
@@ -1198,7 +1210,10 @@ namespace _
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
@@ -1208,7 +1223,7 @@ namespace _
                     b.HasIndex("ModifiedById")
                         .HasDatabaseName("IX_ModifiedById");
 
-                    b.ToTable("AssistanceRequestType");
+                    b.ToTable("AssistanceRequestType", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Attribute", b =>
@@ -1300,20 +1315,6 @@ namespace _
                         .HasDatabaseName("UQ_Name");
 
                     b.ToTable("BillProfile", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Member Prices"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Guests Prices"
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.BillRate", b =>
@@ -1366,32 +1367,6 @@ namespace _
                         .HasDatabaseName("IX_BillProfileId");
 
                     b.ToTable("BillRate", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BillProfileId = 1,
-                            ChargeAfter = 1,
-                            ChargeEvery = 5,
-                            IsDefault = true,
-                            MinimumFee = 2m,
-                            Options = 0,
-                            Rate = 2m,
-                            StartFee = 1m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            BillProfileId = 2,
-                            ChargeAfter = 1,
-                            ChargeEvery = 5,
-                            IsDefault = true,
-                            MinimumFee = 2m,
-                            Options = 0,
-                            Rate = 2m,
-                            StartFee = 1m
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.BillRatePeriodDay", b =>
@@ -1542,30 +1517,6 @@ namespace _
                         .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("BundleProduct", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Options = 0,
-                            Price = 1m,
-                            ProductBundleId = 5,
-                            ProductId = 4,
-                            Quantity = 1m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Options = 0,
-                            Price = 2m,
-                            ProductBundleId = 5,
-                            ProductId = 3,
-                            Quantity = 1m
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.BundleProductUserPrice", b =>
@@ -2309,24 +2260,6 @@ namespace _
                         .HasDatabaseName("IX_SecurityProfileId");
 
                     b.ToTable("HostGroup", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DefaultGuestGroupId = 2,
-                            Name = "Computers",
-                            Options = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DefaultGuestGroupId = 2,
-                            Name = "Endpoints",
-                            Options = 0
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.HostGroupUserBillProfile", b =>
@@ -2525,15 +2458,6 @@ namespace _
                         .HasDatabaseName("UQ_Name");
 
                     b.ToTable("HostLayoutGroup", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Name = "Default"
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.HostLayoutGroupImage", b =>
@@ -3412,107 +3336,6 @@ namespace _
                         .HasDatabaseName("UQ_Name");
 
                     b.ToTable("MonetaryUnit", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            IsDeleted = false,
-                            Name = "1 Cent",
-                            Value = 0.01m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 1,
-                            IsDeleted = false,
-                            Name = "5 Cent",
-                            Value = 0.05m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 2,
-                            IsDeleted = false,
-                            Name = "10 Cent",
-                            Value = 0.10m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 3,
-                            IsDeleted = false,
-                            Name = "25 Cent",
-                            Value = 0.25m
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 4,
-                            IsDeleted = false,
-                            Name = "1 Dollar",
-                            Value = 1.00m
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 5,
-                            IsDeleted = false,
-                            Name = "2 Dollar",
-                            Value = 2.00m
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 6,
-                            IsDeleted = false,
-                            Name = "5 Dollar",
-                            Value = 5.00m
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 7,
-                            IsDeleted = false,
-                            Name = "10 Dollar",
-                            Value = 10.00m
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 8,
-                            IsDeleted = false,
-                            Name = "20 Dollar",
-                            Value = 20.00m
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 9,
-                            IsDeleted = false,
-                            Name = "50 Dollar",
-                            Value = 50.00m
-                        },
-                        new
-                        {
-                            Id = 11,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 10,
-                            IsDeleted = false,
-                            Name = "100 Dollar",
-                            Value = 100.00m
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.News", b =>
@@ -3897,64 +3720,6 @@ namespace _
                         .HasDatabaseName("UQ_Name");
 
                     b.ToTable("PaymentMethod", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = -1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            IsClient = true,
-                            IsDeleted = false,
-                            IsEnabled = true,
-                            IsManager = true,
-                            IsPortal = false,
-                            Name = "Cash",
-                            Options = 0,
-                            Surcharge = 0m
-                        },
-                        new
-                        {
-                            Id = -4,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 2,
-                            IsClient = true,
-                            IsDeleted = false,
-                            IsEnabled = true,
-                            IsManager = true,
-                            IsPortal = false,
-                            Name = "Points",
-                            Options = 0,
-                            Surcharge = 0m
-                        },
-                        new
-                        {
-                            Id = -3,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 3,
-                            IsClient = true,
-                            IsDeleted = false,
-                            IsEnabled = true,
-                            IsManager = true,
-                            IsPortal = false,
-                            Name = "Deposit",
-                            Options = 0,
-                            Surcharge = 0m
-                        },
-                        new
-                        {
-                            Id = -2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 4,
-                            IsClient = true,
-                            IsDeleted = false,
-                            IsEnabled = true,
-                            IsManager = true,
-                            IsPortal = false,
-                            Name = "Credit Card",
-                            Options = 0,
-                            Surcharge = 0m
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.PersonalFile", b =>
@@ -4226,43 +3991,6 @@ namespace _
                         .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("PresetTimeSale", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 5
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 15
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 30
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 60
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.PresetTimeSaleMoney", b =>
@@ -4305,43 +4033,6 @@ namespace _
                         .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("PresetTimeSaleMoney", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 1m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 2m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 5m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 10m
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Value = 20m
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductBase", b =>
@@ -4576,44 +4267,6 @@ namespace _
                         .HasDatabaseName("IX_ParentId");
 
                     b.ToTable("ProductGroup", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Guid = new Guid("e798a7fb-448b-4825-8b32-c5ea6db70271"),
-                            Name = "Time Offers",
-                            SortOption = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 1,
-                            Guid = new Guid("e798a7fb-448b-4825-8b32-c5ea6db70272"),
-                            Name = "Food",
-                            SortOption = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 2,
-                            Guid = new Guid("e798a7fb-448b-4825-8b32-c5ea6db70273"),
-                            Name = "Drinks",
-                            SortOption = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 3,
-                            Guid = new Guid("e798a7fb-448b-4825-8b32-c5ea6db70274"),
-                            Name = "Sweets",
-                            SortOption = 0
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductHostHidden", b =>
@@ -4999,13 +4652,6 @@ namespace _
                         .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("ProductPeriod", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Options = 0
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductPeriodDay", b =>
@@ -5031,20 +4677,6 @@ namespace _
                         .HasDatabaseName("UQ_ProductPeriodDay");
 
                     b.ToTable("ProductPeriodDay", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Day = 6,
-                            ProductPeriodId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Day = 0,
-                            ProductPeriodId = 1
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductPeriodDayTime", b =>
@@ -5119,71 +4751,6 @@ namespace _
                         .IsUnique();
 
                     b.ToTable("ProductTax", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsEnabled = false,
-                            ProductId = 1,
-                            TaxId = 1,
-                            UseOrder = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsEnabled = false,
-                            ProductId = 2,
-                            TaxId = 1,
-                            UseOrder = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsEnabled = false,
-                            ProductId = 3,
-                            TaxId = 1,
-                            UseOrder = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsEnabled = false,
-                            ProductId = 4,
-                            TaxId = 1,
-                            UseOrder = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsEnabled = false,
-                            ProductId = 5,
-                            TaxId = 1,
-                            UseOrder = 0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsEnabled = false,
-                            ProductId = 6,
-                            TaxId = 1,
-                            UseOrder = 0
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsEnabled = false,
-                            ProductId = 7,
-                            TaxId = 1,
-                            UseOrder = 0
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductTimeHostDisallowed", b =>
@@ -6341,32 +5908,6 @@ namespace _
                         .HasDatabaseName("UQ_Name");
 
                     b.ToTable("Tax", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "24%",
-                            UseOrder = 0,
-                            Value = 23m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "16%",
-                            UseOrder = 1,
-                            Value = 16m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "None",
-                            UseOrder = 2,
-                            Value = 0m
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Token", b =>
@@ -6842,15 +6383,6 @@ namespace _
                         .HasDatabaseName("IX_ModifiedById");
 
                     b.ToTable("UserCredential", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = new byte[] { 83, 85, 227, 15, 78, 232, 180, 20, 79, 103, 15, 129, 10, 3, 147, 126, 239, 126, 93, 160, 96, 159, 159, 171, 75, 146, 156, 64, 102, 115, 131, 210, 243, 219, 214, 200, 104, 163, 120, 128, 217, 173, 12, 84, 51, 200, 142, 86, 133, 24, 98, 54, 195, 158, 10, 216, 230, 203, 100, 128, 223, 32, 7, 134 },
-                            Salt = new byte[] { 122, 20, 170, 207, 168, 134, 14, 116, 132, 207, 72, 238, 236, 130, 222, 250, 181, 146, 250, 184, 202, 112, 56, 82, 103, 23, 34, 243, 224, 174, 161, 14, 142, 244, 60, 245, 219, 79, 33, 181, 48, 74, 108, 244, 211, 197, 191, 120, 86, 58, 255, 225, 4, 59, 42, 86, 91, 159, 213, 202, 225, 155, 196, 188, 16, 26, 133, 226, 69, 188, 244, 43, 23, 65, 152, 246, 180, 11, 171, 65, 169, 52, 86, 192, 92, 75, 151, 142, 130, 26, 183, 149, 14, 247, 125, 118, 169, 71, 193, 27 }
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserCreditLimit", b =>
@@ -7019,50 +6551,6 @@ namespace _
                         .HasDatabaseName("IX_SecurityProfileId");
 
                     b.ToTable("UserGroup", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BillProfileId = 1,
-                            BillingOptions = 0,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreditLimit = 0m,
-                            CreditLimitOptions = 0,
-                            IsAgeRatingEnabled = false,
-                            IsDefault = true,
-                            IsNegativeBalanceAllowed = false,
-                            IsWaitingLinePriorityEnabled = false,
-                            Name = "Members",
-                            Options = 0,
-                            Overrides = 0,
-                            PointsAwardOptions = 0,
-                            PointsMoneyRatio = 0m,
-                            PointsTimeRatio = 0,
-                            RequiredUserInfo = 0,
-                            WaitingLinePriority = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            BillProfileId = 2,
-                            BillingOptions = 0,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreditLimit = 0m,
-                            CreditLimitOptions = 0,
-                            IsAgeRatingEnabled = false,
-                            IsDefault = false,
-                            IsNegativeBalanceAllowed = false,
-                            IsWaitingLinePriorityEnabled = false,
-                            Name = "Guests",
-                            Options = 8,
-                            Overrides = 0,
-                            PointsAwardOptions = 0,
-                            PointsMoneyRatio = 0m,
-                            PointsTimeRatio = 0,
-                            RequiredUserInfo = 0,
-                            WaitingLinePriority = 0
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserGroupHostDisallowed", b =>
@@ -7168,496 +6656,6 @@ namespace _
                         .HasDatabaseName("UQ_UserPermission");
 
                     b.ToTable("UserPermission", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "CustomPrice"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "NonDefaultVat"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "PayLater"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "VoidInvoices"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "VoidUsedTimeInvoices"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "VoidClosedShiftInvoices"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "VoidOtherOperatorInvoices"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "VoidPastDaysInvoices"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "Deposit"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "Withdraw"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "VoidDeposits"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "ManualOpenCashDrawer"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "ModifyBillingOptions"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "AllowTimeCredit"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "AllowDisableReceiptPrint"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "ViewInvoices"
-                        },
-                        new
-                        {
-                            Id = 18,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "ViewPaidInvoices"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "ViewPastDaysInvoices"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "ViewDeposits"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "ViewPastDaysDeposits"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "ViewRegisterTransactions"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "ViewPastDaysRegisterTransactions"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Sale",
-                            UserId = 1,
-                            Value = "DeleteTimePurchases"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Shift",
-                            UserId = 1,
-                            Value = "ViewExpected"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Stock",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 27,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Stock",
-                            UserId = 1,
-                            Value = "Manage"
-                        },
-                        new
-                        {
-                            Id = 28,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Stock",
-                            UserId = 1,
-                            Value = "ViewStockTransactions"
-                        },
-                        new
-                        {
-                            Id = 29,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Stock",
-                            UserId = 1,
-                            Value = "ViewPastDaysStockTransactions"
-                        },
-                        new
-                        {
-                            Id = 30,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Management",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 31,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Management",
-                            UserId = 1,
-                            Value = "Tasks"
-                        },
-                        new
-                        {
-                            Id = 32,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Management",
-                            UserId = 1,
-                            Value = "Processes"
-                        },
-                        new
-                        {
-                            Id = 33,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Management",
-                            UserId = 1,
-                            Value = "Files"
-                        },
-                        new
-                        {
-                            Id = 34,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Management",
-                            UserId = 1,
-                            Value = "Maintenance"
-                        },
-                        new
-                        {
-                            Id = 35,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Management",
-                            UserId = 1,
-                            Value = "Security"
-                        },
-                        new
-                        {
-                            Id = 36,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Management",
-                            UserId = 1,
-                            Value = "LockState"
-                        },
-                        new
-                        {
-                            Id = 37,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Management",
-                            UserId = 1,
-                            Value = "ModuleRestart"
-                        },
-                        new
-                        {
-                            Id = 38,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Management",
-                            UserId = 1,
-                            Value = "PowerOnEndpoints"
-                        },
-                        new
-                        {
-                            Id = 39,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Deployment",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 40,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Monitoring",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 41,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Reports",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 42,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Settings",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 43,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Apps",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 44,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "News",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 45,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "UserPasswordReset"
-                        },
-                        new
-                        {
-                            Id = 46,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "UserEnable"
-                        },
-                        new
-                        {
-                            Id = 47,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "UserDisable"
-                        },
-                        new
-                        {
-                            Id = 48,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "UserManualLogin"
-                        },
-                        new
-                        {
-                            Id = 49,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "Add"
-                        },
-                        new
-                        {
-                            Id = 50,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "Delete"
-                        },
-                        new
-                        {
-                            Id = 51,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "ChangeUserName"
-                        },
-                        new
-                        {
-                            Id = 52,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "ChangeUserGroup"
-                        },
-                        new
-                        {
-                            Id = 53,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "Edit"
-                        },
-                        new
-                        {
-                            Id = 54,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "User",
-                            UserId = 1,
-                            Value = "AccessStats"
-                        },
-                        new
-                        {
-                            Id = 55,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Log",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 56,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "Log",
-                            UserId = 1,
-                            Value = "Clear"
-                        },
-                        new
-                        {
-                            Id = 57,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "WaitingLines",
-                            UserId = 1,
-                            Value = "*"
-                        },
-                        new
-                        {
-                            Id = 58,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "WaitingLines",
-                            UserId = 1,
-                            Value = "Manage"
-                        },
-                        new
-                        {
-                            Id = 59,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "RegisterTransactions",
-                            UserId = 1,
-                            Value = "RegisterTransactionsPayIn"
-                        },
-                        new
-                        {
-                            Id = 60,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "RegisterTransactions",
-                            UserId = 1,
-                            Value = "RegisterTransactionsPayOut"
-                        },
-                        new
-                        {
-                            Id = 61,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Type = "WebApi",
-                            UserId = 1,
-                            Value = "*"
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserPicture", b =>
@@ -8042,56 +7040,6 @@ namespace _
                         .HasDatabaseName("IX_HostId");
 
                     b.ToTable("HostEndpoint", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Guid = new Guid("cd41aa25-ac1f-4da9-8c8e-075032803871"),
-                            HostGroupId = 2,
-                            IsDeleted = false,
-                            Name = "XBOX-ONE-1",
-                            Number = 1,
-                            State = 0,
-                            MaximumUsers = 4
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Guid = new Guid("cd41aa25-ac1f-4da9-8c8e-075032803872"),
-                            HostGroupId = 2,
-                            IsDeleted = false,
-                            Name = "XBOX-ONE-2",
-                            Number = 2,
-                            State = 0,
-                            MaximumUsers = 4
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Guid = new Guid("cd41aa25-ac1f-4da9-8c8e-075032803873"),
-                            HostGroupId = 2,
-                            IsDeleted = false,
-                            Name = "PS4-1",
-                            Number = 3,
-                            State = 0,
-                            MaximumUsers = 4
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Guid = new Guid("cd41aa25-ac1f-4da9-8c8e-075032803874"),
-                            HostGroupId = 2,
-                            IsDeleted = false,
-                            Name = "WII-1",
-                            Number = 4,
-                            State = 0,
-                            MaximumUsers = 4
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineExtended", b =>
@@ -8298,56 +7246,6 @@ namespace _
                         .HasDatabaseName("IX_ProductId");
 
                     b.ToTable("ProductTime", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 6,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Guid = new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba6"),
-                            IsDeleted = false,
-                            Name = "Six Hours (6)",
-                            OrderOptions = 0,
-                            Price = 12m,
-                            ProductGroupId = 1,
-                            PurchaseOptions = 0,
-                            StockAlert = 0m,
-                            StockOptions = 0,
-                            StockProductAmount = 0m,
-                            ExpirationOptions = 0,
-                            ExpireAfterType = 0,
-                            ExpireAtDayTimeMinute = 0,
-                            ExpireFromOptions = 0,
-                            ExpiresAfter = 0,
-                            Minutes = 360,
-                            UsageOptions = 0,
-                            UseOrder = 0
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Guid = new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba7"),
-                            IsDeleted = false,
-                            Name = "Six Hours (6 Weekends)",
-                            OrderOptions = 0,
-                            Price = 16m,
-                            ProductGroupId = 1,
-                            PurchaseOptions = 0,
-                            StockAlert = 0m,
-                            StockOptions = 0,
-                            StockProductAmount = 0m,
-                            ExpirationOptions = 0,
-                            ExpireAfterType = 0,
-                            ExpireAtDayTimeMinute = 0,
-                            ExpireFromOptions = 0,
-                            ExpiresAfter = 0,
-                            Minutes = 360,
-                            UsageOptions = 0,
-                            UseOrder = 0
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductOLExtended", b =>
@@ -8600,20 +7498,6 @@ namespace _
                         .HasDatabaseName("UQ_Username");
 
                     b.ToTable("UserMember", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 2,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Guid = new Guid("38753737-24f1-40d7-8ac4-ba61660d666a"),
-                            IsDeleted = false,
-                            IsDisabled = false,
-                            Sex = 0,
-                            IsPersonalInfoRequested = false,
-                            UserGroupId = 1,
-                            Username = "User"
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserOperator", b =>
@@ -8646,19 +7530,6 @@ namespace _
                         .HasDatabaseName("UQ_Username");
 
                     b.ToTable("UserOperator", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedTime = new DateTime(2023, 11, 8, 7, 16, 30, 216, DateTimeKind.Unspecified).AddTicks(6704),
-                            Guid = new Guid("691ea8b4-d794-4096-84ae-bbdb7bcc0b02"),
-                            IsDeleted = false,
-                            IsDisabled = false,
-                            Sex = 0,
-                            ShiftOptions = 0,
-                            Username = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.VerificationEmail", b =>
@@ -8779,79 +7650,6 @@ namespace _
                     b.HasBaseType("Gizmo.DAL.Entities.ProductBaseExtended");
 
                     b.ToTable("Product", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Cost = 0.90m,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Guid = new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba1"),
-                            IsDeleted = false,
-                            Name = "Mars Bar",
-                            OrderOptions = 0,
-                            Points = 10,
-                            Price = 1.10m,
-                            ProductGroupId = 4,
-                            PurchaseOptions = 0,
-                            StockAlert = 0m,
-                            StockOptions = 1,
-                            StockProductAmount = 0m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Cost = 1.20m,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Guid = new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba2"),
-                            IsDeleted = false,
-                            Name = "Snickers Bar",
-                            OrderOptions = 0,
-                            Points = 15,
-                            Price = 2.0m,
-                            ProductGroupId = 4,
-                            PurchaseOptions = 0,
-                            StockAlert = 0m,
-                            StockOptions = 1,
-                            StockProductAmount = 0m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Cost = 1.20m,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Guid = new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba4"),
-                            IsDeleted = false,
-                            Name = "Coca Cola (Can)",
-                            OrderOptions = 0,
-                            Points = 20,
-                            Price = 2.0m,
-                            ProductGroupId = 3,
-                            PurchaseOptions = 0,
-                            StockAlert = 0m,
-                            StockOptions = 1,
-                            StockProductAmount = 0m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Cost = 2.20m,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Guid = new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba3"),
-                            IsDeleted = false,
-                            Name = "Pizza (Small)",
-                            OrderOptions = 0,
-                            Price = 6.0m,
-                            ProductGroupId = 2,
-                            PurchaseOptions = 0,
-                            StockAlert = 0m,
-                            StockOptions = 0,
-                            StockProductAmount = 0m
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductBundle", b =>
@@ -8862,26 +7660,6 @@ namespace _
                         .HasColumnType("int");
 
                     b.ToTable("ProductBundle", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 5,
-                            CreatedTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 0,
-                            Guid = new Guid("39a65689-65ae-49b4-80b9-ea0afb9daba5"),
-                            IsDeleted = false,
-                            Name = "Pizza and Cola",
-                            OrderOptions = 0,
-                            Points = 200,
-                            Price = 3.40m,
-                            ProductGroupId = 2,
-                            PurchaseOptions = 0,
-                            StockAlert = 0m,
-                            StockOptions = 1,
-                            StockProductAmount = 0m,
-                            BundleStockOptions = 0
-                        });
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductOLProduct", b =>

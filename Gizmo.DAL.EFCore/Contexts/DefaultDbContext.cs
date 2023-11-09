@@ -989,13 +989,8 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new AssistanceRequestTypeMap()); 
             #endregion
 
-
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
-            #endregion
-
-            #region SEED
-            Seed(modelBuilder);
             #endregion
 
             #region BASE MODEL CREATION
