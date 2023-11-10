@@ -776,6 +776,13 @@ namespace Gizmo.DAL.Contexts
         #endregion
 
         #region OVERRIDES
+
+        /// <inheritdoc/>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.EnableSensitiveDataLogging(false);
+        }
+
         /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

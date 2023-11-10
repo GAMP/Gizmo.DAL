@@ -1,5 +1,4 @@
-﻿using Gizmo.DAL.Contexts;
-using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Entities;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +8,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 
-namespace Gizmo.DAL.EFCore.Contexts
+namespace Gizmo.DAL.Contexts
 {
     /// <summary>
     /// Database initializer.
@@ -17,6 +16,7 @@ namespace Gizmo.DAL.EFCore.Contexts
     public sealed class DatabaseInitializer
     {
         private readonly DefaultDbContext _context;
+
         /// <summary>
         /// Create new instance.
         /// </summary>
@@ -32,56 +32,40 @@ namespace Gizmo.DAL.EFCore.Contexts
         {
             if (_context.Database.CanConnect())
             {
-                var appliedMigrations = _context.Database.GetAppliedMigrations();
+                var appliedMigrations = _context.Database.GetAppliedMigrations().ToArray();
 
                 if (!appliedMigrations.Any())
                 {
-                    _context.Database.EnsureDeleted();
-                    _context.Database.Migrate();
-                    SeedData(false);
+                    if (_context.Database.IsSqlServer())
+                    {
+                        var migrationsAssemblyEf6 = "Gizmo.DAL.EF6.Migrations.MSSQL";
+
+                        //how to apply EF6 migration
+
+                    }
+                    else if (_context.Database.IsNpgsql())
+                    {
+                        var pendingMigrations = _context.Database.GetPendingMigrations().ToArray();
+
+                        if (pendingMigrations.Any())
+                        {
+                            _context.Database.Migrate();
+                        }
+                    }
                 }
             }
             else
             {
                 _context.Database.Migrate();
-                SeedData(false);
+                AddSeedData();
             }
         }
 
-        private void SeedData(bool withRefresh)
+        private void AddSeedData()
         {
             try
             {
                 _context.Database.BeginTransaction();
-
-                if (withRefresh)
-                {
-                    _context.PresetTimeSaleMoney.RemoveRange(_context.PresetTimeSaleMoney);
-                    _context.PresetTimeSale.RemoveRange(_context.PresetTimeSale);
-                    _context.HostEndpoint.RemoveRange(_context.HostEndpoint);
-                    _context.HostGroups.RemoveRange(_context.HostGroups);
-                    _context.UsersMember.RemoveRange(_context.UsersMember);
-                    _context.UserGroups.RemoveRange(_context.UserGroups);
-                    _context.BillRates.RemoveRange(_context.BillRates);
-                    _context.BillProfiles.RemoveRange(_context.BillProfiles);
-                    _context.HostLayoutGroups.RemoveRange(_context.HostLayoutGroups);
-                    _context.ProductsTaxes.RemoveRange(_context.ProductsTaxes);
-                    _context.ProductPeriodDays.RemoveRange(_context.ProductPeriodDays);
-                    _context.ProductPeriods.RemoveRange(_context.ProductPeriods);
-                    _context.BundleProducts.RemoveRange(_context.BundleProducts);
-                    _context.ProductTimes.RemoveRange(_context.ProductTimes);
-                    _context.ProductBundles.RemoveRange(_context.ProductBundles);
-                    _context.Products.RemoveRange(_context.Products);
-                    _context.ProductGroups.RemoveRange(_context.ProductGroups);
-                    _context.Taxes.RemoveRange(_context.Taxes);
-                    _context.UserPermissions.RemoveRange(_context.UserPermissions);
-                    _context.Credentials.RemoveRange(_context.Credentials);
-                    _context.UsersOperator.RemoveRange(_context.UsersOperator);
-                    _context.MonetaryUnits.RemoveRange(_context.MonetaryUnits);
-                    _context.PaymentMethods.RemoveRange(_context.PaymentMethods);
-                    
-                    _context.SaveChanges();
-                }
 
                 #region AddPaymentMethods
 
@@ -152,7 +136,7 @@ namespace Gizmo.DAL.EFCore.Contexts
                 _context.UsersOperator.AddRange(admin);
                 _context.SaveChanges();
 
-                var adminCredential = new UserCredential() { Id = 1, Salt = salt, Password = password };
+                var adminCredential = new UserCredential() { Id = admin.Id, Salt = salt, Password = password };
 
                 var adminPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes()
                     .Select(claim => new UserPermission() { UserId = admin.Id, Type = claim.Resource, Value = claim.Operation });
@@ -248,20 +232,44 @@ namespace Gizmo.DAL.EFCore.Contexts
 
                 var bundleProducts = new BundleProduct[]
                 {
-                 new(){ProductId = productCocaCola.Id, ProductBundleId = productBundlePizzaAndCola.Id, Price = 1, Quantity = 1 },
-                 new(){ProductId = productPizza.Id, ProductBundleId = productBundlePizzaAndCola.Id, Price = 2, Quantity = 1 }
+                     new(){ProductId = productCocaCola.Id, ProductBundleId = productBundlePizzaAndCola.Id, Price = 1, Quantity = 1 },
+                     new(){ProductId = productPizza.Id, ProductBundleId = productBundlePizzaAndCola.Id, Price = 2, Quantity = 1 }
                 };
 
-                var productPeriod = new ProductPeriod()
-                {
-                    Id = 1,
-                    Options = PeriodOptionType.None
+                var productPeriods = new ProductPeriod[]
+                { 
+                    new ()
+                    {
+                        Id = productMars.Id,
+                        Options = PeriodOptionType.None
+                    },
+                    new ()
+                    {
+                        Id = productSnickers.Id,
+                        Options = PeriodOptionType.None
+                    },
+                    new ()
+                    {
+                        Id = productPizza.Id,
+                        Options = PeriodOptionType.None
+                    },
+                    new ()
+                    {
+                        Id = productCocaCola.Id,
+                        Options = PeriodOptionType.None
+                    },
+                    new ()
+                    {
+                        Id = productBundlePizzaAndCola.Id,
+                        Options = PeriodOptionType.None
+                    },
                 };
-                var productPeriodDays = new ProductPeriodDay[]
+
+                var productPeriodDays = productPeriods.SelectMany(x => new ProductPeriodDay[]
                 {
-                 new(){ ProductPeriodId = productPeriod.Id, Day = DayOfWeek.Saturday },
-                 new(){ ProductPeriodId = productPeriod.Id, Day = DayOfWeek.Sunday },
-                };
+                     new(){ ProductPeriodId = x.Id, Day = DayOfWeek.Saturday },
+                     new(){ ProductPeriodId = x.Id, Day = DayOfWeek.Sunday },
+                });
 
                 var productTimeSixHours = new ProductTime()
                 {
@@ -299,7 +307,7 @@ namespace Gizmo.DAL.EFCore.Contexts
                 };
 
                 _context.BundleProducts.AddRange(bundleProducts);
-                _context.ProductPeriods.AddRange(productPeriod);
+                _context.ProductPeriods.AddRange(productPeriods);
                 _context.ProductPeriodDays.AddRange(productPeriodDays);
                 _context.ProductsTaxes.AddRange(productTaxes);
 
@@ -418,6 +426,46 @@ namespace Gizmo.DAL.EFCore.Contexts
                 });
 
                 #endregion
+
+                _context.SaveChanges();
+
+                _context.Database.CommitTransaction();
+            }
+            catch
+            {
+                _context.Database.RollbackTransaction();
+                throw;
+            }
+        }
+        private void RemoveSeedData()
+        {
+            try
+            {
+                _context.Database.BeginTransaction();
+
+                _context.PresetTimeSaleMoney.RemoveRange(_context.PresetTimeSaleMoney);
+                _context.PresetTimeSale.RemoveRange(_context.PresetTimeSale);
+                _context.HostEndpoint.RemoveRange(_context.HostEndpoint);
+                _context.HostGroups.RemoveRange(_context.HostGroups);
+                _context.UsersMember.RemoveRange(_context.UsersMember);
+                _context.UserGroups.RemoveRange(_context.UserGroups);
+                _context.BillRates.RemoveRange(_context.BillRates);
+                _context.BillProfiles.RemoveRange(_context.BillProfiles);
+                _context.HostLayoutGroups.RemoveRange(_context.HostLayoutGroups);
+                _context.ProductsTaxes.RemoveRange(_context.ProductsTaxes);
+                _context.ProductPeriodDays.RemoveRange(_context.ProductPeriodDays);
+                _context.ProductPeriods.RemoveRange(_context.ProductPeriods);
+                _context.BundleProducts.RemoveRange(_context.BundleProducts);
+                _context.ProductTimes.RemoveRange(_context.ProductTimes);
+                _context.ProductBundles.RemoveRange(_context.ProductBundles);
+                _context.Products.RemoveRange(_context.Products);
+                _context.ProductGroups.RemoveRange(_context.ProductGroups);
+                _context.Taxes.RemoveRange(_context.Taxes);
+                _context.UserPermissions.RemoveRange(_context.UserPermissions);
+                _context.Credentials.RemoveRange(_context.Credentials);
+                _context.UsersOperator.RemoveRange(_context.UsersOperator);
+                _context.MonetaryUnits.RemoveRange(_context.MonetaryUnits);
+                _context.PaymentMethods.RemoveRange(_context.PaymentMethods);
 
                 _context.SaveChanges();
 
