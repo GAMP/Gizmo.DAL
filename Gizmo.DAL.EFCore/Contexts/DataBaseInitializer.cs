@@ -47,7 +47,7 @@ namespace Gizmo.DAL.Contexts
 
             //here we need to determine if the current database instance is an old EF6 based one
             //that have not yet been migrated to the new strcuture
-            if (databaseType != DatabaseType.MSSQL || databaseType != DatabaseType.MSSQLEXPRESS)
+            if (databaseType == DatabaseType.MSSQL || databaseType == DatabaseType.MSSQLEXPRESS || databaseType == DatabaseType.LOCALDB)
             {
                 optionsBuilder.UseSqlServer(connectionString, options =>
                 {
@@ -84,6 +84,7 @@ namespace Gizmo.DAL.Contexts
             {
                 case DatabaseType.MSSQL:
                 case DatabaseType.MSSQLEXPRESS:
+                case DatabaseType.LOCALDB:
                     optionsBuilder.UseSqlServer(connectionString, options =>
                     {
                         options.CommandTimeout(commandTimeout);
@@ -98,7 +99,7 @@ namespace Gizmo.DAL.Contexts
                     });
                     break;
                 default:
-                    throw new NotSupportedException();
+                    throw new NotSupportedException($"Specified {databaseType} database type is not supported.");
             }
 
             using (DefaultDbContext dbContext = new(optionsBuilder.Options))
