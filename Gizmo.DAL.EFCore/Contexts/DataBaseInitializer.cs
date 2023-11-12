@@ -1,4 +1,5 @@
 ﻿using Gizmo.DAL.EFCore;
+using Gizmo.DAL.EFCore.Extensions;
 using Gizmo.DAL.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -46,7 +47,7 @@ namespace Gizmo.DAL.Contexts
             //TODO validation logic could be added, possibly it will be done before this call
 
             //here we need to determine if the current database instance is an old EF6 based one
-            //that have not yet been migrated to the new strcuture
+            //that have not yet been migrated to the new strcuture, this should only be done with MSSQL databases
             if (databaseType == DatabaseType.MSSQL || databaseType == DatabaseType.MSSQLEXPRESS || databaseType == DatabaseType.LOCALDB)
             {
                 optionsBuilder.UseSqlServer(connectionString, options =>
@@ -59,27 +60,30 @@ namespace Gizmo.DAL.Contexts
 
                 using (DefaultDbContext migrateContext = new(optionsBuilder.Options))
                 {
-                    string tableExistQuery = """
-                           IF (EXISTS (SELECT *
-                           FROM INFORMATION_SCHEMA.TABLES
-                           WHERE TABLE_SCHEMA = 'dbo'
-                           AND TABLE_NAME = '__MigrationHistory'))
-                           BEGIN
-                              SELECT CAST(1 AS BIT)
-                           END;
-                        ELSE
-                           BEGIN
-                              SELECT CAST(0 AS BIT)
-                           END;
-                        """;
+                    //check if EF6 migration table existis in the database, that will indicate that its an old EF6 database instance
+                    if(await migrateContext.Database.TableExistsAsync("__MigrationHistory", cancellationToken))
+                    {
+                        //ensure that no EFCore migrations applied already, if EFCore migration table exists that will indicate
+                        //that EFCore migrations already applied
 
-                    var result = (await migrateContext.Database.SqlQueryRaw<bool>(tableExistQuery)
-                        .ToListAsync(cancellationToken)).Single();
+                        //TOOD we could also check if the table is empty,
+                        //not sure if this can happen and what the state of the db will be in that case
+                        if (!await migrateContext.Database.TableExistsAsync("__EFMigrationsHistory", cancellationToken))
+                        {
+                            //detemine EF6 database version, only latest will be allowed, if the database is on lower version we cant proceed
+                            if(!await migrateContext.Database.MigrationExistAsync("202309121624325_Update17",cancellationToken))
+                            {
+                                //current version is not supported
+                                throw new NotSupportedException("Current database version cannot be upgraded.");
+                            }
 
-                    await migrateContext.Database.MigrateAsync(cancellationToken);
+                            await migrateContext.Database.MigrateAsync(cancellationToken);
+                        }
+                    }
                 }
             }
 
+            //initialize db context based on our configuration
             switch(databaseType)
             {
                 case DatabaseType.MSSQL:
@@ -102,6 +106,7 @@ namespace Gizmo.DAL.Contexts
                     throw new NotSupportedException($"Specified {databaseType} database type is not supported.");
             }
 
+            //default migration code, this will be executed for all databases all the times
             using (DefaultDbContext dbContext = new(optionsBuilder.Options))
             {                
                 //get currently pending migrations
@@ -117,7 +122,7 @@ namespace Gizmo.DAL.Contexts
             }
         }
 
-        private void AddSeedData(DefaultDbContext dbContext)
+        private static void AddSeedData(DefaultDbContext dbContext)
         {
             try
             {
@@ -493,7 +498,8 @@ namespace Gizmo.DAL.Contexts
                 throw;
             }
         }
-        private void RemoveSeedData(DefaultDbContext dbContext)
+
+        private static void RemoveSeedData(DefaultDbContext dbContext)
         {
             try
             {
@@ -532,6 +538,6 @@ namespace Gizmo.DAL.Contexts
                 dbContext.Database.RollbackTransaction();
                 throw;
             }
-        }
+        }        
     }
 }
