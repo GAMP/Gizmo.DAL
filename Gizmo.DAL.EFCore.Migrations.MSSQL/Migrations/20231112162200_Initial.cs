@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace _
+namespace Gizmo.DAL.EFCore.Migrations.MSSQL.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -42,7 +42,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_LogException", x => x.LogId);
                     table.ForeignKey(
-                        name: "FK_dbo.LogException_dbo.Log_LogId",
+                        name: "FK_LogException_Log_LogId",
                         column: x => x.LogId,
                         principalTable: "Log",
                         principalColumn: "LogId",
@@ -94,7 +94,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppCategory", x => x.AppCategoryId);
                     table.ForeignKey(
-                        name: "FK_dbo.AppCategory_dbo.AppCategory_ParentId",
+                        name: "FK_AppCategory_AppCategory_ParentId",
                         column: x => x.ParentId,
                         principalTable: "AppCategory",
                         principalColumn: "AppCategoryId");
@@ -147,7 +147,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppExe", x => x.AppExeId);
                     table.ForeignKey(
-                        name: "FK_dbo.AppExe_dbo.App_AppId",
+                        name: "FK_AppExe_App_AppId",
                         column: x => x.AppId,
                         principalTable: "App",
                         principalColumn: "AppId",
@@ -175,7 +175,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppExeCdImage", x => x.AppExeCdImageId);
                     table.ForeignKey(
-                        name: "FK_dbo.AppExeCdImage_dbo.AppExe_AppExeId",
+                        name: "FK_AppExeCdImage_AppExe_AppExeId",
                         column: x => x.AppExeId,
                         principalTable: "AppExe",
                         principalColumn: "AppExeId",
@@ -198,7 +198,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppExeDeployment", x => new { x.AppExeId, x.DeploymentId });
                     table.ForeignKey(
-                        name: "FK_dbo.AppExeDeployment_dbo.AppExe_AppExeId",
+                        name: "FK_AppExeDeployment_AppExe_AppExeId",
                         column: x => x.AppExeId,
                         principalTable: "AppExe",
                         principalColumn: "AppExeId",
@@ -220,7 +220,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppExeImage", x => x.AppExeId);
                     table.ForeignKey(
-                        name: "FK_dbo.AppExeImage_dbo.AppExe_AppExeId",
+                        name: "FK_AppExeImage_AppExe_AppExeId",
                         column: x => x.AppExeId,
                         principalTable: "AppExe",
                         principalColumn: "AppExeId",
@@ -243,7 +243,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppExeLicense", x => new { x.AppExeId, x.LicenseId });
                     table.ForeignKey(
-                        name: "FK_dbo.AppExeLicense_dbo.AppExe_AppExeId",
+                        name: "FK_AppExeLicense_AppExe_AppExeId",
                         column: x => x.AppExeId,
                         principalTable: "AppExe",
                         principalColumn: "AppExeId",
@@ -268,7 +268,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppExeMaxUser", x => x.AppExeMaxUserId);
                     table.ForeignKey(
-                        name: "FK_dbo.AppExeMaxUser_dbo.AppExe_AppExeId",
+                        name: "FK_AppExeMaxUser_AppExe_AppExeId",
                         column: x => x.AppExeId,
                         principalTable: "AppExe",
                         principalColumn: "AppExeId",
@@ -291,7 +291,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppExePersonalFile", x => new { x.AppExeId, x.PersonalFileId });
                     table.ForeignKey(
-                        name: "FK_dbo.AppExePersonalFile_dbo.AppExe_AppExeId",
+                        name: "FK_AppExePersonalFile_AppExe_AppExeId",
                         column: x => x.AppExeId,
                         principalTable: "AppExe",
                         principalColumn: "AppExeId",
@@ -318,7 +318,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppExeTask", x => x.AppExeTaskId);
                     table.ForeignKey(
-                        name: "FK_dbo.AppExeTask_dbo.AppExe_AppExeId",
+                        name: "FK_AppExeTask_AppExe_AppExeId",
                         column: x => x.AppExeId,
                         principalTable: "AppExe",
                         principalColumn: "AppExeId",
@@ -354,13 +354,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppGroupApp", x => new { x.AppGroupId, x.AppId });
                     table.ForeignKey(
-                        name: "FK_dbo.AppGroupApp_dbo.AppGroup_AppGroupId",
+                        name: "FK_AppGroupApp_AppGroup_AppGroupId",
                         column: x => x.AppGroupId,
                         principalTable: "AppGroup",
                         principalColumn: "AppGroupId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.AppGroupApp_dbo.App_AppId",
+                        name: "FK_AppGroupApp_App_AppId",
                         column: x => x.AppId,
                         principalTable: "App",
                         principalColumn: "AppId",
@@ -382,7 +382,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppImage", x => x.AppId);
                     table.ForeignKey(
-                        name: "FK_dbo.AppImage_dbo.App_AppId",
+                        name: "FK_AppImage_App_AppId",
                         column: x => x.AppId,
                         principalTable: "App",
                         principalColumn: "AppId",
@@ -410,7 +410,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppLink", x => x.AppLinkId);
                     table.ForeignKey(
-                        name: "FK_dbo.AppLink_dbo.App_AppId",
+                        name: "FK_AppLink_App_AppId",
                         column: x => x.AppId,
                         principalTable: "App",
                         principalColumn: "AppId",
@@ -430,7 +430,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppRating", x => new { x.AppId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_dbo.AppRating_dbo.App_AppId",
+                        name: "FK_AppRating_App_AppId",
                         column: x => x.AppId,
                         principalTable: "App",
                         principalColumn: "AppId",
@@ -454,13 +454,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_AppStat", x => x.AppStatId);
                     table.ForeignKey(
-                        name: "FK_dbo.AppStat_dbo.AppExe_AppExeId",
+                        name: "FK_AppStat_AppExe_AppExeId",
                         column: x => x.AppExeId,
                         principalTable: "AppExe",
                         principalColumn: "AppExeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.AppStat_dbo.App_AppId",
+                        name: "FK_AppStat_App_AppId",
                         column: x => x.AppId,
                         principalTable: "App",
                         principalColumn: "AppId",
@@ -514,7 +514,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_AssetTransaction", x => x.AssetTransactionId);
                     table.ForeignKey(
-                        name: "FK_dbo.AssetTransaction_dbo.Asset_AssetId",
+                        name: "FK_AssetTransaction_Asset_AssetId",
                         column: x => x.AssetId,
                         principalTable: "Asset",
                         principalColumn: "AssetId",
@@ -634,7 +634,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_BillRate", x => x.BillRateId);
                     table.ForeignKey(
-                        name: "FK_dbo.BillRate_dbo.BillProfile_BillProfileId",
+                        name: "FK_BillRate_BillProfile_BillProfileId",
                         column: x => x.BillProfileId,
                         principalTable: "BillProfile",
                         principalColumn: "BillProfileId",
@@ -654,7 +654,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_BillRatePeriodDay", x => x.BillRatePeriodDayId);
                     table.ForeignKey(
-                        name: "FK_dbo.BillRatePeriodDay_dbo.BillRate_BillRateId",
+                        name: "FK_BillRatePeriodDay_BillRate_BillRateId",
                         column: x => x.BillRateId,
                         principalTable: "BillRate",
                         principalColumn: "BillRateId",
@@ -678,7 +678,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_BillRateStep", x => x.BillRateStepId);
                     table.ForeignKey(
-                        name: "FK_dbo.BillRateStep_dbo.BillRate_BillRateId",
+                        name: "FK_BillRateStep_BillRate_BillRateId",
                         column: x => x.BillRateId,
                         principalTable: "BillRate",
                         principalColumn: "BillRateId",
@@ -697,7 +697,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_BillRatePeriodDayTime", x => new { x.PeriodDayId, x.StartSecond, x.EndSecond });
                     table.ForeignKey(
-                        name: "FK_dbo.BillRatePeriodDayTime_dbo.BillRatePeriodDay_PeriodDayId",
+                        name: "FK_BillRatePeriodDayTime_BillRatePeriodDay_PeriodDayId",
                         column: x => x.PeriodDayId,
                         principalTable: "BillRatePeriodDay",
                         principalColumn: "BillRatePeriodDayId",
@@ -744,7 +744,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_BundleProductUserPrice", x => x.BundleProductUserPriceId);
                     table.ForeignKey(
-                        name: "FK_dbo.BundleProductUserPrice_dbo.BundleProduct_BundleProductId",
+                        name: "FK_BundleProductUserPrice_BundleProduct_BundleProductId",
                         column: x => x.BundleProductId,
                         principalTable: "BundleProduct",
                         principalColumn: "BundleProductId",
@@ -814,13 +814,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_DeploymentDeployment", x => new { x.ParentId, x.ChildId });
                     table.ForeignKey(
-                        name: "FK_dbo.DeploymentDeployment_dbo.Deployment_ChildId",
+                        name: "FK_DeploymentDeployment_Deployment_ChildId",
                         column: x => x.ChildId,
                         principalTable: "Deployment",
                         principalColumn: "DeploymentId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.DeploymentDeployment_dbo.Deployment_ParentId",
+                        name: "FK_DeploymentDeployment_Deployment_ParentId",
                         column: x => x.ParentId,
                         principalTable: "Deployment",
                         principalColumn: "DeploymentId",
@@ -929,7 +929,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_DeviceHost", x => x.DeviceHostId);
                     table.ForeignKey(
-                        name: "FK_dbo.DeviceHost_dbo.Device_DeviceId",
+                        name: "FK_DeviceHost_Device_DeviceId",
                         column: x => x.DeviceId,
                         principalTable: "Device",
                         principalColumn: "DeviceId",
@@ -1056,7 +1056,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_HostGroup", x => x.HostGroupId);
                     table.ForeignKey(
-                        name: "FK_dbo.HostGroup_dbo.AppGroup_AppGroupId",
+                        name: "FK_HostGroup_AppGroup_AppGroupId",
                         column: x => x.AppGroupId,
                         principalTable: "AppGroup",
                         principalColumn: "AppGroupId");
@@ -1077,13 +1077,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_HostGroupUserBillProfile", x => x.HostGroupUserBillProfileId);
                     table.ForeignKey(
-                        name: "FK_dbo.HostGroupUserBillProfile_dbo.BillProfile_BillProfileId",
+                        name: "FK_HostGroupUserBillProfile_BillProfile_BillProfileId",
                         column: x => x.BillProfileId,
                         principalTable: "BillProfile",
                         principalColumn: "BillProfileId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.HostGroupUserBillProfile_dbo.HostGroup_HostGroupId",
+                        name: "FK_HostGroupUserBillProfile_HostGroup_HostGroupId",
                         column: x => x.HostGroupId,
                         principalTable: "HostGroup",
                         principalColumn: "HostGroupId",
@@ -1106,7 +1106,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_HostGroupWaitingLine", x => x.HosGroupId);
                     table.ForeignKey(
-                        name: "FK_dbo.HostGroupWaitingLine_dbo.HostGroup_HosGroupId",
+                        name: "FK_HostGroupWaitingLine_HostGroup_HosGroupId",
                         column: x => x.HosGroupId,
                         principalTable: "HostGroup",
                         principalColumn: "HostGroupId",
@@ -1136,13 +1136,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_HostGroupWaitingLineEntry", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_dbo.HostGroupWaitingLineEntry_dbo.HostGroupWaitingLine_HostGroupId",
+                        name: "FK_HostGroupWaitingLineEntry_HostGroupWaitingLine_HostGroupId",
                         column: x => x.HostGroupId,
                         principalTable: "HostGroupWaitingLine",
                         principalColumn: "HosGroupId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.HostGroupWaitingLineEntry_dbo.HostGroup_HostGroupId",
+                        name: "FK_HostGroupWaitingLineEntry_HostGroup_HostGroupId",
                         column: x => x.HostGroupId,
                         principalTable: "HostGroup",
                         principalColumn: "HostGroupId",
@@ -1182,7 +1182,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_HostLayoutGroupImage", x => x.HostLayoutGroupId);
                     table.ForeignKey(
-                        name: "FK_dbo.HostLayoutGroupImage_dbo.HostLayoutGroup_HostLayoutGroupId",
+                        name: "FK_HostLayoutGroupImage_HostLayoutGroup_HostLayoutGroupId",
                         column: x => x.HostLayoutGroupId,
                         principalTable: "HostLayoutGroup",
                         principalColumn: "HostLayoutGroupId",
@@ -1211,13 +1211,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_HostLayoutGroupLayout", x => x.HostLayoutGroupLayoutId);
                     table.ForeignKey(
-                        name: "FK_dbo.HostLayoutGroupLayout_dbo.HostLayoutGroup_HostLayoutGroupId",
+                        name: "FK_HostLayoutGroupLayout_HostLayoutGroup_HostLayoutGroupId",
                         column: x => x.HostLayoutGroupId,
                         principalTable: "HostLayoutGroup",
                         principalColumn: "HostLayoutGroupId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.HostLayoutGroupLayout_dbo.Host_HostId",
+                        name: "FK_HostLayoutGroupLayout_Host_HostId",
                         column: x => x.HostId,
                         principalTable: "Host",
                         principalColumn: "HostId",
@@ -1288,13 +1288,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_InvoiceFiscalReceipt", x => x.InvoiceFiscalReceiptId);
                     table.ForeignKey(
-                        name: "FK_dbo.InvoiceFiscalReceipt_dbo.FiscalReceipt_FiscalReceiptId",
+                        name: "FK_InvoiceFiscalReceipt_FiscalReceipt_FiscalReceiptId",
                         column: x => x.FiscalReceiptId,
                         principalTable: "FiscalReceipt",
                         principalColumn: "FiscalReceiptId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.InvoiceFiscalReceipt_dbo.Invoice_InvoiceId",
+                        name: "FK_InvoiceFiscalReceipt_Invoice_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoice",
                         principalColumn: "InvoiceId",
@@ -1339,7 +1339,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_InvoiceLine", x => x.InvoiceLineId);
                     table.ForeignKey(
-                        name: "FK_dbo.InvoiceLine_dbo.Invoice_InvoiceId",
+                        name: "FK_InvoiceLine_Invoice_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoice",
                         principalColumn: "InvoiceId",
@@ -1466,7 +1466,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_InvoicePayment", x => x.InvoicePaymentId);
                     table.ForeignKey(
-                        name: "FK_dbo.InvoicePayment_dbo.Invoice_InvoiceId",
+                        name: "FK_InvoicePayment_Invoice_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoice",
                         principalColumn: "InvoiceId",
@@ -1515,12 +1515,12 @@ namespace _
                 {
                     table.PrimaryKey("PK_LicenseKey", x => x.LicenseKeyId);
                     table.ForeignKey(
-                        name: "FK_dbo.LicenseKey_dbo.HostComputer_AssignedHostId",
+                        name: "FK_LicenseKey_HostComputer_AssignedHostId",
                         column: x => x.AssignedHostId,
                         principalTable: "HostComputer",
                         principalColumn: "HostId");
                     table.ForeignKey(
-                        name: "FK_dbo.LicenseKey_dbo.License_LicenseId",
+                        name: "FK_LicenseKey_License_LicenseId",
                         column: x => x.LicenseId,
                         principalTable: "License",
                         principalColumn: "LicenseId",
@@ -1642,7 +1642,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_Payment", x => x.PaymentId);
                     table.ForeignKey(
-                        name: "FK_dbo.Payment_dbo.DepositTransaction_DepositTransactionId",
+                        name: "FK_Payment_DepositTransaction_DepositTransactionId",
                         column: x => x.DepositTransactionId,
                         principalTable: "DepositTransaction",
                         principalColumn: "DepositTransactionId");
@@ -1683,16 +1683,16 @@ namespace _
                 {
                     table.PrimaryKey("PK_PaymentIntentDeposit", x => x.PaymentIntentId);
                     table.ForeignKey(
+                        name: "FK_PaymentIntentDeposit_DepositPayment_DepositPaymentId",
+                        column: x => x.DepositPaymentId,
+                        principalTable: "DepositPayment",
+                        principalColumn: "DepositPaymentId");
+                    table.ForeignKey(
                         name: "FK_PaymentIntentDeposit_PaymentIntent_PaymentIntentId",
                         column: x => x.PaymentIntentId,
                         principalTable: "PaymentIntent",
                         principalColumn: "PaymentIntentId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.PaymentIntentDeposit_dbo.DepositPayment_DepositPaymentId",
-                        column: x => x.DepositPaymentId,
-                        principalTable: "DepositPayment",
-                        principalColumn: "DepositPaymentId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1707,16 +1707,16 @@ namespace _
                 {
                     table.PrimaryKey("PK_PaymentIntentOrder", x => x.PaymentIntentId);
                     table.ForeignKey(
+                        name: "FK_PaymentIntentOrder_InvoicePayment_InvoicePaymentId",
+                        column: x => x.InvoicePaymentId,
+                        principalTable: "InvoicePayment",
+                        principalColumn: "InvoicePaymentId");
+                    table.ForeignKey(
                         name: "FK_PaymentIntentOrder_PaymentIntent_PaymentIntentId",
                         column: x => x.PaymentIntentId,
                         principalTable: "PaymentIntent",
                         principalColumn: "PaymentIntentId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.PaymentIntentOrder_dbo.InvoicePayment_InvoicePaymentId",
-                        column: x => x.InvoicePaymentId,
-                        principalTable: "InvoicePayment",
-                        principalColumn: "InvoicePaymentId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1898,7 +1898,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductBase", x => x.ProductId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductBase_dbo.ProductBase_StockProductId",
+                        name: "FK_ProductBase_ProductBase_StockProductId",
                         column: x => x.StockProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId");
@@ -1934,7 +1934,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductPeriod", x => x.ProductId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductPeriod_dbo.ProductBase_ProductId",
+                        name: "FK_ProductPeriod_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
@@ -1962,16 +1962,16 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductTime", x => x.ProductId);
                     table.ForeignKey(
+                        name: "FK_ProductTime_AppGroup_AppGroupId",
+                        column: x => x.AppGroupId,
+                        principalTable: "AppGroup",
+                        principalColumn: "AppGroupId");
+                    table.ForeignKey(
                         name: "FK_ProductTime_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.ProductTime_dbo.AppGroup_AppGroupId",
-                        column: x => x.AppGroupId,
-                        principalTable: "AppGroup",
-                        principalColumn: "AppGroupId");
                 });
 
             migrationBuilder.CreateTable(
@@ -2005,7 +2005,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductPeriodDay", x => x.ProductPeriodDayId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductPeriodDay_dbo.ProductPeriod_ProductPeriodId",
+                        name: "FK_ProductPeriodDay_ProductPeriod_ProductPeriodId",
                         column: x => x.ProductPeriodId,
                         principalTable: "ProductPeriod",
                         principalColumn: "ProductId",
@@ -2025,7 +2025,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductTimePeriod", x => x.ProductId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductTimePeriod_dbo.ProductTime_ProductId",
+                        name: "FK_ProductTimePeriod_ProductTime_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductTime",
                         principalColumn: "ProductId",
@@ -2044,7 +2044,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductPeriodDayTime", x => new { x.PeriodDayId, x.StartSecond, x.EndSecond });
                     table.ForeignKey(
-                        name: "FK_dbo.ProductPeriodDayTime_dbo.ProductPeriodDay_PeriodDayId",
+                        name: "FK_ProductPeriodDayTime_ProductPeriodDay_PeriodDayId",
                         column: x => x.PeriodDayId,
                         principalTable: "ProductPeriodDay",
                         principalColumn: "ProductPeriodDayId",
@@ -2064,7 +2064,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductTimePeriodDay", x => x.ProductTimePeriodDayId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductTimePeriodDay_dbo.ProductTimePeriod_ProductTimePeriodId",
+                        name: "FK_ProductTimePeriodDay_ProductTimePeriod_ProductTimePeriodId",
                         column: x => x.ProductTimePeriodId,
                         principalTable: "ProductTimePeriod",
                         principalColumn: "ProductId",
@@ -2083,7 +2083,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductTimePeriodDayTime", x => new { x.PeriodDayId, x.StartSecond, x.EndSecond });
                     table.ForeignKey(
-                        name: "FK_dbo.ProductTimePeriodDayTime_dbo.ProductTimePeriodDay_PeriodDayId",
+                        name: "FK_ProductTimePeriodDayTime_ProductTimePeriodDay_PeriodDayId",
                         column: x => x.PeriodDayId,
                         principalTable: "ProductTimePeriodDay",
                         principalColumn: "ProductTimePeriodDayId",
@@ -2110,7 +2110,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductBundleUserPrice", x => x.ProductBundleUserPriceId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductBundleUserPrice_dbo.ProductBundle_ProductBundleId",
+                        name: "FK_ProductBundleUserPrice_ProductBundle_ProductBundleId",
                         column: x => x.ProductBundleId,
                         principalTable: "ProductBundle",
                         principalColumn: "ProductId");
@@ -2136,7 +2136,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductGroup", x => x.ProductGroupId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductGroup_dbo.ProductGroup_ParentId",
+                        name: "FK_ProductGroup_ProductGroup_ParentId",
                         column: x => x.ParentId,
                         principalTable: "ProductGroup",
                         principalColumn: "ProductGroupId");
@@ -2160,13 +2160,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductHostHidden", x => x.ProductHostHiddenId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductHostHidden_dbo.HostGroup_HostGroupId",
+                        name: "FK_ProductHostHidden_HostGroup_HostGroupId",
                         column: x => x.HostGroupId,
                         principalTable: "HostGroup",
                         principalColumn: "HostGroupId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductHostHidden_dbo.ProductBase_ProductId",
+                        name: "FK_ProductHostHidden_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
@@ -2190,7 +2190,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductImage", x => x.ProductImageId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductImage_dbo.ProductBase_ProductId",
+                        name: "FK_ProductImage_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
@@ -2285,16 +2285,16 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductOLProduct", x => x.ProductOLId);
                     table.ForeignKey(
+                        name: "FK_ProductOLProduct_ProductBaseExtended_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "ProductBaseExtended",
+                        principalColumn: "ProductId");
+                    table.ForeignKey(
                         name: "FK_ProductOLProduct_ProductOLExtended_ProductOLId",
                         column: x => x.ProductOLId,
                         principalTable: "ProductOLExtended",
                         principalColumn: "ProductOLId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.ProductOLProduct_dbo.ProductBaseExtended_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "ProductBaseExtended",
-                        principalColumn: "ProductId");
                 });
 
             migrationBuilder.CreateTable(
@@ -2314,7 +2314,7 @@ namespace _
                         principalColumn: "ProductOLId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductOLTime_dbo.ProductTime_ProductTimeId",
+                        name: "FK_ProductOLTime_ProductTime_ProductTimeId",
                         column: x => x.ProductTimeId,
                         principalTable: "ProductTime",
                         principalColumn: "ProductId");
@@ -2369,12 +2369,12 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductOrder", x => x.ProductOrderId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductOrder_dbo.Host_HostId",
+                        name: "FK_ProductOrder_Host_HostId",
                         column: x => x.HostId,
                         principalTable: "Host",
                         principalColumn: "HostId");
                     table.ForeignKey(
-                        name: "FK_dbo.ProductOrder_dbo.PaymentMethod_PreferedPaymentMethodId",
+                        name: "FK_ProductOrder_PaymentMethod_PreferedPaymentMethodId",
                         column: x => x.PreferedPaymentMethodId,
                         principalTable: "PaymentMethod",
                         principalColumn: "PaymentMethodId");
@@ -2399,7 +2399,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductTax", x => x.ProductTaxId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductTax_dbo.ProductBase_ProductId",
+                        name: "FK_ProductTax_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
@@ -2424,13 +2424,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductTimeHostDisallowed", x => x.ProductTimeHostDisallowedId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductTimeHostDisallowed_dbo.HostGroup_HostGroupId",
+                        name: "FK_ProductTimeHostDisallowed_HostGroup_HostGroupId",
                         column: x => x.HostGroupId,
                         principalTable: "HostGroup",
                         principalColumn: "HostGroupId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductTimeHostDisallowed_dbo.ProductTime_ProductTimeId",
+                        name: "FK_ProductTimeHostDisallowed_ProductTime_ProductTimeId",
                         column: x => x.ProductTimeId,
                         principalTable: "ProductTime",
                         principalColumn: "ProductId");
@@ -2454,7 +2454,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductUserDisallowed", x => x.ProductUserDisallowedId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductUserDisallowed_dbo.ProductBase_ProductId",
+                        name: "FK_ProductUserDisallowed_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
@@ -2482,7 +2482,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ProductUserPrice", x => x.ProductUserPriceId);
                     table.ForeignKey(
-                        name: "FK_dbo.ProductUserPrice_dbo.ProductBase_ProductId",
+                        name: "FK_ProductUserPrice_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
@@ -2509,23 +2509,23 @@ namespace _
                 {
                     table.PrimaryKey("PK_Refund", x => x.RefundId);
                     table.ForeignKey(
-                        name: "FK_dbo.Refund_dbo.DepositTransaction_DepositTransactionId",
+                        name: "FK_Refund_DepositTransaction_DepositTransactionId",
                         column: x => x.DepositTransactionId,
                         principalTable: "DepositTransaction",
                         principalColumn: "DepositTransactionId");
                     table.ForeignKey(
-                        name: "FK_dbo.Refund_dbo.PaymentMethod_RefundMethodId",
+                        name: "FK_Refund_PaymentMethod_RefundMethodId",
                         column: x => x.RefundMethodId,
                         principalTable: "PaymentMethod",
                         principalColumn: "PaymentMethodId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.Refund_dbo.Payment_PaymentId",
+                        name: "FK_Refund_Payment_PaymentId",
                         column: x => x.PaymentId,
                         principalTable: "Payment",
                         principalColumn: "PaymentId");
                     table.ForeignKey(
-                        name: "FK_dbo.Refund_dbo.PointTransaction_PointTransactionId",
+                        name: "FK_Refund_PointTransaction_PointTransactionId",
                         column: x => x.PointTransactionId,
                         principalTable: "PointTransaction",
                         principalColumn: "PointTransactionId");
@@ -2544,23 +2544,23 @@ namespace _
                 {
                     table.PrimaryKey("PK_RefundDepositPayment", x => x.RefundId);
                     table.ForeignKey(
-                        name: "FK_RefundDepositPayment_Refund_RefundId",
-                        column: x => x.RefundId,
-                        principalTable: "Refund",
-                        principalColumn: "RefundId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.RefundDepositPayment_dbo.DepositPayment_DepositPaymentId",
+                        name: "FK_RefundDepositPayment_DepositPayment_DepositPaymentId",
                         column: x => x.DepositPaymentId,
                         principalTable: "DepositPayment",
                         principalColumn: "DepositPaymentId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.RefundDepositPayment_dbo.FiscalReceipt_FiscalReceiptId",
+                        name: "FK_RefundDepositPayment_FiscalReceipt_FiscalReceiptId",
                         column: x => x.FiscalReceiptId,
                         principalTable: "FiscalReceipt",
                         principalColumn: "FiscalReceiptId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_RefundDepositPayment_Refund_RefundId",
+                        column: x => x.RefundId,
+                        principalTable: "Refund",
+                        principalColumn: "RefundId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -2575,23 +2575,23 @@ namespace _
                 {
                     table.PrimaryKey("PK_RefundInvoicePayment", x => x.RefundId);
                     table.ForeignKey(
-                        name: "FK_RefundInvoicePayment_Refund_RefundId",
-                        column: x => x.RefundId,
-                        principalTable: "Refund",
-                        principalColumn: "RefundId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.RefundInvoicePayment_dbo.InvoicePayment_InvoicePaymentId",
+                        name: "FK_RefundInvoicePayment_InvoicePayment_InvoicePaymentId",
                         column: x => x.InvoicePaymentId,
                         principalTable: "InvoicePayment",
                         principalColumn: "InvoicePaymentId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.RefundInvoicePayment_dbo.Invoice_InvoiceId",
+                        name: "FK_RefundInvoicePayment_Invoice_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoice",
                         principalColumn: "InvoiceId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_RefundInvoicePayment_Refund_RefundId",
+                        column: x => x.RefundId,
+                        principalTable: "Refund",
+                        principalColumn: "RefundId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -2637,7 +2637,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_RegisterTransaction", x => x.RegisterTransactionId);
                     table.ForeignKey(
-                        name: "FK_dbo.RegisterTransaction_dbo.Register_RegisterId",
+                        name: "FK_RegisterTransaction_Register_RegisterId",
                         column: x => x.RegisterId,
                         principalTable: "Register",
                         principalColumn: "RegisterId",
@@ -2686,13 +2686,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_ReservationHost", x => x.ReservationHostId);
                     table.ForeignKey(
-                        name: "FK_dbo.ReservationHost_dbo.Host_HostId",
+                        name: "FK_ReservationHost_Host_HostId",
                         column: x => x.HostId,
                         principalTable: "Host",
                         principalColumn: "HostId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.ReservationHost_dbo.Reservation_ReservationId",
+                        name: "FK_ReservationHost_Reservation_ReservationId",
                         column: x => x.ReservationId,
                         principalTable: "Reservation",
                         principalColumn: "ReservationId",
@@ -2716,7 +2716,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_ReservationUser", x => x.ReservationUserId);
                     table.ForeignKey(
-                        name: "FK_dbo.ReservationUser_dbo.Reservation_ReservationId",
+                        name: "FK_ReservationUser_Reservation_ReservationId",
                         column: x => x.ReservationId,
                         principalTable: "Reservation",
                         principalColumn: "ReservationId",
@@ -2758,7 +2758,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_SecurityProfilePolicy", x => x.SecurityProfilePolicyId);
                     table.ForeignKey(
-                        name: "FK_dbo.SecurityProfilePolicy_dbo.SecurityProfile_SecurityProfileId",
+                        name: "FK_SecurityProfilePolicy_SecurityProfile_SecurityProfileId",
                         column: x => x.SecurityProfileId,
                         principalTable: "SecurityProfile",
                         principalColumn: "SecurityProfileId",
@@ -2783,7 +2783,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_SecurityProfileRestriction", x => x.SecurityProfileRestrictionId);
                     table.ForeignKey(
-                        name: "FK_dbo.SecurityProfileRestriction_dbo.SecurityProfile_SecurityProfileId",
+                        name: "FK_SecurityProfileRestriction_SecurityProfile_SecurityProfileId",
                         column: x => x.SecurityProfileId,
                         principalTable: "SecurityProfile",
                         principalColumn: "SecurityProfileId",
@@ -2832,7 +2832,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_Shift", x => x.ShiftId);
                     table.ForeignKey(
-                        name: "FK_dbo.Shift_dbo.Register_RegisterId",
+                        name: "FK_Shift_Register_RegisterId",
                         column: x => x.RegisterId,
                         principalTable: "Register",
                         principalColumn: "RegisterId",
@@ -2868,13 +2868,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_ShiftCount", x => x.ShiftCountId);
                     table.ForeignKey(
-                        name: "FK_dbo.ShiftCount_dbo.PaymentMethod_PaymentMethodId",
+                        name: "FK_ShiftCount_PaymentMethod_PaymentMethodId",
                         column: x => x.PaymentMethodId,
                         principalTable: "PaymentMethod",
                         principalColumn: "PaymentMethodId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.ShiftCount_dbo.Shift_ShiftId",
+                        name: "FK_ShiftCount_Shift_ShiftId",
                         column: x => x.ShiftId,
                         principalTable: "Shift",
                         principalColumn: "ShiftId",
@@ -2906,13 +2906,13 @@ namespace _
                 {
                     table.PrimaryKey("PK_StockTransaction", x => x.StockTransactionId);
                     table.ForeignKey(
-                        name: "FK_dbo.StockTransaction_dbo.ProductBase_ProductId",
+                        name: "FK_StockTransaction_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.StockTransaction_dbo.ProductBase_SourceProductId",
+                        name: "FK_StockTransaction_ProductBase_SourceProductId",
                         column: x => x.SourceProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId");
@@ -3091,7 +3091,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_UsageRate", x => x.UsageId);
                     table.ForeignKey(
-                        name: "FK_dbo.UsageRate_dbo.BillRate_BillRateId",
+                        name: "FK_UsageRate_BillRate_BillRateId",
                         column: x => x.BillRateId,
                         principalTable: "BillRate",
                         principalColumn: "BillRateId",
@@ -3119,7 +3119,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_UsageSession", x => x.UsageSessionId);
                     table.ForeignKey(
-                        name: "FK_dbo.UsageSession_dbo.Usage_CurrentUsageId",
+                        name: "FK_UsageSession_Usage_CurrentUsageId",
                         column: x => x.CurrentUsageId,
                         principalTable: "Usage",
                         principalColumn: "UsageId",
@@ -3137,7 +3137,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_UsageTime", x => x.UsageId);
                     table.ForeignKey(
-                        name: "FK_dbo.UsageTime_dbo.InvoiceLineTime_InvoiceLineId",
+                        name: "FK_UsageTime_InvoiceLineTime_InvoiceLineId",
                         column: x => x.InvoiceLineId,
                         principalTable: "InvoiceLineTime",
                         principalColumn: "InvoiceLineId");
@@ -3154,7 +3154,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_UsageTimeFixed", x => x.UsageId);
                     table.ForeignKey(
-                        name: "FK_dbo.UsageTimeFixed_dbo.InvoiceLineTimeFixed_InvoiceLineId",
+                        name: "FK_UsageTimeFixed_InvoiceLineTimeFixed_InvoiceLineId",
                         column: x => x.InvoiceLineId,
                         principalTable: "InvoiceLineTimeFixed",
                         principalColumn: "InvoiceLineId");
@@ -3208,7 +3208,7 @@ namespace _
                 {
                     table.PrimaryKey("PK_User", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_dbo.User_dbo.User_ModifiedById",
+                        name: "FK_User_User_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "User",
                         principalColumn: "UserId");
@@ -3249,17 +3249,17 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserPicture", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserPicture_dbo.User_CreatedById",
+                        name: "FK_UserPicture_User_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "User",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserPicture_dbo.User_ModifiedById",
+                        name: "FK_UserPicture_User_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "User",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserPicture_dbo.User_UserId",
+                        name: "FK_UserPicture_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
@@ -3284,25 +3284,25 @@ namespace _
                 {
                     table.PrimaryKey("PK_Verification", x => x.VerificationId);
                     table.ForeignKey(
-                        name: "FK_dbo.Verification_dbo.Token_TokenId",
+                        name: "FK_Verification_Token_TokenId",
                         column: x => x.TokenId,
                         principalTable: "Token",
                         principalColumn: "TokenId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.Verification_dbo.User_CreatedById",
+                        name: "FK_Verification_User_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.Verification_dbo.User_ModifiedById",
+                        name: "FK_Verification_User_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.Verification_dbo.User_UserId",
+                        name: "FK_Verification_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId");
@@ -3329,12 +3329,12 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserAgreement", x => x.UserAgreementId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserAgreement_dbo.UserOperator_CreatedById",
+                        name: "FK_UserAgreement_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserAgreement_dbo.UserOperator_ModifiedById",
+                        name: "FK_UserAgreement_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
@@ -3358,23 +3358,23 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserAttribute", x => x.UserAttributeId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserAttribute_dbo.Attribute_AttributeId",
+                        name: "FK_UserAttribute_Attribute_AttributeId",
                         column: x => x.AttributeId,
                         principalTable: "Attribute",
                         principalColumn: "AttributeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.UserAttribute_dbo.UserOperator_CreatedById",
+                        name: "FK_UserAttribute_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserAttribute_dbo.UserOperator_ModifiedById",
+                        name: "FK_UserAttribute_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserAttribute_dbo.User_UserId",
+                        name: "FK_UserAttribute_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
@@ -3397,17 +3397,17 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserCredential", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserCredential_dbo.UserOperator_CreatedById",
+                        name: "FK_UserCredential_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserCredential_dbo.User_ModifiedById",
+                        name: "FK_UserCredential_User_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "User",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserCredential_dbo.User_UserId",
+                        name: "FK_UserCredential_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
@@ -3449,27 +3449,27 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserGroup", x => x.UserGroupId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserGroup_dbo.AppGroup_AppGroupId",
+                        name: "FK_UserGroup_AppGroup_AppGroupId",
                         column: x => x.AppGroupId,
                         principalTable: "AppGroup",
                         principalColumn: "AppGroupId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserGroup_dbo.BillProfile_BillProfileId",
+                        name: "FK_UserGroup_BillProfile_BillProfileId",
                         column: x => x.BillProfileId,
                         principalTable: "BillProfile",
                         principalColumn: "BillProfileId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserGroup_dbo.SecurityProfile_SecurityProfileId",
+                        name: "FK_UserGroup_SecurityProfile_SecurityProfileId",
                         column: x => x.SecurityProfileId,
                         principalTable: "SecurityProfile",
                         principalColumn: "SecurityProfileId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserGroup_dbo.UserOperator_CreatedById",
+                        name: "FK_UserGroup_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserGroup_dbo.UserOperator_ModifiedById",
+                        name: "FK_UserGroup_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
@@ -3493,17 +3493,17 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserPermission", x => x.UserPermissionId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserPermission_dbo.UserOperator_CreatedById",
+                        name: "FK_UserPermission_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserPermission_dbo.UserOperator_ModifiedById",
+                        name: "FK_UserPermission_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserPermission_dbo.User_UserId",
+                        name: "FK_UserPermission_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
@@ -3529,12 +3529,12 @@ namespace _
                 {
                     table.PrimaryKey("PK_Variable", x => x.VariableId);
                     table.ForeignKey(
-                        name: "FK_dbo.Variable_dbo.UserOperator_CreatedById",
+                        name: "FK_Variable_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.Variable_dbo.UserOperator_ModifiedById",
+                        name: "FK_Variable_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
@@ -3555,17 +3555,17 @@ namespace _
                 {
                     table.PrimaryKey("PK_Void", x => x.VoidId);
                     table.ForeignKey(
-                        name: "FK_dbo.Void_dbo.Register_RegisterId",
+                        name: "FK_Void_Register_RegisterId",
                         column: x => x.RegisterId,
                         principalTable: "Register",
                         principalColumn: "RegisterId");
                     table.ForeignKey(
-                        name: "FK_dbo.Void_dbo.Shift_ShiftId",
+                        name: "FK_Void_Shift_ShiftId",
                         column: x => x.ShiftId,
                         principalTable: "Shift",
                         principalColumn: "ShiftId");
                     table.ForeignKey(
-                        name: "FK_dbo.Void_dbo.UserOperator_CreatedById",
+                        name: "FK_Void_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
@@ -3625,23 +3625,23 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserAgreementState", x => x.UserAgreementStateId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserAgreementState_dbo.UserAgreement_UserAgreementId",
+                        name: "FK_UserAgreementState_UserAgreement_UserAgreementId",
                         column: x => x.UserAgreementId,
                         principalTable: "UserAgreement",
                         principalColumn: "UserAgreementId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.UserAgreementState_dbo.User_CreatedById",
+                        name: "FK_UserAgreementState_User_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "User",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserAgreementState_dbo.User_ModifiedById",
+                        name: "FK_UserAgreementState_User_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "User",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserAgreementState_dbo.User_UserId",
+                        name: "FK_UserAgreementState_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
@@ -3666,22 +3666,22 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserGroupHostDisallowed", x => x.UserGroupHostDisallowedId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserGroupHostDisallowed_dbo.HostGroup_HostGroupId",
+                        name: "FK_UserGroupHostDisallowed_HostGroup_HostGroupId",
                         column: x => x.HostGroupId,
                         principalTable: "HostGroup",
                         principalColumn: "HostGroupId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserGroupHostDisallowed_dbo.UserGroup_UserGroupId",
+                        name: "FK_UserGroupHostDisallowed_UserGroup_UserGroupId",
                         column: x => x.UserGroupId,
                         principalTable: "UserGroup",
                         principalColumn: "UserGroupId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserGroupHostDisallowed_dbo.UserOperator_CreatedById",
+                        name: "FK_UserGroupHostDisallowed_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserGroupHostDisallowed_dbo.UserOperator_ModifiedById",
+                        name: "FK_UserGroupHostDisallowed_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
@@ -3705,17 +3705,17 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserMember", x => x.UserId);
                     table.ForeignKey(
+                        name: "FK_UserMember_UserGroup_UserGroupId",
+                        column: x => x.UserGroupId,
+                        principalTable: "UserGroup",
+                        principalColumn: "UserGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_UserMember_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.UserMember_dbo.UserGroup_UserGroupId",
-                        column: x => x.UserGroupId,
-                        principalTable: "UserGroup",
-                        principalColumn: "UserGroupId",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3729,16 +3729,16 @@ namespace _
                 {
                     table.PrimaryKey("PK_VoidDepositPayment", x => x.VoidId);
                     table.ForeignKey(
+                        name: "FK_VoidDepositPayment_DepositPayment_DepositPaymentId",
+                        column: x => x.DepositPaymentId,
+                        principalTable: "DepositPayment",
+                        principalColumn: "DepositPaymentId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_VoidDepositPayment_Void_VoidId",
                         column: x => x.VoidId,
                         principalTable: "Void",
                         principalColumn: "VoidId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.VoidDepositPayment_dbo.DepositPayment_DepositPaymentId",
-                        column: x => x.DepositPaymentId,
-                        principalTable: "DepositPayment",
-                        principalColumn: "DepositPaymentId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -3753,16 +3753,16 @@ namespace _
                 {
                     table.PrimaryKey("PK_VoidInvoice", x => x.VoidId);
                     table.ForeignKey(
+                        name: "FK_VoidInvoice_Invoice_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoice",
+                        principalColumn: "InvoiceId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_VoidInvoice_Void_VoidId",
                         column: x => x.VoidId,
                         principalTable: "Void",
                         principalColumn: "VoidId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.VoidInvoice_dbo.Invoice_InvoiceId",
-                        column: x => x.InvoiceId,
-                        principalTable: "Invoice",
-                        principalColumn: "InvoiceId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -3782,18 +3782,18 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserCreditLimit", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserCreditLimit_dbo.UserMember_UserId",
+                        name: "FK_UserCreditLimit_UserMember_UserId",
                         column: x => x.UserId,
                         principalTable: "UserMember",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.UserCreditLimit_dbo.UserOperator_CreatedById",
+                        name: "FK_UserCreditLimit_UserOperator_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserCreditLimit_dbo.UserOperator_ModifiedById",
+                        name: "FK_UserCreditLimit_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
@@ -3813,16 +3813,16 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserGuest", x => x.UserId);
                     table.ForeignKey(
+                        name: "FK_UserGuest_Host_ReservedHostId",
+                        column: x => x.ReservedHostId,
+                        principalTable: "Host",
+                        principalColumn: "HostId");
+                    table.ForeignKey(
                         name: "FK_UserGuest_UserMember_UserId",
                         column: x => x.UserId,
                         principalTable: "UserMember",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_dbo.UserGuest_dbo.Host_ReservedHostId",
-                        column: x => x.ReservedHostId,
-                        principalTable: "Host",
-                        principalColumn: "HostId");
                 });
 
             migrationBuilder.CreateTable(
@@ -3843,7 +3843,7 @@ namespace _
                         principalColumn: "NoteId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.UserNote_dbo.UserMember_UserId",
+                        name: "FK_UserNote_UserMember_UserId",
                         column: x => x.UserId,
                         principalTable: "UserMember",
                         principalColumn: "UserId");
@@ -3877,18 +3877,18 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserSession", x => x.UserSessionId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserSession_dbo.Host_HostId",
+                        name: "FK_UserSession_Host_HostId",
                         column: x => x.HostId,
                         principalTable: "Host",
                         principalColumn: "HostId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.UserSession_dbo.UserMember_UserId",
+                        name: "FK_UserSession_UserMember_UserId",
                         column: x => x.UserId,
                         principalTable: "UserMember",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserSession_dbo.User_CreatedById",
+                        name: "FK_UserSession_User_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "User",
                         principalColumn: "UserId");
@@ -3913,51 +3913,51 @@ namespace _
                 {
                     table.PrimaryKey("PK_UserSessionChange", x => x.UserSessionChangeId);
                     table.ForeignKey(
-                        name: "FK_dbo.UserSessionChange_dbo.Host_HostId",
+                        name: "FK_UserSessionChange_Host_HostId",
                         column: x => x.HostId,
                         principalTable: "Host",
                         principalColumn: "HostId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_dbo.UserSessionChange_dbo.UserMember_UserId",
+                        name: "FK_UserSessionChange_UserMember_UserId",
                         column: x => x.UserId,
                         principalTable: "UserMember",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_dbo.UserSessionChange_dbo.UserSession_UserSessionId",
+                        name: "FK_UserSessionChange_UserSession_UserSessionId",
                         column: x => x.UserSessionId,
                         principalTable: "UserSession",
                         principalColumn: "UserSessionId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_dbo.UserSessionChange_dbo.User_CreatedById",
+                        name: "FK_UserSessionChange_User_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "User",
                         principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppCategoryId",
+                name: "IX_App_AppCategoryId",
                 table: "App",
                 column: "AppCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_App_CreatedById",
                 table: "App",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeveloperId",
+                name: "IX_App_DeveloperId",
                 table: "App",
                 column: "DeveloperId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_App_ModifiedById",
                 table: "App",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PublisherId",
+                name: "IX_App_PublisherId",
                 table: "App",
                 column: "PublisherId");
 
@@ -3968,17 +3968,17 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppCategory_CreatedById",
                 table: "AppCategory",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppCategory_ModifiedById",
                 table: "AppCategory",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParentId",
+                name: "IX_AppCategory_ParentId",
                 table: "AppCategory",
                 column: "ParentId");
 
@@ -3989,12 +3989,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppEnterprise_CreatedById",
                 table: "AppEnterprise",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppEnterprise_ModifiedById",
                 table: "AppEnterprise",
                 column: "ModifiedById");
 
@@ -4011,37 +4011,37 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppExe_AppId",
                 table: "AppExe",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExe_CreatedById",
                 table: "AppExe",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DefaultDeploymentId",
+                name: "IX_AppExe_DefaultDeploymentId",
                 table: "AppExe",
                 column: "DefaultDeploymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExe_ModifiedById",
                 table: "AppExe",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeCdImage_AppExeId",
                 table: "AppExeCdImage",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeCdImage_CreatedById",
                 table: "AppExeCdImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeCdImage_ModifiedById",
                 table: "AppExeCdImage",
                 column: "ModifiedById");
 
@@ -4052,67 +4052,67 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeDeployment_AppExeId",
                 table: "AppExeDeployment",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeDeployment_CreatedById",
                 table: "AppExeDeployment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeploymentId",
+                name: "IX_AppExeDeployment_DeploymentId",
                 table: "AppExeDeployment",
                 column: "DeploymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeDeployment_ModifiedById",
                 table: "AppExeDeployment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeImage_AppExeId",
                 table: "AppExeImage",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeImage_CreatedById",
                 table: "AppExeImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeImage_ModifiedById",
                 table: "AppExeImage",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeLicense_AppExeId",
                 table: "AppExeLicense",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeLicense_CreatedById",
                 table: "AppExeLicense",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LicenseId",
+                name: "IX_AppExeLicense_LicenseId",
                 table: "AppExeLicense",
                 column: "LicenseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeLicense_ModifiedById",
                 table: "AppExeLicense",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeMaxUser_CreatedById",
                 table: "AppExeMaxUser",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeMaxUser_ModifiedById",
                 table: "AppExeMaxUser",
                 column: "ModifiedById");
 
@@ -4123,52 +4123,52 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExePersonalFile_AppExeId",
                 table: "AppExePersonalFile",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExePersonalFile_CreatedById",
                 table: "AppExePersonalFile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExePersonalFile_ModifiedById",
                 table: "AppExePersonalFile",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PersonalFileId",
+                name: "IX_AppExePersonalFile_PersonalFileId",
                 table: "AppExePersonalFile",
                 column: "PersonalFileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppExeTask_AppExeId",
                 table: "AppExeTask",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppExeTask_CreatedById",
                 table: "AppExeTask",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppExeTask_ModifiedById",
                 table: "AppExeTask",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskBaseId",
+                name: "IX_AppExeTask_TaskBaseId",
                 table: "AppExeTask",
                 column: "TaskBaseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppGroup_CreatedById",
                 table: "AppGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppGroup_ModifiedById",
                 table: "AppGroup",
                 column: "ModifiedById");
 
@@ -4185,42 +4185,42 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroupId",
+                name: "IX_AppGroupApp_AppGroupId",
                 table: "AppGroupApp",
                 column: "AppGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppGroupApp_AppId",
                 table: "AppGroupApp",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppImage_AppId",
                 table: "AppImage",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppImage_CreatedById",
                 table: "AppImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppImage_ModifiedById",
                 table: "AppImage",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppLink_AppId",
                 table: "AppLink",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AppLink_CreatedById",
                 table: "AppLink",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AppLink_ModifiedById",
                 table: "AppLink",
                 column: "ModifiedById");
 
@@ -4231,47 +4231,47 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppRating_AppId",
                 table: "AppRating",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_AppRating_UserId",
                 table: "AppRating",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeId",
+                name: "IX_AppStat_AppExeId",
                 table: "AppStat",
                 column: "AppExeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppId",
+                name: "IX_AppStat_AppId",
                 table: "AppStat",
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_AppStat_HostId",
                 table: "AppStat",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_AppStat_UserId",
                 table: "AppStat",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssetTypeId",
+                name: "IX_Asset_AssetTypeId",
                 table: "Asset",
                 column: "AssetTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Asset_CreatedById",
                 table: "Asset",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Asset_ModifiedById",
                 table: "Asset",
                 column: "ModifiedById");
 
@@ -4290,42 +4290,42 @@ namespace _
                 filter: "[SmartCardUID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssetId",
+                name: "IX_AssetTransaction_AssetId",
                 table: "AssetTransaction",
                 column: "AssetId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssetTypeId",
+                name: "IX_AssetTransaction_AssetTypeId",
                 table: "AssetTransaction",
                 column: "AssetTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CheckedInById",
+                name: "IX_AssetTransaction_CheckedInById",
                 table: "AssetTransaction",
                 column: "CheckedInById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AssetTransaction_CreatedById",
                 table: "AssetTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AssetTransaction_ModifiedById",
                 table: "AssetTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_AssetTransaction_UserId",
                 table: "AssetTransaction",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AssetType_CreatedById",
                 table: "AssetType",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AssetType_ModifiedById",
                 table: "AssetType",
                 column: "ModifiedById");
 
@@ -4336,47 +4336,47 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssistanceRequestTypeId",
+                name: "IX_AssistanceRequest_AssistanceRequestTypeId",
                 table: "AssistanceRequest",
                 column: "AssistanceRequestTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AssistanceRequest_CreatedById",
                 table: "AssistanceRequest",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_AssistanceRequest_HostId",
                 table: "AssistanceRequest",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AssistanceRequest_ModifiedById",
                 table: "AssistanceRequest",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_AssistanceRequest_UserId",
                 table: "AssistanceRequest",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_AssistanceRequestType_CreatedById",
                 table: "AssistanceRequestType",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_AssistanceRequestType_ModifiedById",
                 table: "AssistanceRequestType",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Attribute_CreatedById",
                 table: "Attribute",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Attribute_ModifiedById",
                 table: "Attribute",
                 column: "ModifiedById");
 
@@ -4387,12 +4387,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_BillProfile_CreatedById",
                 table: "BillProfile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_BillProfile_ModifiedById",
                 table: "BillProfile",
                 column: "ModifiedById");
 
@@ -4403,7 +4403,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillProfileId",
+                name: "IX_BillRate_BillProfileId",
                 table: "BillRate",
                 column: "BillProfileId");
 
@@ -4414,7 +4414,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PeriodDayId",
+                name: "IX_BillRatePeriodDayTime_PeriodDayId",
                 table: "BillRatePeriodDayTime",
                 column: "PeriodDayId");
 
@@ -4425,37 +4425,37 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_BundleProduct_CreatedById",
                 table: "BundleProduct",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_BundleProduct_ModifiedById",
                 table: "BundleProduct",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductBundleId",
+                name: "IX_BundleProduct_ProductBundleId",
                 table: "BundleProduct",
                 column: "ProductBundleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_BundleProduct_ProductId",
                 table: "BundleProduct",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_BundleProductUserPrice_CreatedById",
                 table: "BundleProductUserPrice",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_BundleProductUserPrice_ModifiedById",
                 table: "BundleProductUserPrice",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_BundleProductUserPrice_UserGroupId",
                 table: "BundleProductUserPrice",
                 column: "UserGroupId");
 
@@ -4466,27 +4466,27 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ClientTask_CreatedById",
                 table: "ClientTask",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ClientTask_ModifiedById",
                 table: "ClientTask",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskBaseId",
+                name: "IX_ClientTask_TaskBaseId",
                 table: "ClientTask",
                 column: "TaskBaseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Deployment_CreatedById",
                 table: "Deployment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Deployment_ModifiedById",
                 table: "Deployment",
                 column: "ModifiedById");
 
@@ -4503,97 +4503,97 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChildId",
+                name: "IX_DeploymentDeployment_ChildId",
                 table: "DeploymentDeployment",
                 column: "ChildId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_DeploymentDeployment_CreatedById",
                 table: "DeploymentDeployment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_DeploymentDeployment_ModifiedById",
                 table: "DeploymentDeployment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParentId",
+                name: "IX_DeploymentDeployment_ParentId",
                 table: "DeploymentDeployment",
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_DepositPayment_CreatedById",
                 table: "DepositPayment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DepositTransactionId",
+                name: "IX_DepositPayment_DepositTransactionId",
                 table: "DepositPayment",
                 column: "DepositTransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FiscalReceiptId",
+                name: "IX_DepositPayment_FiscalReceiptId",
                 table: "DepositPayment",
                 column: "FiscalReceiptId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_DepositPayment_ModifiedById",
                 table: "DepositPayment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentId",
+                name: "IX_DepositPayment_PaymentId",
                 table: "DepositPayment",
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_DepositPayment_RegisterId",
                 table: "DepositPayment",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_DepositPayment_ShiftId",
                 table: "DepositPayment",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_DepositPayment_UserId",
                 table: "DepositPayment",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_DepositTransaction_CreatedById",
                 table: "DepositTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_DepositTransaction_ModifiedById",
                 table: "DepositTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_DepositTransaction_RegisterId",
                 table: "DepositTransaction",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_DepositTransaction_ShiftId",
                 table: "DepositTransaction",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_DepositTransaction_UserId",
                 table: "DepositTransaction",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Device_CreatedById",
                 table: "Device",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Device_ModifiedById",
                 table: "Device",
                 column: "ModifiedById");
 
@@ -4605,7 +4605,7 @@ namespace _
                 filter: "[Name] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceId",
+                name: "IX_DeviceHdmi_DeviceId",
                 table: "DeviceHdmi",
                 column: "DeviceId",
                 unique: true);
@@ -4617,17 +4617,17 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_DeviceHost_CreatedById",
                 table: "DeviceHost",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_DeviceHost_HostId",
                 table: "DeviceHost",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_DeviceHost_ModifiedById",
                 table: "DeviceHost",
                 column: "ModifiedById");
 
@@ -4638,47 +4638,47 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Feed_CreatedById",
                 table: "Feed",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Feed_ModifiedById",
                 table: "Feed",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_FiscalReceipt_CreatedById",
                 table: "FiscalReceipt",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_FiscalReceipt_RegisterId",
                 table: "FiscalReceipt",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_FiscalReceipt_ShiftId",
                 table: "FiscalReceipt",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Host_CreatedById",
                 table: "Host",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_Host_HostGroupId",
                 table: "Host",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_IconId",
+                name: "IX_Host_IconId",
                 table: "Host",
                 column: "IconId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Host_ModifiedById",
                 table: "Host",
                 column: "ModifiedById");
 
@@ -4689,7 +4689,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_HostComputer_HostId",
                 table: "HostComputer",
                 column: "HostId");
 
@@ -4700,33 +4700,33 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_HostEndpoint_HostId",
                 table: "HostEndpoint",
                 column: "HostId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroupId",
+                name: "IX_HostGroup_AppGroupId",
                 table: "HostGroup",
                 column: "AppGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostGroup_CreatedById",
                 table: "HostGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DefaultGuestGroupId",
+                name: "IX_HostGroup_DefaultGuestGroupId",
                 table: "HostGroup",
                 column: "DefaultGuestGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostGroup_ModifiedById",
                 table: "HostGroup",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SecurityProfileId",
+                name: "IX_HostGroup_SecurityProfileId",
                 table: "HostGroup",
                 column: "SecurityProfileId");
 
@@ -4737,12 +4737,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillProfileId",
+                name: "IX_HostGroupUserBillProfile_BillProfileId",
                 table: "HostGroupUserBillProfile",
                 column: "BillProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_HostGroupUserBillProfile_UserGroupId",
                 table: "HostGroupUserBillProfile",
                 column: "UserGroupId");
 
@@ -4753,48 +4753,48 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostGroupWaitingLine_CreatedById",
                 table: "HostGroupWaitingLine",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HosGroupId",
+                name: "IX_HostGroupWaitingLine_HosGroupId",
                 table: "HostGroupWaitingLine",
                 column: "HosGroupId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostGroupWaitingLine_ModifiedById",
                 table: "HostGroupWaitingLine",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostGroupWaitingLineEntry_CreatedById",
                 table: "HostGroupWaitingLineEntry",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_HostGroupWaitingLineEntry_HostGroupId",
                 table: "HostGroupWaitingLineEntry",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostGroupWaitingLineEntry_ModifiedById",
                 table: "HostGroupWaitingLineEntry",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_HostGroupWaitingLineEntry_UserId",
                 table: "HostGroupWaitingLineEntry",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostLayoutGroup_CreatedById",
                 table: "HostLayoutGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostLayoutGroup_ModifiedById",
                 table: "HostLayoutGroup",
                 column: "ModifiedById");
 
@@ -4805,32 +4805,32 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostLayoutGroupImage_CreatedById",
                 table: "HostLayoutGroupImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostLayoutGroupId",
+                name: "IX_HostLayoutGroupImage_HostLayoutGroupId",
                 table: "HostLayoutGroupImage",
                 column: "HostLayoutGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostLayoutGroupImage_ModifiedById",
                 table: "HostLayoutGroupImage",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_HostLayoutGroupLayout_CreatedById",
                 table: "HostLayoutGroupLayout",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_HostLayoutGroupLayout_HostId",
                 table: "HostLayoutGroupLayout",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_HostLayoutGroupLayout_ModifiedById",
                 table: "HostLayoutGroupLayout",
                 column: "ModifiedById");
 
@@ -4841,62 +4841,62 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Icon_CreatedById",
                 table: "Icon",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Icon_ModifiedById",
                 table: "Icon",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Invoice_CreatedById",
                 table: "Invoice",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Invoice_ModifiedById",
                 table: "Invoice",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrderId",
+                name: "IX_Invoice_ProductOrderId",
                 table: "Invoice",
                 column: "ProductOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Invoice_RegisterId",
                 table: "Invoice",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Invoice_ShiftId",
                 table: "Invoice",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Invoice_UserId",
                 table: "Invoice",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_InvoiceFiscalReceipt_CreatedById",
                 table: "InvoiceFiscalReceipt",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceId",
+                name: "IX_InvoiceFiscalReceipt_InvoiceId",
                 table: "InvoiceFiscalReceipt",
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_InvoiceFiscalReceipt_RegisterId",
                 table: "InvoiceFiscalReceipt",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_InvoiceFiscalReceipt_ShiftId",
                 table: "InvoiceFiscalReceipt",
                 column: "ShiftId");
 
@@ -4907,32 +4907,32 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_InvoiceLine_CreatedById",
                 table: "InvoiceLine",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceId",
+                name: "IX_InvoiceLine_InvoiceId",
                 table: "InvoiceLine",
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_InvoiceLine_ModifiedById",
                 table: "InvoiceLine",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_InvoiceLine_RegisterId",
                 table: "InvoiceLine",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_InvoiceLine_ShiftId",
                 table: "InvoiceLine",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_InvoiceLine_UserId",
                 table: "InvoiceLine",
                 column: "UserId");
 
@@ -4944,12 +4944,12 @@ namespace _
                 filter: "[PointsTransactionId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BundleLineId",
+                name: "IX_InvoiceLineExtended_BundleLineId",
                 table: "InvoiceLineExtended",
                 column: "BundleLineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineExtended_InvoiceLineId",
                 table: "InvoiceLineExtended",
                 column: "InvoiceLineId",
                 unique: true);
@@ -4969,13 +4969,13 @@ namespace _
                 filter: "[StockTransactionId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineProduct_InvoiceLineId",
                 table: "InvoiceLineProduct",
                 column: "InvoiceLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_InvoiceLineProduct_ProductId",
                 table: "InvoiceLineProduct",
                 column: "ProductId");
 
@@ -4986,13 +4986,13 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineSession_InvoiceLineId",
                 table: "InvoiceLineSession",
                 column: "InvoiceLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderLineId",
+                name: "IX_InvoiceLineSession_OrderLineId",
                 table: "InvoiceLineSession",
                 column: "OrderLineId");
 
@@ -5003,13 +5003,13 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineTime_InvoiceLineId",
                 table: "InvoiceLineTime",
                 column: "InvoiceLineId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductTimeId",
+                name: "IX_InvoiceLineTime_ProductTimeId",
                 table: "InvoiceLineTime",
                 column: "ProductTimeId");
 
@@ -5020,7 +5020,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_InvoiceLineTimeFixed_InvoiceLineId",
                 table: "InvoiceLineTimeFixed",
                 column: "InvoiceLineId",
                 unique: true);
@@ -5032,47 +5032,47 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_InvoicePayment_CreatedById",
                 table: "InvoicePayment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceId",
+                name: "IX_InvoicePayment_InvoiceId",
                 table: "InvoicePayment",
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_InvoicePayment_ModifiedById",
                 table: "InvoicePayment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentId",
+                name: "IX_InvoicePayment_PaymentId",
                 table: "InvoicePayment",
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_InvoicePayment_RegisterId",
                 table: "InvoicePayment",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_InvoicePayment_ShiftId",
                 table: "InvoicePayment",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_InvoicePayment_UserId",
                 table: "InvoicePayment",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_License_CreatedById",
                 table: "License",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_License_ModifiedById",
                 table: "License",
                 column: "ModifiedById");
 
@@ -5089,22 +5089,22 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssignedHostId",
+                name: "IX_LicenseKey_AssignedHostId",
                 table: "LicenseKey",
                 column: "AssignedHostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_LicenseKey_CreatedById",
                 table: "LicenseKey",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LicenseId",
+                name: "IX_LicenseKey_LicenseId",
                 table: "LicenseKey",
                 column: "LicenseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_LicenseKey_ModifiedById",
                 table: "LicenseKey",
                 column: "ModifiedById");
 
@@ -5135,18 +5135,18 @@ namespace _
                 column: "Time");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LogId",
+                name: "IX_LogException_LogId",
                 table: "LogException",
                 column: "LogId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Mapping_CreatedById",
                 table: "Mapping",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Mapping_ModifiedById",
                 table: "Mapping",
                 column: "ModifiedById");
 
@@ -5157,12 +5157,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_MonetaryUnit_CreatedById",
                 table: "MonetaryUnit",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_MonetaryUnit_ModifiedById",
                 table: "MonetaryUnit",
                 column: "ModifiedById");
 
@@ -5173,52 +5173,52 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_News_CreatedById",
                 table: "News",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_News_ModifiedById",
                 table: "News",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Note_CreatedById",
                 table: "Note",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Note_ModifiedById",
                 table: "Note",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Payment_CreatedById",
                 table: "Payment",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Payment_ModifiedById",
                 table: "Payment",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentMethodId",
+                name: "IX_Payment_PaymentMethodId",
                 table: "Payment",
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Payment_RegisterId",
                 table: "Payment",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Payment_ShiftId",
                 table: "Payment",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Payment_UserId",
                 table: "Payment",
                 column: "UserId");
 
@@ -5237,22 +5237,22 @@ namespace _
                 filter: "[PointTransactionId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PaymentIntent_CreatedById",
                 table: "PaymentIntent",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PaymentIntent_ModifiedById",
                 table: "PaymentIntent",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentMethodId",
+                name: "IX_PaymentIntent_PaymentMethodId",
                 table: "PaymentIntent",
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_PaymentIntent_UserId",
                 table: "PaymentIntent",
                 column: "UserId");
 
@@ -5263,7 +5263,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentIntentId",
+                name: "IX_PaymentIntentDeposit_PaymentIntentId",
                 table: "PaymentIntentDeposit",
                 column: "PaymentIntentId",
                 unique: true);
@@ -5276,13 +5276,13 @@ namespace _
                 filter: "[DepositPaymentId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentIntentId",
+                name: "IX_PaymentIntentOrder_PaymentIntentId",
                 table: "PaymentIntentOrder",
                 column: "PaymentIntentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrderId",
+                name: "IX_PaymentIntentOrder_ProductOrderId",
                 table: "PaymentIntentOrder",
                 column: "ProductOrderId");
 
@@ -5294,12 +5294,12 @@ namespace _
                 filter: "[InvoicePaymentId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PaymentMethod_CreatedById",
                 table: "PaymentMethod",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PaymentMethod_ModifiedById",
                 table: "PaymentMethod",
                 column: "ModifiedById");
 
@@ -5310,12 +5310,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PersonalFile_CreatedById",
                 table: "PersonalFile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PersonalFile_ModifiedById",
                 table: "PersonalFile",
                 column: "ModifiedById");
 
@@ -5332,12 +5332,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PluginLibrary_CreatedById",
                 table: "PluginLibrary",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PluginLibrary_ModifiedById",
                 table: "PluginLibrary",
                 column: "ModifiedById");
 
@@ -5348,73 +5348,73 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PointTransaction_CreatedById",
                 table: "PointTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PointTransaction_ModifiedById",
                 table: "PointTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_PointTransaction_RegisterId",
                 table: "PointTransaction",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_PointTransaction_ShiftId",
                 table: "PointTransaction",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_PointTransaction_UserId",
                 table: "PointTransaction",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PresetTimeSale_CreatedById",
                 table: "PresetTimeSale",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PresetTimeSale_ModifiedById",
                 table: "PresetTimeSale",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_PresetTimeSaleMoney_CreatedById",
                 table: "PresetTimeSaleMoney",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_PresetTimeSaleMoney_ModifiedById",
                 table: "PresetTimeSaleMoney",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_Product_ProductId",
                 table: "Product",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductBase_CreatedById",
                 table: "ProductBase",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductBase_ModifiedById",
                 table: "ProductBase",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductGroupId",
+                name: "IX_ProductBase_ProductGroupId",
                 table: "ProductBase",
                 column: "ProductGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockProductId",
+                name: "IX_ProductBase_StockProductId",
                 table: "ProductBase",
                 column: "StockProductId");
 
@@ -5432,29 +5432,29 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductBaseExtended_ProductId",
                 table: "ProductBaseExtended",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductBundle_ProductId",
                 table: "ProductBundle",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductBundleUserPrice_CreatedById",
                 table: "ProductBundleUserPrice",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductBundleUserPrice_ModifiedById",
                 table: "ProductBundleUserPrice",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_ProductBundleUserPrice_UserGroupId",
                 table: "ProductBundleUserPrice",
                 column: "UserGroupId");
 
@@ -5465,17 +5465,17 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductGroup_CreatedById",
                 table: "ProductGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductGroup_ModifiedById",
                 table: "ProductGroup",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParentId",
+                name: "IX_ProductGroup_ParentId",
                 table: "ProductGroup",
                 column: "ParentId");
 
@@ -5486,17 +5486,17 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductHostHidden_CreatedById",
                 table: "ProductHostHidden",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_ProductHostHidden_HostGroupId",
                 table: "ProductHostHidden",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductHostHidden_ModifiedById",
                 table: "ProductHostHidden",
                 column: "ModifiedById");
 
@@ -5507,143 +5507,143 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductImage_CreatedById",
                 table: "ProductImage",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductImage_ModifiedById",
                 table: "ProductImage",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductImage_ProductId",
                 table: "ProductImage",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductOL_CreatedById",
                 table: "ProductOL",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductOL_ModifiedById",
                 table: "ProductOL",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOL_ProductOLId",
                 table: "ProductOL",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrderId",
+                name: "IX_ProductOL_ProductOrderId",
                 table: "ProductOL",
                 column: "ProductOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_ProductOL_RegisterId",
                 table: "ProductOL",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_ProductOL_ShiftId",
                 table: "ProductOL",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_ProductOL_UserId",
                 table: "ProductOL",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BundleLineId",
+                name: "IX_ProductOLExtended_BundleLineId",
                 table: "ProductOLExtended",
                 column: "BundleLineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLExtended_ProductOLId",
                 table: "ProductOLExtended",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductOLProduct_ProductId",
                 table: "ProductOLProduct",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLProduct_ProductOLId",
                 table: "ProductOLProduct",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLSession_ProductOLId",
                 table: "ProductOLSession",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageSessionId",
+                name: "IX_ProductOLSession_UsageSessionId",
                 table: "ProductOLSession",
                 column: "UsageSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLTime_ProductOLId",
                 table: "ProductOLTime",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductTimeId",
+                name: "IX_ProductOLTime_ProductTimeId",
                 table: "ProductOLTime",
                 column: "ProductTimeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLId",
+                name: "IX_ProductOLTimeFixed_ProductOLId",
                 table: "ProductOLTimeFixed",
                 column: "ProductOLId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductOrder_CreatedById",
                 table: "ProductOrder",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_ProductOrder_HostId",
                 table: "ProductOrder",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductOrder_ModifiedById",
                 table: "ProductOrder",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PreferedPaymentMethodId",
+                name: "IX_ProductOrder_PreferedPaymentMethodId",
                 table: "ProductOrder",
                 column: "PreferedPaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_ProductOrder_RegisterId",
                 table: "ProductOrder",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_ProductOrder_ShiftId",
                 table: "ProductOrder",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_ProductOrder_UserId",
                 table: "ProductOrder",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductPeriod_ProductId",
                 table: "ProductPeriod",
                 column: "ProductId");
 
@@ -5654,22 +5654,22 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PeriodDayId",
+                name: "IX_ProductPeriodDayTime_PeriodDayId",
                 table: "ProductPeriodDayTime",
                 column: "PeriodDayId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductTax_CreatedById",
                 table: "ProductTax",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductTax_ModifiedById",
                 table: "ProductTax",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaxId",
+                name: "IX_ProductTax_TaxId",
                 table: "ProductTax",
                 column: "TaxId");
 
@@ -5680,28 +5680,28 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroupId",
+                name: "IX_ProductTime_AppGroupId",
                 table: "ProductTime",
                 column: "AppGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductTime_ProductId",
                 table: "ProductTime",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductTimeHostDisallowed_CreatedById",
                 table: "ProductTimeHostDisallowed",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_ProductTimeHostDisallowed_HostGroupId",
                 table: "ProductTimeHostDisallowed",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductTimeHostDisallowed_ModifiedById",
                 table: "ProductTimeHostDisallowed",
                 column: "ModifiedById");
 
@@ -5712,13 +5712,13 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_ProductTimePeriod_ProductId",
                 table: "ProductTimePeriod",
                 column: "ProductId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductTimePeriodDayId",
+                name: "IX_ProductTimePeriodDay_ProductTimePeriodDayId",
                 table: "ProductTimePeriodDay",
                 column: "ProductTimePeriodDayId");
 
@@ -5729,22 +5729,22 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PeriodDayId",
+                name: "IX_ProductTimePeriodDayTime_PeriodDayId",
                 table: "ProductTimePeriodDayTime",
                 column: "PeriodDayId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductUserDisallowed_CreatedById",
                 table: "ProductUserDisallowed",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductUserDisallowed_ModifiedById",
                 table: "ProductUserDisallowed",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_ProductUserDisallowed_UserGroupId",
                 table: "ProductUserDisallowed",
                 column: "UserGroupId");
 
@@ -5755,17 +5755,17 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ProductUserPrice_CreatedById",
                 table: "ProductUserPrice",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ProductUserPrice_ModifiedById",
                 table: "ProductUserPrice",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_ProductUserPrice_UserGroupId",
                 table: "ProductUserPrice",
                 column: "UserGroupId");
 
@@ -5776,47 +5776,47 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Refund_CreatedById",
                 table: "Refund",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DepositTransactionId",
+                name: "IX_Refund_DepositTransactionId",
                 table: "Refund",
                 column: "DepositTransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentId",
+                name: "IX_Refund_PaymentId",
                 table: "Refund",
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PointTransactionId",
+                name: "IX_Refund_PointTransactionId",
                 table: "Refund",
                 column: "PointTransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefundMethodId",
+                name: "IX_Refund_RefundMethodId",
                 table: "Refund",
                 column: "RefundMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Refund_RegisterId",
                 table: "Refund",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Refund_ShiftId",
                 table: "Refund",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FiscalReceiptId",
+                name: "IX_RefundDepositPayment_FiscalReceiptId",
                 table: "RefundDepositPayment",
                 column: "FiscalReceiptId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefundId",
+                name: "IX_RefundDepositPayment_RefundId",
                 table: "RefundDepositPayment",
                 column: "RefundId",
                 unique: true);
@@ -5829,12 +5829,12 @@ namespace _
                 filter: "[DepositPaymentId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceId",
+                name: "IX_RefundInvoicePayment_InvoiceId",
                 table: "RefundInvoicePayment",
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefundId",
+                name: "IX_RefundInvoicePayment_RefundId",
                 table: "RefundInvoicePayment",
                 column: "RefundId",
                 unique: true);
@@ -5846,12 +5846,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Register_CreatedById",
                 table: "Register",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Register_ModifiedById",
                 table: "Register",
                 column: "ModifiedById");
 
@@ -5863,37 +5863,37 @@ namespace _
                 filter: "[MacAddress] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_RegisterTransaction_CreatedById",
                 table: "RegisterTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_RegisterTransaction_ModifiedById",
                 table: "RegisterTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_RegisterTransaction_RegisterId",
                 table: "RegisterTransaction",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_RegisterTransaction_ShiftId",
                 table: "RegisterTransaction",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Reservation_CreatedById",
                 table: "Reservation",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Reservation_ModifiedById",
                 table: "Reservation",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Reservation_UserId",
                 table: "Reservation",
                 column: "UserId");
 
@@ -5904,22 +5904,22 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ReservationHost_CreatedById",
                 table: "ReservationHost",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_ReservationHost_HostId",
                 table: "ReservationHost",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ReservationHost_ModifiedById",
                 table: "ReservationHost",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PreferedUserId",
+                name: "IX_ReservationHost_PreferedUserId",
                 table: "ReservationHost",
                 column: "PreferedUserId");
 
@@ -5930,17 +5930,17 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ReservationUser_CreatedById",
                 table: "ReservationUser",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ReservationUser_ModifiedById",
                 table: "ReservationUser",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_ReservationUser_UserId",
                 table: "ReservationUser",
                 column: "UserId");
 
@@ -5951,12 +5951,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_SecurityProfile_CreatedById",
                 table: "SecurityProfile",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_SecurityProfile_ModifiedById",
                 table: "SecurityProfile",
                 column: "ModifiedById");
 
@@ -5967,12 +5967,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_SecurityProfilePolicy_CreatedById",
                 table: "SecurityProfilePolicy",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_SecurityProfilePolicy_ModifiedById",
                 table: "SecurityProfilePolicy",
                 column: "ModifiedById");
 
@@ -5983,27 +5983,27 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_SecurityProfileRestriction_CreatedById",
                 table: "SecurityProfileRestriction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_SecurityProfileRestriction_ModifiedById",
                 table: "SecurityProfileRestriction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SecurityProfileId",
+                name: "IX_SecurityProfileRestriction_SecurityProfileId",
                 table: "SecurityProfileRestriction",
                 column: "SecurityProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Setting_CreatedById",
                 table: "Setting",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Setting_ModifiedById",
                 table: "Setting",
                 column: "ModifiedById");
 
@@ -6014,47 +6014,47 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Shift_CreatedById",
                 table: "Shift",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EndedById",
+                name: "IX_Shift_EndedById",
                 table: "Shift",
                 column: "EndedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Shift_ModifiedById",
                 table: "Shift",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OperatorId",
+                name: "IX_Shift_OperatorId",
                 table: "Shift",
                 column: "OperatorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Shift_RegisterId",
                 table: "Shift",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Shift_ShiftId",
                 table: "Shift",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_ShiftCount_CreatedById",
                 table: "ShiftCount",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_ShiftCount_ModifiedById",
                 table: "ShiftCount",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentMethodId",
+                name: "IX_ShiftCount_PaymentMethodId",
                 table: "ShiftCount",
                 column: "PaymentMethodId");
 
@@ -6065,37 +6065,37 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_StockTransaction_CreatedById",
                 table: "StockTransaction",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_StockTransaction_ModifiedById",
                 table: "StockTransaction",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductId",
+                name: "IX_StockTransaction_ProductId",
                 table: "StockTransaction",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SourceProductId",
+                name: "IX_StockTransaction_SourceProductId",
                 table: "StockTransaction",
                 column: "SourceProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_TaskBase_CreatedById",
                 table: "TaskBase",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_TaskBase_ModifiedById",
                 table: "TaskBase",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskBase_TaskId",
                 table: "TaskBase",
                 column: "TaskId",
                 unique: true);
@@ -6113,36 +6113,36 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskJunction_TaskId",
                 table: "TaskJunction",
                 column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskNotification_TaskId",
                 table: "TaskNotification",
                 column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskProcess_TaskId",
                 table: "TaskProcess",
                 column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskId",
+                name: "IX_TaskScript_TaskId",
                 table: "TaskScript",
                 column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Tax_CreatedById",
                 table: "Tax",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Tax_ModifiedById",
                 table: "Tax",
                 column: "ModifiedById");
 
@@ -6153,17 +6153,17 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Token_CreatedById",
                 table: "Token",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Token_ModifiedById",
                 table: "Token",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Token_UserId",
                 table: "Token",
                 column: "UserId");
 
@@ -6174,81 +6174,81 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageSessionId",
+                name: "IX_Usage_UsageSessionId",
                 table: "Usage",
                 column: "UsageSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Usage_UserId",
                 table: "Usage",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillRateId",
+                name: "IX_UsageRate_BillRateId",
                 table: "UsageRate",
                 column: "BillRateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageId",
+                name: "IX_UsageRate_UsageId",
                 table: "UsageRate",
                 column: "UsageId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CurrentUsageId",
+                name: "IX_UsageSession_CurrentUsageId",
                 table: "UsageSession",
                 column: "CurrentUsageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageSessionId",
+                name: "IX_UsageSession_UsageSessionId",
                 table: "UsageSession",
                 column: "UsageSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UsageSession_UserId",
                 table: "UsageSession",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_UsageTime_InvoiceLineId",
                 table: "UsageTime",
                 column: "InvoiceLineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageId",
+                name: "IX_UsageTime_UsageId",
                 table: "UsageTime",
                 column: "UsageId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineId",
+                name: "IX_UsageTimeFixed_InvoiceLineId",
                 table: "UsageTimeFixed",
                 column: "InvoiceLineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageId",
+                name: "IX_UsageTimeFixed_UsageId",
                 table: "UsageTimeFixed",
                 column: "UsageId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageId",
+                name: "IX_UsageUserSession_UsageId",
                 table: "UsageUserSession",
                 column: "UsageId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessionId",
+                name: "IX_UsageUserSession_UserSessionId",
                 table: "UsageUserSession",
                 column: "UserSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_User_CreatedById",
                 table: "User",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_User_ModifiedById",
                 table: "User",
                 column: "ModifiedById");
 
@@ -6273,27 +6273,27 @@ namespace _
                 filter: "[SmartCardUID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserAgreement_CreatedById",
                 table: "UserAgreement",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserAgreement_ModifiedById",
                 table: "UserAgreement",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserAgreementState_CreatedById",
                 table: "UserAgreementState",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserAgreementState_ModifiedById",
                 table: "UserAgreementState",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserAgreementState_UserId",
                 table: "UserAgreementState",
                 column: "UserId");
 
@@ -6304,17 +6304,17 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttributeId",
+                name: "IX_UserAttribute_AttributeId",
                 table: "UserAttribute",
                 column: "AttributeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserAttribute_CreatedById",
                 table: "UserAttribute",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserAttribute_ModifiedById",
                 table: "UserAttribute",
                 column: "ModifiedById");
 
@@ -6325,58 +6325,58 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserCredential_CreatedById",
                 table: "UserCredential",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserCredential_ModifiedById",
                 table: "UserCredential",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserCredential_UserId",
                 table: "UserCredential",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserCreditLimit_CreatedById",
                 table: "UserCreditLimit",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserCreditLimit_ModifiedById",
                 table: "UserCreditLimit",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserCreditLimit_UserId",
                 table: "UserCreditLimit",
                 column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroupId",
+                name: "IX_UserGroup_AppGroupId",
                 table: "UserGroup",
                 column: "AppGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillProfileId",
+                name: "IX_UserGroup_BillProfileId",
                 table: "UserGroup",
                 column: "BillProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserGroup_CreatedById",
                 table: "UserGroup",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserGroup_ModifiedById",
                 table: "UserGroup",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SecurityProfileId",
+                name: "IX_UserGroup_SecurityProfileId",
                 table: "UserGroup",
                 column: "SecurityProfileId");
 
@@ -6387,17 +6387,17 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserGroupHostDisallowed_CreatedById",
                 table: "UserGroupHostDisallowed",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupId",
+                name: "IX_UserGroupHostDisallowed_HostGroupId",
                 table: "UserGroupHostDisallowed",
                 column: "HostGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserGroupHostDisallowed_ModifiedById",
                 table: "UserGroupHostDisallowed",
                 column: "ModifiedById");
 
@@ -6408,7 +6408,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserGuest_UserId",
                 table: "UserGuest",
                 column: "UserId",
                 unique: true);
@@ -6421,12 +6421,12 @@ namespace _
                 filter: "[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroupId",
+                name: "IX_UserMember_UserGroupId",
                 table: "UserMember",
                 column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserMember_UserId",
                 table: "UserMember",
                 column: "UserId",
                 unique: true);
@@ -6445,18 +6445,18 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_NoteId",
+                name: "IX_UserNote_NoteId",
                 table: "UserNote",
                 column: "NoteId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserNote_UserId",
                 table: "UserNote",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserOperator_UserId",
                 table: "UserOperator",
                 column: "UserId",
                 unique: true);
@@ -6475,12 +6475,12 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserPermission_CreatedById",
                 table: "UserPermission",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserPermission_ModifiedById",
                 table: "UserPermission",
                 column: "ModifiedById");
 
@@ -6491,62 +6491,62 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserPicture_CreatedById",
                 table: "UserPicture",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_UserPicture_ModifiedById",
                 table: "UserPicture",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserPicture_UserId",
                 table: "UserPicture",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserSession_CreatedById",
                 table: "UserSession",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_UserSession_HostId",
                 table: "UserSession",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserSession_UserId",
                 table: "UserSession",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_UserSessionChange_CreatedById",
                 table: "UserSessionChange",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostId",
+                name: "IX_UserSessionChange_HostId",
                 table: "UserSessionChange",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_UserSessionChange_UserId",
                 table: "UserSessionChange",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessionId",
+                name: "IX_UserSessionChange_UserSessionId",
                 table: "UserSessionChange",
                 column: "UserSessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Variable_CreatedById",
                 table: "Variable",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Variable_ModifiedById",
                 table: "Variable",
                 column: "ModifiedById");
 
@@ -6557,54 +6557,54 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Verification_CreatedById",
                 table: "Verification",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModifiedById",
+                name: "IX_Verification_ModifiedById",
                 table: "Verification",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TokenId",
+                name: "IX_Verification_TokenId",
                 table: "Verification",
                 column: "TokenId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserId",
+                name: "IX_Verification_UserId",
                 table: "Verification",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VerificationId",
+                name: "IX_VerificationEmail_VerificationId",
                 table: "VerificationEmail",
                 column: "VerificationId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_VerificationId",
+                name: "IX_VerificationMobilePhone_VerificationId",
                 table: "VerificationMobilePhone",
                 column: "VerificationId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedById",
+                name: "IX_Void_CreatedById",
                 table: "Void",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegisterId",
+                name: "IX_Void_RegisterId",
                 table: "Void",
                 column: "RegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShiftId",
+                name: "IX_Void_ShiftId",
                 table: "Void",
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VoidId",
+                name: "IX_VoidDepositPayment_VoidId",
                 table: "VoidDepositPayment",
                 column: "VoidId",
                 unique: true);
@@ -6616,7 +6616,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_VoidId",
+                name: "IX_VoidInvoice_VoidId",
                 table: "VoidInvoice",
                 column: "VoidId",
                 unique: true);
@@ -6628,7 +6628,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.App_dbo.AppCategory_AppCategoryId",
+                name: "FK_App_AppCategory_AppCategoryId",
                 table: "App",
                 column: "AppCategoryId",
                 principalTable: "AppCategory",
@@ -6636,98 +6636,98 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.App_dbo.AppEnterprise_DeveloperId",
+                name: "FK_App_AppEnterprise_DeveloperId",
                 table: "App",
                 column: "DeveloperId",
                 principalTable: "AppEnterprise",
                 principalColumn: "AppEnterpriseId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.App_dbo.AppEnterprise_PublisherId",
+                name: "FK_App_AppEnterprise_PublisherId",
                 table: "App",
                 column: "PublisherId",
                 principalTable: "AppEnterprise",
                 principalColumn: "AppEnterpriseId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.App_dbo.UserOperator_CreatedById",
+                name: "FK_App_UserOperator_CreatedById",
                 table: "App",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.App_dbo.UserOperator_ModifiedById",
+                name: "FK_App_UserOperator_ModifiedById",
                 table: "App",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppCategory_dbo.UserOperator_CreatedById",
+                name: "FK_AppCategory_UserOperator_CreatedById",
                 table: "AppCategory",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppCategory_dbo.UserOperator_ModifiedById",
+                name: "FK_AppCategory_UserOperator_ModifiedById",
                 table: "AppCategory",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppEnterprise_dbo.UserOperator_CreatedById",
+                name: "FK_AppEnterprise_UserOperator_CreatedById",
                 table: "AppEnterprise",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppEnterprise_dbo.UserOperator_ModifiedById",
+                name: "FK_AppEnterprise_UserOperator_ModifiedById",
                 table: "AppEnterprise",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExe_dbo.Deployment_DefaultDeploymentId",
+                name: "FK_AppExe_Deployment_DefaultDeploymentId",
                 table: "AppExe",
                 column: "DefaultDeploymentId",
                 principalTable: "Deployment",
                 principalColumn: "DeploymentId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExe_dbo.UserOperator_CreatedById",
+                name: "FK_AppExe_UserOperator_CreatedById",
                 table: "AppExe",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExe_dbo.UserOperator_ModifiedById",
+                name: "FK_AppExe_UserOperator_ModifiedById",
                 table: "AppExe",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeCdImage_dbo.UserOperator_CreatedById",
+                name: "FK_AppExeCdImage_UserOperator_CreatedById",
                 table: "AppExeCdImage",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeCdImage_dbo.UserOperator_ModifiedById",
+                name: "FK_AppExeCdImage_UserOperator_ModifiedById",
                 table: "AppExeCdImage",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeDeployment_dbo.Deployment_DeploymentId",
+                name: "FK_AppExeDeployment_Deployment_DeploymentId",
                 table: "AppExeDeployment",
                 column: "DeploymentId",
                 principalTable: "Deployment",
@@ -6735,35 +6735,35 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeDeployment_dbo.UserOperator_CreatedById",
+                name: "FK_AppExeDeployment_UserOperator_CreatedById",
                 table: "AppExeDeployment",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeDeployment_dbo.UserOperator_ModifiedById",
+                name: "FK_AppExeDeployment_UserOperator_ModifiedById",
                 table: "AppExeDeployment",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeImage_dbo.UserOperator_CreatedById",
+                name: "FK_AppExeImage_UserOperator_CreatedById",
                 table: "AppExeImage",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeImage_dbo.UserOperator_ModifiedById",
+                name: "FK_AppExeImage_UserOperator_ModifiedById",
                 table: "AppExeImage",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeLicense_dbo.License_LicenseId",
+                name: "FK_AppExeLicense_License_LicenseId",
                 table: "AppExeLicense",
                 column: "LicenseId",
                 principalTable: "License",
@@ -6771,35 +6771,35 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeLicense_dbo.UserOperator_CreatedById",
+                name: "FK_AppExeLicense_UserOperator_CreatedById",
                 table: "AppExeLicense",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeLicense_dbo.UserOperator_ModifiedById",
+                name: "FK_AppExeLicense_UserOperator_ModifiedById",
                 table: "AppExeLicense",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeMaxUser_dbo.UserOperator_CreatedById",
+                name: "FK_AppExeMaxUser_UserOperator_CreatedById",
                 table: "AppExeMaxUser",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeMaxUser_dbo.UserOperator_ModifiedById",
+                name: "FK_AppExeMaxUser_UserOperator_ModifiedById",
                 table: "AppExeMaxUser",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExePersonalFile_dbo.PersonalFile_PersonalFileId",
+                name: "FK_AppExePersonalFile_PersonalFile_PersonalFileId",
                 table: "AppExePersonalFile",
                 column: "PersonalFileId",
                 principalTable: "PersonalFile",
@@ -6807,21 +6807,21 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExePersonalFile_dbo.UserOperator_CreatedById",
+                name: "FK_AppExePersonalFile_UserOperator_CreatedById",
                 table: "AppExePersonalFile",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExePersonalFile_dbo.UserOperator_ModifiedById",
+                name: "FK_AppExePersonalFile_UserOperator_ModifiedById",
                 table: "AppExePersonalFile",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeTask_dbo.TaskBase_TaskBaseId",
+                name: "FK_AppExeTask_TaskBase_TaskBaseId",
                 table: "AppExeTask",
                 column: "TaskBaseId",
                 principalTable: "TaskBase",
@@ -6829,63 +6829,63 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeTask_dbo.UserOperator_CreatedById",
+                name: "FK_AppExeTask_UserOperator_CreatedById",
                 table: "AppExeTask",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppExeTask_dbo.UserOperator_ModifiedById",
+                name: "FK_AppExeTask_UserOperator_ModifiedById",
                 table: "AppExeTask",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppGroup_dbo.UserOperator_CreatedById",
+                name: "FK_AppGroup_UserOperator_CreatedById",
                 table: "AppGroup",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppGroup_dbo.UserOperator_ModifiedById",
+                name: "FK_AppGroup_UserOperator_ModifiedById",
                 table: "AppGroup",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppImage_dbo.UserOperator_CreatedById",
+                name: "FK_AppImage_UserOperator_CreatedById",
                 table: "AppImage",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppImage_dbo.UserOperator_ModifiedById",
+                name: "FK_AppImage_UserOperator_ModifiedById",
                 table: "AppImage",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppLink_dbo.UserOperator_CreatedById",
+                name: "FK_AppLink_UserOperator_CreatedById",
                 table: "AppLink",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppLink_dbo.UserOperator_ModifiedById",
+                name: "FK_AppLink_UserOperator_ModifiedById",
                 table: "AppLink",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppRating_dbo.UserMember_UserId",
+                name: "FK_AppRating_UserMember_UserId",
                 table: "AppRating",
                 column: "UserId",
                 principalTable: "UserMember",
@@ -6893,21 +6893,21 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppStat_dbo.HostComputer_HostId",
+                name: "FK_AppStat_HostComputer_HostId",
                 table: "AppStat",
                 column: "HostId",
                 principalTable: "HostComputer",
                 principalColumn: "HostId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AppStat_dbo.UserMember_UserId",
+                name: "FK_AppStat_UserMember_UserId",
                 table: "AppStat",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Asset_dbo.AssetType_AssetTypeId",
+                name: "FK_Asset_AssetType_AssetTypeId",
                 table: "Asset",
                 column: "AssetTypeId",
                 principalTable: "AssetType",
@@ -6915,21 +6915,21 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Asset_dbo.UserOperator_CreatedById",
+                name: "FK_Asset_UserOperator_CreatedById",
                 table: "Asset",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Asset_dbo.UserOperator_ModifiedById",
+                name: "FK_Asset_UserOperator_ModifiedById",
                 table: "Asset",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssetTransaction_dbo.AssetType_AssetTypeId",
+                name: "FK_AssetTransaction_AssetType_AssetTypeId",
                 table: "AssetTransaction",
                 column: "AssetTypeId",
                 principalTable: "AssetType",
@@ -6937,49 +6937,49 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssetTransaction_dbo.UserMember_UserId",
+                name: "FK_AssetTransaction_UserMember_UserId",
                 table: "AssetTransaction",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssetTransaction_dbo.UserOperator_CheckedInById",
+                name: "FK_AssetTransaction_UserOperator_CheckedInById",
                 table: "AssetTransaction",
                 column: "CheckedInById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssetTransaction_dbo.UserOperator_CreatedById",
+                name: "FK_AssetTransaction_UserOperator_CreatedById",
                 table: "AssetTransaction",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssetTransaction_dbo.UserOperator_ModifiedById",
+                name: "FK_AssetTransaction_UserOperator_ModifiedById",
                 table: "AssetTransaction",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssetType_dbo.UserOperator_CreatedById",
+                name: "FK_AssetType_UserOperator_CreatedById",
                 table: "AssetType",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssetType_dbo.UserOperator_ModifiedById",
+                name: "FK_AssetType_UserOperator_ModifiedById",
                 table: "AssetType",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssistanceRequest_dbo.AssistanceRequestType_AssistanceRequestTypeId",
+                name: "FK_AssistanceRequest_AssistanceRequestType_AssistanceRequestTypeId",
                 table: "AssistanceRequest",
                 column: "AssistanceRequestTypeId",
                 principalTable: "AssistanceRequestType",
@@ -6987,7 +6987,7 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssistanceRequest_dbo.Host_HostId",
+                name: "FK_AssistanceRequest_Host_HostId",
                 table: "AssistanceRequest",
                 column: "HostId",
                 principalTable: "Host",
@@ -6995,70 +6995,70 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssistanceRequest_dbo.UserMember_UserId",
+                name: "FK_AssistanceRequest_UserMember_UserId",
                 table: "AssistanceRequest",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssistanceRequest_dbo.User_CreatedById",
+                name: "FK_AssistanceRequest_User_CreatedById",
                 table: "AssistanceRequest",
                 column: "CreatedById",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssistanceRequest_dbo.User_ModifiedById",
+                name: "FK_AssistanceRequest_User_ModifiedById",
                 table: "AssistanceRequest",
                 column: "ModifiedById",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssistanceRequestType_dbo.UserOperator_CreatedById",
+                name: "FK_AssistanceRequestType_UserOperator_CreatedById",
                 table: "AssistanceRequestType",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.AssistanceRequestType_dbo.UserOperator_ModifiedById",
+                name: "FK_AssistanceRequestType_UserOperator_ModifiedById",
                 table: "AssistanceRequestType",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Attribute_dbo.UserOperator_CreatedById",
+                name: "FK_Attribute_UserOperator_CreatedById",
                 table: "Attribute",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Attribute_dbo.UserOperator_ModifiedById",
+                name: "FK_Attribute_UserOperator_ModifiedById",
                 table: "Attribute",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.BillProfile_dbo.UserOperator_CreatedById",
+                name: "FK_BillProfile_UserOperator_CreatedById",
                 table: "BillProfile",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.BillProfile_dbo.UserOperator_ModifiedById",
+                name: "FK_BillProfile_UserOperator_ModifiedById",
                 table: "BillProfile",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.BundleProduct_dbo.ProductBase_ProductId",
+                name: "FK_BundleProduct_ProductBase_ProductId",
                 table: "BundleProduct",
                 column: "ProductId",
                 principalTable: "ProductBase",
@@ -7066,49 +7066,49 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.BundleProduct_dbo.ProductBundle_ProductBundleId",
+                name: "FK_BundleProduct_ProductBundle_ProductBundleId",
                 table: "BundleProduct",
                 column: "ProductBundleId",
                 principalTable: "ProductBundle",
                 principalColumn: "ProductId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.BundleProduct_dbo.UserOperator_CreatedById",
+                name: "FK_BundleProduct_UserOperator_CreatedById",
                 table: "BundleProduct",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.BundleProduct_dbo.UserOperator_ModifiedById",
+                name: "FK_BundleProduct_UserOperator_ModifiedById",
                 table: "BundleProduct",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.BundleProductUserPrice_dbo.UserGroup_UserGroupId",
+                name: "FK_BundleProductUserPrice_UserGroup_UserGroupId",
                 table: "BundleProductUserPrice",
                 column: "UserGroupId",
                 principalTable: "UserGroup",
                 principalColumn: "UserGroupId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.BundleProductUserPrice_dbo.UserOperator_CreatedById",
+                name: "FK_BundleProductUserPrice_UserOperator_CreatedById",
                 table: "BundleProductUserPrice",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.BundleProductUserPrice_dbo.UserOperator_ModifiedById",
+                name: "FK_BundleProductUserPrice_UserOperator_ModifiedById",
                 table: "BundleProductUserPrice",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ClientTask_dbo.TaskBase_TaskBaseId",
+                name: "FK_ClientTask_TaskBase_TaskBaseId",
                 table: "ClientTask",
                 column: "TaskBaseId",
                 principalTable: "TaskBase",
@@ -7116,49 +7116,49 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ClientTask_dbo.UserOperator_CreatedById",
+                name: "FK_ClientTask_UserOperator_CreatedById",
                 table: "ClientTask",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ClientTask_dbo.UserOperator_ModifiedById",
+                name: "FK_ClientTask_UserOperator_ModifiedById",
                 table: "ClientTask",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Deployment_dbo.UserOperator_CreatedById",
+                name: "FK_Deployment_UserOperator_CreatedById",
                 table: "Deployment",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Deployment_dbo.UserOperator_ModifiedById",
+                name: "FK_Deployment_UserOperator_ModifiedById",
                 table: "Deployment",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DeploymentDeployment_dbo.UserOperator_CreatedById",
+                name: "FK_DeploymentDeployment_UserOperator_CreatedById",
                 table: "DeploymentDeployment",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DeploymentDeployment_dbo.UserOperator_ModifiedById",
+                name: "FK_DeploymentDeployment_UserOperator_ModifiedById",
                 table: "DeploymentDeployment",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositPayment_dbo.DepositTransaction_DepositTransactionId",
+                name: "FK_DepositPayment_DepositTransaction_DepositTransactionId",
                 table: "DepositPayment",
                 column: "DepositTransactionId",
                 principalTable: "DepositTransaction",
@@ -7166,14 +7166,14 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositPayment_dbo.FiscalReceipt_FiscalReceiptId",
+                name: "FK_DepositPayment_FiscalReceipt_FiscalReceiptId",
                 table: "DepositPayment",
                 column: "FiscalReceiptId",
                 principalTable: "FiscalReceipt",
                 principalColumn: "FiscalReceiptId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositPayment_dbo.Payment_PaymentId",
+                name: "FK_DepositPayment_Payment_PaymentId",
                 table: "DepositPayment",
                 column: "PaymentId",
                 principalTable: "Payment",
@@ -7181,21 +7181,21 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositPayment_dbo.Register_RegisterId",
+                name: "FK_DepositPayment_Register_RegisterId",
                 table: "DepositPayment",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositPayment_dbo.Shift_ShiftId",
+                name: "FK_DepositPayment_Shift_ShiftId",
                 table: "DepositPayment",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositPayment_dbo.UserMember_UserId",
+                name: "FK_DepositPayment_UserMember_UserId",
                 table: "DepositPayment",
                 column: "UserId",
                 principalTable: "UserMember",
@@ -7203,70 +7203,70 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositPayment_dbo.UserOperator_CreatedById",
+                name: "FK_DepositPayment_UserOperator_CreatedById",
                 table: "DepositPayment",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositPayment_dbo.UserOperator_ModifiedById",
+                name: "FK_DepositPayment_UserOperator_ModifiedById",
                 table: "DepositPayment",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositTransaction_dbo.Register_RegisterId",
+                name: "FK_DepositTransaction_Register_RegisterId",
                 table: "DepositTransaction",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositTransaction_dbo.Shift_ShiftId",
+                name: "FK_DepositTransaction_Shift_ShiftId",
                 table: "DepositTransaction",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositTransaction_dbo.UserMember_UserId",
+                name: "FK_DepositTransaction_UserMember_UserId",
                 table: "DepositTransaction",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositTransaction_dbo.UserOperator_CreatedById",
+                name: "FK_DepositTransaction_UserOperator_CreatedById",
                 table: "DepositTransaction",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DepositTransaction_dbo.UserOperator_ModifiedById",
+                name: "FK_DepositTransaction_UserOperator_ModifiedById",
                 table: "DepositTransaction",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Device_dbo.UserOperator_CreatedById",
+                name: "FK_Device_UserOperator_CreatedById",
                 table: "Device",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Device_dbo.UserOperator_ModifiedById",
+                name: "FK_Device_UserOperator_ModifiedById",
                 table: "Device",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DeviceHost_dbo.Host_HostId",
+                name: "FK_DeviceHost_Host_HostId",
                 table: "DeviceHost",
                 column: "HostId",
                 principalTable: "Host",
@@ -7274,112 +7274,112 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DeviceHost_dbo.UserOperator_CreatedById",
+                name: "FK_DeviceHost_UserOperator_CreatedById",
                 table: "DeviceHost",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.DeviceHost_dbo.UserOperator_ModifiedById",
+                name: "FK_DeviceHost_UserOperator_ModifiedById",
                 table: "DeviceHost",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Feed_dbo.UserOperator_CreatedById",
+                name: "FK_Feed_UserOperator_CreatedById",
                 table: "Feed",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Feed_dbo.UserOperator_ModifiedById",
+                name: "FK_Feed_UserOperator_ModifiedById",
                 table: "Feed",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.FiscalReceipt_dbo.Register_RegisterId",
+                name: "FK_FiscalReceipt_Register_RegisterId",
                 table: "FiscalReceipt",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.FiscalReceipt_dbo.Shift_ShiftId",
+                name: "FK_FiscalReceipt_Shift_ShiftId",
                 table: "FiscalReceipt",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.FiscalReceipt_dbo.UserOperator_CreatedById",
+                name: "FK_FiscalReceipt_UserOperator_CreatedById",
                 table: "FiscalReceipt",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Host_dbo.HostGroup_HostGroupId",
+                name: "FK_Host_HostGroup_HostGroupId",
                 table: "Host",
                 column: "HostGroupId",
                 principalTable: "HostGroup",
                 principalColumn: "HostGroupId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Host_dbo.Icon_IconId",
+                name: "FK_Host_Icon_IconId",
                 table: "Host",
                 column: "IconId",
                 principalTable: "Icon",
                 principalColumn: "IconId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Host_dbo.UserOperator_CreatedById",
+                name: "FK_Host_UserOperator_CreatedById",
                 table: "Host",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Host_dbo.UserOperator_ModifiedById",
+                name: "FK_Host_UserOperator_ModifiedById",
                 table: "Host",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroup_dbo.SecurityProfile_SecurityProfileId",
+                name: "FK_HostGroup_SecurityProfile_SecurityProfileId",
                 table: "HostGroup",
                 column: "SecurityProfileId",
                 principalTable: "SecurityProfile",
                 principalColumn: "SecurityProfileId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroup_dbo.UserGroup_DefaultGuestGroupId",
+                name: "FK_HostGroup_UserGroup_DefaultGuestGroupId",
                 table: "HostGroup",
                 column: "DefaultGuestGroupId",
                 principalTable: "UserGroup",
                 principalColumn: "UserGroupId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroup_dbo.UserOperator_CreatedById",
+                name: "FK_HostGroup_UserOperator_CreatedById",
                 table: "HostGroup",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroup_dbo.UserOperator_ModifiedById",
+                name: "FK_HostGroup_UserOperator_ModifiedById",
                 table: "HostGroup",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroupUserBillProfile_dbo.UserGroup_UserGroupId",
+                name: "FK_HostGroupUserBillProfile_UserGroup_UserGroupId",
                 table: "HostGroupUserBillProfile",
                 column: "UserGroupId",
                 principalTable: "UserGroup",
@@ -7387,98 +7387,98 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroupWaitingLine_dbo.UserOperator_CreatedById",
+                name: "FK_HostGroupWaitingLine_UserOperator_CreatedById",
                 table: "HostGroupWaitingLine",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroupWaitingLine_dbo.UserOperator_ModifiedById",
+                name: "FK_HostGroupWaitingLine_UserOperator_ModifiedById",
                 table: "HostGroupWaitingLine",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroupWaitingLineEntry_dbo.UserMember_UserId",
+                name: "FK_HostGroupWaitingLineEntry_UserMember_UserId",
                 table: "HostGroupWaitingLineEntry",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroupWaitingLineEntry_dbo.UserOperator_CreatedById",
+                name: "FK_HostGroupWaitingLineEntry_UserOperator_CreatedById",
                 table: "HostGroupWaitingLineEntry",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostGroupWaitingLineEntry_dbo.User_ModifiedById",
+                name: "FK_HostGroupWaitingLineEntry_User_ModifiedById",
                 table: "HostGroupWaitingLineEntry",
                 column: "ModifiedById",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostLayoutGroup_dbo.UserOperator_CreatedById",
+                name: "FK_HostLayoutGroup_UserOperator_CreatedById",
                 table: "HostLayoutGroup",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostLayoutGroup_dbo.UserOperator_ModifiedById",
+                name: "FK_HostLayoutGroup_UserOperator_ModifiedById",
                 table: "HostLayoutGroup",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostLayoutGroupImage_dbo.UserOperator_CreatedById",
+                name: "FK_HostLayoutGroupImage_UserOperator_CreatedById",
                 table: "HostLayoutGroupImage",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostLayoutGroupImage_dbo.UserOperator_ModifiedById",
+                name: "FK_HostLayoutGroupImage_UserOperator_ModifiedById",
                 table: "HostLayoutGroupImage",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostLayoutGroupLayout_dbo.UserOperator_CreatedById",
+                name: "FK_HostLayoutGroupLayout_UserOperator_CreatedById",
                 table: "HostLayoutGroupLayout",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.HostLayoutGroupLayout_dbo.UserOperator_ModifiedById",
+                name: "FK_HostLayoutGroupLayout_UserOperator_ModifiedById",
                 table: "HostLayoutGroupLayout",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Icon_dbo.UserOperator_CreatedById",
+                name: "FK_Icon_UserOperator_CreatedById",
                 table: "Icon",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Icon_dbo.UserOperator_ModifiedById",
+                name: "FK_Icon_UserOperator_ModifiedById",
                 table: "Icon",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Invoice_dbo.ProductOrder_ProductOrderId",
+                name: "FK_Invoice_ProductOrder_ProductOrderId",
                 table: "Invoice",
                 column: "ProductOrderId",
                 principalTable: "ProductOrder",
@@ -7486,21 +7486,21 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Invoice_dbo.Register_RegisterId",
+                name: "FK_Invoice_Register_RegisterId",
                 table: "Invoice",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Invoice_dbo.Shift_ShiftId",
+                name: "FK_Invoice_Shift_ShiftId",
                 table: "Invoice",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Invoice_dbo.UserMember_UserId",
+                name: "FK_Invoice_UserMember_UserId",
                 table: "Invoice",
                 column: "UserId",
                 principalTable: "UserMember",
@@ -7508,42 +7508,42 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Invoice_dbo.UserOperator_CreatedById",
+                name: "FK_Invoice_UserOperator_CreatedById",
                 table: "Invoice",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Invoice_dbo.UserOperator_ModifiedById",
+                name: "FK_Invoice_UserOperator_ModifiedById",
                 table: "Invoice",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceFiscalReceipt_dbo.Register_RegisterId",
+                name: "FK_InvoiceFiscalReceipt_Register_RegisterId",
                 table: "InvoiceFiscalReceipt",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceFiscalReceipt_dbo.Shift_ShiftId",
+                name: "FK_InvoiceFiscalReceipt_Shift_ShiftId",
                 table: "InvoiceFiscalReceipt",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceFiscalReceipt_dbo.UserOperator_CreatedById",
+                name: "FK_InvoiceFiscalReceipt_UserOperator_CreatedById",
                 table: "InvoiceFiscalReceipt",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.PointTransaction_PointsTransactionId",
+                name: "FK_InvoiceLine_PointTransaction_PointsTransactionId",
                 table: "InvoiceLine",
                 column: "PointsTransactionId",
                 principalTable: "PointTransaction",
@@ -7551,21 +7551,21 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.Register_RegisterId",
+                name: "FK_InvoiceLine_Register_RegisterId",
                 table: "InvoiceLine",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.Shift_ShiftId",
+                name: "FK_InvoiceLine_Shift_ShiftId",
                 table: "InvoiceLine",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.UserMember_UserId",
+                name: "FK_InvoiceLine_UserMember_UserId",
                 table: "InvoiceLine",
                 column: "UserId",
                 principalTable: "UserMember",
@@ -7573,21 +7573,21 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.UserOperator_CreatedById",
+                name: "FK_InvoiceLine_UserOperator_CreatedById",
                 table: "InvoiceLine",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.UserOperator_ModifiedById",
+                name: "FK_InvoiceLine_UserOperator_ModifiedById",
                 table: "InvoiceLine",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineExtended_dbo.InvoiceLineProduct_BundleLineId",
+                name: "FK_InvoiceLineExtended_InvoiceLineProduct_BundleLineId",
                 table: "InvoiceLineExtended",
                 column: "BundleLineId",
                 principalTable: "InvoiceLineProduct",
@@ -7595,14 +7595,14 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineExtended_dbo.StockTransaction_StockReturnTransactionId",
+                name: "FK_InvoiceLineExtended_StockTransaction_StockReturnTransactionId",
                 table: "InvoiceLineExtended",
                 column: "StockReturnTransactionId",
                 principalTable: "StockTransaction",
                 principalColumn: "StockTransactionId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineExtended_dbo.StockTransaction_StockTransactionId",
+                name: "FK_InvoiceLineExtended_StockTransaction_StockTransactionId",
                 table: "InvoiceLineExtended",
                 column: "StockTransactionId",
                 principalTable: "StockTransaction",
@@ -7610,28 +7610,28 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineProduct_dbo.ProductBaseExtended_ProductId",
+                name: "FK_InvoiceLineProduct_ProductBaseExtended_ProductId",
                 table: "InvoiceLineProduct",
                 column: "ProductId",
                 principalTable: "ProductBaseExtended",
                 principalColumn: "ProductId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineProduct_dbo.ProductOLProduct_OrderLineId",
+                name: "FK_InvoiceLineProduct_ProductOLProduct_OrderLineId",
                 table: "InvoiceLineProduct",
                 column: "OrderLineId",
                 principalTable: "ProductOLProduct",
                 principalColumn: "ProductOLId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineSession_dbo.ProductOLSession_OrderLineId",
+                name: "FK_InvoiceLineSession_ProductOLSession_OrderLineId",
                 table: "InvoiceLineSession",
                 column: "OrderLineId",
                 principalTable: "ProductOLSession",
                 principalColumn: "ProductOLId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineSession_dbo.UsageSession_UsageSessionId",
+                name: "FK_InvoiceLineSession_UsageSession_UsageSessionId",
                 table: "InvoiceLineSession",
                 column: "UsageSessionId",
                 principalTable: "UsageSession",
@@ -7639,28 +7639,28 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineTime_dbo.ProductOLTime_OrderLineId",
+                name: "FK_InvoiceLineTime_ProductOLTime_OrderLineId",
                 table: "InvoiceLineTime",
                 column: "OrderLineId",
                 principalTable: "ProductOLTime",
                 principalColumn: "ProductOLId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineTime_dbo.ProductTime_ProductTimeId",
+                name: "FK_InvoiceLineTime_ProductTime_ProductTimeId",
                 table: "InvoiceLineTime",
                 column: "ProductTimeId",
                 principalTable: "ProductTime",
                 principalColumn: "ProductId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoiceLineTimeFixed_dbo.ProductOLTimeFixed_OrderLineId",
+                name: "FK_InvoiceLineTimeFixed_ProductOLTimeFixed_OrderLineId",
                 table: "InvoiceLineTimeFixed",
                 column: "OrderLineId",
                 principalTable: "ProductOLTimeFixed",
                 principalColumn: "ProductOLId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoicePayment_dbo.Payment_PaymentId",
+                name: "FK_InvoicePayment_Payment_PaymentId",
                 table: "InvoicePayment",
                 column: "PaymentId",
                 principalTable: "Payment",
@@ -7668,21 +7668,21 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoicePayment_dbo.Register_RegisterId",
+                name: "FK_InvoicePayment_Register_RegisterId",
                 table: "InvoicePayment",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoicePayment_dbo.Shift_ShiftId",
+                name: "FK_InvoicePayment_Shift_ShiftId",
                 table: "InvoicePayment",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoicePayment_dbo.UserMember_UserId",
+                name: "FK_InvoicePayment_UserMember_UserId",
                 table: "InvoicePayment",
                 column: "UserId",
                 principalTable: "UserMember",
@@ -7690,105 +7690,105 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoicePayment_dbo.UserOperator_CreatedById",
+                name: "FK_InvoicePayment_UserOperator_CreatedById",
                 table: "InvoicePayment",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.InvoicePayment_dbo.UserOperator_ModifiedById",
+                name: "FK_InvoicePayment_UserOperator_ModifiedById",
                 table: "InvoicePayment",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.License_dbo.UserOperator_CreatedById",
+                name: "FK_License_UserOperator_CreatedById",
                 table: "License",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.License_dbo.UserOperator_ModifiedById",
+                name: "FK_License_UserOperator_ModifiedById",
                 table: "License",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.LicenseKey_dbo.UserOperator_CreatedById",
+                name: "FK_LicenseKey_UserOperator_CreatedById",
                 table: "LicenseKey",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.LicenseKey_dbo.UserOperator_ModifiedById",
+                name: "FK_LicenseKey_UserOperator_ModifiedById",
                 table: "LicenseKey",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Mapping_dbo.UserOperator_CreatedById",
+                name: "FK_Mapping_UserOperator_CreatedById",
                 table: "Mapping",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Mapping_dbo.UserOperator_ModifiedById",
+                name: "FK_Mapping_UserOperator_ModifiedById",
                 table: "Mapping",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.MonetaryUnit_dbo.UserOperator_CreatedById",
+                name: "FK_MonetaryUnit_UserOperator_CreatedById",
                 table: "MonetaryUnit",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.MonetaryUnit_dbo.UserOperator_ModifiedById",
+                name: "FK_MonetaryUnit_UserOperator_ModifiedById",
                 table: "MonetaryUnit",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.News_dbo.UserOperator_CreatedById",
+                name: "FK_News_UserOperator_CreatedById",
                 table: "News",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.News_dbo.UserOperator_ModifiedById",
+                name: "FK_News_UserOperator_ModifiedById",
                 table: "News",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Note_dbo.UserOperator_CreatedById",
+                name: "FK_Note_UserOperator_CreatedById",
                 table: "Note",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Note_dbo.UserOperator_ModifiedById",
+                name: "FK_Note_UserOperator_ModifiedById",
                 table: "Note",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Payment_dbo.PaymentMethod_PaymentMethodId",
+                name: "FK_Payment_PaymentMethod_PaymentMethodId",
                 table: "Payment",
                 column: "PaymentMethodId",
                 principalTable: "PaymentMethod",
@@ -7796,49 +7796,49 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Payment_dbo.PointTransaction_PointTransactionId",
+                name: "FK_Payment_PointTransaction_PointTransactionId",
                 table: "Payment",
                 column: "PointTransactionId",
                 principalTable: "PointTransaction",
                 principalColumn: "PointTransactionId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Payment_dbo.Register_RegisterId",
+                name: "FK_Payment_Register_RegisterId",
                 table: "Payment",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Payment_dbo.Shift_ShiftId",
+                name: "FK_Payment_Shift_ShiftId",
                 table: "Payment",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Payment_dbo.UserMember_UserId",
+                name: "FK_Payment_UserMember_UserId",
                 table: "Payment",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Payment_dbo.UserOperator_CreatedById",
+                name: "FK_Payment_UserOperator_CreatedById",
                 table: "Payment",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Payment_dbo.UserOperator_ModifiedById",
+                name: "FK_Payment_UserOperator_ModifiedById",
                 table: "Payment",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PaymentIntent_dbo.PaymentMethod_PaymentMethodId",
+                name: "FK_PaymentIntent_PaymentMethod_PaymentMethodId",
                 table: "PaymentIntent",
                 column: "PaymentMethodId",
                 principalTable: "PaymentMethod",
@@ -7846,133 +7846,133 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PaymentIntent_dbo.UserMember_UserId",
+                name: "FK_PaymentIntent_UserMember_UserId",
                 table: "PaymentIntent",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PaymentIntent_dbo.User_CreatedById",
+                name: "FK_PaymentIntent_User_CreatedById",
                 table: "PaymentIntent",
                 column: "CreatedById",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PaymentIntent_dbo.User_ModifiedById",
+                name: "FK_PaymentIntent_User_ModifiedById",
                 table: "PaymentIntent",
                 column: "ModifiedById",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PaymentIntentOrder_dbo.ProductOrder_ProductOrderId",
+                name: "FK_PaymentIntentOrder_ProductOrder_ProductOrderId",
                 table: "PaymentIntentOrder",
                 column: "ProductOrderId",
                 principalTable: "ProductOrder",
                 principalColumn: "ProductOrderId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PaymentMethod_dbo.UserOperator_CreatedById",
+                name: "FK_PaymentMethod_UserOperator_CreatedById",
                 table: "PaymentMethod",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PaymentMethod_dbo.UserOperator_ModifiedById",
+                name: "FK_PaymentMethod_UserOperator_ModifiedById",
                 table: "PaymentMethod",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PersonalFile_dbo.UserOperator_CreatedById",
+                name: "FK_PersonalFile_UserOperator_CreatedById",
                 table: "PersonalFile",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PersonalFile_dbo.UserOperator_ModifiedById",
+                name: "FK_PersonalFile_UserOperator_ModifiedById",
                 table: "PersonalFile",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PluginLibrary_dbo.UserOperator_CreatedById",
+                name: "FK_PluginLibrary_UserOperator_CreatedById",
                 table: "PluginLibrary",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PluginLibrary_dbo.UserOperator_ModifiedById",
+                name: "FK_PluginLibrary_UserOperator_ModifiedById",
                 table: "PluginLibrary",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.Register_RegisterId",
+                name: "FK_PointTransaction_Register_RegisterId",
                 table: "PointTransaction",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.Shift_ShiftId",
+                name: "FK_PointTransaction_Shift_ShiftId",
                 table: "PointTransaction",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.UserMember_UserId",
+                name: "FK_PointTransaction_UserMember_UserId",
                 table: "PointTransaction",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.UserOperator_CreatedById",
+                name: "FK_PointTransaction_UserOperator_CreatedById",
                 table: "PointTransaction",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.UserOperator_ModifiedById",
+                name: "FK_PointTransaction_UserOperator_ModifiedById",
                 table: "PointTransaction",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PresetTimeSale_dbo.UserOperator_CreatedById",
+                name: "FK_PresetTimeSale_UserOperator_CreatedById",
                 table: "PresetTimeSale",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PresetTimeSale_dbo.UserOperator_ModifiedById",
+                name: "FK_PresetTimeSale_UserOperator_ModifiedById",
                 table: "PresetTimeSale",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PresetTimeSaleMoney_dbo.UserOperator_CreatedById",
+                name: "FK_PresetTimeSaleMoney_UserOperator_CreatedById",
                 table: "PresetTimeSaleMoney",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.PresetTimeSaleMoney_dbo.UserOperator_ModifiedById",
+                name: "FK_PresetTimeSaleMoney_UserOperator_ModifiedById",
                 table: "PresetTimeSaleMoney",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
@@ -7987,7 +7987,7 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductBase_dbo.ProductGroup_ProductGroupId",
+                name: "FK_ProductBase_ProductGroup_ProductGroupId",
                 table: "ProductBase",
                 column: "ProductGroupId",
                 principalTable: "ProductGroup",
@@ -7995,21 +7995,21 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductBase_dbo.UserOperator_CreatedById",
+                name: "FK_ProductBase_UserOperator_CreatedById",
                 table: "ProductBase",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductBase_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductBase_UserOperator_ModifiedById",
                 table: "ProductBase",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductBundleUserPrice_dbo.UserGroup_UserGroupId",
+                name: "FK_ProductBundleUserPrice_UserGroup_UserGroupId",
                 table: "ProductBundleUserPrice",
                 column: "UserGroupId",
                 principalTable: "UserGroup",
@@ -8017,63 +8017,63 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductBundleUserPrice_dbo.UserOperator_CreatedById",
+                name: "FK_ProductBundleUserPrice_UserOperator_CreatedById",
                 table: "ProductBundleUserPrice",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductBundleUserPrice_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductBundleUserPrice_UserOperator_ModifiedById",
                 table: "ProductBundleUserPrice",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductGroup_dbo.UserOperator_CreatedById",
+                name: "FK_ProductGroup_UserOperator_CreatedById",
                 table: "ProductGroup",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductGroup_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductGroup_UserOperator_ModifiedById",
                 table: "ProductGroup",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductHostHidden_dbo.UserOperator_CreatedById",
+                name: "FK_ProductHostHidden_UserOperator_CreatedById",
                 table: "ProductHostHidden",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductHostHidden_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductHostHidden_UserOperator_ModifiedById",
                 table: "ProductHostHidden",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductImage_dbo.UserOperator_CreatedById",
+                name: "FK_ProductImage_UserOperator_CreatedById",
                 table: "ProductImage",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductImage_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductImage_UserOperator_ModifiedById",
                 table: "ProductImage",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOL_dbo.ProductOrder_ProductOrderId",
+                name: "FK_ProductOL_ProductOrder_ProductOrderId",
                 table: "ProductOL",
                 column: "ProductOrderId",
                 principalTable: "ProductOrder",
@@ -8081,49 +8081,49 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOL_dbo.Register_RegisterId",
+                name: "FK_ProductOL_Register_RegisterId",
                 table: "ProductOL",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOL_dbo.Shift_ShiftId",
+                name: "FK_ProductOL_Shift_ShiftId",
                 table: "ProductOL",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOL_dbo.UserMember_UserId",
+                name: "FK_ProductOL_UserMember_UserId",
                 table: "ProductOL",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOL_dbo.UserOperator_CreatedById",
+                name: "FK_ProductOL_UserOperator_CreatedById",
                 table: "ProductOL",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOL_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductOL_UserOperator_ModifiedById",
                 table: "ProductOL",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOLExtended_dbo.ProductOLProduct_BundleLineId",
+                name: "FK_ProductOLExtended_ProductOLProduct_BundleLineId",
                 table: "ProductOLExtended",
                 column: "BundleLineId",
                 principalTable: "ProductOLProduct",
                 principalColumn: "ProductOLId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOLSession_dbo.UsageSession_UsageSessionId",
+                name: "FK_ProductOLSession_UsageSession_UsageSessionId",
                 table: "ProductOLSession",
                 column: "UsageSessionId",
                 principalTable: "UsageSession",
@@ -8131,42 +8131,42 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.Register_RegisterId",
+                name: "FK_ProductOrder_Register_RegisterId",
                 table: "ProductOrder",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.Shift_ShiftId",
+                name: "FK_ProductOrder_Shift_ShiftId",
                 table: "ProductOrder",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.UserMember_UserId",
+                name: "FK_ProductOrder_UserMember_UserId",
                 table: "ProductOrder",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.UserOperator_CreatedById",
+                name: "FK_ProductOrder_UserOperator_CreatedById",
                 table: "ProductOrder",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductOrder_UserOperator_ModifiedById",
                 table: "ProductOrder",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductTax_dbo.Tax_TaxId",
+                name: "FK_ProductTax_Tax_TaxId",
                 table: "ProductTax",
                 column: "TaxId",
                 principalTable: "Tax",
@@ -8174,35 +8174,35 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductTax_dbo.UserOperator_CreatedById",
+                name: "FK_ProductTax_UserOperator_CreatedById",
                 table: "ProductTax",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductTax_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductTax_UserOperator_ModifiedById",
                 table: "ProductTax",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductTimeHostDisallowed_dbo.UserOperator_CreatedById",
+                name: "FK_ProductTimeHostDisallowed_UserOperator_CreatedById",
                 table: "ProductTimeHostDisallowed",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductTimeHostDisallowed_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductTimeHostDisallowed_UserOperator_ModifiedById",
                 table: "ProductTimeHostDisallowed",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductUserDisallowed_dbo.UserGroup_UserGroupId",
+                name: "FK_ProductUserDisallowed_UserGroup_UserGroupId",
                 table: "ProductUserDisallowed",
                 column: "UserGroupId",
                 principalTable: "UserGroup",
@@ -8210,21 +8210,21 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductUserDisallowed_dbo.UserOperator_CreatedById",
+                name: "FK_ProductUserDisallowed_UserOperator_CreatedById",
                 table: "ProductUserDisallowed",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductUserDisallowed_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductUserDisallowed_UserOperator_ModifiedById",
                 table: "ProductUserDisallowed",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductUserPrice_dbo.UserGroup_UserGroupId",
+                name: "FK_ProductUserPrice_UserGroup_UserGroupId",
                 table: "ProductUserPrice",
                 column: "UserGroupId",
                 principalTable: "UserGroup",
@@ -8232,28 +8232,28 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductUserPrice_dbo.UserOperator_CreatedById",
+                name: "FK_ProductUserPrice_UserOperator_CreatedById",
                 table: "ProductUserPrice",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ProductUserPrice_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductUserPrice_UserOperator_ModifiedById",
                 table: "ProductUserPrice",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Refund_dbo.Register_RegisterId",
+                name: "FK_Refund_Register_RegisterId",
                 table: "Refund",
                 column: "RegisterId",
                 principalTable: "Register",
                 principalColumn: "RegisterId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Refund_dbo.Shift_ShiftId",
+                name: "FK_Refund_Shift_ShiftId",
                 table: "Refund",
                 column: "ShiftId",
                 principalTable: "Shift",
@@ -8261,56 +8261,56 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Refund_dbo.UserOperator_CreatedById",
+                name: "FK_Refund_UserOperator_CreatedById",
                 table: "Refund",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Register_dbo.UserOperator_CreatedById",
+                name: "FK_Register_UserOperator_CreatedById",
                 table: "Register",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Register_dbo.UserOperator_ModifiedById",
+                name: "FK_Register_UserOperator_ModifiedById",
                 table: "Register",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.RegisterTransaction_dbo.Shift_ShiftId",
+                name: "FK_RegisterTransaction_Shift_ShiftId",
                 table: "RegisterTransaction",
                 column: "ShiftId",
                 principalTable: "Shift",
                 principalColumn: "ShiftId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.RegisterTransaction_dbo.UserOperator_CreatedById",
+                name: "FK_RegisterTransaction_UserOperator_CreatedById",
                 table: "RegisterTransaction",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.RegisterTransaction_dbo.UserOperator_ModifiedById",
+                name: "FK_RegisterTransaction_UserOperator_ModifiedById",
                 table: "RegisterTransaction",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Reservation_dbo.UserMember_UserId",
+                name: "FK_Reservation_UserMember_UserId",
                 table: "Reservation",
                 column: "UserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Reservation_dbo.User_CreatedById",
+                name: "FK_Reservation_User_CreatedById",
                 table: "Reservation",
                 column: "CreatedById",
                 principalTable: "User",
@@ -8318,7 +8318,7 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Reservation_dbo.User_ModifiedById",
+                name: "FK_Reservation_User_ModifiedById",
                 table: "Reservation",
                 column: "ModifiedById",
                 principalTable: "User",
@@ -8326,7 +8326,7 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ReservationHost_dbo.UserMember_PreferedUserId",
+                name: "FK_ReservationHost_UserMember_PreferedUserId",
                 table: "ReservationHost",
                 column: "PreferedUserId",
                 principalTable: "UserMember",
@@ -8334,21 +8334,21 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ReservationHost_dbo.User_CreatedById",
+                name: "FK_ReservationHost_User_CreatedById",
                 table: "ReservationHost",
                 column: "CreatedById",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ReservationHost_dbo.User_ModifiedById",
+                name: "FK_ReservationHost_User_ModifiedById",
                 table: "ReservationHost",
                 column: "ModifiedById",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ReservationUser_dbo.UserMember_UserId",
+                name: "FK_ReservationUser_UserMember_UserId",
                 table: "ReservationUser",
                 column: "UserId",
                 principalTable: "UserMember",
@@ -8356,161 +8356,161 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ReservationUser_dbo.User_CreatedById",
+                name: "FK_ReservationUser_User_CreatedById",
                 table: "ReservationUser",
                 column: "CreatedById",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ReservationUser_dbo.User_ModifiedById",
+                name: "FK_ReservationUser_User_ModifiedById",
                 table: "ReservationUser",
                 column: "ModifiedById",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.SecurityProfile_dbo.UserOperator_CreatedById",
+                name: "FK_SecurityProfile_UserOperator_CreatedById",
                 table: "SecurityProfile",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.SecurityProfile_dbo.UserOperator_ModifiedById",
+                name: "FK_SecurityProfile_UserOperator_ModifiedById",
                 table: "SecurityProfile",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.SecurityProfilePolicy_dbo.UserOperator_CreatedById",
+                name: "FK_SecurityProfilePolicy_UserOperator_CreatedById",
                 table: "SecurityProfilePolicy",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.SecurityProfilePolicy_dbo.UserOperator_ModifiedById",
+                name: "FK_SecurityProfilePolicy_UserOperator_ModifiedById",
                 table: "SecurityProfilePolicy",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.SecurityProfileRestriction_dbo.UserOperator_CreatedById",
+                name: "FK_SecurityProfileRestriction_UserOperator_CreatedById",
                 table: "SecurityProfileRestriction",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.SecurityProfileRestriction_dbo.UserOperator_ModifiedById",
+                name: "FK_SecurityProfileRestriction_UserOperator_ModifiedById",
                 table: "SecurityProfileRestriction",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Setting_dbo.UserOperator_CreatedById",
+                name: "FK_Setting_UserOperator_CreatedById",
                 table: "Setting",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Setting_dbo.UserOperator_ModifiedById",
+                name: "FK_Setting_UserOperator_ModifiedById",
                 table: "Setting",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Shift_dbo.UserOperator_CreatedById",
+                name: "FK_Shift_UserOperator_CreatedById",
                 table: "Shift",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Shift_dbo.UserOperator_EndedById",
+                name: "FK_Shift_UserOperator_EndedById",
                 table: "Shift",
                 column: "EndedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Shift_dbo.UserOperator_ModifiedById",
+                name: "FK_Shift_UserOperator_ModifiedById",
                 table: "Shift",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Shift_dbo.UserOperator_OperatorId",
+                name: "FK_Shift_UserOperator_OperatorId",
                 table: "Shift",
                 column: "OperatorId",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ShiftCount_dbo.UserOperator_CreatedById",
+                name: "FK_ShiftCount_UserOperator_CreatedById",
                 table: "ShiftCount",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.ShiftCount_dbo.UserOperator_ModifiedById",
+                name: "FK_ShiftCount_UserOperator_ModifiedById",
                 table: "ShiftCount",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.StockTransaction_dbo.UserOperator_CreatedById",
+                name: "FK_StockTransaction_UserOperator_CreatedById",
                 table: "StockTransaction",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.StockTransaction_dbo.UserOperator_ModifiedById",
+                name: "FK_StockTransaction_UserOperator_ModifiedById",
                 table: "StockTransaction",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.TaskBase_dbo.UserOperator_CreatedById",
+                name: "FK_TaskBase_UserOperator_CreatedById",
                 table: "TaskBase",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.TaskBase_dbo.UserOperator_ModifiedById",
+                name: "FK_TaskBase_UserOperator_ModifiedById",
                 table: "TaskBase",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Tax_dbo.UserOperator_CreatedById",
+                name: "FK_Tax_UserOperator_CreatedById",
                 table: "Tax",
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Tax_dbo.UserOperator_ModifiedById",
+                name: "FK_Tax_UserOperator_ModifiedById",
                 table: "Tax",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Token_dbo.User_CreatedById",
+                name: "FK_Token_User_CreatedById",
                 table: "Token",
                 column: "CreatedById",
                 principalTable: "User",
@@ -8518,7 +8518,7 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Token_dbo.User_ModifiedById",
+                name: "FK_Token_User_ModifiedById",
                 table: "Token",
                 column: "ModifiedById",
                 principalTable: "User",
@@ -8526,14 +8526,14 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Token_dbo.User_UserId",
+                name: "FK_Token_User_UserId",
                 table: "Token",
                 column: "UserId",
                 principalTable: "User",
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Usage_dbo.UsageSession_UsageSessionId",
+                name: "FK_Usage_UsageSession_UsageSessionId",
                 table: "Usage",
                 column: "UsageSessionId",
                 principalTable: "UsageSession",
@@ -8541,7 +8541,7 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.Usage_dbo.UserMember_UserId",
+                name: "FK_Usage_UserMember_UserId",
                 table: "Usage",
                 column: "UserId",
                 principalTable: "UserMember",
@@ -8557,7 +8557,7 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.UsageSession_dbo.UserMember_UserId",
+                name: "FK_UsageSession_UserMember_UserId",
                 table: "UsageSession",
                 column: "UserId",
                 principalTable: "UserMember",
@@ -8580,7 +8580,7 @@ namespace _
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.UsageUserSession_dbo.UserSession_UserSessionId",
+                name: "FK_UsageUserSession_UserSession_UserSessionId",
                 table: "UsageUserSession",
                 column: "UserSessionId",
                 principalTable: "UserSession",
@@ -8588,7 +8588,7 @@ namespace _
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_dbo.User_dbo.UserOperator_CreatedById",
+                name: "FK_User_UserOperator_CreatedById",
                 table: "User",
                 column: "CreatedById",
                 principalTable: "UserOperator",
@@ -8599,199 +8599,199 @@ namespace _
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.AppGroup_dbo.UserOperator_CreatedById",
+                name: "FK_AppGroup_UserOperator_CreatedById",
                 table: "AppGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.AppGroup_dbo.UserOperator_ModifiedById",
+                name: "FK_AppGroup_UserOperator_ModifiedById",
                 table: "AppGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.BillProfile_dbo.UserOperator_CreatedById",
+                name: "FK_BillProfile_UserOperator_CreatedById",
                 table: "BillProfile");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.BillProfile_dbo.UserOperator_ModifiedById",
+                name: "FK_BillProfile_UserOperator_ModifiedById",
                 table: "BillProfile");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Host_dbo.UserOperator_CreatedById",
+                name: "FK_Host_UserOperator_CreatedById",
                 table: "Host");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Host_dbo.UserOperator_ModifiedById",
+                name: "FK_Host_UserOperator_ModifiedById",
                 table: "Host");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.HostGroup_dbo.UserOperator_CreatedById",
+                name: "FK_HostGroup_UserOperator_CreatedById",
                 table: "HostGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.HostGroup_dbo.UserOperator_ModifiedById",
+                name: "FK_HostGroup_UserOperator_ModifiedById",
                 table: "HostGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Icon_dbo.UserOperator_CreatedById",
+                name: "FK_Icon_UserOperator_CreatedById",
                 table: "Icon");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Icon_dbo.UserOperator_ModifiedById",
+                name: "FK_Icon_UserOperator_ModifiedById",
                 table: "Icon");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Invoice_dbo.UserOperator_CreatedById",
+                name: "FK_Invoice_UserOperator_CreatedById",
                 table: "Invoice");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Invoice_dbo.UserOperator_ModifiedById",
+                name: "FK_Invoice_UserOperator_ModifiedById",
                 table: "Invoice");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.UserOperator_CreatedById",
+                name: "FK_InvoiceLine_UserOperator_CreatedById",
                 table: "InvoiceLine");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.UserOperator_ModifiedById",
+                name: "FK_InvoiceLine_UserOperator_ModifiedById",
                 table: "InvoiceLine");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.PaymentMethod_dbo.UserOperator_CreatedById",
+                name: "FK_PaymentMethod_UserOperator_CreatedById",
                 table: "PaymentMethod");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.PaymentMethod_dbo.UserOperator_ModifiedById",
+                name: "FK_PaymentMethod_UserOperator_ModifiedById",
                 table: "PaymentMethod");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.UserOperator_CreatedById",
+                name: "FK_PointTransaction_UserOperator_CreatedById",
                 table: "PointTransaction");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.UserOperator_ModifiedById",
+                name: "FK_PointTransaction_UserOperator_ModifiedById",
                 table: "PointTransaction");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductBase_dbo.UserOperator_CreatedById",
+                name: "FK_ProductBase_UserOperator_CreatedById",
                 table: "ProductBase");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductBase_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductBase_UserOperator_ModifiedById",
                 table: "ProductBase");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductGroup_dbo.UserOperator_CreatedById",
+                name: "FK_ProductGroup_UserOperator_CreatedById",
                 table: "ProductGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductGroup_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductGroup_UserOperator_ModifiedById",
                 table: "ProductGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOL_dbo.UserOperator_CreatedById",
+                name: "FK_ProductOL_UserOperator_CreatedById",
                 table: "ProductOL");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOL_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductOL_UserOperator_ModifiedById",
                 table: "ProductOL");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.UserOperator_CreatedById",
+                name: "FK_ProductOrder_UserOperator_CreatedById",
                 table: "ProductOrder");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.UserOperator_ModifiedById",
+                name: "FK_ProductOrder_UserOperator_ModifiedById",
                 table: "ProductOrder");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Register_dbo.UserOperator_CreatedById",
+                name: "FK_Register_UserOperator_CreatedById",
                 table: "Register");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Register_dbo.UserOperator_ModifiedById",
+                name: "FK_Register_UserOperator_ModifiedById",
                 table: "Register");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.SecurityProfile_dbo.UserOperator_CreatedById",
+                name: "FK_SecurityProfile_UserOperator_CreatedById",
                 table: "SecurityProfile");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.SecurityProfile_dbo.UserOperator_ModifiedById",
+                name: "FK_SecurityProfile_UserOperator_ModifiedById",
                 table: "SecurityProfile");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Shift_dbo.UserOperator_CreatedById",
+                name: "FK_Shift_UserOperator_CreatedById",
                 table: "Shift");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Shift_dbo.UserOperator_EndedById",
+                name: "FK_Shift_UserOperator_EndedById",
                 table: "Shift");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Shift_dbo.UserOperator_ModifiedById",
+                name: "FK_Shift_UserOperator_ModifiedById",
                 table: "Shift");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Shift_dbo.UserOperator_OperatorId",
+                name: "FK_Shift_UserOperator_OperatorId",
                 table: "Shift");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.StockTransaction_dbo.UserOperator_CreatedById",
+                name: "FK_StockTransaction_UserOperator_CreatedById",
                 table: "StockTransaction");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.StockTransaction_dbo.UserOperator_ModifiedById",
+                name: "FK_StockTransaction_UserOperator_ModifiedById",
                 table: "StockTransaction");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.User_dbo.UserOperator_CreatedById",
+                name: "FK_User_UserOperator_CreatedById",
                 table: "User");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.UserGroup_dbo.UserOperator_CreatedById",
+                name: "FK_UserGroup_UserOperator_CreatedById",
                 table: "UserGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.UserGroup_dbo.UserOperator_ModifiedById",
+                name: "FK_UserGroup_UserOperator_ModifiedById",
                 table: "UserGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.HostGroup_dbo.AppGroup_AppGroupId",
+                name: "FK_HostGroup_AppGroup_AppGroupId",
                 table: "HostGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.UserGroup_dbo.AppGroup_AppGroupId",
+                name: "FK_UserGroup_AppGroup_AppGroupId",
                 table: "UserGroup");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Invoice_dbo.UserMember_UserId",
+                name: "FK_Invoice_UserMember_UserId",
                 table: "Invoice");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.UserMember_UserId",
+                name: "FK_InvoiceLine_UserMember_UserId",
                 table: "InvoiceLine");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.UserMember_UserId",
+                name: "FK_PointTransaction_UserMember_UserId",
                 table: "PointTransaction");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOL_dbo.UserMember_UserId",
+                name: "FK_ProductOL_UserMember_UserId",
                 table: "ProductOL");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.UserMember_UserId",
+                name: "FK_ProductOrder_UserMember_UserId",
                 table: "ProductOrder");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Usage_dbo.UserMember_UserId",
+                name: "FK_Usage_UserMember_UserId",
                 table: "Usage");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.UsageSession_dbo.UserMember_UserId",
+                name: "FK_UsageSession_UserMember_UserId",
                 table: "UsageSession");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.Host_HostId",
+                name: "FK_ProductOrder_Host_HostId",
                 table: "ProductOrder");
 
             migrationBuilder.DropForeignKey(
@@ -8799,91 +8799,87 @@ namespace _
                 table: "ProductBaseExtended");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.StockTransaction_dbo.ProductBase_ProductId",
+                name: "FK_StockTransaction_ProductBase_ProductId",
                 table: "StockTransaction");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.StockTransaction_dbo.ProductBase_SourceProductId",
+                name: "FK_StockTransaction_ProductBase_SourceProductId",
                 table: "StockTransaction");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Invoice_dbo.Register_RegisterId",
+                name: "FK_Invoice_Register_RegisterId",
                 table: "Invoice");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.Register_RegisterId",
+                name: "FK_InvoiceLine_Register_RegisterId",
                 table: "InvoiceLine");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.Register_RegisterId",
+                name: "FK_PointTransaction_Register_RegisterId",
                 table: "PointTransaction");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOL_dbo.Register_RegisterId",
+                name: "FK_ProductOL_Register_RegisterId",
                 table: "ProductOL");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.Register_RegisterId",
+                name: "FK_ProductOrder_Register_RegisterId",
                 table: "ProductOrder");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Shift_dbo.Register_RegisterId",
+                name: "FK_Shift_Register_RegisterId",
                 table: "Shift");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Invoice_dbo.Shift_ShiftId",
+                name: "FK_Invoice_Shift_ShiftId",
                 table: "Invoice");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.Shift_ShiftId",
+                name: "FK_InvoiceLine_Shift_ShiftId",
                 table: "InvoiceLine");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.PointTransaction_dbo.Shift_ShiftId",
+                name: "FK_PointTransaction_Shift_ShiftId",
                 table: "PointTransaction");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOL_dbo.Shift_ShiftId",
+                name: "FK_ProductOL_Shift_ShiftId",
                 table: "ProductOL");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOrder_dbo.Shift_ShiftId",
+                name: "FK_ProductOrder_Shift_ShiftId",
                 table: "ProductOrder");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Invoice_dbo.ProductOrder_ProductOrderId",
+                name: "FK_Invoice_ProductOrder_ProductOrderId",
                 table: "Invoice");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOL_dbo.ProductOrder_ProductOrderId",
+                name: "FK_ProductOL_ProductOrder_ProductOrderId",
                 table: "ProductOL");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.Invoice_InvoiceId",
+                name: "FK_InvoiceLine_Invoice_InvoiceId",
                 table: "InvoiceLine");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.InvoiceLine_dbo.PointTransaction_PointsTransactionId",
+                name: "FK_InvoiceLine_PointTransaction_PointsTransactionId",
                 table: "InvoiceLine");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_InvoiceLineExtended_InvoiceLine_InvoiceLineId",
+                name: "FK_InvoiceLineExtended_InvoiceLineProduct_BundleLineId",
                 table: "InvoiceLineExtended");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.InvoiceLineExtended_dbo.InvoiceLineProduct_BundleLineId",
-                table: "InvoiceLineExtended");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOLProduct_dbo.ProductBaseExtended_ProductId",
+                name: "FK_ProductOLProduct_ProductBaseExtended_ProductId",
                 table: "ProductOLProduct");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.ProductOLExtended_dbo.ProductOLProduct_BundleLineId",
+                name: "FK_ProductOLExtended_ProductOLProduct_BundleLineId",
                 table: "ProductOLExtended");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_dbo.Usage_dbo.UsageSession_UsageSessionId",
+                name: "FK_Usage_UsageSession_UsageSessionId",
                 table: "Usage");
 
             migrationBuilder.DropTable(
@@ -9178,10 +9174,10 @@ namespace _
                 name: "ProductTimePeriodDay");
 
             migrationBuilder.DropTable(
-                name: "Refund");
+                name: "InvoicePayment");
 
             migrationBuilder.DropTable(
-                name: "InvoicePayment");
+                name: "Refund");
 
             migrationBuilder.DropTable(
                 name: "Reservation");
@@ -9193,10 +9189,10 @@ namespace _
                 name: "InvoiceLineTime");
 
             migrationBuilder.DropTable(
-                name: "UsageUserSession");
+                name: "InvoiceLineTimeFixed");
 
             migrationBuilder.DropTable(
-                name: "InvoiceLineTimeFixed");
+                name: "UsageUserSession");
 
             migrationBuilder.DropTable(
                 name: "UserAgreement");
@@ -9241,10 +9237,10 @@ namespace _
                 name: "ProductOLTime");
 
             migrationBuilder.DropTable(
-                name: "UserSession");
+                name: "ProductOLTimeFixed");
 
             migrationBuilder.DropTable(
-                name: "ProductOLTimeFixed");
+                name: "UserSession");
 
             migrationBuilder.DropTable(
                 name: "Token");
@@ -9322,13 +9318,13 @@ namespace _
                 name: "PointTransaction");
 
             migrationBuilder.DropTable(
-                name: "InvoiceLine");
-
-            migrationBuilder.DropTable(
                 name: "InvoiceLineProduct");
 
             migrationBuilder.DropTable(
                 name: "InvoiceLineExtended");
+
+            migrationBuilder.DropTable(
+                name: "InvoiceLine");
 
             migrationBuilder.DropTable(
                 name: "StockTransaction");

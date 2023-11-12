@@ -112,13 +112,13 @@ namespace Gizmo.DAL.Contexts
                 //get currently pending migrations
                 var appliedMigrations = await dbContext.Database.GetAppliedMigrationsAsync(cancellationToken);
 
+                //execute any pending migrations
+                await dbContext.Database.MigrateAsync(cancellationToken);
+
                 //if none of migrations is still applied we should seed the data
                 //as such case will indicate creation of a new database
                 if (!appliedMigrations.Any())
-                    AddSeedData(dbContext);
-
-                //execute any pending migrations
-                await dbContext.Database.MigrateAsync(cancellationToken);
+                    AddSeedData(dbContext);            
             }
         }
 

@@ -1713,6 +1713,7 @@ namespace Gizmo.DAL.Contexts
         /// <param name="modelBuilder"></param>
         private static void RenameIndexWithOldPattern(ModelBuilder modelBuilder)
         {
+            return;
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
                 foreach(var fk in entity.GetForeignKeys())
