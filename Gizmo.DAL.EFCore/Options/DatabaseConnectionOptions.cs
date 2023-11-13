@@ -14,27 +14,16 @@ namespace Gizmo.DAL.EFCore
         /// <summary>
         /// Type of the database.
         /// </summary>
-        public SharedLib.DatabaseType DbType
-        {
-            get;
-            init;
-        }
+        public SharedLib.DatabaseType DbType { get; init; }
 
         /// <summary>
         /// Database connection string.
         /// </summary>
-        public string DbConnectionString
-        {
-            get;
-            init;
-        } = string.Empty;
+        public string DbConnectionString { get; init; } = string.Empty;
 
         /// <summary>
         /// Optional command timeout.
         /// </summary>
-        public int? CommandTimeout
-        {
-            get; init;
-        }
+        public int? CommandTimeout { get; init; }
     }
 }

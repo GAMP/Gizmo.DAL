@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gizmo.DAL.EFCore.Migrations.MSSQL.Migrations
+namespace _
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20231112162200_Initial")]
+    [Migration("20231113182556_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
