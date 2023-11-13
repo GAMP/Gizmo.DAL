@@ -1,9 +1,8 @@
-﻿using Gizmo.DAL.EFCore;
-using Gizmo.DAL.EFCore.Extensions;
+﻿using Gizmo.DAL.EFCore.Extensions;
 using Gizmo.DAL.Entities;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+
 using SharedLib;
 
 using System;
@@ -19,109 +18,79 @@ namespace Gizmo.DAL.Contexts
     /// </summary>
     public sealed class DatabaseInitializer
     {
-        private readonly IOptions<DatabaseConnectionOptions> _connectionOptions;
-
+        private readonly DefaultDbContext _dbContext;
         /// <summary>
-        /// Create new instance.
+        /// Creates new instance.
         /// </summary>
-        /// <param name="connectionOptions">
-        /// Connection options.
+        /// <param name="dbContext">
+        /// Database context.
         /// </param>
-        public DatabaseInitializer(IOptions<DatabaseConnectionOptions> connectionOptions)
-        {
-            _connectionOptions = connectionOptions;
-        }
+        public DatabaseInitializer(DefaultDbContext dbContext) => _dbContext = dbContext;
 
         /// <summary>
         /// Initialize database.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public async Task InitializeAsync(CancellationToken cancellationToken = default)
+        /// <param name="cToken">
+        /// Cancellation token.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation.
+        /// </returns>
+        public async Task InitializeAsync(CancellationToken cToken = default)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<DefaultDbContext>();
+            var initialMigrationName = _dbContext.Database.GetMigrations().FirstOrDefault();
 
-            string connectionString = _connectionOptions.Value.DbConnectionString;
-            var databaseType = _connectionOptions.Value.DbType;
-            var commandTimeout = _connectionOptions.Value.CommandTimeout;
+            await MigrateFromEF6toEFCoreAsync(_dbContext, initialMigrationName, cToken);
 
-            //TODO validation logic could be added, possibly it will be done before this call
+            var appliedMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
+            var pendingMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cToken);
 
-            //here we need to determine if the current database instance is an old EF6 based one
-            //that have not yet been migrated to the new strcuture, this should only be done with MSSQL databases
-            if (databaseType == DatabaseType.MSSQL || databaseType == DatabaseType.MSSQLEXPRESS || databaseType == DatabaseType.LOCALDB)
+            if (pendingMigrations.Any())
+                await _dbContext.Database.MigrateAsync(cToken);
+
+            if (!appliedMigrations.Any())
+                AddSeedData(_dbContext);
+        }
+
+        private static async Task MigrateFromEF6toEFCoreAsync(DefaultDbContext dbContext, string EFCoreInitialMigrationName, CancellationToken cToken)
+        {
+            if (dbContext.Database.IsSqlServer())
             {
-                optionsBuilder.UseSqlServer(connectionString, options =>
-                {
-                    options.CommandTimeout(_connectionOptions.Value.CommandTimeout);
+                if(string.IsNullOrWhiteSpace(EFCoreInitialMigrationName))
+                    throw new ArgumentNullException(nameof(EFCoreInitialMigrationName));
 
-                    //use ef6 migration assembly
-                    options.MigrationsAssembly("Gizmo.DAL.EF6.Migrations.MSSQL");
-                });
-
-                using (DefaultDbContext migrateContext = new(optionsBuilder.Options))
+                if (await dbContext.Database.TableExistsAsync("__MigrationHistory", cToken))
                 {
-                    //check if EF6 migration table existis in the database, that will indicate that its an old EF6 database instance
-                    if(await migrateContext.Database.TableExistsAsync("__MigrationHistory", cancellationToken))
+                    if (!await dbContext.Database.TableExistsAsync("__EFMigrationsHistory", cToken))
                     {
-                        //ensure that no EFCore migrations applied already, if EFCore migration table exists that will indicate
-                        //that EFCore migrations already applied
-
-                        //TOOD we could also check if the table is empty,
-                        //not sure if this can happen and what the state of the db will be in that case
-                        if (!await migrateContext.Database.TableExistsAsync("__EFMigrationsHistory", cancellationToken))
+                        if (!await dbContext.Database.MigrationExistAsync("202309121624325_Update17", cToken))
                         {
-                            //detemine EF6 database version, only latest will be allowed, if the database is on lower version we cant proceed
-                            if(!await migrateContext.Database.MigrationExistAsync("202309121624325_Update17",cancellationToken))
-                            {
-                                //current version is not supported
-                                throw new NotSupportedException("Current database version cannot be upgraded.");
-                            }
-
-                            await migrateContext.Database.MigrateAsync(cancellationToken);
+                            throw new NotSupportedException("Current database version cannot be upgraded.");
                         }
+
+                        var migrationOptionsBuilder = new DbContextOptionsBuilder<DefaultDbContext>();
+
+                        var connectionString = dbContext.Database.GetConnectionString();
+                        var commandTimeout = dbContext.Database.GetCommandTimeout();
+
+                        migrationOptionsBuilder.UseSqlServer(connectionString, options =>
+                        {
+                            options.CommandTimeout(commandTimeout);
+                            options.MigrationsAssembly("Gizmo.DAL.EF6.Migrations.MSSQL");
+                        });
+
+                        using DefaultDbContext migrationDbContext = new(migrationOptionsBuilder.Options);
+
+                        var pendingMigrations = await migrationDbContext.Database.GetPendingMigrationsAsync(cToken);
+
+                        if (pendingMigrations.Count() == 1 && EFCoreInitialMigrationName.Equals(pendingMigrations.First()))
+                            await migrationDbContext.Database.MigrateAsync(cToken);
+                        else
+                            throw new NotSupportedException("Current database version cannot be upgraded.");
                     }
                 }
             }
-
-            //initialize db context based on our configuration
-            switch(databaseType)
-            {
-                case DatabaseType.MSSQL:
-                case DatabaseType.MSSQLEXPRESS:
-                case DatabaseType.LOCALDB:
-                    optionsBuilder.UseSqlServer(connectionString, options =>
-                    {
-                        options.CommandTimeout(commandTimeout);
-                        options.MigrationsAssembly("Gizmo.DAL.EFCore.Migrations.MSSQL");
-                    });
-                    break;
-                case DatabaseType.POSTGRE:
-                    optionsBuilder.UseNpgsql(connectionString, options =>
-                    {
-                        options.CommandTimeout(commandTimeout);
-                        options.MigrationsAssembly("Gizmo.DAL.EFCore.Migrations.Npgsql");
-                    });
-                    break;
-                default:
-                    throw new NotSupportedException($"Specified {databaseType} database type is not supported.");
-            }
-
-            //default migration code, this will be executed for all databases all the times
-            using (DefaultDbContext dbContext = new(optionsBuilder.Options))
-            {                
-                //get currently pending migrations
-                var appliedMigrations = await dbContext.Database.GetAppliedMigrationsAsync(cancellationToken);
-
-                //execute any pending migrations
-                await dbContext.Database.MigrateAsync(cancellationToken);
-
-                //if none of migrations is still applied we should seed the data
-                //as such case will indicate creation of a new database
-                if (!appliedMigrations.Any())
-                    AddSeedData(dbContext);            
-            }
         }
-
         private static void AddSeedData(DefaultDbContext dbContext)
         {
             try
@@ -498,7 +467,6 @@ namespace Gizmo.DAL.Contexts
                 throw;
             }
         }
-
         private static void RemoveSeedData(DefaultDbContext dbContext)
         {
             try
@@ -538,6 +506,6 @@ namespace Gizmo.DAL.Contexts
                 dbContext.Database.RollbackTransaction();
                 throw;
             }
-        }        
+        }
     }
 }
