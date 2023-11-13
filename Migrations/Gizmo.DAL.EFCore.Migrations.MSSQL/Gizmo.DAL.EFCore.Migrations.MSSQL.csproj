@@ -4,10 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <BaseOutputPath>..\Gizmo.DAL.EFCore\bin\</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Gizmo.DAL.EFCore\Gizmo.DAL.EFCore.csproj" />
+    <ProjectReference Include="..\..\Gizmo.DAL.EFCore\Gizmo.DAL.EFCore.csproj" />
   </ItemGroup>
-
+  
 </Project>
