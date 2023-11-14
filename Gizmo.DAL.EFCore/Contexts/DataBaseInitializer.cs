@@ -40,10 +40,12 @@ namespace Gizmo.DAL.Contexts
         {
             var initialMigrationName = _dbContext.Database.GetMigrations().FirstOrDefault();
 
-            await MigrateFromEF6toEFCoreAsync(_dbContext, initialMigrationName, cToken);
+            var isMigrate = await MigrateFromEF6toEFCoreAsync(_dbContext, initialMigrationName, cToken);
 
             var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cToken);
             var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
+
+            pendingMigrations = isMigrate ? pendingMigrations.Skip(1) : pendingMigrations;
 
             if (pendingMigrations.Any())
                 await _dbContext.Database.MigrateAsync(cToken);
@@ -52,7 +54,7 @@ namespace Gizmo.DAL.Contexts
                 AddSeedData(_dbContext);
         }
 
-        private static async Task MigrateFromEF6toEFCoreAsync(DefaultDbContext dbContext, string EFCoreInitialMigrationName, CancellationToken cToken)
+        private static async Task<bool> MigrateFromEF6toEFCoreAsync(DefaultDbContext dbContext, string EFCoreInitialMigrationName, CancellationToken cToken)
         {
             if (dbContext.Database.CanConnect() && dbContext.Database.IsSqlServer())
             {
@@ -84,12 +86,18 @@ namespace Gizmo.DAL.Contexts
                         var pendingMigrations = await migrationDbContext.Database.GetPendingMigrationsAsync(cToken);
 
                         if (pendingMigrations.Count() == 1 && EFCoreInitialMigrationName.Equals(pendingMigrations.First()))
+                        {
                             await migrationDbContext.Database.MigrateAsync(cToken);
+                            
+                            return true;
+                        }
                         else
                             throw new NotSupportedException("Current database version cannot be upgraded.");
                     }
                 }
             }
+
+            return false;
         }
         private static void AddSeedData(DefaultDbContext dbContext)
         {
