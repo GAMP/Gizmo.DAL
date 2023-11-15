@@ -38,27 +38,44 @@ namespace Gizmo.DAL.Contexts
         /// </returns>
         public async Task InitializeAsync(CancellationToken cToken = default)
         {
-            var initialMigrationName = _dbContext.Database.GetMigrations().FirstOrDefault();
+            if (await _dbContext.Database.CanConnectAsync(cToken))
+            {
+                var initialMigrationName = _dbContext.Database.GetMigrations().FirstOrDefault();
 
-            var isMigrate = await MigrateFromEF6toEFCoreAsync(_dbContext, initialMigrationName, cToken);
+                var isMigrate = await MigrateFromEF6toEFCoreAsync(_dbContext, initialMigrationName, cToken);
 
-            var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cToken);
-            var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
+                var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cToken);
+                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
 
-            pendingMigrations = isMigrate ? pendingMigrations.Skip(1) : pendingMigrations;
+                pendingMigrations = isMigrate ? pendingMigrations.Skip(1) : pendingMigrations;
 
-            if (pendingMigrations.Any())
-                await _dbContext.Database.MigrateAsync(cToken);
+                if (pendingMigrations.Any())
+                    await _dbContext.Database.MigrateAsync(cToken);
 
-            if (!appliedMigrations.Any())
+                if (!appliedMigrations.Any())
+                    AddSeedData(_dbContext);
+            }
+            else
+            {
+                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
+                
+                if(pendingMigrations.Any())
+                    await _dbContext.Database.MigrateAsync(cToken);
+                else
+                {
+                    //working only with migrations
+                    return;
+                }
+                
                 AddSeedData(_dbContext);
+            }
         }
 
         private static async Task<bool> MigrateFromEF6toEFCoreAsync(DefaultDbContext dbContext, string EFCoreInitialMigrationName, CancellationToken cToken)
         {
-            if (dbContext.Database.CanConnect() && dbContext.Database.IsSqlServer())
+            if (dbContext.Database.IsSqlServer())
             {
-                if(string.IsNullOrWhiteSpace(EFCoreInitialMigrationName))
+                if (string.IsNullOrWhiteSpace(EFCoreInitialMigrationName))
                     throw new ArgumentNullException(nameof(EFCoreInitialMigrationName));
 
                 if (await dbContext.Database.TableExistsAsync("__MigrationHistory", cToken))
@@ -88,7 +105,7 @@ namespace Gizmo.DAL.Contexts
                         if (pendingMigrations.Count() == 1 && EFCoreInitialMigrationName.Equals(pendingMigrations.First()))
                         {
                             await migrationDbContext.Database.MigrateAsync(cToken);
-                            
+
                             return true;
                         }
                         else
