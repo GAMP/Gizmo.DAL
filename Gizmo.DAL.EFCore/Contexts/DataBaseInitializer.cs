@@ -2,6 +2,9 @@
 using Gizmo.DAL.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.DependencyInjection;
 
 using SharedLib;
 
@@ -19,6 +22,7 @@ namespace Gizmo.DAL.Contexts
     public sealed class DatabaseInitializer
     {
         private readonly DefaultDbContext _dbContext;
+
         /// <summary>
         /// Creates new instance.
         /// </summary>
@@ -40,14 +44,12 @@ namespace Gizmo.DAL.Contexts
         {
             if (await _dbContext.Database.CanConnectAsync(cToken))
             {
-                var initialMigrationName = _dbContext.Database.GetMigrations().FirstOrDefault();
-
-                var isMigrate = await MigrateFromEF6toEFCoreAsync(_dbContext, initialMigrationName, cToken);
+                var isMigrated = await MigrateEF6InitAsync(cToken);
 
                 var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cToken);
                 var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
 
-                pendingMigrations = isMigrate ? pendingMigrations.Skip(1) : pendingMigrations;
+                pendingMigrations = isMigrated ? pendingMigrations.Skip(1) : pendingMigrations;
 
                 if (pendingMigrations.Any())
                     await _dbContext.Database.MigrateAsync(cToken);
@@ -58,51 +60,65 @@ namespace Gizmo.DAL.Contexts
             else
             {
                 var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
-                
-                if(pendingMigrations.Any())
+
+                if (pendingMigrations.Any())
                     await _dbContext.Database.MigrateAsync(cToken);
                 else
                 {
                     //working only with migrations
                     return;
                 }
-                
+
                 AddSeedData(_dbContext);
             }
         }
 
-        private static async Task<bool> MigrateFromEF6toEFCoreAsync(DefaultDbContext dbContext, string EFCoreInitialMigrationName, CancellationToken cToken)
+        /// <summary>
+        /// Rollback to initial migration.
+        /// </summary>
+        /// <param name="cToken">
+        /// Cancellation token.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation.
+        /// </returns>
+        public async Task RollbackToInitMigration(CancellationToken cToken = default)
         {
-            if (dbContext.Database.IsSqlServer())
-            {
-                if (string.IsNullOrWhiteSpace(EFCoreInitialMigrationName))
-                    throw new ArgumentNullException(nameof(EFCoreInitialMigrationName));
+            var migrator = _dbContext.Database.GetInfrastructure().GetRequiredService<IMigrator>();
 
-                if (await dbContext.Database.TableExistsAsync("__MigrationHistory", cToken))
+            await migrator.MigrateAsync(Migration.InitialDatabase, cToken);
+        }
+
+        /// <summary>
+        /// Migrate EF6 initial migration.
+        /// </summary>
+        /// <param name="cToken">
+        /// Cancellation token.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation.
+        /// </returns>
+        /// <exception cref="NotSupportedException">
+        /// Current database version cannot be upgraded.
+        /// </exception>
+        public async Task<bool> MigrateEF6InitAsync(CancellationToken cToken = default)
+        {
+            if (_dbContext.Database.IsSqlServer())
+            {
+                if (await _dbContext.Database.TableExistsAsync("__MigrationHistory", cToken))
                 {
-                    if (!await dbContext.Database.TableExistsAsync("__EFMigrationsHistory", cToken))
+                    if (!await _dbContext.Database.TableExistsAsync("__EFMigrationsHistory", cToken))
                     {
-                        if (!await dbContext.Database.MigrationExistAsync("202309121624325_Update17", cToken))
+                        if (!await _dbContext.Database.MigrationExistAsync("202309121624325_Update17", cToken))
                         {
                             throw new NotSupportedException("Current database version cannot be upgraded.");
                         }
 
-                        var migrationOptionsBuilder = new DbContextOptionsBuilder<DefaultDbContext>();
-
-                        var connectionString = dbContext.Database.GetConnectionString();
-                        var commandTimeout = dbContext.Database.GetCommandTimeout();
-
-                        migrationOptionsBuilder.UseSqlServer(connectionString, options =>
-                        {
-                            options.CommandTimeout(commandTimeout);
-                            options.MigrationsAssembly("Gizmo.DAL.EF6.Migrations.MSSQL");
-                        });
-
-                        using DefaultDbContext migrationDbContext = new(migrationOptionsBuilder.Options);
+                        using var migrationDbContext = GetDbContextWithEF6Migrations();
 
                         var pendingMigrations = await migrationDbContext.Database.GetPendingMigrationsAsync(cToken);
 
-                        if (pendingMigrations.Count() == 1 && EFCoreInitialMigrationName.Equals(pendingMigrations.First()))
+                        if (pendingMigrations.Count() == 1)
                         {
                             await migrationDbContext.Database.MigrateAsync(cToken);
 
@@ -115,6 +131,22 @@ namespace Gizmo.DAL.Contexts
             }
 
             return false;
+        }
+
+        private DefaultDbContext GetDbContextWithEF6Migrations()
+        {
+            var migrationOptionsBuilder = new DbContextOptionsBuilder<DefaultDbContext>();
+
+            var connectionString = _dbContext.Database.GetConnectionString();
+            var commandTimeout = _dbContext.Database.GetCommandTimeout();
+
+            migrationOptionsBuilder.UseSqlServer(connectionString, options =>
+            {
+                options.CommandTimeout(commandTimeout);
+                options.MigrationsAssembly("Gizmo.DAL.EF6.Migrations.MSSQL");
+            });
+
+            return new(migrationOptionsBuilder.Options);
         }
         private static void AddSeedData(DefaultDbContext dbContext)
         {
