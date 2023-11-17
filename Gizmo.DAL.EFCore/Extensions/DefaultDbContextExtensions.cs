@@ -1,83 +1,32 @@
-﻿using Gizmo.DAL.EFCore.Extensions;
-using Gizmo.DAL.Entities;
-
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.Extensions.DependencyInjection;
-
-using SharedLib;
 
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Gizmo.DAL.Contexts;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Gizmo.DAL.Entities;
+using SharedLib;
+using System.Globalization;
 
-namespace Gizmo.DAL.Contexts
+namespace Gizmo.DAL.EFCore.Extensions
 {
     /// <summary>
-    /// Database initializer.
+    /// Default database context extensions.
     /// </summary>
-    public sealed class DatabaseInitializer
+    public static class DefaultDbContextExtensions
     {
-        private readonly DefaultDbContext _dbContext;
-
         /// <summary>
-        /// Creates new instance.
+        /// Updates database to target migration.
         /// </summary>
         /// <param name="dbContext">
         /// Database context.
         /// </param>
-        public DatabaseInitializer(DefaultDbContext dbContext) => _dbContext = dbContext;
-
-        /// <summary>
-        /// Initialize database.
-        /// </summary>
-        /// <param name="cToken">
-        /// Cancellation token.
-        /// </param>
-        /// <returns>
-        /// A <see cref="Task"/> representing the asynchronous operation.
-        /// </returns>
-        public async Task InitializeAsync(CancellationToken cToken = default)
-        {
-            if (await _dbContext.Database.CanConnectAsync(cToken))
-            {
-                var isMigrated = await MigrateEF6InitAsync(cToken);
-
-                var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cToken);
-                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
-
-                pendingMigrations = isMigrated ? pendingMigrations.Skip(1) : pendingMigrations;
-
-                if (pendingMigrations.Any())
-                    await _dbContext.Database.MigrateAsync(cToken);
-
-                if (!appliedMigrations.Any())
-                    AddSeedData(_dbContext);
-            }
-            else
-            {
-                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
-
-                if (pendingMigrations.Any())
-                    await _dbContext.Database.MigrateAsync(cToken);
-                else
-                {
-                    //working only with migrations
-                    return;
-                }
-
-                AddSeedData(_dbContext);
-            }
-        }
-
-        /// <summary>
-        /// Rollback to initial migration.
-        /// </summary>
         /// <param name="migrationName">
-        /// Migration name.
+        /// Target migration name.
         /// </param>
         /// <param name="cToken">
         /// Cancellation token.
@@ -85,93 +34,68 @@ namespace Gizmo.DAL.Contexts
         /// <returns>
         /// A <see cref="Task"/> representing the asynchronous operation.
         /// </returns>
-        public async Task RollbackToMigration(string migrationName, CancellationToken cToken = default)
+        public static async Task MigrateToAsync(this DefaultDbContext dbContext, string migrationName, CancellationToken cToken = default)
         {
-            var migrator = _dbContext.Database.GetInfrastructure().GetRequiredService<IMigrator>();
+            var migrator = dbContext.Database.GetInfrastructure().GetRequiredService<IMigrator>();
 
             await migrator.MigrateAsync(migrationName, cToken);
         }
 
         /// <summary>
-        /// Rollback to EF6 last snapshot.
+        /// Upgrades the database to the last state on Entity Framework 6.
         /// </summary>
+        /// <param name="dbContext">
+        /// Database context.
+        /// </param>
         /// <param name="cToken">
         /// Cancellation token.
         /// </param>
         /// <returns>
         /// A <see cref="Task"/> representing the asynchronous operation.
         /// </returns>
-        public async Task RollbackToEF6(CancellationToken cToken = default)
+        public static async Task UpgradeDatabaseToLastEF6StateAsync(this DefaultDbContext dbContext, CancellationToken cToken = default)
         {
-            await RollbackToMigration("20231115164653_Initial", cToken);
+            await dbContext.MigrateToAsync("Initial", cToken);
 
-            var dbContext = GetDbContextWithEF6Migrations();
+            var migrationDbContext = dbContext.WithEF6Migrations();
 
-            var migrator = dbContext.Database.GetInfrastructure().GetRequiredService<IMigrator>();
+            var migrator = migrationDbContext.Database.GetInfrastructure().GetRequiredService<IMigrator>();
 
             await migrator.MigrateAsync(Migration.InitialDatabase, cToken);
         }
 
         /// <summary>
-        /// Migrate EF6 initial migration.
+        /// Returns new database context with EF6 migrations.
         /// </summary>
-        /// <param name="cToken">
-        /// Cancellation token.
+        /// <param name="dbContext">
+        /// Database context.
         /// </param>
         /// <returns>
-        /// A <see cref="Task"/> representing the asynchronous operation.
+        /// New database context with EF6 migrations.
         /// </returns>
-        /// <exception cref="NotSupportedException">
-        /// Current database version cannot be upgraded.
-        /// </exception>
-        public async Task<bool> MigrateEF6InitAsync(CancellationToken cToken = default)
+        public static DefaultDbContext WithEF6Migrations(this DefaultDbContext dbContext)
         {
-            if (_dbContext.Database.IsSqlServer())
-            {
-                if (await _dbContext.Database.TableExistsAsync("__MigrationHistory", cToken))
-                {
-                    if (!await _dbContext.Database.TableExistsAsync("__EFMigrationsHistory", cToken))
-                    {
-                        if (!await _dbContext.Database.MigrationExistAsync("202309121624325_Update17", cToken))
-                        {
-                            throw new NotSupportedException("Current database version cannot be upgraded.");
-                        }
+            var optionsBuilder = new DbContextOptionsBuilder<DefaultDbContext>();
 
-                        using var migrationDbContext = GetDbContextWithEF6Migrations();
+            var connectionString = dbContext.Database.GetConnectionString();
+            var commandTimeout = dbContext.Database.GetCommandTimeout();
 
-                        var pendingMigrations = await migrationDbContext.Database.GetPendingMigrationsAsync(cToken);
-
-                        if (pendingMigrations.Count() == 1)
-                        {
-                            await migrationDbContext.Database.MigrateAsync(cToken);
-
-                            return true;
-                        }
-                        else
-                            throw new NotSupportedException("Current database version cannot be upgraded.");
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private DefaultDbContext GetDbContextWithEF6Migrations()
-        {
-            var migrationOptionsBuilder = new DbContextOptionsBuilder<DefaultDbContext>();
-
-            var connectionString = _dbContext.Database.GetConnectionString();
-            var commandTimeout = _dbContext.Database.GetCommandTimeout();
-
-            migrationOptionsBuilder.UseSqlServer(connectionString, options =>
+            optionsBuilder.UseSqlServer(connectionString, options =>
             {
                 options.CommandTimeout(commandTimeout);
                 options.MigrationsAssembly("Gizmo.DAL.EF6.Migrations.MSSQL");
             });
 
-            return new(migrationOptionsBuilder.Options);
+            return new(optionsBuilder.Options);
         }
-        private static void AddSeedData(DefaultDbContext dbContext)
+        
+        /// <summary>
+        /// Add seed data to a new database.
+        /// </summary>
+        /// <param name="dbContext">
+        /// Database context.
+        /// </param>
+        public static void AddSeedData(this DefaultDbContext dbContext)
         {
             try
             {
@@ -536,46 +460,6 @@ namespace Gizmo.DAL.Contexts
                 });
 
                 #endregion
-
-                dbContext.SaveChanges();
-
-                dbContext.Database.CommitTransaction();
-            }
-            catch
-            {
-                dbContext.Database.RollbackTransaction();
-                throw;
-            }
-        }
-        private static void RemoveSeedData(DefaultDbContext dbContext)
-        {
-            try
-            {
-                dbContext.Database.BeginTransaction();
-
-                dbContext.PresetTimeSaleMoney.RemoveRange(dbContext.PresetTimeSaleMoney);
-                dbContext.PresetTimeSale.RemoveRange(dbContext.PresetTimeSale);
-                dbContext.HostEndpoint.RemoveRange(dbContext.HostEndpoint);
-                dbContext.HostGroups.RemoveRange(dbContext.HostGroups);
-                dbContext.UsersMember.RemoveRange(dbContext.UsersMember);
-                dbContext.UserGroups.RemoveRange(dbContext.UserGroups);
-                dbContext.BillRates.RemoveRange(dbContext.BillRates);
-                dbContext.BillProfiles.RemoveRange(dbContext.BillProfiles);
-                dbContext.HostLayoutGroups.RemoveRange(dbContext.HostLayoutGroups);
-                dbContext.ProductsTaxes.RemoveRange(dbContext.ProductsTaxes);
-                dbContext.ProductPeriodDays.RemoveRange(dbContext.ProductPeriodDays);
-                dbContext.ProductPeriods.RemoveRange(dbContext.ProductPeriods);
-                dbContext.BundleProducts.RemoveRange(dbContext.BundleProducts);
-                dbContext.ProductTimes.RemoveRange(dbContext.ProductTimes);
-                dbContext.ProductBundles.RemoveRange(dbContext.ProductBundles);
-                dbContext.Products.RemoveRange(dbContext.Products);
-                dbContext.ProductGroups.RemoveRange(dbContext.ProductGroups);
-                dbContext.Taxes.RemoveRange(dbContext.Taxes);
-                dbContext.UserPermissions.RemoveRange(dbContext.UserPermissions);
-                dbContext.Credentials.RemoveRange(dbContext.Credentials);
-                dbContext.UsersOperator.RemoveRange(dbContext.UsersOperator);
-                dbContext.MonetaryUnits.RemoveRange(dbContext.MonetaryUnits);
-                dbContext.PaymentMethods.RemoveRange(dbContext.PaymentMethods);
 
                 dbContext.SaveChanges();
 
