@@ -76,15 +76,38 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Rollback to initial migration.
         /// </summary>
+        /// <param name="migrationName">
+        /// Migration name.
+        /// </param>
         /// <param name="cToken">
         /// Cancellation token.
         /// </param>
         /// <returns>
         /// A <see cref="Task"/> representing the asynchronous operation.
         /// </returns>
-        public async Task RollbackToInitMigration(CancellationToken cToken = default)
+        public async Task RollbackToMigration(string migrationName, CancellationToken cToken = default)
         {
             var migrator = _dbContext.Database.GetInfrastructure().GetRequiredService<IMigrator>();
+
+            await migrator.MigrateAsync(migrationName, cToken);
+        }
+
+        /// <summary>
+        /// Rollback to EF6 last snapshot.
+        /// </summary>
+        /// <param name="cToken">
+        /// Cancellation token.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation.
+        /// </returns>
+        public async Task RollbackToEF6(CancellationToken cToken = default)
+        {
+            await RollbackToMigration("20231115164653_Initial", cToken);
+
+            var dbContext = GetDbContextWithEF6Migrations();
+
+            var migrator = dbContext.Database.GetInfrastructure().GetRequiredService<IMigrator>();
 
             await migrator.MigrateAsync(Migration.InitialDatabase, cToken);
         }
