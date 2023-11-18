@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace _
+namespace Gizmo.DAL.EFCore.Migrations
 {
     [DbContext(typeof(DefaultDbContext))]
     partial class DefaultDbContextModelSnapshot : ModelSnapshot
@@ -101,8 +101,7 @@ namespace _
                     b.HasIndex("DeveloperId");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_App");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -152,8 +151,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppCategory");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -199,14 +197,12 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppEnterprise");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_AppEnterprise");
+                        .IsUnique();
 
                     b.ToTable("AppEnterprise", (string)null);
                 });
@@ -365,8 +361,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppExeCdImage");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -647,14 +642,12 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppGroup");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_AppGroup");
+                        .IsUnique();
 
                     b.ToTable("AppGroup", (string)null);
                 });
@@ -769,8 +762,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_AppLink");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -910,16 +902,14 @@ namespace _
                     b.HasIndex("AssetTypeId");
 
                     b.HasIndex("Barcode")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Barcode_Asset");
+                        .IsUnique();
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("SmartCardUID")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_SmartCardUID_Asset");
+                        .IsUnique();
 
                     b.ToTable("Asset", (string)null);
                 });
@@ -1043,8 +1033,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_AssetType");
+                        .IsUnique();
 
                     b.ToTable("AssetType", (string)null);
                 });
@@ -1192,8 +1181,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_Attribute");
+                        .IsUnique();
 
                     b.ToTable("Attribute", (string)null);
                 });
@@ -1233,8 +1221,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_BillProfile");
+                        .IsUnique();
 
                     b.ToTable("BillProfile", (string)null);
                 });
@@ -1308,8 +1295,7 @@ namespace _
                     b.HasKey("Id");
 
                     b.HasIndex("BillRateId", "Day")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_BillRatePeriodDay");
+                        .IsUnique();
 
                     b.ToTable("BillRatePeriodDay", (string)null);
                 });
@@ -1371,8 +1357,7 @@ namespace _
                     b.HasKey("Id");
 
                     b.HasIndex("BillRateId", "Minute")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_BillRateMinute");
+                        .IsUnique();
 
                     b.ToTable("BillRateStep", (string)null);
                 });
@@ -1477,8 +1462,7 @@ namespace _
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("BundleProductId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_BundleProductUserGroup");
+                        .IsUnique();
 
                     b.ToTable("BundleProductUserPrice", (string)null);
                 });
@@ -1609,14 +1593,12 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_Deployment");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_Deployment");
+                        .IsUnique();
 
                     b.ToTable("Deployment", (string)null);
                 });
@@ -1844,8 +1826,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_Device_DeviceHdmi");
+                        .IsUnique();
 
                     b.ToTable("Device", (string)null);
 
@@ -1987,6 +1968,8 @@ namespace _
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("Id");
+
                     b.HasIndex("RegisterId");
 
                     b.HasIndex("ShiftId");
@@ -2051,8 +2034,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_Host_HostComputer_HostEndpoint");
+                        .IsUnique();
 
                     b.HasIndex("HostGroupId");
 
@@ -2125,8 +2107,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_HostGroup");
+                        .IsUnique();
 
                     b.HasIndex("SecurityProfileId");
 
@@ -2164,8 +2145,7 @@ namespace _
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("HostGroupId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_HostGroupUserBillProfile");
+                        .IsUnique();
 
                     b.ToTable("HostGroupUserBillProfile", (string)null);
                 });
@@ -2314,8 +2294,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_HostLayoutGroup");
+                        .IsUnique();
 
                     b.ToTable("HostLayoutGroup", (string)null);
                 });
@@ -2413,8 +2392,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("HostLayoutGroupId", "HostId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_HostLayoutGroupHost");
+                        .IsUnique();
 
                     b.ToTable("HostLayoutGroupLayout", (string)null);
                 });
@@ -2588,8 +2566,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("FiscalReceiptId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_FiscalReceipt");
+                        .IsUnique();
 
                     b.HasIndex("InvoiceId");
 
@@ -2732,8 +2709,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("PointsTransactionId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_PointsTransaction_InvoiceLine_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineSession_InvoiceLineTime_InvoiceLineTimeFixed");
+                        .IsUnique();
 
                     b.HasIndex("RegisterId");
 
@@ -2870,14 +2846,12 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_License");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_License");
+                        .IsUnique();
 
                     b.ToTable("License", (string)null);
                 });
@@ -2938,8 +2912,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_LicenseKey");
+                        .IsUnique();
 
                     b.HasIndex("LicenseId");
 
@@ -3096,8 +3069,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("MountPoint")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_MountPoint");
+                        .IsUnique();
 
                     b.ToTable("Mapping", (string)null);
                 });
@@ -3149,8 +3121,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_MonetaryUnit");
+                        .IsUnique();
 
                     b.ToTable("MonetaryUnit", (string)null);
                 });
@@ -3346,16 +3317,14 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DepositTransactionId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_DepositTransaction");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("PointTransactionId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_PointsTransaction_Payment");
+                        .IsUnique();
 
                     b.HasIndex("RegisterId");
 
@@ -3427,8 +3396,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_PaymentIntent_PaymentIntentDeposit_PaymentIntentOrder");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -3515,8 +3483,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_PaymentMethod");
+                        .IsUnique();
 
                     b.ToTable("PaymentMethod", (string)null);
                 });
@@ -3622,14 +3589,12 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_PersonalFile");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_PersonalFile");
+                        .IsUnique();
 
                     b.ToTable("PersonalFile", (string)null);
                 });
@@ -3671,8 +3636,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("FileName")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_FileName");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -3913,16 +3877,14 @@ namespace _
                     b.HasKey("Id");
 
                     b.HasIndex("Barcode")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Barcode_Product_ProductBase_ProductBaseExtended_ProductBundle_ProductTime");
+                        .IsUnique();
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_Product_ProductBase_ProductBaseExtended_ProductBundle_ProductTime");
+                        .IsUnique();
 
                     b.HasIndex("ProductGroupId");
 
@@ -3985,8 +3947,7 @@ namespace _
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("ProductBundleId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductBundlePriceUserGroup");
+                        .IsUnique();
 
                     b.ToTable("ProductBundleUserPrice", (string)null);
                 });
@@ -4036,8 +3997,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_ProductGroup");
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 
@@ -4087,8 +4047,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("ProductId", "HostGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductHostGroup");
+                        .IsUnique();
 
                     b.ToTable("ProductHostHidden", (string)null);
                 });
@@ -4427,8 +4386,7 @@ namespace _
                     b.HasKey("Id");
 
                     b.HasIndex("ProductPeriodId", "Day")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductPeriodDay");
+                        .IsUnique();
 
                     b.ToTable("ProductPeriodDay", (string)null);
                 });
@@ -4546,8 +4504,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("ProductTimeId", "HostGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductTimeHostGroup");
+                        .IsUnique();
 
                     b.ToTable("ProductTimeHostDisallowed", (string)null);
                 });
@@ -4662,8 +4619,7 @@ namespace _
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("ProductId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductUserGroup_ProductUserDisallowed");
+                        .IsUnique();
 
                     b.ToTable("ProductUserDisallowed", (string)null);
                 });
@@ -4723,8 +4679,7 @@ namespace _
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("ProductId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductUserGroup_ProductUserPrice");
+                        .IsUnique();
 
                     b.ToTable("ProductUserPrice", (string)null);
                 });
@@ -4852,8 +4807,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("MacAddress")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_MACAddress_Register");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -5020,8 +4974,7 @@ namespace _
                     b.HasIndex("PreferedUserId");
 
                     b.HasIndex("ReservationId", "HostId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Reservation_Host");
+                        .IsUnique();
 
                     b.ToTable("ReservationHost", (string)null);
                 });
@@ -5062,8 +5015,7 @@ namespace _
                     b.HasIndex("UserId");
 
                     b.HasIndex("ReservationId", "UserId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Reservation_User");
+                        .IsUnique();
 
                     b.ToTable("ReservationUser", (string)null);
                 });
@@ -5107,8 +5059,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_SecurityProfile");
+                        .IsUnique();
 
                     b.ToTable("SecurityProfile", (string)null);
                 });
@@ -5150,8 +5101,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("SecurityProfileId", "Type")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_SecurityProfilePolicyType");
+                        .IsUnique();
 
                     b.ToTable("SecurityProfilePolicy", (string)null);
                 });
@@ -5247,8 +5197,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name", "GroupName")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_NameGroup");
+                        .IsUnique();
 
                     b.ToTable("Setting", (string)null);
                 });
@@ -5423,8 +5372,7 @@ namespace _
                     b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("ShiftId", "PaymentMethodId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ShiftCountPaymentMethod");
+                        .IsUnique();
 
                     b.ToTable("ShiftCount", (string)null);
                 });
@@ -5534,8 +5482,7 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_TaskBase_TaskJunction_TaskNotification_TaskProcess_TaskScript");
+                        .IsUnique();
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -5543,8 +5490,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_TaskBase_TaskJunction_TaskNotification_TaskProcess_TaskScript");
+                        .IsUnique();
 
                     b.ToTable("TaskBase", (string)null);
 
@@ -5591,8 +5537,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_Tax");
+                        .IsUnique();
 
                     b.ToTable("Tax", (string)null);
                 });
@@ -5648,8 +5593,7 @@ namespace _
                     b.HasIndex("UserId");
 
                     b.HasIndex("Value")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Value");
+                        .IsUnique();
 
                     b.ToTable("Token", (string)null);
                 });
@@ -5832,18 +5776,15 @@ namespace _
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid_User_UserGuest_UserMember_UserOperator");
+                        .IsUnique();
 
                     b.HasIndex("Identification")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Identification_User_UserGuest_UserMember_UserOperator");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("SmartCardUID")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_SmartCardUID_User_UserGuest_UserMember_UserOperator");
+                        .IsUnique();
 
                     b.ToTable("User", (string)null);
 
@@ -5950,8 +5891,7 @@ namespace _
                     b.HasIndex("UserId");
 
                     b.HasIndex("UserAgreementId", "UserId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UserAgreementState");
+                        .IsUnique();
 
                     b.ToTable("UserAgreementState", (string)null);
                 });
@@ -6001,8 +5941,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("UserId", "AttributeId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UserAttribute");
+                        .IsUnique();
 
                     b.ToTable("UserAttribute", (string)null);
                 });
@@ -6201,8 +6140,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_UserGroup");
+                        .IsUnique();
 
                     b.HasIndex("SecurityProfileId");
 
@@ -6252,8 +6190,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("UserGroupId", "HostGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UserGroupHostGroup");
+                        .IsUnique();
 
                     b.ToTable("UserGroupHostDisallowed", (string)null);
                 });
@@ -6303,8 +6240,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("UserId", "Type", "Value")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UserPermission");
+                        .IsUnique();
 
                     b.ToTable("UserPermission", (string)null);
                 });
@@ -6527,8 +6463,7 @@ namespace _
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name_Variable");
+                        .IsUnique();
 
                     b.ToTable("Variable", (string)null);
                 });
@@ -6627,8 +6562,7 @@ namespace _
                         .IsUnique();
 
                     b.HasIndex("UniqueId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UniqueId");
+                        .IsUnique();
 
                     b.ToTable("DeviceHdmi", (string)null);
                 });
@@ -6652,8 +6586,7 @@ namespace _
                     b.HasIndex("Id");
 
                     b.HasIndex("MACAddress")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_MACAddress_HostComputer");
+                        .IsUnique();
 
                     b.ToTable("HostComputer", (string)null);
                 });
@@ -6693,12 +6626,10 @@ namespace _
                         .IsUnique();
 
                     b.HasIndex("StockReturnTransactionId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_StockReturnTransaction_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineTime");
+                        .IsUnique();
 
                     b.HasIndex("StockTransactionId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_StockTransaction_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineTime");
+                        .IsUnique();
 
                     b.ToTable("InvoiceLineExtended", (string)null);
                 });
@@ -6719,8 +6650,7 @@ namespace _
                     b.HasIndex("OrderLineId");
 
                     b.HasIndex("UsageSessionId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UsageSession");
+                        .IsUnique();
 
                     b.ToTable("InvoiceLineSession", (string)null);
                 });
@@ -6739,8 +6669,7 @@ namespace _
                         .IsUnique();
 
                     b.HasIndex("OrderLineId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine_InvoiceLineTimeFixed");
+                        .IsUnique();
 
                     b.ToTable("InvoiceLineTimeFixed", (string)null);
                 });
@@ -6772,8 +6701,7 @@ namespace _
                         .HasColumnOrder(1);
 
                     b.HasIndex("DepositPaymentId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment_PaymentIntentDeposit");
+                        .IsUnique();
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -6797,8 +6725,7 @@ namespace _
                         .IsUnique();
 
                     b.HasIndex("InvoicePaymentId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_InvoicePayment_PaymentIntentOrder");
+                        .IsUnique();
 
                     b.HasIndex("ProductOrderId");
 
@@ -6908,8 +6835,7 @@ namespace _
                         .HasColumnOrder(2);
 
                     b.HasIndex("DepositPaymentId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment_RefundDepositPayment");
+                        .IsUnique();
 
                     b.HasIndex("FiscalReceiptId");
 
@@ -6937,8 +6863,7 @@ namespace _
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("InvoicePaymentId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_InvoicePayment_RefundInvoicePayment");
+                        .IsUnique();
 
                     b.ToTable("RefundInvoicePayment", (string)null);
                 });
@@ -7085,8 +7010,7 @@ namespace _
                         .HasColumnType("character varying(30)");
 
                     b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Email_UserGuest_UserMember");
+                        .IsUnique();
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -7094,8 +7018,7 @@ namespace _
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("Username")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Username_UserGuest_UserMember");
+                        .IsUnique();
 
                     b.ToTable("UserMember", (string)null);
                 });
@@ -7117,15 +7040,13 @@ namespace _
                         .HasColumnType("character varying(30)");
 
                     b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Email_UserOperator");
+                        .IsUnique();
 
                     b.HasIndex("Id")
                         .IsUnique();
 
                     b.HasIndex("Username")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Username_UserOperator");
+                        .IsUnique();
 
                     b.ToTable("UserOperator", (string)null);
                 });
@@ -7169,8 +7090,7 @@ namespace _
                         .HasColumnOrder(1);
 
                     b.HasIndex("DepositPaymentId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment_VoidDepositPayment");
+                        .IsUnique();
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -7190,8 +7110,7 @@ namespace _
                         .IsUnique();
 
                     b.HasIndex("InvoiceId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Invoice");
+                        .IsUnique();
 
                     b.ToTable("VoidInvoice", (string)null);
                 });
@@ -7207,8 +7126,7 @@ namespace _
                         .HasColumnType("integer");
 
                     b.HasIndex("OrderLineId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine_InvoiceLineProduct");
+                        .IsUnique();
 
                     b.HasIndex("ProductId");
 
@@ -7229,8 +7147,7 @@ namespace _
                         .HasColumnType("integer");
 
                     b.HasIndex("OrderLineId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine_InvoiceLineTime");
+                        .IsUnique();
 
                     b.HasIndex("ProductTimeId");
 
@@ -7352,8 +7269,7 @@ namespace _
                         .HasColumnOrder(4);
 
                     b.HasIndex("ReservedHostId", "ReservedSlot")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UserGuestHostSlot");
+                        .IsUnique();
 
                     b.ToTable("UserGuest", (string)null);
                 });

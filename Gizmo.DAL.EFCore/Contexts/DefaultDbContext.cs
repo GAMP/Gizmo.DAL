@@ -1669,6 +1669,17 @@ namespace Gizmo.DAL.Contexts
         /// <param name="modelBuilder"></param>
         public void ApplyGlobalMapConfigurations(ModelBuilder modelBuilder)
         {
+            ApplyDefaultTypesConfigurations(modelBuilder);
+
+            GuardDatabaseNameExceedLimits(modelBuilder);
+        }
+
+        /// <summary>
+        /// Apply default types configurations
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        private void ApplyDefaultTypesConfigurations(ModelBuilder modelBuilder)
+        {
             var entities = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).ToList();
             foreach (var entity in entities)
             {
@@ -1686,21 +1697,13 @@ namespace Gizmo.DAL.Contexts
                     modelBuilder.Entity(entity).Property(property.Name).HasPrecision(19, 4);
             }
 
-
-            if (Database.IsSqlServer())
+            if (Database.IsNpgsql())
             {
-                // Change default generated index names of foreign keys to match the old database pattern
-                //RenameIndexWithOldPattern(modelBuilder);
-            }
-            else if (Database.IsNpgsql())
-            {
-                // Remove duplicated index name to be unique on database level not the table level
-                RenameDuplicatedIndexNames(modelBuilder);
-
                 // Set all DateTime properties to be mapped as timestamp without time zone
-                foreach (var property in modelBuilder.Model.GetEntityTypes()
-                                                                             .SelectMany(t => t.GetProperties())
-                                                                             .Where(x => x.ClrType == typeof(DateTime) || x.ClrType == typeof(DateTime?)))
+                var datetimeProperties = modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetProperties())
+                    .Where(x => x.ClrType == typeof(DateTime) || x.ClrType == typeof(DateTime?));
+
+                foreach (var property in datetimeProperties)
                 {
                     property.SetColumnType("timestamp without time zone");
                 }
@@ -1708,75 +1711,41 @@ namespace Gizmo.DAL.Contexts
         }
 
         /// <summary>
-        /// Change default generated index names of foreign keys to match the old database pattern 
+        /// Guard the tables/columns/indexes against exceed the max limit of chars in naming convension 
         /// </summary>
         /// <param name="modelBuilder"></param>
-        private static void RenameIndexWithOldPattern(ModelBuilder modelBuilder)
+        private static void GuardDatabaseNameExceedLimits(ModelBuilder modelBuilder)
         {
+            const int MaxLengthLimit = 63;
+
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
-                foreach(var fk in entity.GetForeignKeys())
-                {
-                    var fkName = fk.GetDefaultName();
+                var tableName = entity.GetTableName();
+                if (tableName.Length > MaxLengthLimit)
+                    throw new Exception($"Table {tableName} exceed the limit {MaxLengthLimit}");
 
-                    var splitted = fkName.Split('_').ToList();
-                    if (splitted.Count < 4)
+                foreach (var property in entity.GetProperties())
+                {
+                    var columnName = property.GetColumnName();
+                    if (string.IsNullOrEmpty(columnName))
                         continue;
 
-                    string constraintName = $"{splitted[0]}_dbo.{splitted[1]}_dbo.{splitted[2]}_{splitted[3]}";
+                    if (columnName.Length <= MaxLengthLimit)
+                        continue;
 
-                    fk.SetConstraintName(constraintName);
+                    throw new Exception($"Table {tableName} - Column {columnName} exceed the limit {MaxLengthLimit}");
                 }
 
                 foreach (var index in entity.GetIndexes())
                 {
                     var indexName = index.GetDatabaseName();
-                    if (indexName.StartsWith("IX") == false)
+                    if (string.IsNullOrEmpty(indexName))
                         continue;
 
-                    var splitted = indexName.Split('_').ToList();
-                    if (splitted.Count < 3)
+                    if (indexName.Length <= MaxLengthLimit)
                         continue;
 
-                    splitted.RemoveAt(1);
-                    splitted = splitted.Where(e => e.IsNullOrEmpty() == false).ToList();
-
-                    index.SetDatabaseName($"{string.Join("_", splitted)}");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Change default generated index names of foreign keys to match the old database pattern 
-        /// </summary>
-        /// <param name="modelBuilder"></param>
-        private static void RenameDuplicatedIndexNames(ModelBuilder modelBuilder)
-        {
-            var indexes = new Dictionary<string, List<KeyValuePair<IMutableEntityType, IMutableIndex>>>();
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            {
-                foreach (var index in entity.GetIndexes())
-                {
-                    var defaultIndexName = index.GetDefaultDatabaseName();
-                    var indexName = index.GetDatabaseName();
-
-                    // To check only on the index defined by the user not automated
-                    if (defaultIndexName == indexName)
-                        continue;
-
-                    if (indexes.ContainsKey(indexName))
-                        indexes[indexName].Add(new(entity, index));
-                    else
-                        indexes.Add(indexName, new List<KeyValuePair<IMutableEntityType, IMutableIndex>>() { new(entity, index) });
-                }
-            }
-
-            var duplicatedIndexes = indexes.Where(e => e.Value.Count > 1).ToList();
-            foreach (var duplicatedIndex in duplicatedIndexes)
-            {
-                foreach (var index in duplicatedIndex.Value)
-                {
-                    index.Value.SetDatabaseName($"{index.Value.GetDatabaseName()}_{index.Key.GetTableName()}");
+                    throw new Exception($"Table {tableName} - Index {indexName} exceed the limit {MaxLengthLimit}");
                 }
             }
         }
