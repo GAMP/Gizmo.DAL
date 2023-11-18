@@ -26,8 +26,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             // Indexes
-            builder.HasIndex(x => x.StockTransactionId).HasDatabaseName("UQ_StockTransaction").IsUnique();
-            builder.HasIndex(x => x.StockReturnTransactionId).HasDatabaseName("UQ_StockReturnTransaction").IsUnique();
+            builder.HasIndex(x => x.StockTransactionId).IsUnique();
+            builder.HasIndex(x => x.StockReturnTransactionId).IsUnique();
             builder.HasIndex(x => x.Id);
 
             builder.HasOne(x => x.BundleLine)

@@ -49,8 +49,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(9);
 
             // Indexes
-            builder.HasIndex(t => t.DepositTransactionId).HasDatabaseName("UQ_DepositTransaction").IsUnique();
-            builder.HasIndex(t => t.PointTransactionId).HasDatabaseName("UQ_PointsTransaction").IsUnique();
+            builder.HasIndex(t => t.DepositTransactionId).IsUnique();
+            builder.HasIndex(t => t.PointTransactionId).IsUnique();
 
             // Relationships
             builder.HasOne(x => x.User)

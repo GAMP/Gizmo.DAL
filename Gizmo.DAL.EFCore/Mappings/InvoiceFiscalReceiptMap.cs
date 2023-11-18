@@ -23,7 +23,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2);
 
             // Indexes
-            builder.HasIndex(t => t.FiscalReceiptId).HasDatabaseName("UQ_FiscalReceipt").IsUnique();
+            builder.HasIndex(t => t.FiscalReceiptId).IsUnique();
 
             builder.HasOne(x => x.Invoice)
                 .WithMany(x => x.FiscalReceipts)

@@ -34,7 +34,7 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY);
 
             // Indexes
-            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Name).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(AssetType));

@@ -19,7 +19,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false);
 
             // Indexes
-            builder.HasIndex(t => t.DepositPaymentId).HasDatabaseName("UQ_DepositPayment").IsUnique();
+            builder.HasIndex(t => t.DepositPaymentId).IsUnique();
             builder.HasIndex(t => t.Id);
 
             builder.HasOne(x => x.DepositPayment)

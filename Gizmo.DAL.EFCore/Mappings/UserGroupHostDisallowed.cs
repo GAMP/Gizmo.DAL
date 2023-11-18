@@ -29,7 +29,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             // Indexes
-            builder.HasIndex(x => new { x.UserGroupId, x.HostGroupId }).HasDatabaseName("UQ_UserGroupHostGroup").IsUnique();
+            builder.HasIndex(x => new { x.UserGroupId, x.HostGroupId }).IsUnique();
 
             builder.HasOne(x => x.UserGroup)
                 .WithMany(x => x.DissalowedHostGroups)

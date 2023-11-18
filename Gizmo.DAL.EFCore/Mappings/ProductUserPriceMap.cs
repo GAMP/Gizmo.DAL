@@ -35,7 +35,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(5);
 
             // Indexes
-            builder.HasIndex(x => new { x.ProductId, x.UserGroupId }).HasDatabaseName("UQ_ProductUserGroup").IsUnique();
+            builder.HasIndex(x => new { x.ProductId, x.UserGroupId }).IsUnique();
 
             builder.ToTable("ProductUserPrice");
 

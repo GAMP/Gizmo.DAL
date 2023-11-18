@@ -23,7 +23,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             // Indexes
-            builder.HasIndex(t => new { t.BundleProductId, t.UserGroupId }).HasDatabaseName("UQ_BundleProductUserGroup").IsUnique();
+            builder.HasIndex(t => new { t.BundleProductId, t.UserGroupId }).IsUnique();
 
             builder.ToTable(nameof(BundleProductUserPrice));
 

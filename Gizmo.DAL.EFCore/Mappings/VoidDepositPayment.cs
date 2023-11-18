@@ -18,7 +18,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(1);
 
             // Indexes
-            builder.HasIndex(t => t.DepositPaymentId).HasDatabaseName("UQ_DepositPayment").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.DepositPaymentId).IsUnique().HasFilter(null);
             builder.HasIndex(t => t.Id);
 
             builder.HasOne(t => t.DepositPayment)

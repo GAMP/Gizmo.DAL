@@ -1690,7 +1690,7 @@ namespace Gizmo.DAL.Contexts
             if (Database.IsSqlServer())
             {
                 // Change default generated index names of foreign keys to match the old database pattern
-                RenameIndexWithOldPattern(modelBuilder);
+                //RenameIndexWithOldPattern(modelBuilder);
             }
             else if (Database.IsNpgsql())
             {
@@ -1713,7 +1713,6 @@ namespace Gizmo.DAL.Contexts
         /// <param name="modelBuilder"></param>
         private static void RenameIndexWithOldPattern(ModelBuilder modelBuilder)
         {
-            return;
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
                 foreach(var fk in entity.GetForeignKeys())

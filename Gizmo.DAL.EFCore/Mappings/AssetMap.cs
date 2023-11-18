@@ -47,9 +47,9 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(7);
 
             // Indexes
-            builder.HasIndex(t => t.SmartCardUID).HasDatabaseName("UQ_SmartCardUID").IsUnique();
+            builder.HasIndex(t => t.SmartCardUID).IsUnique();
 
-            builder.HasIndex(t => t.Barcode).HasDatabaseName("UQ_Barcode").IsUnique();
+            builder.HasIndex(t => t.Barcode).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(Asset));

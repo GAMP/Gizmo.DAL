@@ -39,7 +39,7 @@ namespace Gizmo.DAL.Mappings
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Indexes
-            builder.HasIndex(x => new { x.HostGroupId, x.UserGroupId }).HasDatabaseName("UQ_HostGroupUserBillProfile").IsUnique();
+            builder.HasIndex(x => new { x.HostGroupId, x.UserGroupId }).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(HostGroupUserBillProfile));

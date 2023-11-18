@@ -50,8 +50,8 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY);
 
             // Indexes
-            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
-            builder.HasIndex(t => t.Barcode).HasDatabaseName("UQ_Barcode").IsUnique();
+            builder.HasIndex(t => t.Name).IsUnique();
+            builder.HasIndex(t => t.Barcode).IsUnique();
 
             // Relations
             builder.ToTable("ProductBase");

@@ -19,7 +19,7 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY);
 
             // Indexes
-            builder.HasIndex(t => t.UniqueId).HasDatabaseName("UQ_UniqueId").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.UniqueId).IsUnique().HasFilter(null);
             builder.HasIndex(x => x.Id);
 
             //table configuration

@@ -84,7 +84,7 @@ namespace Gizmo.DAL.Mappings
 
             // Indexes
             builder.HasIndex(t => t.PointsTransactionId)
-                .HasDatabaseName("UQ_PointsTransaction")
+                
                 .IsUnique();
 
             builder.HasOne(x => x.Invoice)

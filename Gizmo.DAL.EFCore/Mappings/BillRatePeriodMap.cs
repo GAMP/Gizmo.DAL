@@ -25,7 +25,7 @@ namespace Gizmo.DAL.Mappings
             builder.Property(x => x.Day);
 
             // Indexes
-            builder.HasIndex(t => new { t.BillRateId,t.Day }).HasDatabaseName("UQ_BillRatePeriodDay").IsUnique();
+            builder.HasIndex(t => new { t.BillRateId,t.Day }).IsUnique();
 
             builder.HasOne(x => x.BillRate)
                 .WithMany(x => x.Days)

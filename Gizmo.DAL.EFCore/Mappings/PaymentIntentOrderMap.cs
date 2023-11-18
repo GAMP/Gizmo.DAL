@@ -23,7 +23,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2);
 
             // Indexes
-            builder.HasIndex(t => t.InvoicePaymentId).HasDatabaseName("UQ_InvoicePayment").IsUnique(); //same invoice payment may not appear multiple times
+            builder.HasIndex(t => t.InvoicePaymentId).IsUnique(); //same invoice payment may not appear multiple times
             builder.HasIndex(t => t.Id);
 
             builder.HasOne(x => x.ProductOrder)

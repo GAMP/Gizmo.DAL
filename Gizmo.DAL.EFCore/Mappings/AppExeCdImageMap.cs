@@ -47,7 +47,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("AppExeCdImageId");
 
             // Indexes
-            builder.HasIndex(x => x.Guid).HasDatabaseName("UQ_Guid").IsUnique();
+            builder.HasIndex(x => x.Guid).IsUnique();
             builder.HasIndex(x => x.AppExeId);
 
             // Relationships

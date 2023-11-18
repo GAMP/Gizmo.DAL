@@ -28,8 +28,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2);
 
             // Indexes
-            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
-            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Guid).IsUnique();
+            builder.HasIndex(t => t.Name).IsUnique();
             builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings

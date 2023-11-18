@@ -64,9 +64,9 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(11);
 
             // Indexes
-            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
+            builder.HasIndex(t => t.Guid).IsUnique();
 
-            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Name).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable("Deployment");
