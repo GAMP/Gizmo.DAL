@@ -1,8 +1,7 @@
-﻿namespace GizmoDALV2.Migrations.MSSQL
+﻿namespace Gizmo.DAL.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update16 : DbMigration
     {
         public override void Up()
@@ -67,8 +66,8 @@
             AddColumn("dbo.PaymentMethod", "PaymentProvider", c => c.Guid());
             CreateIndex("dbo.Setting", new[] { "Name", "GroupName" }, unique: true, name: "UQ_NameGroup");
 
-            Sql(Gizmo.DAL.Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_InvoicePayment", "PaymentIntentOrder", "InvoicePaymentId"));
-            Sql(Gizmo.DAL.Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_DepositPayment", "PaymentIntentDeposit", "DepositPaymentId"));
+            Sql(Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_InvoicePayment", "PaymentIntentOrder", "InvoicePaymentId"));
+            Sql(Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_DepositPayment", "PaymentIntentDeposit", "DepositPaymentId"));
         }
         
         public override void Down()

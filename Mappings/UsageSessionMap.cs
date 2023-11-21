@@ -1,37 +1,37 @@
-﻿using GizmoDALV2.Entities;
+﻿using Gizmo.DAL.Entities;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class UsageSessionMap : EntityTypeConfiguration<UsageSession>
     {
         public UsageSessionMap()
         {
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("UsageSessionId");
 
-            this.Property(x => x.UserId)
+            Property(x => x.UserId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.CurrentUsageId)
+            Property(x => x.CurrentUsageId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.CurrentSecond)
+            Property(x => x.CurrentSecond)
                 .HasColumnOrder(3);
 
-            this.Property(x => x.IsActive)
+            Property(x => x.IsActive)
                 .HasColumnOrder(4);
 
-            this.ToTable(nameof(UsageSession));
+            ToTable(nameof(UsageSession));
 
-            this.HasRequired(x => x.User)
+            HasRequired(x => x.User)
                 .WithMany(x => x.UsageSessions)
                 .HasForeignKey(x => x.UserId);
 
-            this.HasOptional(x => x.CurrentUsage)
+            HasOptional(x => x.CurrentUsage)
                 .WithMany()
                 .HasForeignKey(x => x.CurrentUsageId)
                 .WillCascadeOnDelete(false);

@@ -1,7 +1,8 @@
 ﻿using CoreLib;
 
-using GizmoDALV2.DTO;
-using GizmoDALV2.Entities;
+using Gizmo.DAL.Contexts;
+using Gizmo.DAL.DTO;
+using Gizmo.DAL.Entities;
 
 using IntegrationLib;
 
@@ -10,7 +11,6 @@ using SharedLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
@@ -20,7 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GizmoDALV2
+namespace Gizmo.DAL
 {
     #region GIZMODATABASE
     /// <summary>
@@ -79,7 +79,7 @@ namespace GizmoDALV2
         /// </summary>
         public IDispatcherPrincipal CurrentPrincipal
         {
-            get { return System.Threading.Thread.CurrentPrincipal as IDispatcherPrincipal; }
+            get { return Thread.CurrentPrincipal as IDispatcherPrincipal; }
         }
 
         /// <summary>
@@ -1196,7 +1196,7 @@ namespace GizmoDALV2
                             IgnoreUpdatedUpdate = true,
                         };
 
-                        var userCredentials = new Entities.UserCredential();
+                        var userCredentials = new UserCredential();
 
                         if (string.IsNullOrWhiteSpace(user.Password))
                         {

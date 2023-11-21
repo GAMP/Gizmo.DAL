@@ -1,22 +1,22 @@
-﻿using GizmoDALV2.Entities;
+﻿using Gizmo.DAL.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class PluginLibraryMap : EntityTypeConfiguration<PluginLibrary>
     {
         public PluginLibraryMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("PluginLibraryId");
 
-            this.Property(x => x.FileName)
+            Property(x => x.FileName)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[] 
                 {
@@ -24,7 +24,7 @@ namespace GizmoDALV2.Mappings
                 }));
 
             // Table & Column Mappings
-            this.ToTable("PluginLibrary");
+            ToTable("PluginLibrary");
         }
     }
 }

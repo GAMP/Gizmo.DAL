@@ -1,26 +1,25 @@
-﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
+﻿using Gizmo.DAL.Entities;
+
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class TaskBaseMap : EntityTypeConfiguration<TaskBase>
     {
         public TaskBaseMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(t => t.Name)
+            Property(t => t.Name)
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45)
                 .HasColumnAnnotation("Index",
@@ -29,7 +28,7 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("UQ_Name") { IsUnique = true } 
                 }));
 
-            this.Property(x => x.Guid)
+            Property(x => x.Guid)
                 .IsRequired()
                 .HasColumnOrder(2)
                 .HasColumnAnnotation(
@@ -40,9 +39,9 @@ namespace GizmoDALV2.Mappings
                 }));
 
             // Table & Column Mappings
-            this.ToTable("TaskBase");
+            ToTable("TaskBase");
 
-            this.Property(t => t.Id)
+            Property(t => t.Id)
                 .HasColumnName("TaskId");     
         }
     }
@@ -52,31 +51,31 @@ namespace GizmoDALV2.Mappings
         public TaskProcessMap()
         {
             // Properties
-            this.Property(t => t.FileName)
+            Property(t => t.FileName)
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Arguments)
+            Property(t => t.Arguments)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.WorkingDirectory)
+            Property(t => t.WorkingDirectory)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Username)
+            Property(t => t.Username)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Password)
+            Property(t => t.Password)
                 .HasColumnOrder(5)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.ProcessOptions)
+            Property(x => x.ProcessOptions)
                 .HasColumnOrder(6);
 
             // Table & Column Mappings
-            this.ToTable("TaskProcess");
+            ToTable("TaskProcess");
 
         }
     }
@@ -86,16 +85,16 @@ namespace GizmoDALV2.Mappings
         public TaskJunctionMap()
         {
             // Properties
-            this.Property(x => x.SourceDirectory)
+            Property(x => x.SourceDirectory)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired();
 
-            this.Property(x => x.DestinationDirectory)
+            Property(x => x.DestinationDirectory)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired();
 
             // Table & Column Mappings
-            this.ToTable("TaskJunction");
+            ToTable("TaskJunction");
         }
     }
 
@@ -104,16 +103,16 @@ namespace GizmoDALV2.Mappings
         public TaskNotificationMap()
         {
             // Properties
-            this.Property(x => x.Title)
+            Property(x => x.Title)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(x => x.Message)
+            Property(x => x.Message)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
-            this.Property(x => x.NotificationOptions);
+            Property(x => x.NotificationOptions);
 
             // Table & Column Mappings
-            this.ToTable("TaskNotification");
+            ToTable("TaskNotification");
         }
     }
 
@@ -122,11 +121,11 @@ namespace GizmoDALV2.Mappings
         public TaskScriptMap()
         {
             // Properties
-            this.Property(x => x.Data)
+            Property(x => x.Data)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
             // Table & Column Mappings
-            this.ToTable("TaskScript");
+            ToTable("TaskScript");
 
         }
     }
@@ -136,18 +135,18 @@ namespace GizmoDALV2.Mappings
         public ClientTaskMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("ClientTaskId");
 
             // Table & Column Mappings
-            this.HasRequired(x => x.TaskBase)
+            HasRequired(x => x.TaskBase)
                 .WithMany(x=>x.UsedByTask)
                 .HasForeignKey(x => x.TaskBaseId);
 
-            this.ToTable("ClientTask");
+            ToTable("ClientTask");
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using Gizmo.DAL.Entities;
 using Gizmo.DAL.Mappings;
-using GizmoDALV2.Entities;
-using GizmoDALV2.Mappings;
-using GizmoDALV2.Migrations;
+using Gizmo.DAL.Migrations;
+
+using GizmoDALV2;
+
 using SharedLib;
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,7 +26,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GizmoDALV2
+namespace Gizmo.DAL.Contexts
 {
     #region DEFAULTDBCONTEXT
 
@@ -1148,7 +1150,7 @@ namespace GizmoDALV2
             #region EVENT GENERATION
 
             IList<IEntityEventArgs> events = new List<IEntityEventArgs>();
-            var handler = DefaultDbContext.EntityEvent;
+            var handler = EntityEvent;
             if (handler != null)
             {
                 var addedGroups = addedEntries.GroupBy(x => x.Entity.GetType());
@@ -1347,7 +1349,7 @@ namespace GizmoDALV2
             #region EVENT GENERATION
 
             IList<IEntityEventArgs> events = new List<IEntityEventArgs>();
-            var handler = DefaultDbContext.EntityEvent;
+            var handler = EntityEvent;
             if (handler != null)
             {
                 var addedGroups = addedEntries.GroupBy(x => x.Entity.GetType());
@@ -1446,7 +1448,7 @@ namespace GizmoDALV2
         public byte[] GetNewSalt()
         {
             byte[] salt = new byte[100];
-            using (var generator = RNGCryptoServiceProvider.Create())
+            using (var generator = RandomNumberGenerator.Create())
             {
                 generator.GetNonZeroBytes(salt);
             }
@@ -1469,7 +1471,7 @@ namespace GizmoDALV2
 
             List<byte> bytes = new List<byte>(Encoding.Default.GetBytes(pwd));
             bytes.AddRange(salt);
-            using (SHA512 hasher = SHA512Managed.Create())
+            using (SHA512 hasher = SHA512.Create())
             {
                 return hasher.ComputeHash(bytes.ToArray());
             }
@@ -1693,9 +1695,9 @@ namespace GizmoDALV2
         {
             get
             {
-                if (DefaultDbContext.notifyTypes == null)
-                    DefaultDbContext.notifyTypes = new HashSet<Type>();
-                return DefaultDbContext.notifyTypes;
+                if (notifyTypes == null)
+                    notifyTypes = new HashSet<Type>();
+                return notifyTypes;
             }
         }
 
@@ -1730,8 +1732,8 @@ namespace GizmoDALV2
         /// </summary>
         public static bool RaiseAllEntityEvents
         {
-            get { return DefaultDbContext.raiseAllEntityEvents; }
-            set { DefaultDbContext.raiseAllEntityEvents = value; }
+            get { return raiseAllEntityEvents; }
+            set { raiseAllEntityEvents = value; }
         }
 
         #endregion
@@ -1744,8 +1746,8 @@ namespace GizmoDALV2
         /// <param name="type">Type.</param>
         public static void RegisterNotification(Type type)
         {
-            if (!DefaultDbContext.NotifyTypes.Contains(type))
-                DefaultDbContext.NotifyTypes.Add(type);
+            if (!NotifyTypes.Contains(type))
+                NotifyTypes.Add(type);
         }
 
         /// <summary>
@@ -1754,7 +1756,7 @@ namespace GizmoDALV2
         /// <typeparam name="T">Type.</typeparam>
         public static void RegisterNotification<T>()
         {
-            DefaultDbContext.RegisterNotification(typeof(T));
+            RegisterNotification(typeof(T));
         }
 
         /// <summary>
@@ -1764,10 +1766,10 @@ namespace GizmoDALV2
         /// <returns>True or false.</returns>
         public static bool IsNotificationRegistered(Type type)
         {
-            if (DefaultDbContext.RaiseAllEntityEvents)
+            if (RaiseAllEntityEvents)
                 return true;
 
-            return DefaultDbContext.NotifyTypes.Contains(type);
+            return NotifyTypes.Contains(type);
         }
 
         /// <summary>
@@ -1777,7 +1779,7 @@ namespace GizmoDALV2
         {
             try
             {
-                var handler = DefaultDbContext.EntityEvent;
+                var handler = EntityEvent;
                 if (handler != null)
                 {
                     //generate new event list

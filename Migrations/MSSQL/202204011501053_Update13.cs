@@ -1,8 +1,7 @@
-﻿namespace GizmoDALV2.Migrations.MSSQL
+﻿namespace Gizmo.DAL.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update13 : DbMigration
     {
         public override void Up()
@@ -71,7 +70,7 @@
                 .Index(t => t.RefundId)
                 .Index(t => t.FiscalReceiptId);
 
-            Sql(Gizmo.DAL.Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_DepositPayment", "RefundDepositPayment", "DepositPaymentId"));
+            Sql(Scripts.SQLScripts.CreateUniqueNullableIndex("UQ_DepositPayment", "RefundDepositPayment", "DepositPaymentId"));
 
             CreateTable(
                 "dbo.VoidDepositPayment",
@@ -99,7 +98,7 @@
             AddForeignKey("dbo.DepositPayment", "FiscalReceiptId", "dbo.FiscalReceipt", "FiscalReceiptId");
             AddForeignKey("dbo.Refund", "PaymentId", "dbo.Payment", "PaymentId");
 
-            Sql(Gizmo.DAL.Scripts.SQLScripts.CREATE_DEPOSIT_PAYMENT_REFUNDS);
+            Sql(Scripts.SQLScripts.CREATE_DEPOSIT_PAYMENT_REFUNDS);
         }
         
         public override void Down()

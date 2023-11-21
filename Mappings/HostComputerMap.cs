@@ -1,27 +1,25 @@
-﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
+﻿using Gizmo.DAL.Entities;
+
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class HostComputerMap : EntityTypeConfiguration<HostComputer>
     {
         public HostComputerMap()
         {
             // Properties
-            this.Property(x => x.Id);
+            Property(x => x.Id);
 
-            this.Property(t => t.Hostname)
+            Property(t => t.Hostname)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.MACAddress)
+            Property(t => t.MACAddress)
                 .IsRequired()
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY)
@@ -32,7 +30,7 @@ namespace GizmoDALV2.Mappings
                 })); 
 
             // Table & Column Mappings
-            this.ToTable("HostComputer");       
+            ToTable("HostComputer");       
         }
     }
 }

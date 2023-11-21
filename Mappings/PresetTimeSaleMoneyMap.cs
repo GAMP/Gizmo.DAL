@@ -1,30 +1,26 @@
-﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Gizmo.DAL.Entities;
 
-namespace GizmoDALV2.Mappings
+using System.Data.Entity.ModelConfiguration;
+
+namespace Gizmo.DAL.Mappings
 {
     public class PresetTimeSaleMoneyMap : EntityTypeConfiguration<PresetTimeSaleMoney>
     {
         public PresetTimeSaleMoneyMap()
         {
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("PresetTimeSaleMoneyId")
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Value)
+            Property(x => x.Value)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.DisplayOrder)
+            Property(x => x.DisplayOrder)
                 .HasColumnOrder(2);
 
-            this.ToTable(nameof(PresetTimeSaleMoney));
+            ToTable(nameof(PresetTimeSaleMoney));
         }
     }
 }

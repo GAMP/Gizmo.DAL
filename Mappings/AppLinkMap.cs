@@ -1,46 +1,44 @@
-﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
+﻿using Gizmo.DAL.Entities;
+
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class AppLinkMap : EntityTypeConfiguration<AppLink>
     {
         public AppLinkMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(t => t.AppId)
+            Property(t => t.AppId)
                 .HasColumnOrder(1);
 
-            this.Property(t => t.Caption)
+            Property(t => t.Caption)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Description)
+            Property(t => t.Description)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(t => t.Url)
+            Property(t => t.Url)
                 .IsRequired()
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            this.Property(x => x.DisplayOrder)
+            Property(x => x.DisplayOrder)
                 .HasColumnOrder(5);
 
-            this.Property(t => t.Guid)
+            Property(t => t.Guid)
                 .HasColumnOrder(6)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[] 
@@ -49,13 +47,13 @@ namespace GizmoDALV2.Mappings
                 }));
 
             // Table & Column Mappings
-            this.ToTable("AppLink");
+            ToTable("AppLink");
 
-            this.Property(t => t.Id)
+            Property(t => t.Id)
                 .HasColumnName("AppLinkId");
 
             // Relationships
-            this.HasRequired(t => t.App)
+            HasRequired(t => t.App)
                 .WithMany(t => t.AppLinks)
                 .HasForeignKey(d => d.AppId);
         }

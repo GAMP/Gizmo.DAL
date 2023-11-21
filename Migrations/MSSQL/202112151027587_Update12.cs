@@ -1,8 +1,7 @@
-﻿namespace GizmoDALV2.Migrations.MSSQL
+﻿namespace Gizmo.DAL.Migrations.MSSQL
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class Update12 : DbMigration
     {
         public override void Up()

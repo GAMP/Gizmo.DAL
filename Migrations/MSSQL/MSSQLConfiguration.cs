@@ -1,6 +1,8 @@
-namespace GizmoDALV2.Migrations
+﻿namespace Gizmo.DAL.Migrations
 {
     using System.Data.Entity.Migrations;
+
+    using Gizmo.DAL.Contexts;
 
     public sealed class MSSQLConfiguration : DbMigrationsConfiguration<DefaultDbContext>
     {

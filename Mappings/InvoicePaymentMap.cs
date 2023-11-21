@@ -1,46 +1,40 @@
-﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Gizmo.DAL.Entities;
 
-namespace GizmoDALV2.Mappings
+using System.Data.Entity.ModelConfiguration;
+
+namespace Gizmo.DAL.Mappings
 {
     public class InvoicePaymentMap : EntityTypeConfiguration<InvoicePayment>
     {
         public InvoicePaymentMap()
         {
-            this.HasKey(x => x.Id);
+            HasKey(x => x.Id);
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("InvoicePaymentId");
 
-            this.Property(x => x.InvoiceId)
+            Property(x => x.InvoiceId)
                 .HasColumnOrder(1);
 
-            this.Property(x => x.PaymentId)
+            Property(x => x.PaymentId)
                 .HasColumnOrder(2);
 
-            this.Property(x => x.UserId)
+            Property(x => x.UserId)
                 .HasColumnOrder(3);
 
-            this.ToTable(nameof(InvoicePayment));
+            ToTable(nameof(InvoicePayment));
 
-            this.HasRequired(x => x.Invoice)
+            HasRequired(x => x.Invoice)
                 .WithMany(x => x.InvoicePayments)
                 .HasForeignKey(x => x.InvoiceId);
 
-            this.HasRequired(x => x.Payment)
+            HasRequired(x => x.Payment)
                 .WithMany()
                 .HasForeignKey(x => x.PaymentId)
                 .WillCascadeOnDelete(false);
 
-            this.HasRequired(x => x.User)
+            HasRequired(x => x.User)
                 .WithMany(x=>x.InvoicePayments)
                 .HasForeignKey(x => x.UserId)
                 .WillCascadeOnDelete(false);

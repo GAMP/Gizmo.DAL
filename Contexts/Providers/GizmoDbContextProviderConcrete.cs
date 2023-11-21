@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using SharedLib;
 using SharedLib.Configuration;
 
-namespace Gizmo.DAL.Contexts.Providers
+namespace Gizmo.DAL.Contexts
 {
     /// <summary>
     /// Gizmo.DAL default db context ptovider.

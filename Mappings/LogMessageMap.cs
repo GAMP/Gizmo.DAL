@@ -1,27 +1,25 @@
-﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
+﻿using Gizmo.DAL.Entities;
+
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class LogMap : EntityTypeConfiguration<Log>
     {
         public LogMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(x => x.Time)
+            Property(x => x.Time)
                 .HasColumnOrder(1)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[] 
@@ -29,7 +27,7 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("IX_Time") 
                 }));
 
-            this.Property(x => x.HostNumber)
+            Property(x => x.HostNumber)
                 .HasColumnOrder(2)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[] 
@@ -37,18 +35,18 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("IX_HostNumber") 
                 })); ;
 
-            this.Property(t => t.Hostname)
+            Property(t => t.Hostname)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.ModuleType)
+            Property(x => x.ModuleType)
                 .HasColumnOrder(4);
 
-            this.Property(t => t.ModuleVersion)
+            Property(t => t.ModuleVersion)
                 .HasColumnOrder(5)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            this.Property(x => x.Category)
+            Property(x => x.Category)
                 .HasColumnOrder(6)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[] 
@@ -56,7 +54,7 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("IX_Category") 
                 }));
 
-            this.Property(x => x.MessageType)
+            Property(x => x.MessageType)
                 .HasColumnOrder(7)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[] 
@@ -64,15 +62,15 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("IX_MessageType") 
                 }));
 
-            this.Property(t => t.Message)
+            Property(t => t.Message)
                 .IsRequired()
                 .HasColumnOrder(8)
                 .HasMaxLength(SQLStringSize.NORMAL);
 
             // Table & Column Mappings
-            this.ToTable("Log");
+            ToTable("Log");
 
-            this.Property(t => t.Id)
+            Property(t => t.Id)
                 .HasColumnName("LogId");
         }
     }
@@ -82,25 +80,25 @@ namespace GizmoDALV2.Mappings
         public LogExceptionMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
-            this.Property(x => x.ExceptionData)
+            Property(x => x.ExceptionData)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLByteArraySize.NORMAL);
 
             // Table & mappings
-            this.ToTable("LogException");
+            ToTable("LogException");
 
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnName("LogId");
 
-            this.HasRequired(x => x.Message)
+            HasRequired(x => x.Message)
                 .WithRequiredDependent(x => x.Exception)
                 .WillCascadeOnDelete(true);
         }

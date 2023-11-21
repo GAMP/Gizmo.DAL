@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GizmoDALV2
+namespace Gizmo.DAL
 {
     /// <summary>
     /// External export class.

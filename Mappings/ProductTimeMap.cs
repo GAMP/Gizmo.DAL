@@ -1,21 +1,17 @@
-﻿using GizmoDALV2.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Gizmo.DAL.Entities;
 
-namespace GizmoDALV2.Mappings
+using System.Data.Entity.ModelConfiguration;
+
+namespace Gizmo.DAL.Mappings
 {
     public class ProductTimeMap : EntityTypeConfiguration<ProductTime>
     {
         public ProductTimeMap()
         {
             // Table & Column Mappings
-            this.ToTable("ProductTime");
+            ToTable("ProductTime");
 
-            this.HasOptional(x => x.AppGroup)
+            HasOptional(x => x.AppGroup)
                 .WithMany(x => x.TimeOffers)
                 .HasForeignKey(x => x.AppGroupId);
         }

@@ -1,22 +1,25 @@
-﻿using GizmoDALV2.Entities;
+﻿using Gizmo.DAL.Entities;
+
+using GizmoDALV2;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration;
 
-namespace GizmoDALV2.Mappings
+namespace Gizmo.DAL.Mappings
 {
     public class SecurityProfileMap : EntityTypeConfiguration<SecurityProfile>
     {
         public SecurityProfileMap()
         {
             // Primary Key
-            this.HasKey(t => t.Id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(x => x.Id)
+            Property(x => x.Id)
                 .HasColumnOrder(0);
 
-            this.Property(t => t.Name)
+            Property(t => t.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45)
@@ -26,13 +29,13 @@ namespace GizmoDALV2.Mappings
                     new IndexAttribute("UQ_Name") { IsUnique = true } 
                 }));
 
-            this.Property(x => x.DisabledDrives)
+            Property(x => x.DisabledDrives)
                 .HasColumnOrder(2);
 
             // Table & Column Mappings
-            this.ToTable("SecurityProfile");
+            ToTable("SecurityProfile");
 
-            this.Property(t => t.Id)
+            Property(t => t.Id)
                 .HasColumnName("SecurityProfileId");
         }
     }
