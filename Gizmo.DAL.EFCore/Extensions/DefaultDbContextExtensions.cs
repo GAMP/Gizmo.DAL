@@ -157,8 +157,8 @@ namespace Gizmo.DAL.EFCore.Extensions
 
                 #region AddDefaultOperator
 
-                byte[] salt = DefaultDbContext.GetNewSalt();
-                byte[] password = DefaultDbContext.GetHashedPassword("admin", salt);
+                byte[] salt = dbContext.GetNewSalt();
+                byte[] password = dbContext.GetHashedPassword("admin", salt);
 
                 var admin = new UserOperator
                 {
