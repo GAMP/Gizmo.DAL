@@ -2,7 +2,7 @@
 using Gizmo.DAL.Mappings;
 using Gizmo.DAL.Migrations.MSSQL;
 
-using GizmoDALV2;
+using Gizmo.DAL;
 
 using SharedLib;
 

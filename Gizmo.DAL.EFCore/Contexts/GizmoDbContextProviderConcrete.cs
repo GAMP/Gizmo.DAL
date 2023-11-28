@@ -1,7 +1,5 @@
 ﻿using System;
 
-using GizmoDALV2;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 

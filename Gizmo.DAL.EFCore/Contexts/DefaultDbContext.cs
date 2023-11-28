@@ -13,10 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using CoreLib;
 using Microsoft.EntityFrameworkCore.Metadata;
-using GizmoDALV2;
 using Gizmo.DAL.Mappings;
-using SharedLib;
-using System.Globalization;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Gizmo.DAL.Contexts

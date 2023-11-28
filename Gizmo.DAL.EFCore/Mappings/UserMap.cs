@@ -1,7 +1,7 @@
 ﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using GizmoDALV2;
 
 namespace Gizmo.DAL.Mappings
 {

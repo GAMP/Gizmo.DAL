@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Gizmo.DAL.Scripts
+﻿namespace Gizmo.DAL.Scripts
 {
     public static class SQLScripts
     {

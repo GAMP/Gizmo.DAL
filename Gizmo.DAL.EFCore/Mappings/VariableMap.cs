@@ -1,5 +1,5 @@
-﻿using GizmoDALV2;
-using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
