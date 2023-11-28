@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace _
+namespace Gizmo.DAL.Migrations.Npgsql
 {
     /// <inheritdoc />
     public partial class Initial : Migration

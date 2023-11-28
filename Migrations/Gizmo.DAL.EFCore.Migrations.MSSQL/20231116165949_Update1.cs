@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace _
+namespace Gizmo.DAL.Migrations.MSSQL
 {
     /// <inheritdoc />
     public partial class Update1 : Migration

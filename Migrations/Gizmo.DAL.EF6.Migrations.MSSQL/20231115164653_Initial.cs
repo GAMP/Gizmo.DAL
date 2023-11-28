@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace _
+namespace Gizmo.DAL.Migrations.MSSQL
 {
     /// <inheritdoc />
     public partial class Initial : Migration

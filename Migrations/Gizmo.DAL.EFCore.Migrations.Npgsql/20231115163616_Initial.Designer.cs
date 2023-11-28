@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace _
+namespace Gizmo.DAL.Migrations.Npgsql
 {
     [DbContext(typeof(DefaultDbContext))]
     [Migration("20231115163616_Initial")]
