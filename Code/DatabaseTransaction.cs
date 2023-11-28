@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
 
-using GizmoDALV2;
-
 namespace Gizmo.DAL
 {
     /// <summary>

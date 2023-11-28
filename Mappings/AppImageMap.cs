@@ -19,7 +19,7 @@ namespace Gizmo.DAL.Mappings
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
             Property(x => x.Image)
-                .HasMaxLength(GizmoDALV2.SQLByteArraySize.MEDIUM);
+                .HasMaxLength(SQLByteArraySize.MEDIUM);
 
             // Table & Column Mappings
             ToTable("AppImage");

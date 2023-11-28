@@ -2,8 +2,6 @@
 using Gizmo.DAL.Mappings;
 using Gizmo.DAL.Migrations;
 
-using GizmoDALV2;
-
 using SharedLib;
 
 using System;

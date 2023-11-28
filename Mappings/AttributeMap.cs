@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity.ModelConfiguration;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure.Annotations;
-using GizmoDALV2;
 
 namespace Gizmo.DAL.Mappings
 {

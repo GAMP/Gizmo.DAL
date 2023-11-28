@@ -19,7 +19,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0);
 
             Property(x => x.Name)
-                .HasMaxLength(GizmoDALV2.SQLStringSize.TINY45)
+                .HasMaxLength(SQLStringSize.TINY45)
                 .HasColumnOrder(1)
                 .HasColumnAnnotation("Index",
                 new IndexAnnotation(new[] 

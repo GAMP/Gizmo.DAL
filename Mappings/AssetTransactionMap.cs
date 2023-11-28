@@ -1,7 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
 
-using GizmoDALV2;
-
 using System.Data.Entity.ModelConfiguration;
 
 namespace Gizmo.DAL.Mappings
