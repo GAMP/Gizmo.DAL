@@ -27,6 +27,24 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Gizmo.DAL.EFCore\**" />
+	  <Compile Remove="Gizmo.DAL\**" />
+	  <Compile Remove="Migrations\Gizmo.DAL.EF6.Migrations.MSSQL\**" />
+	  <Compile Remove="Migrations\Gizmo.DAL.EFCore.Migrations.MSSQL\**" />
+	  <Compile Remove="Migrations\Gizmo.DAL.EFCore.Migrations.Npgsql\**" />
+	  <EmbeddedResource Remove="Gizmo.DAL.EFCore\**" />
+	  <EmbeddedResource Remove="Gizmo.DAL\**" />
+	  <EmbeddedResource Remove="Migrations\Gizmo.DAL.EF6.Migrations.MSSQL\**" />
+	  <EmbeddedResource Remove="Migrations\Gizmo.DAL.EFCore.Migrations.MSSQL\**" />
+	  <EmbeddedResource Remove="Migrations\Gizmo.DAL.EFCore.Migrations.Npgsql\**" />
+	  <None Remove="Gizmo.DAL.EFCore\**" />
+	  <None Remove="Gizmo.DAL\**" />
+	  <None Remove="Migrations\Gizmo.DAL.EF6.Migrations.MSSQL\**" />
+	  <None Remove="Migrations\Gizmo.DAL.EFCore.Migrations.MSSQL\**" />
+	  <None Remove="Migrations\Gizmo.DAL.EFCore.Migrations.Npgsql\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="EntityFramework" Version="6.4.4" />
 	</ItemGroup>
 
