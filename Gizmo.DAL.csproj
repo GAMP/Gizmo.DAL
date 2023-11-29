@@ -4,8 +4,8 @@
 		<Configurations>Debug;Release;</Configurations>
 		<TargetFrameworks>net6.0;net461</TargetFrameworks>
 		<LangVersion>latest</LangVersion>
-		<Product>GizmoDALV2</Product>
-		<Description>GizmoDALV2</Description>
+		<Product>Gizmo.DAL</Product>
+		<Description>Gizmo.DAL</Description>
 		<Copyright>NETProjects</Copyright>
 		<Authors />
 		<Company>NETProjects</Company>
@@ -14,7 +14,7 @@
 		<EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
 		<Optimize>true</Optimize>
 		<!-- !IMPORTANT! will break compatibility with older builds if name is changed-->
-		<AssemblyName>GizmoDALV2</AssemblyName>
+		<AssemblyName>Gizmo.DAL</AssemblyName>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">

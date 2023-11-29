@@ -1,9 +1,8 @@
-﻿using Gizmo.DAL.Entities;
-using System.Data.Entity.ModelConfiguration;
+﻿using System.Data.Entity.ModelConfiguration;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class VoidMap : EntityTypeConfiguration<Void>
+    public class VoidMap : EntityTypeConfiguration<Entities.Void>
     {
         public VoidMap()
         {
@@ -16,7 +15,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0);
 
             // Table & Column Mappings
-            ToTable(nameof(Void));
+            ToTable(nameof(Entities.Void));
         }
     }   
 }
