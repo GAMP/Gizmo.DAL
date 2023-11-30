@@ -28,67 +28,67 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Initialize database.
         /// </summary>
-        /// <param name="cToken">
+        /// <param name="cancellationToken">
         /// Cancellation token.
         /// </param>
         /// <returns>
         /// A <see cref="Task"/> representing the asynchronous operation.
         /// </returns>
-        public async Task InitializeAsync(CancellationToken cToken = default)
+        public async Task InitializeAsync(CancellationToken cancellationToken = default)
         {
-            if (await _dbContext.Database.CanConnectAsync(cToken))
+            if (await _dbContext.Database.CanConnectAsync(cancellationToken))
             {
-                var isMigrated = await TryMigrateToEF6InitialAsync(cToken);
+                var isMigrated = await TryMigrateToEF6InitialAsync(cancellationToken);
 
-                var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cToken);
-                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
+                var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cancellationToken);
+                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
 
                 pendingMigrations = isMigrated 
                     ? pendingMigrations.Skip(1) 
                     : pendingMigrations;
 
                 if (pendingMigrations.Any())
-                    await _dbContext.Database.MigrateAsync(cToken);
+                    await _dbContext.Database.MigrateAsync(cancellationToken);
 
                 if (!appliedMigrations.Any())
-                    _dbContext.AddSeedData();
+                    await _dbContext.AddSeedDataAsync(cancellationToken);
             }
             else
             {
-                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cToken);
+                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
 
                 if (pendingMigrations.Any())
-                    await _dbContext.Database.MigrateAsync(cToken);
+                    await _dbContext.Database.MigrateAsync(cancellationToken);
                 else
                 {
                     //working only with migrations
                     return;
                 }
 
-                _dbContext.AddSeedData();
+               await _dbContext.AddSeedDataAsync(cancellationToken);
             }
         }
 
-        private async Task<bool> TryMigrateToEF6InitialAsync(CancellationToken cToken = default)
+        private async Task<bool> TryMigrateToEF6InitialAsync(CancellationToken cancellationToken = default)
         {
             if (_dbContext.Database.IsSqlServer())
             {
-                if (await _dbContext.Database.TableExistsAsync("__MigrationHistory", cToken))
+                if (await _dbContext.Database.TableExistsAsync("__MigrationHistory", cancellationToken))
                 {
-                    if (!await _dbContext.Database.TableExistsAsync("__EFMigrationsHistory", cToken))
+                    if (!await _dbContext.Database.TableExistsAsync("__EFMigrationsHistory", cancellationToken))
                     {
-                        if (!await _dbContext.Database.MigrationExistAsync("202309121624325_Update17", cToken))
+                        if (!await _dbContext.Database.MigrationExistAsync("202309121624325_Update17", cancellationToken))
                         {
                             throw new NotSupportedException("Current database version cannot be upgraded.");
                         }
 
                         using var migrationDbContext = _dbContext.WithEF6Migrations();
 
-                        var pendingMigrations = await migrationDbContext.Database.GetPendingMigrationsAsync(cToken);
+                        var pendingMigrations = await migrationDbContext.Database.GetPendingMigrationsAsync(cancellationToken);
 
                         if (pendingMigrations.Count() == 1)
                         {
-                            await migrationDbContext.Database.MigrateAsync(cToken);
+                            await migrationDbContext.Database.MigrateAsync(cancellationToken);
 
                             return true;
                         }

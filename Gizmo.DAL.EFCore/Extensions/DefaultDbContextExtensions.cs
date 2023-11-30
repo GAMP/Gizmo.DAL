@@ -95,7 +95,10 @@ namespace Gizmo.DAL.EFCore.Extensions
         /// <param name="dbContext">
         /// Database context.
         /// </param>
-        public static void AddSeedData(this DefaultDbContext dbContext)
+        /// <param name="cancellationToken">
+        /// Cancellation token.
+        /// </param>
+        public static async Task AddSeedDataAsync(this DefaultDbContext dbContext, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -461,7 +464,7 @@ namespace Gizmo.DAL.EFCore.Extensions
 
                 #endregion
 
-                dbContext.SaveChanges();
+                await dbContext.SaveChangesAsync(cancellationToken);
 
                 dbContext.Database.CommitTransaction();
             }
