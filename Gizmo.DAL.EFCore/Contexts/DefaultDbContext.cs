@@ -1528,7 +1528,7 @@ namespace Gizmo.DAL.Contexts
             TEntity entity = default;
             try
             {
-                entity = await Set<TEntity>().FindAsync(ct, entityKey);
+                entity = await Set<TEntity>().FindAsync(new object[] {entityKey},ct);
             }
             catch (InvalidOperationException)
             {
