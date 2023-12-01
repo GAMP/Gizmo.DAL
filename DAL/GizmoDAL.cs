@@ -1177,7 +1177,7 @@ namespace Gizmo.DAL
                             FirstName = user.FirstName,
                             LastName = user.LastName,
                             Email = user.Email,
-                            Sex = user.Sex,
+                            Sex = (SharedLib.Sex)user.Sex,
                             Phone = user.Phone,
                             MobilePhone = user.MobilePhone,
                             BirthDate = user.BirthDate,
@@ -1228,7 +1228,7 @@ namespace Gizmo.DAL
                                 User = userMember,
                                 IsDelivered = true,
                                 DeliveredTime = DateTime.Now,
-                                Status = OrderStatus.Completed,
+                                Status = SharedLib.OrderStatus.Completed,
                             };
 
                             //create time order line
@@ -1250,7 +1250,7 @@ namespace Gizmo.DAL
                             {
                                 ProductOrder = order,
                                 User = order.User,
-                                Status = InvoiceStatus.Paid,
+                                Status = SharedLib.InvoiceStatus.Paid,
                             };
 
                             //create invoice line
@@ -1282,7 +1282,7 @@ namespace Gizmo.DAL
                             {
                                 User = userMember,
                                 Amount = deposits,
-                                Type = DepositTransactionType.Credit,
+                                Type = SharedLib.DepositTransactionType.Credit,
                                 Balance = deposits,
                             };
 
