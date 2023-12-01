@@ -28,7 +28,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("BillProfileId");
 
             // Indexes
-            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Name).IsUnique();
 
             builder.ToTable("BillProfile");
         }

@@ -27,7 +27,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(4);
 
             // Indexes
-            builder.HasIndex(x => new { x.ReservedHostId, x.ReservedSlot }).HasDatabaseName("UQ_UserGuestHostSlot").IsUnique();
+            builder.HasIndex(x => new { x.ReservedHostId, x.ReservedSlot }).IsUnique();
             
             builder.HasIndex(t => t.Id);
 

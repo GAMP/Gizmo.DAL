@@ -31,7 +31,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.HasIndex(t => new { t.Name, t.GroupName }).HasDatabaseName("UQ_NameGroup").IsUnique().HasFilter(null);
+            builder.HasIndex(t => new { t.Name, t.GroupName }).IsUnique().HasFilter(null);
 
             builder.Property(t => t.Value)
                 .HasColumnOrder(3);

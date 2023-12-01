@@ -4,10 +4,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.Npgsql
+namespace Gizmo.DAL.EFCore.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -3953,6 +3953,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "DeveloperId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_App_Guid",
+                table: "App",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_App_ModifiedById",
                 table: "App",
                 column: "ModifiedById");
@@ -3963,15 +3969,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "PublisherId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid_App",
-                table: "App",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AppCategory_CreatedById",
                 table: "AppCategory",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppCategory_Guid",
+                table: "AppCategory",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppCategory_ModifiedById",
@@ -3984,15 +3990,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid_AppCategory",
-                table: "AppCategory",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AppEnterprise_CreatedById",
                 table: "AppEnterprise",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppEnterprise_Guid",
+                table: "AppEnterprise",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppEnterprise_ModifiedById",
@@ -4000,13 +4006,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid_AppEnterprise",
-                table: "AppEnterprise",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name_AppEnterprise",
+                name: "IX_AppEnterprise_Name",
                 table: "AppEnterprise",
                 column: "Name",
                 unique: true);
@@ -4042,15 +4042,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeCdImage_ModifiedById",
-                table: "AppExeCdImage",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid_AppExeCdImage",
+                name: "IX_AppExeCdImage_Guid",
                 table: "AppExeCdImage",
                 column: "Guid",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppExeCdImage_ModifiedById",
+                table: "AppExeCdImage",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppExeDeployment_AppExeId",
@@ -4169,18 +4169,18 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroup_ModifiedById",
-                table: "AppGroup",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid_AppGroup",
+                name: "IX_AppGroup_Guid",
                 table: "AppGroup",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_AppGroup",
+                name: "IX_AppGroup_ModifiedById",
+                table: "AppGroup",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppGroup_Name",
                 table: "AppGroup",
                 column: "Name",
                 unique: true);
@@ -4221,15 +4221,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppLink_ModifiedById",
-                table: "AppLink",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid_AppLink",
+                name: "IX_AppLink_Guid",
                 table: "AppLink",
                 column: "Guid",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppLink_ModifiedById",
+                table: "AppLink",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppRating_AppId",
@@ -4267,6 +4267,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "AssetTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Asset_Barcode",
+                table: "Asset",
+                column: "Barcode",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Asset_CreatedById",
                 table: "Asset",
                 column: "CreatedById");
@@ -4277,13 +4283,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Barcode_Asset",
-                table: "Asset",
-                column: "Barcode",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_SmartCardUID_Asset",
+                name: "IX_Asset_SmartCardUID",
                 table: "Asset",
                 column: "SmartCardUID",
                 unique: true);
@@ -4329,7 +4329,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_AssetType",
+                name: "IX_AssetType_Name",
                 table: "AssetType",
                 column: "Name",
                 unique: true);
@@ -4380,7 +4380,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_Attribute",
+                name: "IX_Attribute_Name",
                 table: "Attribute",
                 column: "Name",
                 unique: true);
@@ -4396,7 +4396,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_BillProfile",
+                name: "IX_BillProfile_Name",
                 table: "BillProfile",
                 column: "Name",
                 unique: true);
@@ -4407,7 +4407,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "BillProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_BillRatePeriodDay",
+                name: "IX_BillRatePeriodDay_BillRateId_Day",
                 table: "BillRatePeriodDay",
                 columns: new[] { "BillRateId", "Day" },
                 unique: true);
@@ -4418,7 +4418,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "PeriodDayId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_BillRateMinute",
+                name: "IX_BillRateStep_BillRateId_Minute",
                 table: "BillRateStep",
                 columns: new[] { "BillRateId", "Minute" },
                 unique: true);
@@ -4444,6 +4444,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BundleProductUserPrice_BundleProductId_UserGroupId",
+                table: "BundleProductUserPrice",
+                columns: new[] { "BundleProductId", "UserGroupId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BundleProductUserPrice_CreatedById",
                 table: "BundleProductUserPrice",
                 column: "CreatedById");
@@ -4457,12 +4463,6 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_BundleProductUserPrice_UserGroupId",
                 table: "BundleProductUserPrice",
                 column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_BundleProductUserGroup",
-                table: "BundleProductUserPrice",
-                columns: new[] { "BundleProductId", "UserGroupId" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientTask_CreatedById",
@@ -4485,18 +4485,18 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Deployment_ModifiedById",
-                table: "Deployment",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid_Deployment",
+                name: "IX_Deployment_Guid",
                 table: "Deployment",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_Deployment",
+                name: "IX_Deployment_ModifiedById",
+                table: "Deployment",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Deployment_Name",
                 table: "Deployment",
                 column: "Name",
                 unique: true);
@@ -4597,7 +4597,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_Device_DeviceHdmi",
+                name: "IX_Device_Name",
                 table: "Device",
                 column: "Name",
                 unique: true);
@@ -4609,7 +4609,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UniqueId",
+                name: "IX_DeviceHdmi_UniqueId",
                 table: "DeviceHdmi",
                 column: "UniqueId",
                 unique: true);
@@ -4651,6 +4651,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FiscalReceipt_FiscalReceiptId",
+                table: "FiscalReceipt",
+                column: "FiscalReceiptId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FiscalReceipt_RegisterId",
                 table: "FiscalReceipt",
                 column: "RegisterId");
@@ -4664,6 +4669,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_Host_CreatedById",
                 table: "Host",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Host_Guid",
+                table: "Host",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Host_HostGroupId",
@@ -4681,18 +4692,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid_Host_HostComputer_HostEndpoint",
-                table: "Host",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HostComputer_HostId",
                 table: "HostComputer",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_MACAddress_HostComputer",
+                name: "IX_HostComputer_MACAddress",
                 table: "HostComputer",
                 column: "MACAddress",
                 unique: true);
@@ -4724,15 +4729,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroup_SecurityProfileId",
-                table: "HostGroup",
-                column: "SecurityProfileId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name_HostGroup",
+                name: "IX_HostGroup_Name",
                 table: "HostGroup",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HostGroup_SecurityProfileId",
+                table: "HostGroup",
+                column: "SecurityProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HostGroupUserBillProfile_BillProfileId",
@@ -4740,15 +4745,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "BillProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupUserBillProfile_UserGroupId",
-                table: "HostGroupUserBillProfile",
-                column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_HostGroupUserBillProfile",
+                name: "IX_HostGroupUserBillProfile_HostGroupId_UserGroupId",
                 table: "HostGroupUserBillProfile",
                 columns: new[] { "HostGroupId", "UserGroupId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HostGroupUserBillProfile_UserGroupId",
+                table: "HostGroupUserBillProfile",
+                column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HostGroupWaitingLine_CreatedById",
@@ -4797,7 +4802,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_HostLayoutGroup",
+                name: "IX_HostLayoutGroup_Name",
                 table: "HostLayoutGroup",
                 column: "Name",
                 unique: true);
@@ -4828,15 +4833,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostLayoutGroupLayout_ModifiedById",
-                table: "HostLayoutGroupLayout",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_HostLayoutGroupHost",
+                name: "IX_HostLayoutGroupLayout_HostLayoutGroupId_HostId",
                 table: "HostLayoutGroupLayout",
                 columns: new[] { "HostLayoutGroupId", "HostId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HostLayoutGroupLayout_ModifiedById",
+                table: "HostLayoutGroupLayout",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Icon_CreatedById",
@@ -4884,6 +4889,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InvoiceFiscalReceipt_FiscalReceiptId",
+                table: "InvoiceFiscalReceipt",
+                column: "FiscalReceiptId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceFiscalReceipt_InvoiceId",
                 table: "InvoiceFiscalReceipt",
                 column: "InvoiceId");
@@ -4897,12 +4908,6 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_InvoiceFiscalReceipt_ShiftId",
                 table: "InvoiceFiscalReceipt",
                 column: "ShiftId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_FiscalReceipt",
-                table: "InvoiceFiscalReceipt",
-                column: "FiscalReceiptId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLine_CreatedById",
@@ -4920,6 +4925,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InvoiceLine_PointsTransactionId",
+                table: "InvoiceLine",
+                column: "PointsTransactionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLine_RegisterId",
                 table: "InvoiceLine",
                 column: "RegisterId");
@@ -4935,12 +4946,6 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_PointsTransaction_InvoiceLine_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineSession_InvoiceLineTime_InvoiceLineTimeFixed",
-                table: "InvoiceLine",
-                column: "PointsTransactionId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLineExtended_BundleLineId",
                 table: "InvoiceLineExtended",
                 column: "BundleLineId");
@@ -4952,13 +4957,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_StockReturnTransaction_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineTime",
+                name: "IX_InvoiceLineExtended_StockReturnTransactionId",
                 table: "InvoiceLineExtended",
                 column: "StockReturnTransactionId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_StockTransaction_InvoiceLineExtended_InvoiceLineProduct_InvoiceLineTime",
+                name: "IX_InvoiceLineExtended_StockTransactionId",
                 table: "InvoiceLineExtended",
                 column: "StockTransactionId",
                 unique: true);
@@ -4970,15 +4975,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineProduct_ProductId",
-                table: "InvoiceLineProduct",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_OrderLine_InvoiceLineProduct",
+                name: "IX_InvoiceLineProduct_OrderLineId",
                 table: "InvoiceLineProduct",
                 column: "OrderLineId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceLineProduct_ProductId",
+                table: "InvoiceLineProduct",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLineSession_InvoiceLineId",
@@ -4992,7 +4997,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "OrderLineId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UsageSession",
+                name: "IX_InvoiceLineSession_UsageSessionId",
                 table: "InvoiceLineSession",
                 column: "UsageSessionId",
                 unique: true);
@@ -5004,15 +5009,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineTime_ProductTimeId",
-                table: "InvoiceLineTime",
-                column: "ProductTimeId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_OrderLine_InvoiceLineTime",
+                name: "IX_InvoiceLineTime_OrderLineId",
                 table: "InvoiceLineTime",
                 column: "OrderLineId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceLineTime_ProductTimeId",
+                table: "InvoiceLineTime",
+                column: "ProductTimeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLineTimeFixed_InvoiceLineId",
@@ -5021,7 +5026,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_OrderLine_InvoiceLineTimeFixed",
+                name: "IX_InvoiceLineTimeFixed_OrderLineId",
                 table: "InvoiceLineTimeFixed",
                 column: "OrderLineId",
                 unique: true);
@@ -5067,18 +5072,18 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_License_ModifiedById",
-                table: "License",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid_License",
+                name: "IX_License_Guid",
                 table: "License",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_License",
+                name: "IX_License_ModifiedById",
+                table: "License",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_License_Name",
                 table: "License",
                 column: "Name",
                 unique: true);
@@ -5094,6 +5099,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LicenseKey_Guid",
+                table: "LicenseKey",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LicenseKey_LicenseId",
                 table: "LicenseKey",
                 column: "LicenseId");
@@ -5102,12 +5113,6 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_LicenseKey_ModifiedById",
                 table: "LicenseKey",
                 column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid_LicenseKey",
-                table: "LicenseKey",
-                column: "Guid",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Category",
@@ -5146,7 +5151,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_MountPoint",
+                name: "IX_Mapping_MountPoint",
                 table: "Mapping",
                 column: "MountPoint",
                 unique: true);
@@ -5162,7 +5167,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_MonetaryUnit",
+                name: "IX_MonetaryUnit_Name",
                 table: "MonetaryUnit",
                 column: "Name",
                 unique: true);
@@ -5193,6 +5198,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Payment_DepositTransactionId",
+                table: "Payment",
+                column: "DepositTransactionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payment_ModifiedById",
                 table: "Payment",
                 column: "ModifiedById");
@@ -5201,6 +5212,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_Payment_PaymentMethodId",
                 table: "Payment",
                 column: "PaymentMethodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payment_PointTransactionId",
+                table: "Payment",
+                column: "PointTransactionId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payment_RegisterId",
@@ -5218,21 +5235,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositTransaction",
-                table: "Payment",
-                column: "DepositTransactionId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_PointsTransaction_Payment",
-                table: "Payment",
-                column: "PointTransactionId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PaymentIntent_CreatedById",
                 table: "PaymentIntent",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentIntent_Guid",
+                table: "PaymentIntent",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentIntent_ModifiedById",
@@ -5250,9 +5261,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid_PaymentIntent_PaymentIntentDeposit_PaymentIntentOrder",
-                table: "PaymentIntent",
-                column: "Guid",
+                name: "IX_PaymentIntentDeposit_DepositPaymentId",
+                table: "PaymentIntentDeposit",
+                column: "DepositPaymentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -5262,9 +5273,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositPayment_PaymentIntentDeposit",
-                table: "PaymentIntentDeposit",
-                column: "DepositPaymentId",
+                name: "IX_PaymentIntentOrder_InvoicePaymentId",
+                table: "PaymentIntentOrder",
+                column: "InvoicePaymentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -5279,12 +5290,6 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ProductOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_InvoicePayment_PaymentIntentOrder",
-                table: "PaymentIntentOrder",
-                column: "InvoicePaymentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethod_CreatedById",
                 table: "PaymentMethod",
                 column: "CreatedById");
@@ -5295,7 +5300,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_PaymentMethod",
+                name: "IX_PaymentMethod_Name",
                 table: "PaymentMethod",
                 column: "Name",
                 unique: true);
@@ -5306,18 +5311,18 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PersonalFile_ModifiedById",
-                table: "PersonalFile",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid_PersonalFile",
+                name: "IX_PersonalFile_Guid",
                 table: "PersonalFile",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_PersonalFile",
+                name: "IX_PersonalFile_ModifiedById",
+                table: "PersonalFile",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonalFile_Name",
                 table: "PersonalFile",
                 column: "Name",
                 unique: true);
@@ -5328,15 +5333,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PluginLibrary_ModifiedById",
-                table: "PluginLibrary",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_FileName",
+                name: "IX_PluginLibrary_FileName",
                 table: "PluginLibrary",
                 column: "FileName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PluginLibrary_ModifiedById",
+                table: "PluginLibrary",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PointTransaction_CreatedById",
@@ -5390,6 +5395,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductBase_Barcode",
+                table: "ProductBase",
+                column: "Barcode",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductBase_CreatedById",
                 table: "ProductBase",
                 column: "CreatedById");
@@ -5400,6 +5411,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductBase_Name",
+                table: "ProductBase",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductBase_ProductGroupId",
                 table: "ProductBase",
                 column: "ProductGroupId");
@@ -5408,18 +5425,6 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_ProductBase_StockProductId",
                 table: "ProductBase",
                 column: "StockProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Barcode_Product_ProductBase_ProductBaseExtended_ProductBundle_ProductTime",
-                table: "ProductBase",
-                column: "Barcode",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name_Product_ProductBase_ProductBaseExtended_ProductBundle_ProductTime",
-                table: "ProductBase",
-                column: "Name",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductBaseExtended_ProductId",
@@ -5444,15 +5449,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductBundleUserPrice_UserGroupId",
-                table: "ProductBundleUserPrice",
-                column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_ProductBundlePriceUserGroup",
+                name: "IX_ProductBundleUserPrice_ProductBundleId_UserGroupId",
                 table: "ProductBundleUserPrice",
                 columns: new[] { "ProductBundleId", "UserGroupId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductBundleUserPrice_UserGroupId",
+                table: "ProductBundleUserPrice",
+                column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductGroup_CreatedById",
@@ -5465,15 +5470,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductGroup_ParentId",
-                table: "ProductGroup",
-                column: "ParentId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name_ProductGroup",
+                name: "IX_ProductGroup_Name",
                 table: "ProductGroup",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductGroup_ParentId",
+                table: "ProductGroup",
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductHostHidden_CreatedById",
@@ -5491,7 +5496,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ProductHostGroup",
+                name: "IX_ProductHostHidden_ProductId_HostGroupId",
                 table: "ProductHostHidden",
                 columns: new[] { "ProductId", "HostGroupId" },
                 unique: true);
@@ -5638,7 +5643,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ProductPeriodDay",
+                name: "IX_ProductPeriodDay_ProductPeriodId_Day",
                 table: "ProductPeriodDay",
                 columns: new[] { "ProductPeriodId", "Day" },
                 unique: true);
@@ -5696,7 +5701,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ProductTimeHostGroup",
+                name: "IX_ProductTimeHostDisallowed_ProductTimeId_HostGroupId",
                 table: "ProductTimeHostDisallowed",
                 columns: new[] { "ProductTimeId", "HostGroupId" },
                 unique: true);
@@ -5734,15 +5739,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductUserDisallowed_UserGroupId",
-                table: "ProductUserDisallowed",
-                column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_ProductUserGroup_ProductUserDisallowed",
+                name: "IX_ProductUserDisallowed_ProductId_UserGroupId",
                 table: "ProductUserDisallowed",
                 columns: new[] { "ProductId", "UserGroupId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductUserDisallowed_UserGroupId",
+                table: "ProductUserDisallowed",
+                column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductUserPrice_CreatedById",
@@ -5755,15 +5760,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductUserPrice_UserGroupId",
-                table: "ProductUserPrice",
-                column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_ProductUserGroup_ProductUserPrice",
+                name: "IX_ProductUserPrice_ProductId_UserGroupId",
                 table: "ProductUserPrice",
                 columns: new[] { "ProductId", "UserGroupId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductUserPrice_UserGroupId",
+                table: "ProductUserPrice",
+                column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Refund_CreatedById",
@@ -5801,6 +5806,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefundDepositPayment_DepositPaymentId",
+                table: "RefundDepositPayment",
+                column: "DepositPaymentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefundDepositPayment_FiscalReceiptId",
                 table: "RefundDepositPayment",
                 column: "FiscalReceiptId");
@@ -5812,15 +5823,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositPayment_RefundDepositPayment",
-                table: "RefundDepositPayment",
-                column: "DepositPaymentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RefundInvoicePayment_InvoiceId",
                 table: "RefundInvoicePayment",
                 column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefundInvoicePayment_InvoicePaymentId",
+                table: "RefundInvoicePayment",
+                column: "InvoicePaymentId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefundInvoicePayment_RefundId",
@@ -5829,26 +5840,20 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_InvoicePayment_RefundInvoicePayment",
-                table: "RefundInvoicePayment",
-                column: "InvoicePaymentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Register_CreatedById",
                 table: "Register",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Register_ModifiedById",
-                table: "Register",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_MACAddress_Register",
+                name: "IX_Register_MacAddress",
                 table: "Register",
                 column: "MacAddress",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Register_ModifiedById",
+                table: "Register",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RegisterTransaction_CreatedById",
@@ -5912,7 +5917,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "PreferedUserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Reservation_Host",
+                name: "IX_ReservationHost_ReservationId_HostId",
                 table: "ReservationHost",
                 columns: new[] { "ReservationId", "HostId" },
                 unique: true);
@@ -5928,15 +5933,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReservationUser_UserId",
-                table: "ReservationUser",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Reservation_User",
+                name: "IX_ReservationUser_ReservationId_UserId",
                 table: "ReservationUser",
                 columns: new[] { "ReservationId", "UserId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReservationUser_UserId",
+                table: "ReservationUser",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SecurityProfile_CreatedById",
@@ -5949,7 +5954,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_SecurityProfile",
+                name: "IX_SecurityProfile_Name",
                 table: "SecurityProfile",
                 column: "Name",
                 unique: true);
@@ -5965,7 +5970,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_SecurityProfilePolicyType",
+                name: "IX_SecurityProfilePolicy_SecurityProfileId_Type",
                 table: "SecurityProfilePolicy",
                 columns: new[] { "SecurityProfileId", "Type" },
                 unique: true);
@@ -5996,7 +6001,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_NameGroup",
+                name: "IX_Setting_Name_GroupName",
                 table: "Setting",
                 columns: new[] { "Name", "GroupName" },
                 unique: true);
@@ -6047,7 +6052,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ShiftCountPaymentMethod",
+                name: "IX_ShiftCount_ShiftId_PaymentMethodId",
                 table: "ShiftCount",
                 columns: new[] { "ShiftId", "PaymentMethodId" },
                 unique: true);
@@ -6078,26 +6083,26 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskBase_ModifiedById",
-                table: "TaskBase",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TaskBase_TaskId",
-                table: "TaskBase",
-                column: "TaskId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid_TaskBase_TaskJunction_TaskNotification_TaskProcess_TaskScript",
+                name: "IX_TaskBase_Guid",
                 table: "TaskBase",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_TaskBase_TaskJunction_TaskNotification_TaskProcess_TaskScript",
+                name: "IX_TaskBase_ModifiedById",
+                table: "TaskBase",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskBase_Name",
                 table: "TaskBase",
                 column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskBase_TaskId",
+                table: "TaskBase",
+                column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -6135,7 +6140,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_Tax",
+                name: "IX_Tax_Name",
                 table: "Tax",
                 column: "Name",
                 unique: true);
@@ -6156,7 +6161,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Value",
+                name: "IX_Token_Value",
                 table: "Token",
                 column: "Value",
                 unique: true);
@@ -6236,24 +6241,24 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_ModifiedById",
-                table: "User",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid_User_UserGuest_UserMember_UserOperator",
+                name: "IX_User_Guid",
                 table: "User",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Identification_User_UserGuest_UserMember_UserOperator",
+                name: "IX_User_Identification",
                 table: "User",
                 column: "Identification",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_SmartCardUID_User_UserGuest_UserMember_UserOperator",
+                name: "IX_User_ModifiedById",
+                table: "User",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_SmartCardUID",
                 table: "User",
                 column: "SmartCardUID",
                 unique: true);
@@ -6279,15 +6284,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAgreementState_UserId",
-                table: "UserAgreementState",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_UserAgreementState",
+                name: "IX_UserAgreementState_UserAgreementId_UserId",
                 table: "UserAgreementState",
                 columns: new[] { "UserAgreementId", "UserId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAgreementState_UserId",
+                table: "UserAgreementState",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserAttribute_AttributeId",
@@ -6305,7 +6310,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UserAttribute",
+                name: "IX_UserAttribute_UserId_AttributeId",
                 table: "UserAttribute",
                 columns: new[] { "UserId", "AttributeId" },
                 unique: true);
@@ -6362,15 +6367,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroup_SecurityProfileId",
-                table: "UserGroup",
-                column: "SecurityProfileId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name_UserGroup",
+                name: "IX_UserGroup_Name",
                 table: "UserGroup",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserGroup_SecurityProfileId",
+                table: "UserGroup",
+                column: "SecurityProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserGroupHostDisallowed_CreatedById",
@@ -6388,9 +6393,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UserGroupHostGroup",
+                name: "IX_UserGroupHostDisallowed_UserGroupId_HostGroupId",
                 table: "UserGroupHostDisallowed",
                 columns: new[] { "UserGroupId", "HostGroupId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserGuest_ReservedHostId_ReservedSlot",
+                table: "UserGuest",
+                columns: new[] { "ReservedHostId", "ReservedSlot" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -6400,9 +6411,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UserGuestHostSlot",
-                table: "UserGuest",
-                columns: new[] { "ReservedHostId", "ReservedSlot" },
+                name: "IX_UserMember_Email",
+                table: "UserMember",
+                column: "Email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -6417,13 +6428,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Email_UserGuest_UserMember",
-                table: "UserMember",
-                column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Username_UserGuest_UserMember",
+                name: "IX_UserMember_Username",
                 table: "UserMember",
                 column: "Username",
                 unique: true);
@@ -6440,19 +6445,19 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserOperator_Email",
+                table: "UserOperator",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserOperator_UserId",
                 table: "UserOperator",
                 column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Email_UserOperator",
-                table: "UserOperator",
-                column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Username_UserOperator",
+                name: "IX_UserOperator_Username",
                 table: "UserOperator",
                 column: "Username",
                 unique: true);
@@ -6468,7 +6473,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UserPermission",
+                name: "IX_UserPermission_UserId_Type_Value",
                 table: "UserPermission",
                 columns: new[] { "UserId", "Type", "Value" },
                 unique: true);
@@ -6534,7 +6539,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name_Variable",
+                name: "IX_Variable_Name",
                 table: "Variable",
                 column: "Name",
                 unique: true);
@@ -6587,27 +6592,27 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_VoidDepositPayment_DepositPaymentId",
+                table: "VoidDepositPayment",
+                column: "DepositPaymentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_VoidDepositPayment_VoidId",
                 table: "VoidDepositPayment",
                 column: "VoidId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositPayment_VoidDepositPayment",
-                table: "VoidDepositPayment",
-                column: "DepositPaymentId",
+                name: "IX_VoidInvoice_InvoiceId",
+                table: "VoidInvoice",
+                column: "InvoiceId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_VoidInvoice_VoidId",
                 table: "VoidInvoice",
                 column: "VoidId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Invoice",
-                table: "VoidInvoice",
-                column: "InvoiceId",
                 unique: true);
 
             migrationBuilder.AddForeignKey(

@@ -28,7 +28,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             // Indexes
-            builder.HasIndex(x => new { x.ProductId, x.HostGroupId }).HasDatabaseName("UQ_ProductHostGroup").IsUnique();
+            builder.HasIndex(x => new { x.ProductId, x.HostGroupId }).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(ProductHostHidden));

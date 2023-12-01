@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.MSSQL
+namespace Gizmo.DAL.EFCore.Migrations
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20231115164653_Initial")]
-    partial class Initial
+    [Migration("20231118095648_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,8 +104,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("DeveloperId");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -155,8 +154,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -202,14 +200,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("AppEnterprise", (string)null);
                 });
@@ -368,8 +364,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -650,14 +645,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("AppGroup", (string)null);
                 });
@@ -772,8 +765,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -914,7 +906,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Barcode")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Barcode")
                         .HasFilter("[Barcode] IS NOT NULL");
 
                     b.HasIndex("CreatedById");
@@ -923,7 +914,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("SmartCardUID")
                         .IsUnique()
-                        .HasDatabaseName("UQ_SmartCardUID")
                         .HasFilter("[SmartCardUID] IS NOT NULL");
 
                     b.ToTable("Asset", (string)null);
@@ -1048,8 +1038,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("AssetType", (string)null);
                 });
@@ -1197,8 +1186,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("Attribute", (string)null);
                 });
@@ -1238,8 +1226,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("BillProfile", (string)null);
                 });
@@ -1313,8 +1300,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasKey("Id");
 
                     b.HasIndex("BillRateId", "Day")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_BillRatePeriodDay");
+                        .IsUnique();
 
                     b.ToTable("BillRatePeriodDay", (string)null);
                 });
@@ -1376,8 +1362,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasKey("Id");
 
                     b.HasIndex("BillRateId", "Minute")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_BillRateMinute");
+                        .IsUnique();
 
                     b.ToTable("BillRateStep", (string)null);
                 });
@@ -1482,8 +1467,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("BundleProductId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_BundleProductUserGroup");
+                        .IsUnique();
 
                     b.ToTable("BundleProductUserPrice", (string)null);
                 });
@@ -1614,14 +1598,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("Deployment", (string)null);
                 });
@@ -1850,7 +1832,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Name")
                         .HasFilter("[Name] IS NOT NULL");
 
                     b.ToTable("Device", (string)null);
@@ -1993,6 +1974,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("Id");
+
                     b.HasIndex("RegisterId");
 
                     b.HasIndex("ShiftId");
@@ -2057,8 +2040,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("HostGroupId");
 
@@ -2131,8 +2113,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.HasIndex("SecurityProfileId");
 
@@ -2170,8 +2151,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("HostGroupId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_HostGroupUserBillProfile");
+                        .IsUnique();
 
                     b.ToTable("HostGroupUserBillProfile", (string)null);
                 });
@@ -2320,8 +2300,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("HostLayoutGroup", (string)null);
                 });
@@ -2419,8 +2398,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("HostLayoutGroupId", "HostId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_HostLayoutGroupHost");
+                        .IsUnique();
 
                     b.ToTable("HostLayoutGroupLayout", (string)null);
                 });
@@ -2594,8 +2572,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("FiscalReceiptId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_FiscalReceipt");
+                        .IsUnique();
 
                     b.HasIndex("InvoiceId");
 
@@ -2739,7 +2716,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("PointsTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_PointsTransaction")
                         .HasFilter("[PointsTransactionId] IS NOT NULL");
 
                     b.HasIndex("RegisterId");
@@ -2877,14 +2853,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("License", (string)null);
                 });
@@ -2945,8 +2919,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("LicenseId");
 
@@ -3103,8 +3076,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("MountPoint")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_MountPoint");
+                        .IsUnique();
 
                     b.ToTable("Mapping", (string)null);
                 });
@@ -3156,8 +3128,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("MonetaryUnit", (string)null);
                 });
@@ -3354,7 +3325,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("DepositTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositTransaction")
                         .HasFilter("[DepositTransactionId] IS NOT NULL");
 
                     b.HasIndex("ModifiedById");
@@ -3363,7 +3333,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("PointTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_PointsTransaction")
                         .HasFilter("[PointTransactionId] IS NOT NULL");
 
                     b.HasIndex("RegisterId");
@@ -3436,8 +3405,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -3524,8 +3492,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("PaymentMethod", (string)null);
                 });
@@ -3631,14 +3598,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("PersonalFile", (string)null);
                 });
@@ -3680,8 +3645,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("FileName")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_FileName");
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -3923,7 +3887,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Barcode")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Barcode")
                         .HasFilter("[Barcode] IS NOT NULL");
 
                     b.HasIndex("CreatedById");
@@ -3931,8 +3894,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.HasIndex("ProductGroupId");
 
@@ -3995,8 +3957,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("ProductBundleId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductBundlePriceUserGroup");
+                        .IsUnique();
 
                     b.ToTable("ProductBundleUserPrice", (string)null);
                 });
@@ -4046,8 +4007,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 
@@ -4097,8 +4057,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("ProductId", "HostGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductHostGroup");
+                        .IsUnique();
 
                     b.ToTable("ProductHostHidden", (string)null);
                 });
@@ -4437,8 +4396,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasKey("Id");
 
                     b.HasIndex("ProductPeriodId", "Day")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductPeriodDay");
+                        .IsUnique();
 
                     b.ToTable("ProductPeriodDay", (string)null);
                 });
@@ -4556,8 +4514,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("ProductTimeId", "HostGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductTimeHostGroup");
+                        .IsUnique();
 
                     b.ToTable("ProductTimeHostDisallowed", (string)null);
                 });
@@ -4672,8 +4629,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("ProductId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductUserGroup");
+                        .IsUnique();
 
                     b.ToTable("ProductUserDisallowed", (string)null);
                 });
@@ -4733,8 +4689,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("ProductId", "UserGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ProductUserGroup");
+                        .IsUnique();
 
                     b.ToTable("ProductUserPrice", (string)null);
                 });
@@ -4863,7 +4818,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("MacAddress")
                         .IsUnique()
-                        .HasDatabaseName("UQ_MACAddress")
                         .HasFilter("[MacAddress] IS NOT NULL");
 
                     b.HasIndex("ModifiedById");
@@ -5031,8 +4985,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("PreferedUserId");
 
                     b.HasIndex("ReservationId", "HostId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Reservation_Host");
+                        .IsUnique();
 
                     b.ToTable("ReservationHost", (string)null);
                 });
@@ -5073,8 +5026,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("UserId");
 
                     b.HasIndex("ReservationId", "UserId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Reservation_User");
+                        .IsUnique();
 
                     b.ToTable("ReservationUser", (string)null);
                 });
@@ -5118,8 +5070,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("SecurityProfile", (string)null);
                 });
@@ -5161,8 +5112,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("SecurityProfileId", "Type")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_SecurityProfilePolicyType");
+                        .IsUnique();
 
                     b.ToTable("SecurityProfilePolicy", (string)null);
                 });
@@ -5258,8 +5208,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name", "GroupName")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_NameGroup");
+                        .IsUnique();
 
                     b.ToTable("Setting", (string)null);
                 });
@@ -5434,8 +5383,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("ShiftId", "PaymentMethodId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_ShiftCountPaymentMethod");
+                        .IsUnique();
 
                     b.ToTable("ShiftCount", (string)null);
                 });
@@ -5545,8 +5493,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -5554,8 +5501,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("TaskBase", (string)null);
 
@@ -5602,8 +5548,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("Tax", (string)null);
                 });
@@ -5659,8 +5604,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("UserId");
 
                     b.HasIndex("Value")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Value");
+                        .IsUnique();
 
                     b.ToTable("Token", (string)null);
                 });
@@ -5843,19 +5787,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Guid")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Guid");
+                        .IsUnique();
 
                     b.HasIndex("Identification")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Identification")
                         .HasFilter("[Identification] IS NOT NULL");
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("SmartCardUID")
                         .IsUnique()
-                        .HasDatabaseName("UQ_SmartCardUID")
                         .HasFilter("[SmartCardUID] IS NOT NULL");
 
                     b.ToTable("User", (string)null);
@@ -5963,8 +5904,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("UserId");
 
                     b.HasIndex("UserAgreementId", "UserId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UserAgreementState");
+                        .IsUnique();
 
                     b.ToTable("UserAgreementState", (string)null);
                 });
@@ -6014,8 +5954,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("UserId", "AttributeId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UserAttribute");
+                        .IsUnique();
 
                     b.ToTable("UserAttribute", (string)null);
                 });
@@ -6214,8 +6153,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.HasIndex("SecurityProfileId");
 
@@ -6265,8 +6203,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("UserGroupId", "HostGroupId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UserGroupHostGroup");
+                        .IsUnique();
 
                     b.ToTable("UserGroupHostDisallowed", (string)null);
                 });
@@ -6316,8 +6253,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("UserId", "Type", "Value")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UserPermission");
+                        .IsUnique();
 
                     b.ToTable("UserPermission", (string)null);
                 });
@@ -6540,8 +6476,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Name");
+                        .IsUnique();
 
                     b.ToTable("Variable", (string)null);
                 });
@@ -6640,8 +6575,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .IsUnique();
 
                     b.HasIndex("UniqueId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UniqueId");
+                        .IsUnique();
 
                     b.ToTable("DeviceHdmi", (string)null);
                 });
@@ -6665,8 +6599,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("Id");
 
                     b.HasIndex("MACAddress")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_MACAddress");
+                        .IsUnique();
 
                     b.ToTable("HostComputer", (string)null);
                 });
@@ -6707,12 +6640,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("StockReturnTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_StockReturnTransaction")
                         .HasFilter("[StockReturnTransactionId] IS NOT NULL");
 
                     b.HasIndex("StockTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_StockTransaction")
                         .HasFilter("[StockTransactionId] IS NOT NULL");
 
                     b.ToTable("InvoiceLineExtended", (string)null);
@@ -6734,8 +6665,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("OrderLineId");
 
                     b.HasIndex("UsageSessionId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_UsageSession");
+                        .IsUnique();
 
                     b.ToTable("InvoiceLineSession", (string)null);
                 });
@@ -6754,8 +6684,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .IsUnique();
 
                     b.HasIndex("OrderLineId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine");
+                        .IsUnique();
 
                     b.ToTable("InvoiceLineTimeFixed", (string)null);
                 });
@@ -6788,7 +6717,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("DepositPaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment")
                         .HasFilter("[DepositPaymentId] IS NOT NULL");
 
                     b.HasIndex("Id")
@@ -6814,7 +6742,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("InvoicePaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_InvoicePayment")
                         .HasFilter("[InvoicePaymentId] IS NOT NULL");
 
                     b.HasIndex("ProductOrderId");
@@ -6926,7 +6853,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("DepositPaymentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment")
                         .HasFilter("[DepositPaymentId] IS NOT NULL");
 
                     b.HasIndex("FiscalReceiptId");
@@ -6955,8 +6881,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("InvoicePaymentId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_InvoicePayment");
+                        .IsUnique();
 
                     b.ToTable("RefundInvoicePayment", (string)null);
                 });
@@ -7104,7 +7029,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Email")
                         .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("Id")
@@ -7113,8 +7037,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("UserGroupId");
 
                     b.HasIndex("Username")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Username");
+                        .IsUnique();
 
                     b.ToTable("UserMember", (string)null);
                 });
@@ -7137,15 +7060,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Email")
                         .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("Id")
                         .IsUnique();
 
                     b.HasIndex("Username")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Username");
+                        .IsUnique();
 
                     b.ToTable("UserOperator", (string)null);
                 });
@@ -7189,8 +7110,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnOrder(1);
 
                     b.HasIndex("DepositPaymentId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_DepositPayment");
+                        .IsUnique();
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -7210,8 +7130,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .IsUnique();
 
                     b.HasIndex("InvoiceId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_Invoice");
+                        .IsUnique();
 
                     b.ToTable("VoidInvoice", (string)null);
                 });
@@ -7227,8 +7146,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.HasIndex("OrderLineId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine");
+                        .IsUnique();
 
                     b.HasIndex("ProductId");
 
@@ -7249,8 +7167,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int");
 
                     b.HasIndex("OrderLineId")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_OrderLine");
+                        .IsUnique();
 
                     b.HasIndex("ProductTimeId");
 
@@ -7373,7 +7290,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("ReservedHostId", "ReservedSlot")
                         .IsUnique()
-                        .HasDatabaseName("UQ_UserGuestHostSlot")
                         .HasFilter("[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
 
                     b.ToTable("UserGuest", (string)null);

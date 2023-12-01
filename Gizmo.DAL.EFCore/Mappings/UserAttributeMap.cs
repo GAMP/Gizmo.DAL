@@ -32,7 +32,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             // Indexes
-            builder.HasIndex(x => new { x.UserId, x.AttributeId }).HasDatabaseName("UQ_UserAttribute").IsUnique();
+            builder.HasIndex(x => new { x.UserId, x.AttributeId }).IsUnique();
 
             // Relations
             builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);

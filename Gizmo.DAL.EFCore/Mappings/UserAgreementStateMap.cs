@@ -25,7 +25,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2);
 
             // Indexes
-            builder.HasIndex(x => new { x.UserAgreementId, x.UserId }).HasDatabaseName("UQ_UserAgreementState").IsUnique();
+            builder.HasIndex(x => new { x.UserAgreementId, x.UserId }).IsUnique();
 
             builder.HasOne(x => x.UserAgreement)
                 .WithMany(x => x.UserAgreementStates)

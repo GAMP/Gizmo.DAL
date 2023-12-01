@@ -51,7 +51,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(8);
 
             // Indexes
-            builder.HasIndex(t => t.MountPoint).HasDatabaseName("UQ_MountPoint").IsUnique();
+            builder.HasIndex(t => t.MountPoint).IsUnique();
 
             //Table & Column mappings
             builder.ToTable("Mapping");

@@ -78,7 +78,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("UserGroupId");
 
             // Indexes
-            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Name).IsUnique();
 
             // Relationships
             builder.HasOne(x => x.AppGroup)

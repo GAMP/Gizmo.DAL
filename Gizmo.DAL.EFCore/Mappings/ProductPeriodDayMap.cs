@@ -25,7 +25,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("ProductPeriodId");
 
             // Indexes
-            builder.HasIndex(x => new { x.ProductPeriodId, x.Day }).HasDatabaseName("UQ_ProductPeriodDay").IsUnique();
+            builder.HasIndex(x => new { x.ProductPeriodId, x.Day }).IsUnique();
 
             builder.HasOne(x => x.Period)
                 .WithMany(x => x.Days)

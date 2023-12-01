@@ -28,7 +28,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("SecurityProfilePolicyId");
 
             // Indexes
-            builder.HasIndex(x => new { x.SecurityProfileId, x.Type }).HasDatabaseName("UQ_SecurityProfilePolicyType").IsUnique();
+            builder.HasIndex(x => new { x.SecurityProfileId, x.Type }).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable("SecurityProfilePolicy");

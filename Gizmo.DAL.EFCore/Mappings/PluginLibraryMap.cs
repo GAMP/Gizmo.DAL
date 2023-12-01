@@ -19,7 +19,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("PluginLibraryId");
 
             // Indexes
-            builder.HasIndex(t => t.FileName).HasDatabaseName("UQ_FileName").IsUnique();
+            builder.HasIndex(t => t.FileName).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable("PluginLibrary");

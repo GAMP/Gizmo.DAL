@@ -36,7 +36,7 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY);
 
             // Indexes
-            builder.HasIndex(x => new { x.UserId, x.Type, x.Value }).HasDatabaseName("UQ_UserPermission").IsUnique();
+            builder.HasIndex(x => new { x.UserId, x.Type, x.Value }).IsUnique();
 
             // Relations
             builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);

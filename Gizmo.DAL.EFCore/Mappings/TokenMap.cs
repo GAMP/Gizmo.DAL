@@ -39,7 +39,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false);
 
             // Indexes
-            builder.HasIndex(t => t.Value).HasDatabaseName("UQ_Value").IsUnique();
+            builder.HasIndex(t => t.Value).IsUnique();
 
             builder.HasOne(e => e.User)
                 .WithMany(e => e.Tokens)

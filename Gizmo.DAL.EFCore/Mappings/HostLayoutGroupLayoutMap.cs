@@ -41,7 +41,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(7);
 
             // Indexes
-            builder.HasIndex(x => new { x.HostLayoutGroupId, x.HostId }).HasDatabaseName("UQ_HostLayoutGroupHost").IsUnique();
+            builder.HasIndex(x => new { x.HostLayoutGroupId, x.HostId }).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable("HostLayoutGroupLayout");

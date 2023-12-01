@@ -45,7 +45,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(7);
 
             // Indexes
-            builder.HasIndex(t => t.MacAddress).HasDatabaseName("UQ_MACAddress").IsUnique();
+            builder.HasIndex(t => t.MacAddress).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(Register));

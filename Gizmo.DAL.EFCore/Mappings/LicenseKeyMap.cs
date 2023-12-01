@@ -47,7 +47,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false);
 
             // Indexes
-            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
+            builder.HasIndex(t => t.Guid).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(LicenseKey));      

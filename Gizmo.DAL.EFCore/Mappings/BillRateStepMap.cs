@@ -40,7 +40,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(6);
 
             // Indexes
-            builder.HasIndex(t => new { t.BillRateId, t.Minute }).HasDatabaseName("UQ_BillRateMinute").IsUnique();
+            builder.HasIndex(t => new { t.BillRateId, t.Minute }).IsUnique();
 
             builder.ToTable("BillRateStep");
 

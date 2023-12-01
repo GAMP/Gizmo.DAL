@@ -16,7 +16,7 @@ namespace Gizmo.DAL.Mappings
             // Indexes
             builder.HasIndex(t => t.Id);
             builder.HasIndex(t => t.OrderLineId)
-                .HasDatabaseName("UQ_OrderLine")
+                
                 .IsUnique()
                 .HasFilter(null);
 
