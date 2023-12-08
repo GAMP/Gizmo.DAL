@@ -34,14 +34,34 @@ namespace Gizmo.DAL.Scripts
         /// <summary>
         /// Session span update script.
         /// </summary>
-        private const string SESSION_UPDATE_SQL =
-            "UPDATE UserSession SET" + " " +
-            "Span=Span+@SPAN," + " " +
-            "PendSpan = CASE State WHEN 5 THEN PendSpan+@SPAN ELSE PendSpan END, PendSpanTotal = CASE State WHEN 5 THEN PendSpanTotal+@SPAN ELSE PendSpanTotal END," + " " +
-            "PauseSpan = CASE State WHEN 9 THEN PauseSpan+@SPAN ELSE PauseSpan END, PauseSpanTotal = CASE State WHEN 9 THEN PauseSpanTotal+@SPAN ELSE PauseSpanTotal END," + " " +
-            "GraceSpan = CASE State WHEN 33 THEN GraceSpan+@SPAN ELSE GraceSpan END, GraceSpanTotal = CASE State WHEN 33 THEN GraceSpanTotal+@SPAN ELSE GraceSpanTotal END" + " " +
-            "OUTPUT INSERTED.UserSessionId as Id,INSERTED.UserId,INSERTED.HostId,INSERTED.State,INSERTED.Span,INSERTED.BilledSpan,INSERTED.PendTime,INSERTED.PendSpan,INSERTED.EndTime,INSERTED.CreatedById,INSERTED.CreatedTime,INSERTED.Slot,INSERTED.PendSpanTotal,INSERTED.PauseSpan,INSERTED.PauseSpanTotal,INSERTED.GraceTime,INSERTED.GraceSpan,INSERTED.GraceSpanTotal" + " " +
-            "WHERE State & 1 = 1;";
+        private const string SESSION_UPDATE_SQL ="""
+            UPDATE UserSession 
+            SET
+                Span=Span+@SPAN,
+                PendSpan = CASE State WHEN 5 THEN PendSpan+@SPAN ELSE PendSpan END, PendSpanTotal = CASE State WHEN 5 THEN PendSpanTotal+@SPAN ELSE PendSpanTotal END,
+                PauseSpan = CASE State WHEN 9 THEN PauseSpan+@SPAN ELSE PauseSpan END, PauseSpanTotal = CASE State WHEN 9 THEN PauseSpanTotal+@SPAN ELSE PauseSpanTotal END,
+                GraceSpan = CASE State WHEN 33 THEN GraceSpan+@SPAN ELSE GraceSpan END, GraceSpanTotal = CASE State WHEN 33 THEN GraceSpanTotal+@SPAN ELSE GraceSpanTotal END
+            OUTPUT 
+                INSERTED.UserSessionId as Id
+                ,INSERTED.UserId
+                ,INSERTED.HostId
+                ,INSERTED.State
+                ,INSERTED.Span
+                ,INSERTED.BilledSpan
+                ,INSERTED.PendTime
+                ,INSERTED.PendSpan
+                ,INSERTED.EndTime
+                ,INSERTED.CreatedById
+                ,INSERTED.CreatedTime
+                ,INSERTED.Slot
+                ,INSERTED.PendSpanTotal
+                ,INSERTED.PauseSpan
+                ,INSERTED.PauseSpanTotal
+                ,INSERTED.GraceTime
+                ,INSERTED.GraceSpan
+                ,INSERTED.GraceSpanTotal
+            WHERE State & 1 = 1
+            """;
 
         /// <summary>
         /// Log limiting sql script.
