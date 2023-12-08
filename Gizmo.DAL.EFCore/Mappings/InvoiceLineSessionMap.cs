@@ -14,7 +14,7 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(InvoiceLineSession));
 
             // Indexes
-            builder.HasIndex(t => t.UsageSessionId).HasDatabaseName("UQ_UsageSession").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.UsageSessionId).IsUnique().HasFilter(null);
             builder.HasIndex(t => t.Id);
 
             builder.HasOne(x => x.OrderLine)

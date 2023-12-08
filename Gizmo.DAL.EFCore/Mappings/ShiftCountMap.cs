@@ -62,7 +62,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(14);
 
             // Indexes
-            builder.HasIndex(x => new { x.ShiftId, x.PaymentMethodId }).HasDatabaseName("UQ_ShiftCountPaymentMethod").IsUnique();
+            builder.HasIndex(x => new { x.ShiftId, x.PaymentMethodId }).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(ShiftCount));

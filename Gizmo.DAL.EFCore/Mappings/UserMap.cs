@@ -1,7 +1,7 @@
 ﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using GizmoDALV2;
 
 namespace Gizmo.DAL.Mappings
 {
@@ -53,9 +53,9 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY);
 
             // Indexes
-            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
-            builder.HasIndex(t => t.SmartCardUID).HasDatabaseName("UQ_SmartCardUID").IsUnique();
-            builder.HasIndex(t => t.Identification).HasDatabaseName("UQ_Identification").IsUnique();
+            builder.HasIndex(t => t.Guid).IsUnique();
+            builder.HasIndex(t => t.SmartCardUID).IsUnique();
+            builder.HasIndex(t => t.Identification).IsUnique();
 
             // Relations
             builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);

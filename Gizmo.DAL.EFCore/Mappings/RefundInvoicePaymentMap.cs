@@ -26,7 +26,7 @@ namespace Gizmo.DAL.Mappings
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Indexes
-            builder.HasIndex(t => t.InvoicePaymentId).HasDatabaseName("UQ_InvoicePayment").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.InvoicePaymentId).IsUnique().HasFilter(null);
             builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings

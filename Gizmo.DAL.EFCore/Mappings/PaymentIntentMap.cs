@@ -1,5 +1,5 @@
 ﻿using Gizmo.DAL.Entities;
-using GizmoDALV2;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -64,7 +64,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(x => x.PaymentMethodId);
 
             // Indexes
-            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
+            builder.HasIndex(t => t.Guid).IsUnique();
 
             builder.ToTable(nameof(PaymentIntent));
         }

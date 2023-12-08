@@ -1,5 +1,5 @@
-﻿using GizmoDALV2;
-using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -28,8 +28,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2);
 
             // Indexes
-            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
-            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Guid).IsUnique();
+            builder.HasIndex(t => t.Name).IsUnique();
             builder.HasIndex(t => t.Id);
 
             // Table & Column Mappings

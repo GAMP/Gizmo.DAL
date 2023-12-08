@@ -1,4 +1,6 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Gizmo.DAL.Scripts;
+
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
@@ -85,5 +87,60 @@ namespace Gizmo.DAL.EFCore.Extensions
                 throw new NotSupportedException(); 
             }
         }
+
+        /// <summary>
+        /// Executes sql script.
+        /// </summary>
+        /// <param name="dbFacade">
+        /// Database facade.
+        /// </param>
+        /// <param name="scriptName">
+        /// Sql script name from the Gizmo.DAL.Scripts namespace.
+        /// </param>
+        /// <param name="sqlParameter">
+        /// Sql parameter.
+        /// </param>
+        /// <returns>
+        /// Number of rows affected.
+        /// </returns>
+        /// <exception cref="NotSupportedException">
+        /// Database provider is not supported for this sql command.
+        /// </exception>
+        public static int ExecuteSqlScript(this DatabaseFacade dbFacade, string scriptName, SqlParameter sqlParameter = null) =>
+            dbFacade.ProviderName switch
+            {
+                "Microsoft.EntityFrameworkCore.SqlServer" => dbFacade.ExecuteSqlRaw(MsSqlScripts.GetScript(scriptName), sqlParameter),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => dbFacade.ExecuteSqlRaw(NpgSqlScripts.GetScript(scriptName), sqlParameter),
+                _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
+            };
+
+        /// <summary>
+        /// Executes sql script.
+        /// </summary>
+        /// <param name="dbFacade">
+        /// Database facade.
+        /// </param>
+        /// <param name="scriptName">
+        /// Sql script name from the Gizmo.DAL.Scripts namespace.
+        /// </param>
+        /// <param name="sqlParameter">
+        /// Sql parameter.
+        /// </param>
+        /// <param name="cToken">
+        /// Cancellation token.
+        /// </param>
+        /// <returns>
+        ///  Task with number of rows affected.
+        /// </returns>
+        /// <exception cref="NotSupportedException">
+        /// Database provider is not supported for this sql command.
+        /// </exception>
+        public static Task<int> ExecuteSqlScriptAsync(this DatabaseFacade dbFacade, string scriptName, SqlParameter sqlParameter = null, CancellationToken cToken = default) =>
+            dbFacade.ProviderName switch
+            {
+                "Microsoft.EntityFrameworkCore.SqlServer" => dbFacade.ExecuteSqlRawAsync(MsSqlScripts.GetScript(scriptName), sqlParameter, cToken),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => dbFacade.ExecuteSqlRawAsync(NpgSqlScripts.GetScript(scriptName), sqlParameter, cToken),
+                _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
+            };
     }
 }

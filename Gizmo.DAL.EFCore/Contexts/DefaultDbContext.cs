@@ -11,12 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using CoreLib;
-using Microsoft.EntityFrameworkCore.Metadata;
-using GizmoDALV2;
 using Gizmo.DAL.Mappings;
-using SharedLib;
-using System.Globalization;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Gizmo.DAL.Contexts
@@ -773,6 +768,16 @@ namespace Gizmo.DAL.Contexts
 
         #endregion
 
+        /// <summary>
+        /// Gets or sets assistance requests.
+        /// </summary>
+        public DbSet<AssistanceRequest> AssistanceRequests { get; set; }
+
+        /// <summary>
+        /// Gets or sets assistance request types.
+        /// </summary>
+        public DbSet<AssistanceRequestType> AssistanceRequestTypes { get; set; }
+
         #endregion
 
         #region OVERRIDES
@@ -1405,7 +1410,7 @@ namespace Gizmo.DAL.Contexts
         /// Implements default method to be used by SaltGenerator delegate
         /// </summary>
         /// <returns>String value that can be used as salt.</returns>
-        public static byte[] GetNewSalt()
+        public byte[] GetNewSalt()
         {
             byte[] salt = new byte[100];
             using (var generator = RandomNumberGenerator.Create())
@@ -1421,7 +1426,7 @@ namespace Gizmo.DAL.Contexts
         /// <param name="pwd">Password input string.</param>
         /// <param name="salt">Password salt.</param>
         /// <returns>Hashed password byte array.</returns>
-        public static byte[] GetHashedPassword(string pwd, byte[] salt)
+        public byte[] GetHashedPassword(string pwd, byte[] salt)
         {
             if (string.IsNullOrWhiteSpace(pwd))
                 throw new ArgumentNullException(nameof(pwd), "Password may not be null or empty");
@@ -1523,7 +1528,7 @@ namespace Gizmo.DAL.Contexts
             TEntity entity = default;
             try
             {
-                entity = await Set<TEntity>().FindAsync(ct, entityKey);
+                entity = await Set<TEntity>().FindAsync(new object[] {entityKey},ct);
             }
             catch (InvalidOperationException)
             {
@@ -1669,6 +1674,17 @@ namespace Gizmo.DAL.Contexts
         /// <param name="modelBuilder"></param>
         public void ApplyGlobalMapConfigurations(ModelBuilder modelBuilder)
         {
+            ApplyDefaultTypesConfigurations(modelBuilder);
+
+            GuardDatabaseNameExceedLimits(modelBuilder);
+        }
+
+        /// <summary>
+        /// Apply default types configurations
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        private void ApplyDefaultTypesConfigurations(ModelBuilder modelBuilder)
+        {
             var entities = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).ToList();
             foreach (var entity in entities)
             {
@@ -1686,21 +1702,13 @@ namespace Gizmo.DAL.Contexts
                     modelBuilder.Entity(entity).Property(property.Name).HasPrecision(19, 4);
             }
 
-
-            if (Database.IsSqlServer())
+            if (Database.IsNpgsql())
             {
-                // Change default generated index names of foreign keys to match the old database pattern
-                RenameIndexWithOldPattern(modelBuilder);
-            }
-            else if (Database.IsNpgsql())
-            {
-                // Remove duplicated index name to be unique on database level not the table level
-                RenameDuplicatedIndexNames(modelBuilder);
-
                 // Set all DateTime properties to be mapped as timestamp without time zone
-                foreach (var property in modelBuilder.Model.GetEntityTypes()
-                                                                             .SelectMany(t => t.GetProperties())
-                                                                             .Where(x => x.ClrType == typeof(DateTime) || x.ClrType == typeof(DateTime?)))
+                var datetimeProperties = modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetProperties())
+                    .Where(x => x.ClrType == typeof(DateTime) || x.ClrType == typeof(DateTime?));
+
+                foreach (var property in datetimeProperties)
                 {
                     property.SetColumnType("timestamp without time zone");
                 }
@@ -1708,416 +1716,43 @@ namespace Gizmo.DAL.Contexts
         }
 
         /// <summary>
-        /// Change default generated index names of foreign keys to match the old database pattern 
+        /// Guard the tables/columns/indexes against exceed the max limit of chars in naming convension 
         /// </summary>
         /// <param name="modelBuilder"></param>
-        private static void RenameIndexWithOldPattern(ModelBuilder modelBuilder)
+        private static void GuardDatabaseNameExceedLimits(ModelBuilder modelBuilder)
         {
-            return;
+            const int MaxLengthLimit = 63;
+
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
-                foreach(var fk in entity.GetForeignKeys())
-                {
-                    var fkName = fk.GetDefaultName();
+                var tableName = entity.GetTableName();
+                if (tableName.Length > MaxLengthLimit)
+                    throw new Exception($"Table {tableName} exceed the limit {MaxLengthLimit}");
 
-                    var splitted = fkName.Split('_').ToList();
-                    if (splitted.Count < 4)
+                foreach (var property in entity.GetProperties())
+                {
+                    var columnName = property.GetColumnName();
+                    if (string.IsNullOrEmpty(columnName))
                         continue;
 
-                    string constraintName = $"{splitted[0]}_dbo.{splitted[1]}_dbo.{splitted[2]}_{splitted[3]}";
+                    if (columnName.Length <= MaxLengthLimit)
+                        continue;
 
-                    fk.SetConstraintName(constraintName);
+                    throw new Exception($"Table {tableName} - Column {columnName} exceed the limit {MaxLengthLimit}");
                 }
 
                 foreach (var index in entity.GetIndexes())
                 {
                     var indexName = index.GetDatabaseName();
-                    if (indexName.StartsWith("IX") == false)
+                    if (string.IsNullOrEmpty(indexName))
                         continue;
 
-                    var splitted = indexName.Split('_').ToList();
-                    if (splitted.Count < 3)
+                    if (indexName.Length <= MaxLengthLimit)
                         continue;
 
-                    splitted.RemoveAt(1);
-                    splitted = splitted.Where(e => e.IsNullOrEmpty() == false).ToList();
-
-                    index.SetDatabaseName($"{string.Join("_", splitted)}");
+                    throw new Exception($"Table {tableName} - Index {indexName} exceed the limit {MaxLengthLimit}");
                 }
             }
-        }
-
-        /// <summary>
-        /// Change default generated index names of foreign keys to match the old database pattern 
-        /// </summary>
-        /// <param name="modelBuilder"></param>
-        private static void RenameDuplicatedIndexNames(ModelBuilder modelBuilder)
-        {
-            var indexes = new Dictionary<string, List<KeyValuePair<IMutableEntityType, IMutableIndex>>>();
-            foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            {
-                foreach (var index in entity.GetIndexes())
-                {
-                    var defaultIndexName = index.GetDefaultDatabaseName();
-                    var indexName = index.GetDatabaseName();
-
-                    // To check only on the index defined by the user not automated
-                    if (defaultIndexName == indexName)
-                        continue;
-
-                    if (indexes.ContainsKey(indexName))
-                        indexes[indexName].Add(new(entity, index));
-                    else
-                        indexes.Add(indexName, new List<KeyValuePair<IMutableEntityType, IMutableIndex>>() { new(entity, index) });
-                }
-            }
-
-            var duplicatedIndexes = indexes.Where(e => e.Value.Count > 1).ToList();
-            foreach (var duplicatedIndex in duplicatedIndexes)
-            {
-                foreach (var index in duplicatedIndex.Value)
-                {
-                    index.Value.SetDatabaseName($"{index.Value.GetDatabaseName()}_{index.Key.GetTableName()}");
-                }
-            }
-        }
-
-        #endregion
-
-        #region SEED
-
-        private static void Seed(ModelBuilder builder)
-        {
-            #region AddPaymentMethods
-
-            builder.Entity<PaymentMethod>().HasData(new PaymentMethod[]
-            {
-                new() { Id = (int)PaymentMethodType.Cash, Name = "Cash", DisplayOrder = 0, IsEnabled = true, IsClient = true, IsManager = true },
-                new() { Id = (int)PaymentMethodType.Points, Name = "Points", DisplayOrder = 2, IsEnabled = true, IsClient = true, IsManager = true },
-                new() { Id = (int)PaymentMethodType.Deposit, Name = "Deposit", DisplayOrder = 3, IsEnabled = true, IsClient = true, IsManager = true },
-                new() { Id = (int)PaymentMethodType.CreditCard, Name = "Credit Card", DisplayOrder = 4, IsEnabled = true, IsClient = true, IsManager = true },
-            });
-
-            #endregion
-
-            #region AddMonetaryUnits
-
-            if (RegionInfo.CurrentRegion.ISOCurrencySymbol == "EUR")
-            {
-                builder.Entity<MonetaryUnit>().HasData(new MonetaryUnit[]
-                {
-                    new() { Id = 1, DisplayOrder = 0, Name = "1 Cent", Value = 0.01M },
-                    new() { Id = 2, DisplayOrder = 1, Name = "5 Cent", Value = 0.05M },
-                    new() { Id = 3, DisplayOrder = 2, Name = "10 Cent", Value = 0.10M },
-                    new() { Id = 4, DisplayOrder = 3, Name = "20 Cent", Value = 0.20M },
-                    new() { Id = 5, DisplayOrder = 4, Name = "50 Cent", Value = 0.50M },
-                    new() { Id = 6, DisplayOrder = 5, Name = "1 Euro", Value = 1.00M },
-                    new() { Id = 7, DisplayOrder = 6, Name = "2 Euro", Value = 2.00M },
-                    new() { Id = 8, DisplayOrder = 7, Name = "5 Euro", Value = 5.00M },
-                    new() { Id = 9, DisplayOrder = 8, Name = "10 Euro", Value = 10.00M },
-                    new() { Id = 10, DisplayOrder = 9, Name = "20 Euro", Value = 20.00M },
-                    new() { Id = 11, DisplayOrder = 10, Name = "50 Euro", Value = 50.00M },
-                    new() { Id = 12, DisplayOrder = 11, Name = "100 Euro", Value = 100.00M },
-                    new() { Id = 13, DisplayOrder = 12, Name = "200 Euro", Value = 200.00M },
-                    new() { Id = 14, DisplayOrder = 13, Name = "500 Euro", Value = 500.00M }
-                });
-            }
-            else
-            {
-                builder.Entity<MonetaryUnit>().HasData(new MonetaryUnit[]
-                {
-                    new() { Id = 1, DisplayOrder = 0, Name = "1 Cent", Value = 0.01M },
-                    new() { Id = 2, DisplayOrder = 1, Name = "5 Cent", Value = 0.05M },
-                    new() { Id = 3, DisplayOrder = 2, Name = "10 Cent", Value = 0.10M },
-                    new() { Id = 4, DisplayOrder = 3, Name = "25 Cent", Value = 0.25M },
-                    new() { Id = 5, DisplayOrder = 4, Name = "1 Dollar", Value = 1.00M },
-                    new() { Id = 6, DisplayOrder = 5, Name = "2 Dollar", Value = 2.00M },
-                    new() { Id = 7, DisplayOrder = 6, Name = "5 Dollar", Value = 5.00M },
-                    new() { Id = 8, DisplayOrder = 7, Name = "10 Dollar", Value = 10.00M },
-                    new() { Id = 9, DisplayOrder = 8, Name = "20 Dollar", Value = 20.00M },
-                    new() { Id = 10, DisplayOrder = 9, Name = "50 Dollar", Value = 50.00M },
-                    new() { Id = 11, DisplayOrder = 10, Name = "100 Dollar", Value = 100.00M }
-                });
-            }
-
-            #endregion
-
-            #region AddDefaultOperator
-
-            byte[] salt = GetNewSalt();
-            byte[] password = GetHashedPassword("admin", salt);
-
-            var admin = new UserOperator
-            {
-                Id = 1,
-                Username = "Admin",
-                CreatedTime = DateTimeOffset.UtcNow.DateTime,
-                Guid = new("691ea8b4-d794-4096-84ae-bbdb7bcc0b02")
-            };
-
-            var adminCredential = new UserCredential() { Id = 1, Salt = salt, Password = password };
-
-            var adminPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes()
-                .Select((claim, id) => new UserPermission() { Id = id + 1, UserId = admin.Id, Type = claim.Resource, Value = claim.Operation });
-
-            builder.Entity<UserCredential>().HasData(adminCredential);
-            builder.Entity<UserPermission>().HasData(adminPermissions);
-            builder.Entity<UserOperator>().HasData(admin);
-
-            #endregion
-
-            #region AddTaxes
-
-            var taxes = new Tax[]
-            {
-                new() {Id = 1, Name = "24%", Value = 23, UseOrder = 0 },
-                new() {Id = 2, Name = "16%", Value = 16, UseOrder = 1 },
-                new() {Id = 3, Name = "None", Value = 0, UseOrder = 2 }
-            };
-
-            builder.Entity<Tax>().HasData(taxes);
-
-            #endregion
-
-            #region AddProducts
-
-            var tax = taxes[0];
-
-            var productGroupTime = new ProductGroup() { Id = 1, Name = "Time Offers", DisplayOrder = 0, Guid = new("e798a7fb-448b-4825-8b32-c5ea6db70271") };
-            var productGroupFood = new ProductGroup() { Id = 2, Name = "Food", DisplayOrder = 1, Guid = new("e798a7fb-448b-4825-8b32-c5ea6db70272") };
-            var productGroupDrinks = new ProductGroup() { Id = 3, Name = "Drinks", DisplayOrder = 2, Guid = new("e798a7fb-448b-4825-8b32-c5ea6db70273") };
-            var productGroupSweets = new ProductGroup() { Id = 4, Name = "Sweets", DisplayOrder = 3, Guid = new("e798a7fb-448b-4825-8b32-c5ea6db70274") };
-
-            var productGroups = new ProductGroup[] { productGroupTime, productGroupFood, productGroupDrinks, productGroupSweets };
-
-            var productMars = new Product()
-            {
-                Id = 1,
-                ProductGroupId = productGroupSweets.Id,
-                Name = "Mars Bar",
-                Cost = 0.90m,
-                Price = 1.10m,
-                Points = 10,
-                StockOptions = StockOptionType.EnableStock,
-                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba1")
-            };
-            var productSnickers = new Product()
-            {
-                Id = 2,
-                ProductGroupId = productGroupSweets.Id,
-                Name = "Snickers Bar",
-                Points = 15,
-                StockOptions = StockOptionType.EnableStock,
-                Cost = 1.20m,
-                Price = 2.0m,
-                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba2")
-            };
-            var productPizza = new Product()
-            {
-                Id = 3,
-                ProductGroupId = productGroupFood.Id,
-                Name = "Pizza (Small)",
-                Cost = 2.20m,
-                Price = 6.0m,
-                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba3")
-            };
-            var productCocaCola = new Product()
-            {
-                Id = 4,
-                ProductGroupId = productGroupDrinks.Id,
-                Name = "Coca Cola (Can)",
-                Points = 20,
-                StockOptions = StockOptionType.EnableStock,
-                Cost = 1.20m,
-                Price = 2.0m,
-                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba4")
-            };
-
-            var products = new Product[] { productMars, productSnickers, productCocaCola, productPizza };
-
-            var productBundlePizzaAndCola = new ProductBundle()
-            {
-                Id = 5,
-                ProductGroupId = productGroupFood.Id,
-                Name = "Pizza and Cola",
-                StockOptions = StockOptionType.EnableStock,
-                Points = 200,
-                Price = 3.40m, //pizza plus cola
-                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba5")
-            };
-
-            var bundleProducts = new BundleProduct[]
-            {
-                new(){Id = 1, ProductId = productCocaCola.Id, ProductBundleId = productBundlePizzaAndCola.Id, Price = 1, Quantity = 1 },
-                new(){Id = 2, ProductId = productPizza.Id, ProductBundleId = productBundlePizzaAndCola.Id, Price = 2, Quantity = 1 }
-            };
-
-            var productPeriod = new ProductPeriod()
-            {
-                Id = 1,
-                Options = PeriodOptionType.None
-            };
-            var productPeriodDays = new ProductPeriodDay[]
-            {
-                new(){Id = 1, ProductPeriodId = productPeriod.Id, Day = DayOfWeek.Saturday },
-                new(){Id = 2, ProductPeriodId = productPeriod.Id, Day = DayOfWeek.Sunday },
-            };
-
-            var productTimeSixHours = new ProductTime()
-            {
-                Id = 6,
-                ProductGroupId = productGroupTime.Id,
-                Name = "Six Hours (6)",
-                Minutes = 360,
-                Price = 12,
-                WeekEndMaxMinutes = null,
-                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba6")
-            };
-            var productTimeSixHoursWeekends = new ProductTime()
-            {
-                Id = 7,
-                ProductGroupId = productGroupTime.Id,
-                Name = "Six Hours (6 Weekends)",
-                Minutes = 360,
-                Price = 16,
-                WeekEndMaxMinutes = null,
-                Guid = new("39a65689-65ae-49b4-80b9-ea0afb9daba7")
-            };
-
-            var productTimes = new ProductTime[] { productTimeSixHours, productTimeSixHoursWeekends };
-
-            var productTaxes = new ProductTax[]
-            {
-                new() { Id = 1, ProductId = productMars.Id, TaxId = tax.Id },
-                new() { Id = 2, ProductId = productSnickers.Id, TaxId = tax.Id },
-                new() { Id = 3, ProductId = productPizza.Id, TaxId = tax.Id },
-                new() { Id = 4, ProductId = productCocaCola.Id, TaxId = tax.Id },
-                new() { Id = 5, ProductId = productBundlePizzaAndCola.Id, TaxId = tax.Id },
-                new() { Id = 6, ProductId = productTimeSixHours.Id, TaxId = tax.Id },
-                new() { Id = 7, ProductId = productTimeSixHoursWeekends.Id, TaxId = tax.Id },
-            };
-
-            builder.Entity<ProductGroup>().HasData(productGroups);
-            builder.Entity<Product>().HasData(products);
-            builder.Entity<ProductBundle>().HasData(productBundlePizzaAndCola);
-            builder.Entity<BundleProduct>().HasData(bundleProducts);
-            builder.Entity<ProductPeriod>().HasData(productPeriod);
-            builder.Entity<ProductPeriodDay>().HasData(productPeriodDays);
-            builder.Entity<ProductTime>().HasData(productTimes);
-            builder.Entity<ProductTax>().HasData(productTaxes);
-
-            #endregion
-
-            #region AddLayoutGroups
-
-            builder.Entity<HostLayoutGroup>().HasData(new HostLayoutGroup()
-            {
-                Id = 1,
-                Name = "Default",
-                DisplayOrder = 0
-            });
-
-            #endregion
-
-            #region AddBillProfiles
-
-            var billProfileMemberPrices = new BillProfile() { Id = 1, Name = "Member Prices" };
-            var billProfileGuestsPrices = new BillProfile() { Id = 2, Name = "Guests Prices" };
-
-            var billProfiles = new BillProfile[] { billProfileMemberPrices, billProfileGuestsPrices };
-            var billRates = new BillRate[]
-            {
-                new()
-                {
-                    Id = 1,
-                    BillProfileId = billProfileMemberPrices.Id,
-                    IsDefault = true,
-                    MinimumFee = 2,
-                    ChargeAfter = 1,
-                    ChargeEvery = 5,
-                    Rate = 2,
-                    StartFee = 1
-                },
-                new()
-                {
-                    Id = 2,
-                    BillProfileId = billProfileGuestsPrices.Id,
-                    IsDefault = true,
-                    MinimumFee = 2,
-                    ChargeAfter = 1,
-                    ChargeEvery = 5,
-                    Rate = 2,
-                    StartFee = 1
-                }
-            };
-
-            builder.Entity<BillRate>().HasData(billRates);
-            builder.Entity<BillProfile>().HasData(billProfiles);
-
-            #endregion
-
-            #region AddUserGroups
-
-            var userGroupMember = new UserGroup() { Id = 1, Name = "Members", BillProfileId = billProfileMemberPrices.Id, IsDefault = true };
-            var userGroupGuest = new UserGroup() { Id = 2, Name = "Guests", BillProfileId = billProfileGuestsPrices.Id, Options = UserGroupOptionType.GuestUse };
-
-            var userGroups = new UserGroup[] { userGroupMember, userGroupGuest };
-
-            builder.Entity<UserGroup>().HasData(userGroups);
-
-            #endregion
-
-            #region AddUsers
-
-            var userMember = new UserMember() { Id = 2, Username = "User", UserGroupId = userGroupMember.Id, Guid = new("38753737-24f1-40d7-8ac4-ba61660d666a") };
-
-            builder.Entity<UserMember>().HasData(userMember);
-
-            #endregion
-
-            #region AddHostGroups
-
-            var hostGroupComputers = new HostGroup() { Id = 1, Name = "Computers", DefaultGuestGroupId = userGroupGuest.Id };
-            var hostGroupEndpoints = new HostGroup() { Id = 2, Name = "Endpoints", DefaultGuestGroupId = userGroupGuest.Id };
-
-            var hostGroups = new HostGroup[] { hostGroupComputers, hostGroupEndpoints };
-
-            builder.Entity<HostGroup>().HasData(hostGroups);
-
-            #endregion
-
-            #region AddHosts
-
-            builder.Entity<HostEndpoint>().HasData(new HostEndpoint[]
-            {
-                new() { Id = 1, Name = "XBOX-ONE-1", Number = 1, MaximumUsers = 4, HostGroupId = hostGroupEndpoints.Id, Guid = new("cd41aa25-ac1f-4da9-8c8e-075032803871") },
-                new() { Id = 2, Name = "XBOX-ONE-2", Number = 2, MaximumUsers = 4, HostGroupId = hostGroupEndpoints.Id, Guid = new("cd41aa25-ac1f-4da9-8c8e-075032803872") },
-                new() { Id = 3, Name = "PS4-1", Number = 3, MaximumUsers = 4, HostGroupId = hostGroupEndpoints.Id, Guid = new("cd41aa25-ac1f-4da9-8c8e-075032803873") },
-                new() { Id = 4, Name = "WII-1", Number = 4, MaximumUsers = 4, HostGroupId = hostGroupEndpoints.Id, Guid = new("cd41aa25-ac1f-4da9-8c8e-075032803874") }
-            });
-
-            #endregion
-
-            #region AddPresetTime
-
-            builder.Entity<PresetTimeSale>().HasData(new PresetTimeSale[]
-           {
-                new() {Id = 1, Value = 1 },
-                new() {Id = 2, Value = 5 },
-                new() {Id = 3, Value = 15 },
-                new() {Id = 4, Value = 30 },
-                new() {Id = 5, Value = 60 }
-           });
-            builder.Entity<PresetTimeSaleMoney>().HasData(new PresetTimeSaleMoney[]
-            {
-                new() {Id = 1, Value = 1 },
-                new() {Id = 2, Value = 2 },
-                new() {Id = 3, Value = 5 },
-                new() {Id = 4, Value = 10 },
-                new() {Id = 5, Value = 20 }
-            });
-
-            #endregion
         }
 
         #endregion

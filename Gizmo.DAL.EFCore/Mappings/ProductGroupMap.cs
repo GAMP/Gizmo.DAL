@@ -1,5 +1,5 @@
-﻿using GizmoDALV2;
-using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -27,7 +27,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("ProductGroupId");
 
             // Indexes
-            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Name).IsUnique();
 
             builder.HasMany(x => x.ChildGroups)
                 .WithOne(x => x.Parent)

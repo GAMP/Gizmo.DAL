@@ -20,9 +20,9 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(254);
 
             // Indexes
-            builder.HasIndex(t => t.Username).HasDatabaseName("UQ_Username").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.Username).IsUnique().HasFilter(null);
 
-            builder.HasIndex(t => t.Email).HasDatabaseName("UQ_Email").IsUnique();
+            builder.HasIndex(t => t.Email).IsUnique();
             
             builder.HasIndex(t => t.Id);
 

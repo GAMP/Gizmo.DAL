@@ -21,7 +21,7 @@ namespace Gizmo.DAL.Mappings
                 .ValueGeneratedNever();
 
             builder.Property(x => x.Image)
-                .HasMaxLength(GizmoDALV2.SQLByteArraySize.MEDIUM);
+                .HasMaxLength(Gizmo.DAL.SQLByteArraySize.MEDIUM);
 
             // Indexes
             builder.HasIndex(x => x.Id);

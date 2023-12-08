@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace _
+namespace Gizmo.DAL.EFCore.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -3952,6 +3952,12 @@ namespace _
                 column: "DeveloperId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_App_Guid",
+                table: "App",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_App_ModifiedById",
                 table: "App",
                 column: "ModifiedById");
@@ -3962,15 +3968,15 @@ namespace _
                 column: "PublisherId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
-                table: "App",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AppCategory_CreatedById",
                 table: "AppCategory",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppCategory_Guid",
+                table: "AppCategory",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppCategory_ModifiedById",
@@ -3983,15 +3989,15 @@ namespace _
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
-                table: "AppCategory",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AppEnterprise_CreatedById",
                 table: "AppEnterprise",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppEnterprise_Guid",
+                table: "AppEnterprise",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppEnterprise_ModifiedById",
@@ -3999,13 +4005,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
-                table: "AppEnterprise",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_AppEnterprise_Name",
                 table: "AppEnterprise",
                 column: "Name",
                 unique: true);
@@ -4041,15 +4041,15 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppExeCdImage_ModifiedById",
-                table: "AppExeCdImage",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "IX_AppExeCdImage_Guid",
                 table: "AppExeCdImage",
                 column: "Guid",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppExeCdImage_ModifiedById",
+                table: "AppExeCdImage",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppExeDeployment_AppExeId",
@@ -4168,18 +4168,18 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppGroup_ModifiedById",
-                table: "AppGroup",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "IX_AppGroup_Guid",
                 table: "AppGroup",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_AppGroup_ModifiedById",
+                table: "AppGroup",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppGroup_Name",
                 table: "AppGroup",
                 column: "Name",
                 unique: true);
@@ -4220,15 +4220,15 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppLink_ModifiedById",
-                table: "AppLink",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "IX_AppLink_Guid",
                 table: "AppLink",
                 column: "Guid",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppLink_ModifiedById",
+                table: "AppLink",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppRating_AppId",
@@ -4266,6 +4266,13 @@ namespace _
                 column: "AssetTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Asset_Barcode",
+                table: "Asset",
+                column: "Barcode",
+                unique: true,
+                filter: "[Barcode] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Asset_CreatedById",
                 table: "Asset",
                 column: "CreatedById");
@@ -4276,14 +4283,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Barcode",
-                table: "Asset",
-                column: "Barcode",
-                unique: true,
-                filter: "[Barcode] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_SmartCardUID",
+                name: "IX_Asset_SmartCardUID",
                 table: "Asset",
                 column: "SmartCardUID",
                 unique: true,
@@ -4330,7 +4330,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_AssetType_Name",
                 table: "AssetType",
                 column: "Name",
                 unique: true);
@@ -4381,7 +4381,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_Attribute_Name",
                 table: "Attribute",
                 column: "Name",
                 unique: true);
@@ -4397,7 +4397,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_BillProfile_Name",
                 table: "BillProfile",
                 column: "Name",
                 unique: true);
@@ -4408,7 +4408,7 @@ namespace _
                 column: "BillProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_BillRatePeriodDay",
+                name: "IX_BillRatePeriodDay_BillRateId_Day",
                 table: "BillRatePeriodDay",
                 columns: new[] { "BillRateId", "Day" },
                 unique: true);
@@ -4419,7 +4419,7 @@ namespace _
                 column: "PeriodDayId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_BillRateMinute",
+                name: "IX_BillRateStep_BillRateId_Minute",
                 table: "BillRateStep",
                 columns: new[] { "BillRateId", "Minute" },
                 unique: true);
@@ -4445,6 +4445,12 @@ namespace _
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BundleProductUserPrice_BundleProductId_UserGroupId",
+                table: "BundleProductUserPrice",
+                columns: new[] { "BundleProductId", "UserGroupId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BundleProductUserPrice_CreatedById",
                 table: "BundleProductUserPrice",
                 column: "CreatedById");
@@ -4458,12 +4464,6 @@ namespace _
                 name: "IX_BundleProductUserPrice_UserGroupId",
                 table: "BundleProductUserPrice",
                 column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_BundleProductUserGroup",
-                table: "BundleProductUserPrice",
-                columns: new[] { "BundleProductId", "UserGroupId" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientTask_CreatedById",
@@ -4486,18 +4486,18 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Deployment_ModifiedById",
-                table: "Deployment",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "IX_Deployment_Guid",
                 table: "Deployment",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_Deployment_ModifiedById",
+                table: "Deployment",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Deployment_Name",
                 table: "Deployment",
                 column: "Name",
                 unique: true);
@@ -4598,7 +4598,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_Device_Name",
                 table: "Device",
                 column: "Name",
                 unique: true,
@@ -4611,7 +4611,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UniqueId",
+                name: "IX_DeviceHdmi_UniqueId",
                 table: "DeviceHdmi",
                 column: "UniqueId",
                 unique: true);
@@ -4653,6 +4653,11 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FiscalReceipt_FiscalReceiptId",
+                table: "FiscalReceipt",
+                column: "FiscalReceiptId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FiscalReceipt_RegisterId",
                 table: "FiscalReceipt",
                 column: "RegisterId");
@@ -4666,6 +4671,12 @@ namespace _
                 name: "IX_Host_CreatedById",
                 table: "Host",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Host_Guid",
+                table: "Host",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Host_HostGroupId",
@@ -4683,18 +4694,12 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
-                table: "Host",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HostComputer_HostId",
                 table: "HostComputer",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_MACAddress",
+                name: "IX_HostComputer_MACAddress",
                 table: "HostComputer",
                 column: "MACAddress",
                 unique: true);
@@ -4726,15 +4731,15 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroup_SecurityProfileId",
-                table: "HostGroup",
-                column: "SecurityProfileId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_HostGroup_Name",
                 table: "HostGroup",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HostGroup_SecurityProfileId",
+                table: "HostGroup",
+                column: "SecurityProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HostGroupUserBillProfile_BillProfileId",
@@ -4742,15 +4747,15 @@ namespace _
                 column: "BillProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroupUserBillProfile_UserGroupId",
-                table: "HostGroupUserBillProfile",
-                column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_HostGroupUserBillProfile",
+                name: "IX_HostGroupUserBillProfile_HostGroupId_UserGroupId",
                 table: "HostGroupUserBillProfile",
                 columns: new[] { "HostGroupId", "UserGroupId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HostGroupUserBillProfile_UserGroupId",
+                table: "HostGroupUserBillProfile",
+                column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HostGroupWaitingLine_CreatedById",
@@ -4799,7 +4804,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_HostLayoutGroup_Name",
                 table: "HostLayoutGroup",
                 column: "Name",
                 unique: true);
@@ -4830,15 +4835,15 @@ namespace _
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostLayoutGroupLayout_ModifiedById",
-                table: "HostLayoutGroupLayout",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_HostLayoutGroupHost",
+                name: "IX_HostLayoutGroupLayout_HostLayoutGroupId_HostId",
                 table: "HostLayoutGroupLayout",
                 columns: new[] { "HostLayoutGroupId", "HostId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HostLayoutGroupLayout_ModifiedById",
+                table: "HostLayoutGroupLayout",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Icon_CreatedById",
@@ -4886,6 +4891,12 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InvoiceFiscalReceipt_FiscalReceiptId",
+                table: "InvoiceFiscalReceipt",
+                column: "FiscalReceiptId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceFiscalReceipt_InvoiceId",
                 table: "InvoiceFiscalReceipt",
                 column: "InvoiceId");
@@ -4899,12 +4910,6 @@ namespace _
                 name: "IX_InvoiceFiscalReceipt_ShiftId",
                 table: "InvoiceFiscalReceipt",
                 column: "ShiftId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_FiscalReceipt",
-                table: "InvoiceFiscalReceipt",
-                column: "FiscalReceiptId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLine_CreatedById",
@@ -4922,6 +4927,13 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InvoiceLine_PointsTransactionId",
+                table: "InvoiceLine",
+                column: "PointsTransactionId",
+                unique: true,
+                filter: "[PointsTransactionId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLine_RegisterId",
                 table: "InvoiceLine",
                 column: "RegisterId");
@@ -4937,13 +4949,6 @@ namespace _
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_PointsTransaction",
-                table: "InvoiceLine",
-                column: "PointsTransactionId",
-                unique: true,
-                filter: "[PointsTransactionId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLineExtended_BundleLineId",
                 table: "InvoiceLineExtended",
                 column: "BundleLineId");
@@ -4955,14 +4960,14 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_StockReturnTransaction",
+                name: "IX_InvoiceLineExtended_StockReturnTransactionId",
                 table: "InvoiceLineExtended",
                 column: "StockReturnTransactionId",
                 unique: true,
                 filter: "[StockReturnTransactionId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_StockTransaction",
+                name: "IX_InvoiceLineExtended_StockTransactionId",
                 table: "InvoiceLineExtended",
                 column: "StockTransactionId",
                 unique: true,
@@ -4975,15 +4980,15 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineProduct_ProductId",
-                table: "InvoiceLineProduct",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_OrderLine",
+                name: "IX_InvoiceLineProduct_OrderLineId",
                 table: "InvoiceLineProduct",
                 column: "OrderLineId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceLineProduct_ProductId",
+                table: "InvoiceLineProduct",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLineSession_InvoiceLineId",
@@ -4997,7 +5002,7 @@ namespace _
                 column: "OrderLineId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UsageSession",
+                name: "IX_InvoiceLineSession_UsageSessionId",
                 table: "InvoiceLineSession",
                 column: "UsageSessionId",
                 unique: true);
@@ -5009,15 +5014,15 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineTime_ProductTimeId",
-                table: "InvoiceLineTime",
-                column: "ProductTimeId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_OrderLine",
+                name: "IX_InvoiceLineTime_OrderLineId",
                 table: "InvoiceLineTime",
                 column: "OrderLineId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceLineTime_ProductTimeId",
+                table: "InvoiceLineTime",
+                column: "ProductTimeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLineTimeFixed_InvoiceLineId",
@@ -5026,7 +5031,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_OrderLine",
+                name: "IX_InvoiceLineTimeFixed_OrderLineId",
                 table: "InvoiceLineTimeFixed",
                 column: "OrderLineId",
                 unique: true);
@@ -5072,18 +5077,18 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_License_ModifiedById",
-                table: "License",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "IX_License_Guid",
                 table: "License",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_License_ModifiedById",
+                table: "License",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_License_Name",
                 table: "License",
                 column: "Name",
                 unique: true);
@@ -5099,6 +5104,12 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LicenseKey_Guid",
+                table: "LicenseKey",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LicenseKey_LicenseId",
                 table: "LicenseKey",
                 column: "LicenseId");
@@ -5107,12 +5118,6 @@ namespace _
                 name: "IX_LicenseKey_ModifiedById",
                 table: "LicenseKey",
                 column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
-                table: "LicenseKey",
-                column: "Guid",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Category",
@@ -5151,7 +5156,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_MountPoint",
+                name: "IX_Mapping_MountPoint",
                 table: "Mapping",
                 column: "MountPoint",
                 unique: true);
@@ -5167,7 +5172,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_MonetaryUnit_Name",
                 table: "MonetaryUnit",
                 column: "Name",
                 unique: true);
@@ -5198,6 +5203,13 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Payment_DepositTransactionId",
+                table: "Payment",
+                column: "DepositTransactionId",
+                unique: true,
+                filter: "[DepositTransactionId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payment_ModifiedById",
                 table: "Payment",
                 column: "ModifiedById");
@@ -5206,6 +5218,13 @@ namespace _
                 name: "IX_Payment_PaymentMethodId",
                 table: "Payment",
                 column: "PaymentMethodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payment_PointTransactionId",
+                table: "Payment",
+                column: "PointTransactionId",
+                unique: true,
+                filter: "[PointTransactionId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payment_RegisterId",
@@ -5223,23 +5242,15 @@ namespace _
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositTransaction",
-                table: "Payment",
-                column: "DepositTransactionId",
-                unique: true,
-                filter: "[DepositTransactionId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_PointsTransaction",
-                table: "Payment",
-                column: "PointTransactionId",
-                unique: true,
-                filter: "[PointTransactionId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PaymentIntent_CreatedById",
                 table: "PaymentIntent",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentIntent_Guid",
+                table: "PaymentIntent",
+                column: "Guid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentIntent_ModifiedById",
@@ -5257,10 +5268,11 @@ namespace _
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
-                table: "PaymentIntent",
-                column: "Guid",
-                unique: true);
+                name: "IX_PaymentIntentDeposit_DepositPaymentId",
+                table: "PaymentIntentDeposit",
+                column: "DepositPaymentId",
+                unique: true,
+                filter: "[DepositPaymentId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentIntentDeposit_PaymentIntentId",
@@ -5269,11 +5281,11 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositPayment",
-                table: "PaymentIntentDeposit",
-                column: "DepositPaymentId",
+                name: "IX_PaymentIntentOrder_InvoicePaymentId",
+                table: "PaymentIntentOrder",
+                column: "InvoicePaymentId",
                 unique: true,
-                filter: "[DepositPaymentId] IS NOT NULL");
+                filter: "[InvoicePaymentId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentIntentOrder_PaymentIntentId",
@@ -5287,13 +5299,6 @@ namespace _
                 column: "ProductOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_InvoicePayment",
-                table: "PaymentIntentOrder",
-                column: "InvoicePaymentId",
-                unique: true,
-                filter: "[InvoicePaymentId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethod_CreatedById",
                 table: "PaymentMethod",
                 column: "CreatedById");
@@ -5304,7 +5309,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_PaymentMethod_Name",
                 table: "PaymentMethod",
                 column: "Name",
                 unique: true);
@@ -5315,18 +5320,18 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PersonalFile_ModifiedById",
-                table: "PersonalFile",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "IX_PersonalFile_Guid",
                 table: "PersonalFile",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_PersonalFile_ModifiedById",
+                table: "PersonalFile",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonalFile_Name",
                 table: "PersonalFile",
                 column: "Name",
                 unique: true);
@@ -5337,15 +5342,15 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PluginLibrary_ModifiedById",
-                table: "PluginLibrary",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_FileName",
+                name: "IX_PluginLibrary_FileName",
                 table: "PluginLibrary",
                 column: "FileName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PluginLibrary_ModifiedById",
+                table: "PluginLibrary",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PointTransaction_CreatedById",
@@ -5399,6 +5404,13 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductBase_Barcode",
+                table: "ProductBase",
+                column: "Barcode",
+                unique: true,
+                filter: "[Barcode] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductBase_CreatedById",
                 table: "ProductBase",
                 column: "CreatedById");
@@ -5409,6 +5421,12 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductBase_Name",
+                table: "ProductBase",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductBase_ProductGroupId",
                 table: "ProductBase",
                 column: "ProductGroupId");
@@ -5417,19 +5435,6 @@ namespace _
                 name: "IX_ProductBase_StockProductId",
                 table: "ProductBase",
                 column: "StockProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Barcode",
-                table: "ProductBase",
-                column: "Barcode",
-                unique: true,
-                filter: "[Barcode] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name",
-                table: "ProductBase",
-                column: "Name",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductBaseExtended_ProductId",
@@ -5454,15 +5459,15 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductBundleUserPrice_UserGroupId",
-                table: "ProductBundleUserPrice",
-                column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_ProductBundlePriceUserGroup",
+                name: "IX_ProductBundleUserPrice_ProductBundleId_UserGroupId",
                 table: "ProductBundleUserPrice",
                 columns: new[] { "ProductBundleId", "UserGroupId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductBundleUserPrice_UserGroupId",
+                table: "ProductBundleUserPrice",
+                column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductGroup_CreatedById",
@@ -5475,15 +5480,15 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductGroup_ParentId",
-                table: "ProductGroup",
-                column: "ParentId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_ProductGroup_Name",
                 table: "ProductGroup",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductGroup_ParentId",
+                table: "ProductGroup",
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductHostHidden_CreatedById",
@@ -5501,7 +5506,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ProductHostGroup",
+                name: "IX_ProductHostHidden_ProductId_HostGroupId",
                 table: "ProductHostHidden",
                 columns: new[] { "ProductId", "HostGroupId" },
                 unique: true);
@@ -5648,7 +5653,7 @@ namespace _
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ProductPeriodDay",
+                name: "IX_ProductPeriodDay_ProductPeriodId_Day",
                 table: "ProductPeriodDay",
                 columns: new[] { "ProductPeriodId", "Day" },
                 unique: true);
@@ -5706,7 +5711,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ProductTimeHostGroup",
+                name: "IX_ProductTimeHostDisallowed_ProductTimeId_HostGroupId",
                 table: "ProductTimeHostDisallowed",
                 columns: new[] { "ProductTimeId", "HostGroupId" },
                 unique: true);
@@ -5744,15 +5749,15 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductUserDisallowed_UserGroupId",
-                table: "ProductUserDisallowed",
-                column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_ProductUserGroup",
+                name: "IX_ProductUserDisallowed_ProductId_UserGroupId",
                 table: "ProductUserDisallowed",
                 columns: new[] { "ProductId", "UserGroupId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductUserDisallowed_UserGroupId",
+                table: "ProductUserDisallowed",
+                column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductUserPrice_CreatedById",
@@ -5765,15 +5770,15 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductUserPrice_UserGroupId",
-                table: "ProductUserPrice",
-                column: "UserGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_ProductUserGroup",
+                name: "IX_ProductUserPrice_ProductId_UserGroupId",
                 table: "ProductUserPrice",
                 columns: new[] { "ProductId", "UserGroupId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductUserPrice_UserGroupId",
+                table: "ProductUserPrice",
+                column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Refund_CreatedById",
@@ -5811,6 +5816,13 @@ namespace _
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefundDepositPayment_DepositPaymentId",
+                table: "RefundDepositPayment",
+                column: "DepositPaymentId",
+                unique: true,
+                filter: "[DepositPaymentId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefundDepositPayment_FiscalReceiptId",
                 table: "RefundDepositPayment",
                 column: "FiscalReceiptId");
@@ -5822,16 +5834,15 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositPayment",
-                table: "RefundDepositPayment",
-                column: "DepositPaymentId",
-                unique: true,
-                filter: "[DepositPaymentId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RefundInvoicePayment_InvoiceId",
                 table: "RefundInvoicePayment",
                 column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefundInvoicePayment_InvoicePaymentId",
+                table: "RefundInvoicePayment",
+                column: "InvoicePaymentId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefundInvoicePayment_RefundId",
@@ -5840,27 +5851,21 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_InvoicePayment",
-                table: "RefundInvoicePayment",
-                column: "InvoicePaymentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Register_CreatedById",
                 table: "Register",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Register_ModifiedById",
-                table: "Register",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_MACAddress",
+                name: "IX_Register_MacAddress",
                 table: "Register",
                 column: "MacAddress",
                 unique: true,
                 filter: "[MacAddress] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Register_ModifiedById",
+                table: "Register",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RegisterTransaction_CreatedById",
@@ -5924,7 +5929,7 @@ namespace _
                 column: "PreferedUserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Reservation_Host",
+                name: "IX_ReservationHost_ReservationId_HostId",
                 table: "ReservationHost",
                 columns: new[] { "ReservationId", "HostId" },
                 unique: true);
@@ -5940,15 +5945,15 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReservationUser_UserId",
-                table: "ReservationUser",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Reservation_User",
+                name: "IX_ReservationUser_ReservationId_UserId",
                 table: "ReservationUser",
                 columns: new[] { "ReservationId", "UserId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReservationUser_UserId",
+                table: "ReservationUser",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SecurityProfile_CreatedById",
@@ -5961,7 +5966,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_SecurityProfile_Name",
                 table: "SecurityProfile",
                 column: "Name",
                 unique: true);
@@ -5977,7 +5982,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_SecurityProfilePolicyType",
+                name: "IX_SecurityProfilePolicy_SecurityProfileId_Type",
                 table: "SecurityProfilePolicy",
                 columns: new[] { "SecurityProfileId", "Type" },
                 unique: true);
@@ -6008,7 +6013,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_NameGroup",
+                name: "IX_Setting_Name_GroupName",
                 table: "Setting",
                 columns: new[] { "Name", "GroupName" },
                 unique: true);
@@ -6059,7 +6064,7 @@ namespace _
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_ShiftCountPaymentMethod",
+                name: "IX_ShiftCount_ShiftId_PaymentMethodId",
                 table: "ShiftCount",
                 columns: new[] { "ShiftId", "PaymentMethodId" },
                 unique: true);
@@ -6090,26 +6095,26 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskBase_ModifiedById",
-                table: "TaskBase",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TaskBase_TaskId",
-                table: "TaskBase",
-                column: "TaskId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "IX_TaskBase_Guid",
                 table: "TaskBase",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_TaskBase_ModifiedById",
+                table: "TaskBase",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskBase_Name",
                 table: "TaskBase",
                 column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskBase_TaskId",
+                table: "TaskBase",
+                column: "TaskId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -6147,7 +6152,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_Tax_Name",
                 table: "Tax",
                 column: "Name",
                 unique: true);
@@ -6168,7 +6173,7 @@ namespace _
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Value",
+                name: "IX_Token_Value",
                 table: "Token",
                 column: "Value",
                 unique: true);
@@ -6248,25 +6253,25 @@ namespace _
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_ModifiedById",
-                table: "User",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Guid",
+                name: "IX_User_Guid",
                 table: "User",
                 column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Identification",
+                name: "IX_User_Identification",
                 table: "User",
                 column: "Identification",
                 unique: true,
                 filter: "[Identification] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_SmartCardUID",
+                name: "IX_User_ModifiedById",
+                table: "User",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_SmartCardUID",
                 table: "User",
                 column: "SmartCardUID",
                 unique: true,
@@ -6293,15 +6298,15 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAgreementState_UserId",
-                table: "UserAgreementState",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_UserAgreementState",
+                name: "IX_UserAgreementState_UserAgreementId_UserId",
                 table: "UserAgreementState",
                 columns: new[] { "UserAgreementId", "UserId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAgreementState_UserId",
+                table: "UserAgreementState",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserAttribute_AttributeId",
@@ -6319,7 +6324,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UserAttribute",
+                name: "IX_UserAttribute_UserId_AttributeId",
                 table: "UserAttribute",
                 columns: new[] { "UserId", "AttributeId" },
                 unique: true);
@@ -6376,15 +6381,15 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserGroup_SecurityProfileId",
-                table: "UserGroup",
-                column: "SecurityProfileId");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_UserGroup_Name",
                 table: "UserGroup",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserGroup_SecurityProfileId",
+                table: "UserGroup",
+                column: "SecurityProfileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserGroupHostDisallowed_CreatedById",
@@ -6402,10 +6407,17 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UserGroupHostGroup",
+                name: "IX_UserGroupHostDisallowed_UserGroupId_HostGroupId",
                 table: "UserGroupHostDisallowed",
                 columns: new[] { "UserGroupId", "HostGroupId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserGuest_ReservedHostId_ReservedSlot",
+                table: "UserGuest",
+                columns: new[] { "ReservedHostId", "ReservedSlot" },
+                unique: true,
+                filter: "[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserGuest_UserId",
@@ -6414,11 +6426,11 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UserGuestHostSlot",
-                table: "UserGuest",
-                columns: new[] { "ReservedHostId", "ReservedSlot" },
+                name: "IX_UserMember_Email",
+                table: "UserMember",
+                column: "Email",
                 unique: true,
-                filter: "[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
+                filter: "[Email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserMember_UserGroupId",
@@ -6432,14 +6444,7 @@ namespace _
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Email",
-                table: "UserMember",
-                column: "Email",
-                unique: true,
-                filter: "[Email] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Username",
+                name: "IX_UserMember_Username",
                 table: "UserMember",
                 column: "Username",
                 unique: true);
@@ -6456,20 +6461,20 @@ namespace _
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserOperator_UserId",
-                table: "UserOperator",
-                column: "UserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Email",
+                name: "IX_UserOperator_Email",
                 table: "UserOperator",
                 column: "Email",
                 unique: true,
                 filter: "[Email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Username",
+                name: "IX_UserOperator_UserId",
+                table: "UserOperator",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserOperator_Username",
                 table: "UserOperator",
                 column: "Username",
                 unique: true);
@@ -6485,7 +6490,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_UserPermission",
+                name: "IX_UserPermission_UserId_Type_Value",
                 table: "UserPermission",
                 columns: new[] { "UserId", "Type", "Value" },
                 unique: true);
@@ -6551,7 +6556,7 @@ namespace _
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "UQ_Name",
+                name: "IX_Variable_Name",
                 table: "Variable",
                 column: "Name",
                 unique: true);
@@ -6604,27 +6609,27 @@ namespace _
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_VoidDepositPayment_DepositPaymentId",
+                table: "VoidDepositPayment",
+                column: "DepositPaymentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_VoidDepositPayment_VoidId",
                 table: "VoidDepositPayment",
                 column: "VoidId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "UQ_DepositPayment",
-                table: "VoidDepositPayment",
-                column: "DepositPaymentId",
+                name: "IX_VoidInvoice_InvoiceId",
+                table: "VoidInvoice",
+                column: "InvoiceId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_VoidInvoice_VoidId",
                 table: "VoidInvoice",
                 column: "VoidId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "UQ_Invoice",
-                table: "VoidInvoice",
-                column: "InvoiceId",
                 unique: true);
 
             migrationBuilder.AddForeignKey(

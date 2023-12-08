@@ -1,6 +1,6 @@
 ﻿using System;
 
-using GizmoDALV2;
+using Gizmo.DAL;
 
 using Microsoft.Extensions.Options;
 

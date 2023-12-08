@@ -1,5 +1,5 @@
-﻿using GizmoDALV2;
-using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -47,7 +47,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("AppExeCdImageId");
 
             // Indexes
-            builder.HasIndex(x => x.Guid).HasDatabaseName("UQ_Guid").IsUnique();
+            builder.HasIndex(x => x.Guid).IsUnique();
             builder.HasIndex(x => x.AppExeId);
 
             // Relationships

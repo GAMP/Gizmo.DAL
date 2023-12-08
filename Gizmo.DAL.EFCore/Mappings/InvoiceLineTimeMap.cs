@@ -14,7 +14,7 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(InvoiceLineTime));
 
             // Indexes
-            builder.HasIndex(t => t.OrderLineId).HasDatabaseName("UQ_OrderLine").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.OrderLineId).IsUnique().HasFilter(null);
             builder.HasIndex(t => t.Id);
 
             builder.HasOne(x => x.Product)

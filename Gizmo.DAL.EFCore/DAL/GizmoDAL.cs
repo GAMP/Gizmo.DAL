@@ -1015,8 +1015,8 @@ namespace Gizmo.DAL
 
                     var defaultOperator = new Entities.UserOperator();
 
-                    byte[] salt = DefaultDbContext.GetNewSalt();
-                    byte[] password = DefaultDbContext.GetHashedPassword("admin", salt);
+                    byte[] salt = cx.GetNewSalt();
+                    byte[] password = cx.GetHashedPassword("admin", salt);
 
                     defaultOperator.UserCredential = new Entities.UserCredential();
                     defaultOperator.Username = "Admin";
@@ -1246,8 +1246,8 @@ namespace Gizmo.DAL
                         }
                         else
                         {
-                            byte[] salt = DefaultDbContext.GetNewSalt();
-                            byte[] password = DefaultDbContext.GetHashedPassword(user.Password, salt);
+                            byte[] salt = cx.GetNewSalt();
+                            byte[] password = cx.GetHashedPassword(user.Password, salt);
                             userCredentials.Salt = salt;
                             userCredentials.Password = password;
                         }
@@ -1269,7 +1269,7 @@ namespace Gizmo.DAL
                                 User = userMember,
                                 IsDelivered = true,
                                 DeliveredTime = DateTime.Now,
-                                Status = OrderStatus.Completed,
+                                Status = SharedLib.OrderStatus.Completed,
                             };
 
                             //create time order line
@@ -1291,7 +1291,7 @@ namespace Gizmo.DAL
                             {
                                 ProductOrder = order,
                                 User = order.User,
-                                Status = InvoiceStatus.Paid,
+                                Status = SharedLib.InvoiceStatus.Paid,
                             };
 
                             //create invoice line
@@ -1323,7 +1323,7 @@ namespace Gizmo.DAL
                             {
                                 User = userMember,
                                 Amount = deposits,
-                                Type = DepositTransactionType.Credit,
+                                Type = SharedLib.DepositTransactionType.Credit,
                                 Balance = deposits,
                             };
 

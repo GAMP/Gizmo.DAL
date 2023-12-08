@@ -1230,7 +1230,7 @@ namespace Gizmo.DAL
                                 User = userMember,
                                 IsDelivered = true,
                                 DeliveredTime = DateTime.Now,
-                                Status = Gizmo.OrderStatus.Completed,
+                                Status = SharedLib.OrderStatus.Completed,
                             };
 
                             //create time order line
@@ -1252,7 +1252,7 @@ namespace Gizmo.DAL
                             {
                                 ProductOrder = order,
                                 User = order.User,
-                                Status = Gizmo.InvoiceStatus.Paid,
+                                Status = SharedLib.InvoiceStatus.Paid,
                             };
 
                             //create invoice line
@@ -1284,7 +1284,7 @@ namespace Gizmo.DAL
                             {
                                 User = userMember,
                                 Amount = deposits,
-                                Type = Gizmo.DepositTransactionType.Credit,
+                                Type = SharedLib.DepositTransactionType.Credit,
                                 Balance = deposits,
                             };
 

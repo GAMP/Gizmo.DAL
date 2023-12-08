@@ -1,5 +1,5 @@
-﻿using GizmoDALV2;
-using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -25,7 +25,7 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY); 
 
             // Indexes
-            builder.HasIndex(t => t.MACAddress).HasDatabaseName("UQ_MACAddress").IsUnique().HasFilter(null);
+            builder.HasIndex(t => t.MACAddress).IsUnique().HasFilter(null);
             builder.HasIndex(t => t.Id).IsUnique(false);
 
             // Table & Column Mappings

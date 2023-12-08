@@ -42,7 +42,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(7);
 
             // Indexes
-            builder.HasIndex(t => t.Guid).HasDatabaseName("UQ_Guid").IsUnique();
+            builder.HasIndex(t => t.Guid).IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(Host));

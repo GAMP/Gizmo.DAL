@@ -1,8 +1,7 @@
-﻿using GizmoDALV2;
-using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Entities;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedLib;
 
 namespace Gizmo.DAL.Mappings
 {
@@ -60,7 +59,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(11);
 
             // Indexes
-            builder.HasIndex(t => t.Name).HasDatabaseName("UQ_Name").IsUnique();
+            builder.HasIndex(t => t.Name).IsUnique();
             
             // Table & Column Mappings
             builder.ToTable("PaymentMethod");

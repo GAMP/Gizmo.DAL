@@ -25,7 +25,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired();
 
             // Indexes
-            builder.HasIndex(x => new { x.ReservationId, x.UserId }).HasDatabaseName("UQ_Reservation_User").IsUnique();
+            builder.HasIndex(x => new { x.ReservationId, x.UserId }).IsUnique();
 
             builder.HasOne(e => e.Reservation)
                 .WithMany(e => e.Users)

@@ -1,6 +1,6 @@
 ﻿using Gizmo.DAL.Entities;
 
-using GizmoDALV2;
+using Gizmo.DAL;
 
 using System.Data.Entity.ModelConfiguration;
 

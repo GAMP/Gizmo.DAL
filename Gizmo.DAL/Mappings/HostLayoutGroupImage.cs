@@ -18,7 +18,7 @@ namespace Gizmo.DAL.Mappings
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
             Property(x => x.Image)
-                .HasMaxLength(GizmoDALV2.SQLByteArraySize.MEDIUM);
+                .HasMaxLength(Gizmo.DAL.SQLByteArraySize.MEDIUM);
 
             // Table & Column Mappings
             ToTable("HostLayoutGroupImage");

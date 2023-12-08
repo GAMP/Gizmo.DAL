@@ -16,7 +16,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0);
 
             Property(x => x.Image)
-                .HasMaxLength(GizmoDALV2.SQLByteArraySize.MEDIUM)
+                .HasMaxLength(Gizmo.DAL.SQLByteArraySize.MEDIUM)
                 .IsRequired();
 
             // Table & Column Mappings

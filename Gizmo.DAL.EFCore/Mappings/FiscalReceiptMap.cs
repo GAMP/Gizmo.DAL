@@ -12,7 +12,7 @@ namespace Gizmo.DAL.Mappings
         public void Configure(EntityTypeBuilder<FiscalReceipt> builder)
         {
             //Primary key
-            builder.HasKey(x => x.Id);
+            builder.HasIndex(x => x.Id);
 
             builder.Property(x => x.Id)
                 .HasColumnOrder(0)
