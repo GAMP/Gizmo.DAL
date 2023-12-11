@@ -89,7 +89,7 @@ namespace Gizmo.DAL.EFCore.Extensions
         }
 
         /// <summary>
-        /// Executes sql script.
+        /// Executes sql script from file depending on the database provider.
         /// </summary>
         /// <param name="dbFacade">
         /// Database facade.
@@ -115,7 +115,7 @@ namespace Gizmo.DAL.EFCore.Extensions
             };
 
         /// <summary>
-        /// Executes sql script.
+        /// Executes sql script from file depending on the database provider.
         /// </summary>
         /// <param name="dbFacade">
         /// Database facade.
@@ -144,7 +144,7 @@ namespace Gizmo.DAL.EFCore.Extensions
             };
 
         /// <summary>
-        /// Executes sql script.
+        /// Executes sql script from file depending on the database provider.
         /// </summary>
         /// <typeparam name="T">
         /// Result type.

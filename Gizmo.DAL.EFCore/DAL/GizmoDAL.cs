@@ -1217,8 +1217,7 @@ namespace Gizmo.DAL
                             FirstName = user.FirstName,
                             LastName = user.LastName,
                             Email = user.Email,
-                            //TODO: Inconsistent data
-                            //Sex = user.Sex,
+                            Sex = (SharedLib.Sex)user.Sex,
                             Phone = user.Phone,
                             MobilePhone = user.MobilePhone,
                             BirthDate = user.BirthDate,
