@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Gizmo.DAL.Entities;
 using SharedLib;
 using System.Globalization;
+using Gizmo.DAL.Scripts;
+using Microsoft.Data.SqlClient;
 
 namespace Gizmo.DAL.EFCore.Extensions
 {
@@ -474,5 +476,34 @@ namespace Gizmo.DAL.EFCore.Extensions
                 throw;
             }
         }
+
+        /// <summary>
+        /// Executes the SQL against the database, choosing it from the file of the 'Gizmo file.DAL.Scripts' namespace depends on the database provider.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Type of DbSet.
+        /// </typeparam>
+        /// <param name="dbContext">
+        /// Default database context.
+        /// </param>
+        /// <param name="scriptName">
+        /// SQL script name from the Gizmo.DAL.Scripts.SQLScripts.cs.
+        /// </param>
+        /// <param name="sqlParameters">
+        /// Sql parameters for the script.
+        /// </param>
+        /// <returns>
+        /// IQueryable of T.
+        /// </returns>
+        /// <exception cref="NotSupportedException">
+        /// Database provider is not supported for this SQL script name.
+        /// </exception>
+        public static IQueryable<T> FromSqlScript<T>(this DefaultDbContext dbContext, string scriptName, params SqlParameter[] sqlParameters) where T : class
+            => dbContext.Database.ProviderName switch
+            {
+                "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Set<T>().FromSqlRaw(MsSqlScripts.GetScript(scriptName), sqlParameters),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => dbContext.Set<T>().FromSqlRaw(NpgSqlScripts.GetScript(scriptName), sqlParameters),
+                _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
+            };
     }
 }
