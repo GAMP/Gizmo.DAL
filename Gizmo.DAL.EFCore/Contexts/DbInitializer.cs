@@ -77,7 +77,7 @@ namespace Gizmo.DAL.Contexts
             {
                 var hasEF6MigrationHistoryTable = await _dbContext.Database.ExecuteSqlScriptAsync(SQLScripts.HAS_TABLE_BY_NAME, new SqlParameter[] 
                 { 
-                    new ("name", "__EFMigrationsHistory") 
+                    new ("name", "__MigrationHistory") 
                 }, cancellationToken) == 1;
 
                 if (hasEF6MigrationHistoryTable)
