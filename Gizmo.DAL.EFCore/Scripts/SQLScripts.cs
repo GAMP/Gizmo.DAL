@@ -6,7 +6,7 @@
     public static class SQLScripts
     {
         /// <summary>
-        /// Depost payment refund migration script.
+        /// Deposit payment refund migration script.
         /// </summary>
         public const string CREATE_DEPOSIT_PAYMENT_REFUNDS = nameof(CREATE_DEPOSIT_PAYMENT_REFUNDS);
 
@@ -39,5 +39,15 @@
         /// Delete user agreement state by user agreement id.
         /// </summary>
         public const string DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID = nameof(DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID);
+
+        /// <summary>
+        /// Check if migration exists.
+        /// </summary>
+        public const string HAS_EF6_MIGRATION_BY_MIGRATIONID = nameof(HAS_EF6_MIGRATION_BY_MIGRATIONID);
+
+        /// <summary>
+        /// Check if table exists.
+        /// </summary>
+        public const string HAS_TABLE_BY_NAME = nameof(HAS_TABLE_BY_NAME);
     }
 }

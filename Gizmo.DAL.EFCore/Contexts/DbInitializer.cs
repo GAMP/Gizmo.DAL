@@ -1,5 +1,7 @@
 ﻿using Gizmo.DAL.EFCore.Extensions;
+using Gizmo.DAL.Scripts;
 
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -73,11 +75,26 @@ namespace Gizmo.DAL.Contexts
         {
             if (_dbContext.Database.IsSqlServer())
             {
-                if (await _dbContext.Database.TableExistsAsync("__MigrationHistory", cancellationToken))
+                var hasEF6MigrationHistoryTable = await _dbContext.Database.ExecuteSqlScriptAsync(SQLScripts.HAS_TABLE_BY_NAME, new SqlParameter[] 
+                { 
+                    new ("name", "__EFMigrationsHistory") 
+                }, cancellationToken) == 1;
+
+                if (hasEF6MigrationHistoryTable)
                 {
-                    if (!await _dbContext.Database.TableExistsAsync("__EFMigrationsHistory", cancellationToken))
+                    var hasEFCoreMigrationHistoryTable = await _dbContext.Database.ExecuteSqlScriptAsync(SQLScripts.HAS_TABLE_BY_NAME, new SqlParameter[]
                     {
-                        if (!await _dbContext.Database.MigrationExistAsync("202309121624325_Update17", cancellationToken))
+                        new ("name", "__EFMigrationsHistory") 
+                    }, cancellationToken) == 1;
+
+                    if (!hasEFCoreMigrationHistoryTable)
+                    {
+                        var hasEF6Migration_Update17 = await _dbContext.Database.ExecuteSqlScriptAsync(SQLScripts.HAS_EF6_MIGRATION_BY_MIGRATIONID, new SqlParameter[]
+                        {
+                            new ("migrationId", "202309121624325_Update17") 
+                        }, cancellationToken) == 1;
+
+                        if (!hasEF6Migration_Update17)
                         {
                             throw new NotSupportedException("Current database version cannot be upgraded.");
                         }

@@ -35,7 +35,7 @@ namespace Gizmo.DAL.Contexts
         /// <returns>New context instance.</returns>
         public DefaultDbContext GetDbContext()
         {
-            var optionsBuilder = GetDbContextBaseOptionsBuilder();
+            var optionsBuilder = CreateOptionsBuilder();
             
             return new DefaultDbContext(optionsBuilder.Options);
         }
@@ -46,21 +46,21 @@ namespace Gizmo.DAL.Contexts
         /// <returns>New context instance.</returns>
         public DefaultDbContext GetDbNonProxyContext()
         {
-            var optionsBuilder =  GetDbContextBaseOptionsBuilder();
+            var optionsBuilder =  CreateOptionsBuilder();
             
             return new DefaultDbContext(optionsBuilder.Options);
         }
 
         #endregion
 
-        private DbContextOptionsBuilder<DefaultDbContext> GetDbContextBaseOptionsBuilder() => _dbConfig.DbType switch
+        private DbContextOptionsBuilder<DefaultDbContext> CreateOptionsBuilder() => _dbConfig.DbType switch
         {
-            DatabaseType.LOCALDB or DatabaseType.MSSQLEXPRESS or DatabaseType.MSSQL => GetMSSQLBaseOptionsBuilder(),
-            DatabaseType.POSTGRE => GetPostgreBaseOptionsBuilder(),
+            DatabaseType.LOCALDB or DatabaseType.MSSQLEXPRESS or DatabaseType.MSSQL => CreateMssqlOptionsBuilder(),
+            DatabaseType.POSTGRE => CreateNpgsqlOptionsBuilder(),
             _ => throw new NotImplementedException(nameof(GetDbContext))
         };
 
-        private DbContextOptionsBuilder<DefaultDbContext> GetMSSQLBaseOptionsBuilder()
+        private DbContextOptionsBuilder<DefaultDbContext> CreateMssqlOptionsBuilder()
         {
             var optionsBuilder = new DbContextOptionsBuilder<DefaultDbContext>();
             
@@ -72,7 +72,7 @@ namespace Gizmo.DAL.Contexts
             return optionsBuilder;
         }
 
-        private DbContextOptionsBuilder<DefaultDbContext> GetPostgreBaseOptionsBuilder()
+        private DbContextOptionsBuilder<DefaultDbContext> CreateNpgsqlOptionsBuilder()
         {
             var optionsBuilder = new DbContextOptionsBuilder<DefaultDbContext>();
             

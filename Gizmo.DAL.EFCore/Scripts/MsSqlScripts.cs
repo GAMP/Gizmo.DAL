@@ -13,12 +13,11 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.TRUNCATE_LOGS => TRUNCATE_LOGS,
             SQLScripts.DELETE_USERAGREEMENTSTATE_BY_USERID => DELETE_USERAGREEMENTSTATE_BY_USERID,
             SQLScripts.DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID => DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID,
-            _ => throw new NotSupportedException($"Script name {scriptName} is not supported."),
+            SQLScripts.HAS_EF6_MIGRATION_BY_MIGRATIONID => HAS_EF6_MIGRATION_BY_MIGRATIONID,
+            SQLScripts.HAS_TABLE_BY_NAME => HAS_TABLE_BY_NAME,
+            _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
-        /// <summary>
-        /// Depost payment refund migration script.
-        /// </summary>
         private const string CREATE_DEPOSIT_PAYMENT_REFUNDS = """
             BEGIN TRANSACTION;
                 
@@ -52,10 +51,6 @@ namespace Gizmo.DAL.Scripts
             
             COMMIT;
         """;
-
-        /// <summary>
-        /// Session billed span update script.
-        /// </summary>
         private const string SESSION_BILLED_SPAN_UPDATE = """
             UPDATE UserSession 
             SET 
@@ -63,10 +58,6 @@ namespace Gizmo.DAL.Scripts
             WHERE 
                 UserSessionId IN (@JoinList);
             """;
-
-        /// <summary>
-        /// Session span update script.
-        /// </summary>
         private const string SESSION_UPDATE_SQL = """
             UPDATE UserSession 
             SET
@@ -96,10 +87,6 @@ namespace Gizmo.DAL.Scripts
             WHERE 
                 State & 1 = 1;
             """;
-
-        /// <summary>
-        /// Log limiting sql script.
-        /// </summary>
         private const string LOG_LIMIT_SQL = """
             DECLARE @CURRENT_RECORDS AS INT = 0;
             
@@ -113,25 +100,35 @@ namespace Gizmo.DAL.Scripts
                 SELECT @OVER_LIMIT;
             END;
         """;
-
-        /// <summary>
-        /// Log truncate sql script.
-        /// </summary>
         private const string TRUNCATE_LOGS = """
             TRUNCATE TABLE [LogException];
             ALTER TABLE [LogException] DROP CONSTRAINT  [FK_dbo.LogException_dbo.Log_LogId];
             TRUNCATE TABLE [Log];
             ALTER TABLE [LogException] ADD CONSTRAINT  ""FK_dbo.LogException_dbo.Log_LogId"" FOREIGN KEY(LogId) REFERENCES [Log] (LogId) ON DELETE CASCADE;
             """;
-
-        /// <summary>
-        /// Delete user agreement state by user id.
-        /// </summary>
         private const string DELETE_USERAGREEMENTSTATE_BY_USERID = "DELETE FROM UserAgreementState WHERE UserId = @UserId";
-
-        /// <summary>
-        /// Delete user agreement state by user agreement id.
-        /// </summary>
         private const string DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID = "DELETE FROM UserAgreementState WHERE UserAgreementId = @UserAgreementId";
+        private const string HAS_EF6_MIGRATION_BY_MIGRATIONID = """
+            DECLARE @HAS_EF6_MIGRATION_BY_MIGRATIONID TABLE (result BIT);
+            IF EXISTS (
+                SELECT 1 
+                FROM __MigrationHistory 
+                WHERE MigrationId = @migrationId
+            )
+                INSERT INTO @HAS_EF6_MIGRATION_BY_MIGRATIONID VALUES (1);
+            ELSE
+                DELETE FROM @HAS_EF6_MIGRATION_BY_MIGRATIONID
+            """;
+        private const string HAS_TABLE_BY_NAME = """
+            DECLARE @HAS_TABLE_BY_NAME TABLE (result BIT);
+            IF EXISTS (
+                SELECT 1 
+                FROM INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = @name
+            )
+                INSERT INTO @HAS_TABLE_BY_NAME VALUES (1);
+            ELSE
+                DELETE FROM @HAS_TABLE_BY_NAME
+            """;
     }
 }
