@@ -14,7 +14,7 @@ namespace Gizmo.DAL.EFCore.Extensions
     /// <summary>
     /// Database facade extensions.
     /// </summary>
-    public static class DatabaseFacadeExtensions
+    public static class DbFacadeExtensions
     {
         /// <summary>
         /// Executes the SQL against the database, choosing it from the file of the 'Gizmo file.DAL.Scripts' namespace depends on the database provider.

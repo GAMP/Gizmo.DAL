@@ -88,18 +88,33 @@ namespace Gizmo.DAL.Scripts
                 State & 1 = 1;
             """;
         private const string LOG_LIMIT_SQL = """
-            DECLARE @CURRENT_RECORDS AS INT = 0;
-            
-            SELECT @CURRENT_RECORDS = COUNT(*) FROM Log;
-            
-            IF(@CURRENT_RECORDS > @MAX_RECORDS)
-            BEGIN;
-                DECLARE @OVER_LIMIT AS INT = @CURRENT_RECORDS - @MAX_RECORDS;
-                IF @OVER_LIMIT > 0
-                WITH LOG_EXPRESSION AS (SELECT TOP (@OVER_LIMIT) * FROM [Log] ORDER BY LogId ASC) DELETE FROM LOG_EXPRESSION;
-                SELECT @OVER_LIMIT;
-            END;
-        """;
+            DECLARE @LOG_LIMIT_SQL TABLE (RowsAffected INT);
+
+            DECLARE @CurrentRecords INT;
+            SELECT @CurrentRecords = COUNT(*) FROM [Log];
+
+            IF (@CurrentRecords > @MAX_RECORDS)
+            BEGIN
+                DECLARE @OverLimit INT = @CurrentRecords - @MAX_RECORDS;
+                IF (@OverLimit > 0)
+                BEGIN
+                    DELETE FROM [Log]
+                    WHERE LogId IN (
+                        SELECT TOP (@OverLimit) LogId 
+                        FROM [Log] 
+                        ORDER BY LogId ASC
+                    );
+                END
+                ELSE
+                BEGIN
+                    DELETE FROM @LOG_LIMIT_SQL;
+                END
+            END
+            ELSE
+            BEGIN
+                DELETE FROM @LOG_LIMIT_SQL;
+            END
+            """;
         private const string TRUNCATE_LOGS = """
             TRUNCATE TABLE [LogException];
             ALTER TABLE [LogException] DROP CONSTRAINT  [FK_dbo.LogException_dbo.Log_LogId];
