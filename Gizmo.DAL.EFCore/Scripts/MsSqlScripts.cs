@@ -56,7 +56,7 @@ namespace Gizmo.DAL.Scripts
             SET 
                 BilledSpan=BilledSpan+@BILL_CYCLE_SECONDS 
             WHERE 
-                UserSessionId IN (@JoinList);
+                UserSessionId IN (SELECT value FROM STRING_SPLIT(@JoinList, ','));
             """;
         private const string SESSION_UPDATE_SQL = """
             UPDATE UserSession 
