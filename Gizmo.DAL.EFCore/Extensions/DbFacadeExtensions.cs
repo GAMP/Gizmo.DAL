@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,7 +35,7 @@ namespace Gizmo.DAL.EFCore.Extensions
         /// <exception cref="NotSupportedException">
         /// Database provider is not supported for this SQL script name.
         /// </exception>
-        public static int ExecuteSqlScript(this DatabaseFacade dbFacade, string scriptName, params SqlParameter[] sqlParameters)
+        public static int ExecuteSqlScript(this DatabaseFacade dbFacade, string scriptName, params DbParameter[] sqlParameters)
         {
             var result =  dbFacade.ProviderName switch
             {
@@ -69,7 +70,7 @@ namespace Gizmo.DAL.EFCore.Extensions
         /// <exception cref="NotSupportedException">
         /// Database provider is not supported for this SQL script name.
         /// </exception>
-        public static async Task<int> ExecuteSqlScriptAsync(this DatabaseFacade dbFacade, string scriptName, IEnumerable<SqlParameter> sqlParameters = null, CancellationToken cToken = default)
+        public static async Task<int> ExecuteSqlScriptAsync(this DatabaseFacade dbFacade, string scriptName, IEnumerable<DbParameter> sqlParameters = null, CancellationToken cToken = default)
         {
             var result = dbFacade.ProviderName switch
             {
