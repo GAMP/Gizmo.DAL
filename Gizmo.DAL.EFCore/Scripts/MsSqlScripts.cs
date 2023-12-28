@@ -15,8 +15,6 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID => DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID,
             SQLScripts.HAS_EF6_MIGRATION_BY_MIGRATIONID => HAS_EF6_MIGRATION_BY_MIGRATIONID,
             SQLScripts.HAS_TABLE_BY_NAME => HAS_TABLE_BY_NAME,
-            SQLScripts.DELETE_FROM => DELETE_FROM,
-            SQLScripts.DELETE_FROM_WITH_RESEED => DELETE_FROM_WITH_RESEED,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
@@ -146,13 +144,6 @@ namespace Gizmo.DAL.Scripts
                 INSERT INTO @HAS_TABLE_BY_NAME VALUES (1);
             ELSE
                 DELETE FROM @HAS_TABLE_BY_NAME
-            """;
-        private const string DELETE_FROM_WITH_RESEED = $"""
-            DELETE FROM [dbo].[@{SQLScripts.ParamNames.TableName}];
-            DBCC CHECKIDENT ('[dbo].[@{SQLScripts.ParamNames.TableName}]', RESEED, 1);
-            """;
-        private const string DELETE_FROM = $"""
-            DELETE FROM [dbo].[@{SQLScripts.ParamNames.TableName}];
             """;
     }
 }

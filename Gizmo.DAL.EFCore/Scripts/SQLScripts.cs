@@ -6,13 +6,6 @@
     public static class SQLScripts
     {
         /// <summary>
-        /// SQL script general parameter names.
-        public static class ParamNames
-        {
-            public const string TableName = "TableName";
-        }
-
-        /// <summary>
         /// Deposit payment refund migration script.
         /// </summary>
         public const string CREATE_DEPOSIT_PAYMENT_REFUNDS = nameof(CREATE_DEPOSIT_PAYMENT_REFUNDS);
@@ -56,15 +49,5 @@
         /// Check if table exists (case sensitive matters).
         /// </summary>
         public const string HAS_TABLE_BY_NAME = nameof(HAS_TABLE_BY_NAME);
-
-        /// <summary>
-        /// Delete from table with reseed.
-        /// </summary>
-        public const string DELETE_FROM_WITH_RESEED = nameof(DELETE_FROM_WITH_RESEED);
-
-        /// <summary>
-        /// Delete from table.
-        /// </summary>
-        public const string DELETE_FROM = nameof(DELETE_FROM);
     }
 }

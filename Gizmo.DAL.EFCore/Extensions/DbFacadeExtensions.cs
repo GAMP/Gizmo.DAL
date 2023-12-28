@@ -93,5 +93,47 @@ namespace Gizmo.DAL.EFCore.Extensions
                 ? throw new InvalidOperationException($"Error executing sql script {scriptName}.")
                 : result;
         }
+
+        /// <summary>
+        /// Executes the SQL against the database to delete all rows from the table.
+        /// </summary>
+        /// <param name="dbFacade">
+        /// Provides access to database related information and operations for a context.
+        /// </param>
+        /// <param name="tableName">
+        /// Table name.
+        /// </param>
+        /// <param name="withReseed">
+        /// If true, reseed identity column to 1.
+        /// </param>
+        /// <param name="cToken">
+        /// Cancellation token.
+        /// </param>
+        /// <returns>
+        /// The number of rows affected.
+        /// </returns>
+        /// <exception cref="NotSupportedException">
+        /// Database provider is not supported.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Error executing sql script to delete from table.
+        /// </exception>
+        public static async Task<int> DeleteFromAsync(this DatabaseFacade dbFacade, string tableName, bool withReseed, CancellationToken cToken)
+        {
+            var result = dbFacade.ProviderName switch
+            {
+                "Microsoft.EntityFrameworkCore.SqlServer" => withReseed
+                    ? await dbFacade.ExecuteSqlRawAsync($"DELETE FROM [dbo].[{tableName}]; DBCC CHECKIDENT ({tableName}, RESEED, 1);",cToken)
+                    : await dbFacade.ExecuteSqlRawAsync($"DELETE FROM [dbo].[{tableName}];", cToken),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => withReseed 
+                    ? await dbFacade.ExecuteSqlRawAsync($"DELETE FROM \"{tableName}\"; ALTER SEQUENCE \"{tableName}_{tableName}Id_seq\" RESTART;",cToken)
+                    : await dbFacade.ExecuteSqlRawAsync($"DELETE FROM \"{tableName}\";", cToken),
+                _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
+            };
+
+            return result == -1
+               ? throw new InvalidOperationException($"Error executing sql script to delete from {tableName}.")
+               : result;
+        }
     }
 }

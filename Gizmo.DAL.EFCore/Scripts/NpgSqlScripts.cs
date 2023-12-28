@@ -14,8 +14,6 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.DELETE_USERAGREEMENTSTATE_BY_USERID => DELETE_USERAGREEMENTSTATE_BY_USERID,
             SQLScripts.DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID => DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID,
             SQLScripts.CREATE_DEPOSIT_PAYMENT_REFUNDS => CREATE_DEPOSIT_PAYMENT_REFUNDS,
-            SQLScripts.DELETE_FROM => DELETE_FROM,
-            SQLScripts.DELETE_FROM_WITH_RESEED => DELETE_FROM_WITH_RESEED,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
@@ -113,13 +111,6 @@ namespace Gizmo.DAL.Scripts
                 FROM information_schema.tables 
                 WHERE table_name = @name AND table_schema = 'public'
                 LIMIT 1;
-            """;
-        private const string DELETE_FROM = $"""
-            DELETE FROM "@{SQLScripts.ParamNames.TableName}";
-            """;
-        //TODO: 2023-12-29 a.pestunov; EFCore; Complete this PostgreSQL script.
-        private const string DELETE_FROM_WITH_RESEED = $"""
-            DELETE FROM "@{SQLScripts.ParamNames.TableName}";
             """;
     }
 }

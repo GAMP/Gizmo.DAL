@@ -547,25 +547,10 @@ namespace Gizmo.DAL
 
                 if (deleteHosts || deleteUsers)
                 {
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "AppStat" },
-                    }, ct); 
-                    
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ReservationUser" },
-                    }, ct);
-                    
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ReservationHost" },
-                    }, ct);
-                    
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "Reservation" },
-                    }, ct);
+                    await cx.Database.DeleteFromAsync("AppStat", true, ct); 
+                    await cx.Database.DeleteFromAsync("ReservationUser", true, ct);
+                    await cx.Database.DeleteFromAsync("ReservationHost", true, ct);
+                    await cx.Database.DeleteFromAsync("Reservation", true, ct);
                 }
 
                 if (deleteHosts && !deleteUsers)
@@ -580,210 +565,81 @@ namespace Gizmo.DAL
                 await cx.Database.ExecuteSqlRawAsync("UPDATE ProductOLExtended SET BundleLineId=NULL;", ct);
 
                 //USAGE SESSION
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "UsageRate" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "UsageTimeFixed" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "UsageTime" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "UsageUserSession" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "Usage" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "UsageSession" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("UsageRate", false, ct);
+                await cx.Database.DeleteFromAsync("UsageTimeFixed", false, ct);
+                await cx.Database.DeleteFromAsync("UsageTime", false, ct);
+                await cx.Database.DeleteFromAsync("UsageUserSession", false, ct);
+                await cx.Database.DeleteFromAsync("Usage", true, ct);
+                await cx.Database.DeleteFromAsync("UsageSession", true, ct);
 
                 //USER SESSION
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "UserSessionChange" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "UserSession" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("UserSessionChange", true, ct);
+                await cx.Database.DeleteFromAsync("UserSession", true, ct);
 
                 //REFUNDS
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "RefundInvoicePayment" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "RefundDepositPayment" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "Refund" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("RefundInvoicePayment", false, ct);
+                await cx.Database.DeleteFromAsync("RefundDepositPayment", false, ct);
+                await cx.Database.DeleteFromAsync("Refund", true, ct);
 
                 //VOIDS
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "VoidInvoice" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "VoidDepositPayment" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "Void" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("VoidInvoice", false, ct);
+                await cx.Database.DeleteFromAsync("VoidDepositPayment", false, ct);
+                await cx.Database.DeleteFromAsync("Void", true, ct);
 
                 //INVOICE PAYMENTS
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "InvoicePayment" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("InvoicePayment", true, ct);
 
                 //DEPOSIT PAYMENT
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "PaymentIntentDeposit" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "PaymentIntentOrder" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "PaymentIntent" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "DepositPayment" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("PaymentIntentDeposit", false, ct);
+                await cx.Database.DeleteFromAsync("PaymentIntentOrder", false, ct);
+                await cx.Database.DeleteFromAsync("PaymentIntent", true, ct);
+                await cx.Database.DeleteFromAsync("DepositPayment", true, ct);
 
                 //PAYMENTS
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "Payment" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("Payment", true, ct);
 
                 //INVOICE
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "InvoiceLineProduct" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "InvoiceLineSession" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "InvoiceLineTime" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "InvoiceLineTimeFixed" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "InvoiceLineExtended" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "InvoiceLine" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "InvoiceFiscalReceipt" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "Invoice" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineProduct", false, ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineSession", false, ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineTime", false, ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineTimeFixed", false, ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineExtended", false, ct);
+                await cx.Database.DeleteFromAsync("InvoiceLine", true, ct);
+                await cx.Database.DeleteFromAsync("InvoiceFiscalReceipt", true, ct);
+                await cx.Database.DeleteFromAsync("Invoice", true, ct);
 
                 //ORDER
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "ProductOLTimeFixed" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "ProductOLTime" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "ProductOLSession" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "ProductOLProduct" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "ProductOLExtended" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "ProductOL" },
-                }, ct);
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "ProductOrder" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("ProductOLTimeFixed", false, ct);
+                await cx.Database.DeleteFromAsync("ProductOLTime", false, ct);
+                await cx.Database.DeleteFromAsync("ProductOLSession", false, ct);
+                await cx.Database.DeleteFromAsync("ProductOLProduct", false, ct);
+                await cx.Database.DeleteFromAsync("ProductOLExtended", false, ct);
+                await cx.Database.DeleteFromAsync("ProductOL", true, ct);
+                await cx.Database.DeleteFromAsync("ProductOrder", true, ct);
 
                 //DEPOSIT TRANSACTION
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "DepositTransaction" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("DepositTransaction", true, ct);
 
                 //POINT TRANSACTION
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "PointTransaction" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("PointTransaction", true, ct);
 
                 //STOCK TRANSACTION
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "StockTransaction" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("StockTransaction", true, ct);
 
                 //SHIFT COUNT
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "ShiftCount" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("ShiftCount", true, ct);
 
                 //REGISTER TRANSACTION
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "RegisterTransaction" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("RegisterTransaction", true, ct);
 
                 //FISCAL RECEIPTS
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "FiscalReceipt" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("FiscalReceipt", true, ct);
 
                 //SHIFT
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "Shift" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("Shift", true, ct);
 
                 //REGISTER
-                await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                {
-                    { SQLScripts.ParamNames.TableName, "Register" },
-                }, ct);
+                await cx.Database.DeleteFromAsync("Register", true, ct);
 
                 #endregion
 
@@ -791,86 +647,29 @@ namespace Gizmo.DAL
 
                 if (deleteProducts || deleteHosts)
                 {
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductHostHidden" },
-                    }, ct);
+                    await cx.Database.DeleteFromAsync("ProductHostHidden", true, ct);
                 }
 
                 if (deleteProducts)
                 {
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductImage" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductTax" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductPeriod" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductPeriodDayTime" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductPeriodDay" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductTimeHostDisallowed" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductUserDisallowed" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductUserPrice" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "BundleProduct" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductTimeHostDisallowed" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductTimePeriod" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductTimePeriodDayTime" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductTimePeriodDay" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductBundle" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "Product" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductTime" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductBaseExtended" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "ProductBase" },
-                    }, ct);
+                    await cx.Database.DeleteFromAsync("ProductImage", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductTax", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductPeriod", false, ct);
+                    await cx.Database.DeleteFromAsync("ProductPeriodDayTime", false, ct);
+                    await cx.Database.DeleteFromAsync("ProductPeriodDay", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductTimeHostDisallowed", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductUserDisallowed", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductUserPrice", true, ct);
+                    await cx.Database.DeleteFromAsync("BundleProduct", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductTimeHostDisallowed", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductTimePeriod", false, ct);
+                    await cx.Database.DeleteFromAsync("ProductTimePeriodDayTime", false, ct);
+                    await cx.Database.DeleteFromAsync("ProductTimePeriodDay", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductBundle", false, ct);
+                    await cx.Database.DeleteFromAsync("Product", false, ct);
+                    await cx.Database.DeleteFromAsync("ProductTime", false, ct);
+                    await cx.Database.DeleteFromAsync("ProductBaseExtended", false, ct);
+                    await cx.Database.DeleteFromAsync("ProductBase", true, ct);
                 }
 
                 #endregion
@@ -879,50 +678,17 @@ namespace Gizmo.DAL
 
                 if (deleteUsers)
                 {
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "HostGroupWaitingLineEntry" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "AssetTransaction" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "AppRating" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "UserCreditLimit" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "UserAttribute" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "UserNote" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "Note" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "VerificationEmail" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "VerificationMobilePhone" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "Verification" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "Token" },
-                    }, ct);
+                    await cx.Database.DeleteFromAsync("HostGroupWaitingLineEntry", true, ct);
+                    await cx.Database.DeleteFromAsync("AssetTransaction", true, ct);
+                    await cx.Database.DeleteFromAsync("AppRating", false, ct);
+                    await cx.Database.DeleteFromAsync("UserCreditLimit", false, ct);
+                    await cx.Database.DeleteFromAsync("UserAttribute", true, ct);
+                    await cx.Database.DeleteFromAsync("UserNote", false, ct);
+                    await cx.Database.DeleteFromAsync("Note", true, ct);
+                    await cx.Database.DeleteFromAsync("VerificationEmail", false, ct);
+                    await cx.Database.DeleteFromAsync("VerificationMobilePhone", false, ct);
+                    await cx.Database.DeleteFromAsync("Verification", true, ct);
+                    await cx.Database.DeleteFromAsync("Token", true, ct);
 
                     cx.UsersGuest.RemoveRange(cx.UsersGuest);
                     cx.UsersMember.RemoveRange(cx.UsersMember);
@@ -939,18 +705,9 @@ namespace Gizmo.DAL
                 #region HOSTS
                 if (deleteHosts)
                 {
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "HostComputer" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "HostEndpoint" },
-                    }, ct);
-                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.DELETE_FROM_WITH_RESEED, new Dictionary<string, object>
-                    {
-                        { SQLScripts.ParamNames.TableName, "Host" },
-                    }, ct);
+                    await cx.Database.DeleteFromAsync("HostComputer", false, ct);
+                    await cx.Database.DeleteFromAsync("HostEndpoint", false, ct);
+                    await cx.Database.DeleteFromAsync("Host", true, ct);
                 }
                 #endregion
 
