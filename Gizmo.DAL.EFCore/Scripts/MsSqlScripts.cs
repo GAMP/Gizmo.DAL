@@ -15,6 +15,7 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID => DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID,
             SQLScripts.HAS_EF6_MIGRATION_BY_MIGRATIONID => HAS_EF6_MIGRATION_BY_MIGRATIONID,
             SQLScripts.HAS_TABLE_BY_NAME => HAS_TABLE_BY_NAME,
+            SQLScripts.RESET_USERGUESTS => RESET_USERGUESTS,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
@@ -144,6 +145,11 @@ namespace Gizmo.DAL.Scripts
                 INSERT INTO @HAS_TABLE_BY_NAME VALUES (1);
             ELSE
                 DELETE FROM @HAS_TABLE_BY_NAME
+            """;
+        private const string RESET_USERGUESTS = """
+            UPDATE [dbo].[UserGuest] 
+            SET IsReserved=0,ReservedHostId=NULL,ReservedSlot=NULL 
+            WHERE (IsReserved=1 OR ReservedHostId IS NOT NULL OR ReservedSlot IS NOT NULL);
             """;
     }
 }

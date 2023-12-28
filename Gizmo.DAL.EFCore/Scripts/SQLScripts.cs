@@ -49,5 +49,10 @@
         /// Check if table exists (case sensitive matters).
         /// </summary>
         public const string HAS_TABLE_BY_NAME = nameof(HAS_TABLE_BY_NAME);
+
+        /// <summary>
+        /// Reset user guests data.
+        /// </summary>
+        public const string RESET_USERGUESTS = nameof(RESET_USERGUESTS);
     }
 }

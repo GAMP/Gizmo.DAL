@@ -547,99 +547,99 @@ namespace Gizmo.DAL
 
                 if (deleteHosts || deleteUsers)
                 {
-                    await cx.Database.DeleteFromAsync("AppStat", true, ct); 
-                    await cx.Database.DeleteFromAsync("ReservationUser", true, ct);
-                    await cx.Database.DeleteFromAsync("ReservationHost", true, ct);
-                    await cx.Database.DeleteFromAsync("Reservation", true, ct);
+                    await cx.Database.DeleteFromAsync("AppStat", true, cToken: ct); 
+                    await cx.Database.DeleteFromAsync("ReservationUser", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ReservationHost", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("Reservation", true, cToken: ct);
                 }
 
                 if (deleteHosts && !deleteUsers)
                 {
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserGuest] SET IsReserved=0,ReservedHostId=NULL,ReservedSlot=NULL WHERE (IsReserved=1 OR ReservedHostId IS NOT NULL OR ReservedSlot IS NOT NULL);", ct);
+                    await cx.Database.ExecuteSqlScriptAsync(SQLScripts.RESET_USERGUESTS, cToken: ct);
                 }
 
                 #region FINANCIAL
 
-                await cx.Database.ExecuteSqlRawAsync("UPDATE InvoiceLineExtended SET BundleLineId=NULL;", ct);
-                await cx.Database.ExecuteSqlRawAsync("UPDATE UsageSession SET CurrentUsageId=NULL;", ct);
-                await cx.Database.ExecuteSqlRawAsync("UPDATE ProductOLExtended SET BundleLineId=NULL;", ct);
+                await cx.Database.UpdateAsync("InvoiceLineExtended", new Dictionary<string, string> { { "BundleLineId", "NULL" } }, cToken: ct);
+                await cx.Database.UpdateAsync("UsageSession", new Dictionary<string, string> { { "CurrentUsageId", "NULL" } }, cToken: ct);
+                await cx.Database.UpdateAsync("ProductOLExtended", new Dictionary<string, string> { { "BundleLineId", "NULL" } }, cToken: ct);
 
                 //USAGE SESSION
-                await cx.Database.DeleteFromAsync("UsageRate", false, ct);
-                await cx.Database.DeleteFromAsync("UsageTimeFixed", false, ct);
-                await cx.Database.DeleteFromAsync("UsageTime", false, ct);
-                await cx.Database.DeleteFromAsync("UsageUserSession", false, ct);
-                await cx.Database.DeleteFromAsync("Usage", true, ct);
-                await cx.Database.DeleteFromAsync("UsageSession", true, ct);
+                await cx.Database.DeleteFromAsync("UsageRate", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("UsageTimeFixed", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("UsageTime", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("UsageUserSession", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("Usage", true, cToken: ct);
+                await cx.Database.DeleteFromAsync("UsageSession", true, cToken: ct);
 
                 //USER SESSION
-                await cx.Database.DeleteFromAsync("UserSessionChange", true, ct);
-                await cx.Database.DeleteFromAsync("UserSession", true, ct);
+                await cx.Database.DeleteFromAsync("UserSessionChange", true, cToken: ct);
+                await cx.Database.DeleteFromAsync("UserSession", true, cToken: ct);
 
                 //REFUNDS
-                await cx.Database.DeleteFromAsync("RefundInvoicePayment", false, ct);
-                await cx.Database.DeleteFromAsync("RefundDepositPayment", false, ct);
-                await cx.Database.DeleteFromAsync("Refund", true, ct);
+                await cx.Database.DeleteFromAsync("RefundInvoicePayment", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("RefundDepositPayment", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("Refund", true, cToken: ct);
 
                 //VOIDS
-                await cx.Database.DeleteFromAsync("VoidInvoice", false, ct);
-                await cx.Database.DeleteFromAsync("VoidDepositPayment", false, ct);
-                await cx.Database.DeleteFromAsync("Void", true, ct);
+                await cx.Database.DeleteFromAsync("VoidInvoice", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("VoidDepositPayment", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("Void", true, cToken: ct);
 
                 //INVOICE PAYMENTS
-                await cx.Database.DeleteFromAsync("InvoicePayment", true, ct);
+                await cx.Database.DeleteFromAsync("InvoicePayment", true, cToken: ct);
 
                 //DEPOSIT PAYMENT
-                await cx.Database.DeleteFromAsync("PaymentIntentDeposit", false, ct);
-                await cx.Database.DeleteFromAsync("PaymentIntentOrder", false, ct);
-                await cx.Database.DeleteFromAsync("PaymentIntent", true, ct);
-                await cx.Database.DeleteFromAsync("DepositPayment", true, ct);
+                await cx.Database.DeleteFromAsync("PaymentIntentDeposit", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("PaymentIntentOrder", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("PaymentIntent", true, cToken: ct);
+                await cx.Database.DeleteFromAsync("DepositPayment", true, cToken: ct);
 
                 //PAYMENTS
-                await cx.Database.DeleteFromAsync("Payment", true, ct);
+                await cx.Database.DeleteFromAsync("Payment", true, cToken: ct);
 
                 //INVOICE
-                await cx.Database.DeleteFromAsync("InvoiceLineProduct", false, ct);
-                await cx.Database.DeleteFromAsync("InvoiceLineSession", false, ct);
-                await cx.Database.DeleteFromAsync("InvoiceLineTime", false, ct);
-                await cx.Database.DeleteFromAsync("InvoiceLineTimeFixed", false, ct);
-                await cx.Database.DeleteFromAsync("InvoiceLineExtended", false, ct);
-                await cx.Database.DeleteFromAsync("InvoiceLine", true, ct);
-                await cx.Database.DeleteFromAsync("InvoiceFiscalReceipt", true, ct);
-                await cx.Database.DeleteFromAsync("Invoice", true, ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineProduct", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineSession", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineTime", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineTimeFixed", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("InvoiceLineExtended", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("InvoiceLine", true, cToken: ct);
+                await cx.Database.DeleteFromAsync("InvoiceFiscalReceipt", true, cToken: ct);
+                await cx.Database.DeleteFromAsync("Invoice", true, cToken: ct);
 
                 //ORDER
-                await cx.Database.DeleteFromAsync("ProductOLTimeFixed", false, ct);
-                await cx.Database.DeleteFromAsync("ProductOLTime", false, ct);
-                await cx.Database.DeleteFromAsync("ProductOLSession", false, ct);
-                await cx.Database.DeleteFromAsync("ProductOLProduct", false, ct);
-                await cx.Database.DeleteFromAsync("ProductOLExtended", false, ct);
-                await cx.Database.DeleteFromAsync("ProductOL", true, ct);
-                await cx.Database.DeleteFromAsync("ProductOrder", true, ct);
+                await cx.Database.DeleteFromAsync("ProductOLTimeFixed", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("ProductOLTime", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("ProductOLSession", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("ProductOLProduct", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("ProductOLExtended", false, cToken: ct);
+                await cx.Database.DeleteFromAsync("ProductOL", true, cToken: ct);
+                await cx.Database.DeleteFromAsync("ProductOrder", true, cToken: ct);
 
                 //DEPOSIT TRANSACTION
-                await cx.Database.DeleteFromAsync("DepositTransaction", true, ct);
+                await cx.Database.DeleteFromAsync("DepositTransaction", true, cToken: ct);
 
                 //POINT TRANSACTION
-                await cx.Database.DeleteFromAsync("PointTransaction", true, ct);
+                await cx.Database.DeleteFromAsync("PointTransaction", true, cToken: ct);
 
                 //STOCK TRANSACTION
-                await cx.Database.DeleteFromAsync("StockTransaction", true, ct);
+                await cx.Database.DeleteFromAsync("StockTransaction", true, cToken: ct);
 
                 //SHIFT COUNT
-                await cx.Database.DeleteFromAsync("ShiftCount", true, ct);
+                await cx.Database.DeleteFromAsync("ShiftCount", true, cToken: ct);
 
                 //REGISTER TRANSACTION
-                await cx.Database.DeleteFromAsync("RegisterTransaction", true, ct);
+                await cx.Database.DeleteFromAsync("RegisterTransaction", true, cToken: ct);
 
                 //FISCAL RECEIPTS
-                await cx.Database.DeleteFromAsync("FiscalReceipt", true, ct);
+                await cx.Database.DeleteFromAsync("FiscalReceipt", true, cToken: ct);
 
                 //SHIFT
-                await cx.Database.DeleteFromAsync("Shift", true, ct);
+                await cx.Database.DeleteFromAsync("Shift", true, cToken: ct);
 
                 //REGISTER
-                await cx.Database.DeleteFromAsync("Register", true, ct);
+                await cx.Database.DeleteFromAsync("Register", true, cToken: ct);
 
                 #endregion
 
@@ -647,29 +647,29 @@ namespace Gizmo.DAL
 
                 if (deleteProducts || deleteHosts)
                 {
-                    await cx.Database.DeleteFromAsync("ProductHostHidden", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductHostHidden", true, cToken: ct);
                 }
 
                 if (deleteProducts)
                 {
-                    await cx.Database.DeleteFromAsync("ProductImage", true, ct);
-                    await cx.Database.DeleteFromAsync("ProductTax", true, ct);
-                    await cx.Database.DeleteFromAsync("ProductPeriod", false, ct);
-                    await cx.Database.DeleteFromAsync("ProductPeriodDayTime", false, ct);
-                    await cx.Database.DeleteFromAsync("ProductPeriodDay", true, ct);
-                    await cx.Database.DeleteFromAsync("ProductTimeHostDisallowed", true, ct);
-                    await cx.Database.DeleteFromAsync("ProductUserDisallowed", true, ct);
-                    await cx.Database.DeleteFromAsync("ProductUserPrice", true, ct);
-                    await cx.Database.DeleteFromAsync("BundleProduct", true, ct);
-                    await cx.Database.DeleteFromAsync("ProductTimeHostDisallowed", true, ct);
-                    await cx.Database.DeleteFromAsync("ProductTimePeriod", false, ct);
-                    await cx.Database.DeleteFromAsync("ProductTimePeriodDayTime", false, ct);
-                    await cx.Database.DeleteFromAsync("ProductTimePeriodDay", true, ct);
-                    await cx.Database.DeleteFromAsync("ProductBundle", false, ct);
-                    await cx.Database.DeleteFromAsync("Product", false, ct);
-                    await cx.Database.DeleteFromAsync("ProductTime", false, ct);
-                    await cx.Database.DeleteFromAsync("ProductBaseExtended", false, ct);
-                    await cx.Database.DeleteFromAsync("ProductBase", true, ct);
+                    await cx.Database.DeleteFromAsync("ProductImage", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductTax", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductPeriod", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductPeriodDayTime", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductPeriodDay", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductTimeHostDisallowed", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductUserDisallowed", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductUserPrice", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("BundleProduct", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductTimeHostDisallowed", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductTimePeriod", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductTimePeriodDayTime", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductTimePeriodDay", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductBundle", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("Product", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductTime", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductBaseExtended", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("ProductBase", true, cToken: ct);
                 }
 
                 #endregion
@@ -678,17 +678,17 @@ namespace Gizmo.DAL
 
                 if (deleteUsers)
                 {
-                    await cx.Database.DeleteFromAsync("HostGroupWaitingLineEntry", true, ct);
-                    await cx.Database.DeleteFromAsync("AssetTransaction", true, ct);
-                    await cx.Database.DeleteFromAsync("AppRating", false, ct);
-                    await cx.Database.DeleteFromAsync("UserCreditLimit", false, ct);
-                    await cx.Database.DeleteFromAsync("UserAttribute", true, ct);
-                    await cx.Database.DeleteFromAsync("UserNote", false, ct);
-                    await cx.Database.DeleteFromAsync("Note", true, ct);
-                    await cx.Database.DeleteFromAsync("VerificationEmail", false, ct);
-                    await cx.Database.DeleteFromAsync("VerificationMobilePhone", false, ct);
-                    await cx.Database.DeleteFromAsync("Verification", true, ct);
-                    await cx.Database.DeleteFromAsync("Token", true, ct);
+                    await cx.Database.DeleteFromAsync("HostGroupWaitingLineEntry", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("AssetTransaction", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("AppRating", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("UserCreditLimit", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("UserAttribute", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("UserNote", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("Note", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("VerificationEmail", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("VerificationMobilePhone", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("Verification", true, cToken: ct);
+                    await cx.Database.DeleteFromAsync("Token", true, cToken: ct);
 
                     cx.UsersGuest.RemoveRange(cx.UsersGuest);
                     cx.UsersMember.RemoveRange(cx.UsersMember);
@@ -705,9 +705,9 @@ namespace Gizmo.DAL
                 #region HOSTS
                 if (deleteHosts)
                 {
-                    await cx.Database.DeleteFromAsync("HostComputer", false, ct);
-                    await cx.Database.DeleteFromAsync("HostEndpoint", false, ct);
-                    await cx.Database.DeleteFromAsync("Host", true, ct);
+                    await cx.Database.DeleteFromAsync("HostComputer", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("HostEndpoint", false, cToken: ct);
+                    await cx.Database.DeleteFromAsync("Host", true, cToken: ct);
                 }
                 #endregion
 
@@ -717,230 +717,91 @@ namespace Gizmo.DAL
                     if (!deleteUsers)
                     {
                         cx.ChangeTracker.DetectChanges();
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserCreditLimit] Set CreatedById=NULL", ct);
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserCreditLimit] Set ModifiedById=NULL", ct);
 
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserPicture] Set CreatedById=NULL", ct);
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserPicture] Set ModifiedById=NULL", ct);
-
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserAttribute] Set CreatedById=NULL", ct);
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserAttribute] Set ModifiedById=NULL", ct);
-
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AssetTransaction] Set CreatedById=NULL", ct);
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AssetTransaction] Set ModifiedById=NULL", ct);
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AssetTransaction] Set CheckedInById=NULL", ct);
+                        await cx.Database.UpdateAsync("UserCreditLimit", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                        await cx.Database.UpdateAsync("UserPicture", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                        await cx.Database.UpdateAsync("UserAttribute", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                        await cx.Database.UpdateAsync("AssetTransaction", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" }, { "CheckedInById", "NULL" } }, cToken: ct);
                     }
 
                     if (!deleteHosts)
                     {
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Host] Set CreatedById=NULL", ct);
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Host] Set ModifiedById=NULL", ct);
+                        await cx.Database.UpdateAsync("Host", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
                     }
 
                     if (!deleteHosts && !deleteProducts)
                     {
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductHostHidden] Set CreatedById=NULL", ct);
-                        await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductHostHidden] Set ModifiedById=NULL", ct);
+                        await cx.Database.UpdateAsync("ProductHostHidden", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
                     }
 
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[DeviceHost] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[DeviceHost] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Device] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Device] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ReservationUser] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ReservationUser] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ReservationHost] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ReservationHost] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Reservation] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Reservation] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("DELETE FROM [dbo].[Token] WHERE Type=0;", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Token] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Token] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[App] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[App] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppCategory] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppCategory] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppEnterprise] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppEnterprise] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExe] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExe] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeCdImage] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeCdImage] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeDeployment] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeDeployment] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeImage] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeImage] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeLicense] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeLicense] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeMaxUser] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeMaxUser] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExePersonalFile] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExePersonalFile] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeTask] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppExeTask] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppGroup] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppGroup] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppImage] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppImage] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppLink] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AppLink] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Asset] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Asset] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AssetType] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[AssetType] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Attribute] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Attribute] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[BillProfile] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[BillProfile] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[BundleProduct] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[BundleProduct] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[BundleProductUserPrice] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[BundleProductUserPrice] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ClientTask] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ClientTask] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Deployment] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Deployment] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Feed] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Feed] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostGroup] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostGroup] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostGroupWaitingLine] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostGroupWaitingLine] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostGroupWaitingLineEntry] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostGroupWaitingLineEntry] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostLayoutGroup] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostLayoutGroup] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostLayoutGroupImage] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostLayoutGroupImage] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostLayoutGroupLayout] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[HostLayoutGroupLayout] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Icon] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Icon] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[License] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[License] Set ModifiedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[LicenseKey] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[LicenseKey] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Mapping] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Mapping] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[MonetaryUnit] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[MonetaryUnit] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[News] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[News] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Note] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Note] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PaymentMethod] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PaymentMethod] Set ModifiedById=NULL");
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PersonalFile] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PersonalFile] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PluginLibrary] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PluginLibrary] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PresetTimeSale] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PresetTimeSale] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PresetTimeSaleMoney] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[PresetTimeSaleMoney] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductBase] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductBase] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductBundleUserPrice] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductBundleUserPrice] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductGroup] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductGroup] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductImage] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductImage] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductTax] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductTax] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductTimeHostDisallowed] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductTimeHostDisallowed] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductUserDisallowed] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductUserDisallowed] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductUserPrice] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[ProductUserPrice] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[SecurityProfile] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[SecurityProfile] Set ModifiedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[SecurityProfilePolicy] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[SecurityProfilePolicy] Set ModifiedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[SecurityProfileRestriction] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[SecurityProfileRestriction] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Setting] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Setting] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[TaskBase] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[TaskBase] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Tax] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Tax] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserGroup] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserGroup] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserGroupHostDisallowed] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserGroupHostDisallowed] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Variable] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[Variable] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[User] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[User] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserCredential] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserCredential] Set ModifiedById=NULL", ct);
-
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserAgreement] Set CreatedById=NULL", ct);
-                    await cx.Database.ExecuteSqlRawAsync("UPDATE [dbo].[UserAgreement] Set ModifiedById=NULL", ct);
+                    await cx.Database.UpdateAsync("DeviceHost", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Device", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ReservationUser", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ReservationHost", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Reservation", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.DeleteFromAsync("Token", false, new Dictionary<string, string> { { "Type", "0" } }, ct);
+                    await cx.Database.UpdateAsync("Token", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("App", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppCategory", new Dictionary<string, string>  { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppEnterprise", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppExe", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppExeCdImage", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppExeDeployment", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppExeImage", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppExeLicense", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppExeMaxUser", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppExePersonalFile", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppExeTask", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppGroup", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppImage", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppLink", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Asset", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AssetType", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Attribute", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("BillProfile", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("BundleProduct", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("BundleProductUserPrice", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ClientTask", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Deployment", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Feed", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("HostGroup", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("HostGroupWaitingLine", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("HostGroupWaitingLineEntry", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("HostLayoutGroup", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("HostLayoutGroupImage", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("HostLayoutGroupLayout", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Icon", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("License", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("LicenseKey", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Mapping", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("MonetaryUnit", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("News", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Note", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("PaymentMethod", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("PersonalFile", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("PluginLibrary", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("PresetTimeSale", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("PresetTimeSaleMoney", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ProductBase", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ProductBundleUserPrice", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ProductGroup", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ProductImage", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ProductTax", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ProductTimeHostDisallowed", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ProductUserDisallowed", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("ProductUserPrice", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("SecurityProfile", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("SecurityProfilePolicy", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("SecurityProfileRestriction", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Setting", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("TaskBase", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Tax", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("UserGroup", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("UserGroupHostDisallowed", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("Variable", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("User", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("UserCredential", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("UserAgreement", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
 
                     cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is Entities.UserOperator));
                     cx.UsersOperator.RemoveRange(cx.UsersOperator);
