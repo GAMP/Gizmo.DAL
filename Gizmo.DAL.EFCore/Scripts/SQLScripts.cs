@@ -46,8 +46,13 @@
         public const string HAS_EF6_MIGRATION_BY_MIGRATIONID = nameof(HAS_EF6_MIGRATION_BY_MIGRATIONID);
 
         /// <summary>
-        /// Check if table exists.
+        /// Check if table exists (case sensitive matters).
         /// </summary>
         public const string HAS_TABLE_BY_NAME = nameof(HAS_TABLE_BY_NAME);
+
+        /// <summary>
+        /// Reset user guests data.
+        /// </summary>
+        public const string RESET_USERGUESTS = nameof(RESET_USERGUESTS);
     }
 }

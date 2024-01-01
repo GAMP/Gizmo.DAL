@@ -989,7 +989,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
             migrationBuilder.Sql("ALTER TABLE [dbo].[VoidDepositPayment] DROP CONSTRAINT [FK_dbo.VoidDepositPayment_dbo.Void_VoidId];");
             migrationBuilder.Sql("ALTER TABLE [dbo].[VoidInvoice] DROP CONSTRAINT [FK_dbo.VoidInvoice_dbo.Invoice_InvoiceId];");
             migrationBuilder.Sql("ALTER TABLE [dbo].[VoidInvoice] DROP CONSTRAINT [FK_dbo.VoidInvoice_dbo.Void_VoidId];");
-            migrationBuilder.Sql("DROP TABLE [dbo].[__MigrationHistory];");
+            
+            //migrationBuilder.Sql("DROP TABLE [dbo].[__MigrationHistory];");
+            
             migrationBuilder.Sql("ALTER TABLE [dbo].[PaymentIntentOrder] ALTER COLUMN [ProductOrderId] INT NOT NULL;");
             migrationBuilder.Sql("CREATE UNIQUE NONCLUSTERED INDEX [IX_PaymentIntentOrder_InvoicePaymentId] ON [dbo].[PaymentIntentOrder]([InvoicePaymentId] ASC) WHERE ([InvoicePaymentId] IS NOT NULL);");
             migrationBuilder.Sql("CREATE UNIQUE NONCLUSTERED INDEX [IX_PaymentIntentOrder_PaymentIntentId] ON [dbo].[PaymentIntentOrder]([PaymentIntentId] ASC);");

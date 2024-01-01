@@ -1,7 +1,9 @@
-﻿namespace Gizmo.DAL.Contexts
+﻿using SharedLib.Configuration;
+
+namespace Gizmo.DAL.Contexts
 {
     /// <summary>
-    /// Gizmo.DALl default db context ptovider.
+    /// Gizmo.DALl default db context provider.
     /// </summary>
     public interface IGizmoDbContextProviderConcrete
     {
@@ -16,5 +18,19 @@
         /// </summary>
         /// <returns>New context instance.</returns>
         DefaultDbContext GetDbNonProxyContext();
+
+        /// <summary>
+        /// Gets database context.
+        /// </summary>
+        /// <param name="dbConfig">Database configuration.</param>
+        /// <returns>New context instance.</returns>
+        DefaultDbContext GetDbContext(ServiceDatabaseConfig dbConfig);
+
+        /// <summary>
+        /// Gets non-proxy database context.
+        /// </summary>
+        /// <param name="dbConfig">Database configuration.</param>
+        /// <returns>New context instance.</returns>
+        DefaultDbContext GetDbNonProxyContext(ServiceDatabaseConfig dbConfig);
     }
 }

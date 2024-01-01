@@ -13,6 +13,7 @@ using SharedLib;
 using System.Globalization;
 using Gizmo.DAL.Scripts;
 using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace Gizmo.DAL.EFCore.Extensions
 {
@@ -489,8 +490,8 @@ namespace Gizmo.DAL.EFCore.Extensions
         /// <param name="scriptName">
         /// SQL script name from the Gizmo.DAL.Scripts.SQLScripts.cs.
         /// </param>
-        /// <param name="sqlParameters">
-        /// Sql parameters for the script.
+        /// <param name="parameters">
+        /// Sql parameters for the script. Key is parameter name, value is parameter value.
         /// </param>
         /// <returns>
         /// IQueryable of T.
@@ -498,11 +499,15 @@ namespace Gizmo.DAL.EFCore.Extensions
         /// <exception cref="NotSupportedException">
         /// Database provider is not supported for this SQL script name.
         /// </exception>
-        public static IQueryable<T> FromSqlScript<T>(this DefaultDbContext dbContext, string scriptName, params SqlParameter[] sqlParameters) where T : class
+        public static IQueryable<T> FromSqlScript<T>(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters) where T : class
             => dbContext.Database.ProviderName switch
             {
-                "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Set<T>().FromSqlRaw(MsSqlScripts.GetScript(scriptName), sqlParameters),
-                "Npgsql.EntityFrameworkCore.PostgreSQL" => dbContext.Set<T>().FromSqlRaw(NpgSqlScripts.GetScript(scriptName), sqlParameters),
+                "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Set<T>().FromSqlRaw(
+                    MsSqlScripts.GetScript(scriptName), 
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value))),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => dbContext.Set<T>().FromSqlRaw(
+                    NpgSqlScripts.GetScript(scriptName), 
+                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value)).ToArray()),
                 _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
             };
     }
