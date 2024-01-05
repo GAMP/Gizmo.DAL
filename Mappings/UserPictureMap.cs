@@ -29,7 +29,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasIndex(t => t.Id);
 
             // Table & mappings
-            builder.ToTable(nameof(UserPicture));              
+            builder.ToTable(nameof(UserPicture));
 
             // Relations
             builder.HasOne(x => x.User)

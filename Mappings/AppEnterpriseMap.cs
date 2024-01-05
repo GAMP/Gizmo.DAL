@@ -36,7 +36,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasIndex(t => t.Name).IsUnique();
 
             // Table & Column Mappings
-            builder.ToTable("AppEnterprise");          
+            builder.ToTable("AppEnterprise");
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             builder.Property(x => x.Start)
-                .HasColumnOrder(4);   
+                .HasColumnOrder(4);
 
             builder.Property(x => x.StartCash)
                 .HasColumnOrder(5);
@@ -57,7 +57,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(x => x.RegisterId);
 
             builder.HasOne(x => x.Operator)
-                .WithMany(x=>x.Shifts)
+                .WithMany(x => x.Shifts)
                 .HasForeignKey(x => x.OperatorId)
                 .OnDelete(DeleteBehavior.NoAction);
 

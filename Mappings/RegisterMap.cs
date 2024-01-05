@@ -56,7 +56,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.HasMany(x => x.Transactions)
                 .WithOne(x => x.Register)
-                .HasForeignKey(x => x.RegisterId);            
+                .HasForeignKey(x => x.RegisterId);
         }
     }
 }

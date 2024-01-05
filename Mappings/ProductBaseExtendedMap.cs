@@ -15,6 +15,6 @@ namespace Gizmo.DAL.Mappings
             builder.HasIndex(t => t.Id);
 
             builder.ToTable("ProductBaseExtended");
-        }        
+        }
     }
 }

@@ -39,7 +39,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(x => x.ProductId);
 
             builder.HasOne(x => x.Tax)
-                .WithMany(x=>x.Products)
+                .WithMany(x => x.Products)
                 .HasForeignKey(x => x.TaxId)
                 .OnDelete(DeleteBehavior.Restrict);
         }

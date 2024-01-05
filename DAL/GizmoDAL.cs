@@ -37,7 +37,7 @@ namespace Gizmo.DAL
     public partial class GizmoDatabase
     {
         private readonly IGizmoDbContextProviderConcrete _dbContextProvider;
-        
+
         #region CONSTRUCTOR
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Gizmo.DAL
         /// </summary>
         public IDispatcherPrincipal CurrentPrincipal
         {
-            get { return System.Threading.Thread.CurrentPrincipal as IDispatcherPrincipal; }
+            get { return Thread.CurrentPrincipal as IDispatcherPrincipal; }
         }
 
         /// <summary>
@@ -547,7 +547,7 @@ namespace Gizmo.DAL
 
                 if (deleteHosts || deleteUsers)
                 {
-                    await cx.Database.DeleteFromAsync("AppStat", true, cToken: ct); 
+                    await cx.Database.DeleteFromAsync("AppStat", true, cToken: ct);
                     await cx.Database.DeleteFromAsync("ReservationUser", true, cToken: ct);
                     await cx.Database.DeleteFromAsync("ReservationHost", true, cToken: ct);
                     await cx.Database.DeleteFromAsync("Reservation", true, cToken: ct);
@@ -742,7 +742,7 @@ namespace Gizmo.DAL
                     await cx.Database.DeleteFromAsync("Token", false, new Dictionary<string, string> { { "Type", "0" } }, ct);
                     await cx.Database.UpdateAsync("Token", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
                     await cx.Database.UpdateAsync("App", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
-                    await cx.Database.UpdateAsync("AppCategory", new Dictionary<string, string>  { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
+                    await cx.Database.UpdateAsync("AppCategory", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
                     await cx.Database.UpdateAsync("AppEnterprise", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
                     await cx.Database.UpdateAsync("AppExe", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);
                     await cx.Database.UpdateAsync("AppExeCdImage", new Dictionary<string, string> { { "CreatedById", "NULL" }, { "ModifiedById", "NULL" } }, cToken: ct);

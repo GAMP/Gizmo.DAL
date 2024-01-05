@@ -26,8 +26,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(4);
 
             builder.HasOne(x => x.HostGroup)
-                .WithMany(x=>x.UserBillProfiles)
-                .HasForeignKey(x=>x.HostGroupId)
+                .WithMany(x => x.UserBillProfiles)
+                .HasForeignKey(x => x.HostGroupId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.BillProfile)

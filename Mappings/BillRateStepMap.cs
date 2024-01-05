@@ -28,7 +28,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(x => x.Action)
                 .HasColumnOrder(3)
-                .IsRequired();     
+                .IsRequired();
 
             builder.Property(x => x.Charge)
                 .HasColumnOrder(4);

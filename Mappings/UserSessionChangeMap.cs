@@ -49,11 +49,11 @@ namespace Gizmo.DAL.Mappings
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(t => t.CreatedBy)
-                .WithMany(t=>t.CreatedUserSessionChanges)
+                .WithMany(t => t.CreatedUserSessionChanges)
                 .HasForeignKey(t => t.CreatedById);
 
             builder.HasOne(t => t.Host)
-                .WithMany(t=>t.UserSessionsChanges)
+                .WithMany(t => t.UserSessionsChanges)
                 .HasForeignKey(d => d.HostId);
 
             builder.HasOne(t => t.User)

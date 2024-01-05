@@ -998,7 +998,7 @@ namespace Gizmo.DAL.Contexts
 
             #region ASSISTANCE REQUEST
             modelBuilder.ApplyConfiguration(new AssistanceRequestMap());
-            modelBuilder.ApplyConfiguration(new AssistanceRequestTypeMap()); 
+            modelBuilder.ApplyConfiguration(new AssistanceRequestTypeMap());
             #endregion
 
             #region GLOBAL CONFIGURATIONS
@@ -1528,7 +1528,7 @@ namespace Gizmo.DAL.Contexts
             TEntity entity = default;
             try
             {
-                entity = await Set<TEntity>().FindAsync(new object[] {entityKey},ct);
+                entity = await Set<TEntity>().FindAsync(new object[] { entityKey }, ct);
             }
             catch (InvalidOperationException)
             {

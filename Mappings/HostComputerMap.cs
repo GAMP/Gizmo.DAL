@@ -22,14 +22,14 @@ namespace Gizmo.DAL.Mappings
             builder.Property(t => t.MACAddress)
                 .IsRequired()
                 .HasColumnOrder(3)
-                .HasMaxLength(SQLStringSize.TINY); 
+                .HasMaxLength(SQLStringSize.TINY);
 
             // Indexes
             builder.HasIndex(t => t.MACAddress).IsUnique().HasFilter(null);
             builder.HasIndex(t => t.Id).IsUnique(false);
 
             // Table & Column Mappings
-            builder.ToTable("HostComputer");       
+            builder.ToTable("HostComputer");
         }
     }
 }

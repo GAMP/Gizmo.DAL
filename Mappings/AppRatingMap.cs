@@ -12,7 +12,7 @@ namespace Gizmo.DAL.Mappings
         public void Configure(EntityTypeBuilder<AppRating> builder)
         {
             // Primary Key
-            builder.HasKey(x => new { x.AppId,x.UserId});
+            builder.HasKey(x => new { x.AppId, x.UserId });
 
             // Properties
             builder.Property(x => x.AppId)

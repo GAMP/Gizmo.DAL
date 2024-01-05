@@ -27,7 +27,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(x => x.Quantity)
                 .HasColumnOrder(3);
-            
+
             // Relations
             builder.ToTable("BundleProduct");
 

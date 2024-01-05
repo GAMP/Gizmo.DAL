@@ -29,7 +29,7 @@ namespace Gizmo.DAL.Mappings
 
             // Indexes
             builder.HasIndex(t => t.Name).IsUnique();
-            
+
             // Table & Column Mappings
             builder.ToTable("SecurityProfile");
 

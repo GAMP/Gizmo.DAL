@@ -21,7 +21,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(x => x.HostLayoutGroupId)
                 .HasColumnOrder(1);
-                
+
             builder.Property(x => x.HostId)
                 .HasColumnOrder(2);
 

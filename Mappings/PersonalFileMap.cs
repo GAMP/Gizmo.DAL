@@ -23,7 +23,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY);
-            
+
             builder.Property(t => t.Caption)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);

@@ -26,7 +26,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(x => x.ProductId);
 
             builder.HasOne(x => x.SourceProduct)
-                .WithMany(x=>x.StockTransactionsSource)
+                .WithMany(x => x.StockTransactionsSource)
                 .HasForeignKey(x => x.SourceProductId);
 
             builder.HasOne(x => x.CreatedBy)

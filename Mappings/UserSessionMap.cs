@@ -43,7 +43,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(8);
 
             builder.Property(x => x.EndTime)
-                .HasColumnOrder(9);    
+                .HasColumnOrder(9);
 
             // Table & Column Mappings
             builder.ToTable(nameof(UserSession));

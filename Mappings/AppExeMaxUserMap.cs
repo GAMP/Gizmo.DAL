@@ -12,7 +12,7 @@ namespace Gizmo.DAL.Mappings
         public void Configure(EntityTypeBuilder<AppExeMaxUser> builder)
         {
             // Primary Key
-            builder.HasKey(x => x.Id);          
+            builder.HasKey(x => x.Id);
 
             // Properties
             builder.Property(x => x.Id)
@@ -20,7 +20,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0);
 
             builder.Property(x => x.AppExeId)
-                .HasColumnOrder(1); 
+                .HasColumnOrder(1);
 
             builder.Property(x => x.Mode)
                 .HasColumnOrder(2);
@@ -30,7 +30,7 @@ namespace Gizmo.DAL.Mappings
 
             // Indexes
             builder.HasIndex(x => new { x.AppExeId, x.Mode }, "UQ_AppExeAppExeMode").IsUnique();
-            
+
             // Table & Column Mappings
             builder.ToTable("AppExeMaxUser");
 

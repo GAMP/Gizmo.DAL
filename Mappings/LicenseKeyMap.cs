@@ -34,7 +34,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(t => t.Comment)
                 .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnOrder(3);            
+                .HasColumnOrder(3);
 
             builder.Property(x => x.Guid)
                 .HasColumnOrder(4);
@@ -50,7 +50,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasIndex(t => t.Guid).IsUnique();
 
             // Table & Column Mappings
-            builder.ToTable(nameof(LicenseKey));      
+            builder.ToTable(nameof(LicenseKey));
 
             // Relationships
             builder.HasOne(t => t.License)

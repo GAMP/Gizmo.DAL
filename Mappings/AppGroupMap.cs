@@ -35,7 +35,7 @@ namespace Gizmo.DAL.Mappings
             // Table & Column Mappings
             builder.ToTable("AppGroup");
 
-            builder.Property(t => t.Id);                
+            builder.Property(t => t.Id);
         }
     }
 }

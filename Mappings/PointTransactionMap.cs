@@ -40,7 +40,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(x => x.User)
                 .WithMany(x => x.LoayalityPoints)
                 .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.NoAction);       
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(x => x.CreatedBy)
                 .WithMany()

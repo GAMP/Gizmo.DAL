@@ -32,7 +32,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.HasOne(x => x.Product)
                 .WithMany(x => x.Images)
-                .HasForeignKey(x=>x.ProductId);
+                .HasForeignKey(x => x.ProductId);
         }
     }
 }

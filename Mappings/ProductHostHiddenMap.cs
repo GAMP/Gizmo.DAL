@@ -12,7 +12,7 @@ namespace Gizmo.DAL.Mappings
         public void Configure(EntityTypeBuilder<ProductHostHidden> builder)
         {
             //Primary key
-            builder.HasKey(x => x.Id);            
+            builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id)
                 .HasColumnOrder(0)
@@ -23,7 +23,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(x => x.HostGroupId)
                 .HasColumnOrder(2);
-                
+
             builder.Property(x => x.IsHidden)
                 .HasColumnOrder(3);
 

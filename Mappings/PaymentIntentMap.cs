@@ -52,7 +52,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(x => x.Guid)
                 .HasColumnOrder(8)
-                .IsRequired();;
+                .IsRequired(); ;
 
             builder.HasOne(x => x.User)
                 .WithMany(x => x.PaymentIntents)

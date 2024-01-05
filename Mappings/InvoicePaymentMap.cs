@@ -38,7 +38,7 @@ namespace Gizmo.DAL.Mappings
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.User)
-                .WithMany(x=>x.InvoicePayments)
+                .WithMany(x => x.InvoicePayments)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
         }

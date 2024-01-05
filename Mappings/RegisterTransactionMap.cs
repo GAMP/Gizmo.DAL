@@ -23,7 +23,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(1);
 
             builder.Property(x => x.ShiftId)
-                .HasColumnOrder(2) ;
+                .HasColumnOrder(2);
 
             builder.Property(x => x.Amount)
                 .HasColumnOrder(3);
@@ -43,7 +43,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(x => x.RegisterId);
 
             builder.HasOne(x => x.Shift)
-                .WithMany(x=>x.RegisterTransactions)
+                .WithMany(x => x.RegisterTransactions)
                 .HasForeignKey(x => x.ShiftId);
 
             builder.HasOne(x => x.CreatedBy)

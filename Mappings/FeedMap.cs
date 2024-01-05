@@ -33,7 +33,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(t => t.Id)
                 .HasColumnName("FeedId");
-                
+
             // Table & Column Mappings
             builder.ToTable("Feed");
         }

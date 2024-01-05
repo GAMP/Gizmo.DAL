@@ -36,7 +36,7 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable("TaskBase");
 
             builder.Property(t => t.Id)
-                .HasColumnName("TaskId");     
+                .HasColumnName("TaskId");
         }
     }
 }

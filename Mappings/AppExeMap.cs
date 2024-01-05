@@ -25,7 +25,7 @@ namespace Gizmo.DAL.Mappings
             builder.Property(t => t.Caption)
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY);
-            
+
             builder.Property(t => t.Description)
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY);
@@ -56,7 +56,7 @@ namespace Gizmo.DAL.Mappings
                .HasColumnOrder(10);
 
             builder.Property(x => x.DisplayOrder)
-                .HasColumnOrder(11);       
+                .HasColumnOrder(11);
 
             builder.Property(x => x.Options)
                 .HasColumnOrder(12);

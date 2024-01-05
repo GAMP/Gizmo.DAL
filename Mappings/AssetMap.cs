@@ -54,13 +54,13 @@ namespace Gizmo.DAL.Mappings
             // Table & Column Mappings
             builder.ToTable(nameof(Asset));
 
-            builder.HasOne(x=>x.AssetType)
+            builder.HasOne(x => x.AssetType)
                 .WithMany(x => x.Assets)
                 .HasForeignKey(x => x.AssetTypeId);
 
             builder.HasMany(x => x.Transactions)
                 .WithOne(x => x.Asset)
-                .HasForeignKey(x => x.AssetId);          
+                .HasForeignKey(x => x.AssetId);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(x => x.ProductId)
                 .HasColumnOrder(1);
-                
+
             builder.Property(x => x.UserGroupId)
                 .HasColumnOrder(2);
 
