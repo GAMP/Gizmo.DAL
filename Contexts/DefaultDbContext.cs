@@ -2412,7 +2412,7 @@ namespace Gizmo.DAL.Contexts
     /// <summary>
     /// Microsoft SQL Server initializer.
     /// </summary>
-    public class MSSQLInitializer : CreateAndMigrateDatabaseInitializer<DefaultDbContext, MSSQLConfiguration>
+    public class MSSQLInitializer : CreateAndMigrateDatabaseInitializer<DefaultDbContext, GizmoDALV2.Migrations.MSSQLConfiguration>
     {
     }
     #endregion

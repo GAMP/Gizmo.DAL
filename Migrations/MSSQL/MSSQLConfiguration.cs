@@ -1,4 +1,4 @@
-﻿namespace Gizmo.DAL.Migrations
+﻿namespace GizmoDALV2.Migrations
 {
     using System.Data.Entity.Migrations;
 

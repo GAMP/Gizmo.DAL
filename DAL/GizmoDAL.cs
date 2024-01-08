@@ -256,7 +256,7 @@ namespace Gizmo.DAL
                 case DatabaseType.LOCALDB:
                 case DatabaseType.MSSQL:
                 case DatabaseType.MSSQLEXPRESS:
-                    return new DbMigrator(new Migrations.MSSQLConfiguration());
+                    return new DbMigrator(new GizmoDALV2.Migrations.MSSQLConfiguration());
                 default:
                     throw new ArgumentException("Invalid database type", nameof(DatabaseType));
             }
