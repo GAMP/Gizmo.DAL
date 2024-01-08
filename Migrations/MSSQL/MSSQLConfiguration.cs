@@ -9,7 +9,7 @@
         public MSSQLConfiguration()
         {
             ContextType = typeof(DefaultDbContext);
-            MigrationsNamespace = "GizmoDALV2.Migrations.MSSQL";
+            MigrationsNamespace = "Gizmo.DAL.Migrations.MSSQL";
             MigrationsDirectory = @"Migrations\MSSQL";
             AutomaticMigrationsEnabled = false;
             SetSqlGenerator("System.Data.SqlClient", new SqlServerCustomMigrationSqlGenerator());
