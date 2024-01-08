@@ -86,7 +86,7 @@ namespace Gizmo.DAL.Extensions
             optionsBuilder.UseSqlServer(connectionString, options =>
             {
                 options.CommandTimeout(commandTimeout);
-                options.MigrationsAssembly("Gizmo.DAL.EF6.Migrations.MSSQL");
+                options.MigrationsAssembly("Gizmo.DAL.Migrations.EF6.MSSQL");
             });
 
             return new(optionsBuilder.Options);
