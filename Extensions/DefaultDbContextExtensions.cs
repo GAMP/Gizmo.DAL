@@ -504,7 +504,7 @@ namespace Gizmo.DAL.Extensions
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Set<T>().FromSqlRaw(
                     MsSqlScripts.GetScript(scriptName), 
-                    parameters.Select(x => new SqlParameter(x.Key, x.Value))),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value)).ToArray()),
                 "Npgsql.EntityFrameworkCore.PostgreSQL" => dbContext.Set<T>().FromSqlRaw(
                     NpgSqlScripts.GetScript(scriptName), 
                     parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value)).ToArray()),

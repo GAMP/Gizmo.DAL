@@ -41,7 +41,7 @@ namespace Gizmo.DAL.Extensions
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => dbFacade.ExecuteSqlRaw(
                     MsSqlScripts.GetScript(scriptName), 
-                    parameters.Select(x => new SqlParameter(x.Key, x.Value))),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value)).ToArray()),
                 "Npgsql.EntityFrameworkCore.PostgreSQL" => dbFacade.ExecuteSqlRaw(
                     NpgSqlScripts.GetScript(scriptName), 
                     parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value)).ToArray()),
@@ -80,7 +80,7 @@ namespace Gizmo.DAL.Extensions
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => await dbFacade.ExecuteSqlRawAsync(
                     MsSqlScripts.GetScript(scriptName), 
-                    parameters.Select(x => new SqlParameter(x.Key, x.Value)),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value)).ToArray(),
                     cToken),
                 "Npgsql.EntityFrameworkCore.PostgreSQL" => await dbFacade.ExecuteSqlRawAsync(
                     NpgSqlScripts.GetScript(scriptName),
