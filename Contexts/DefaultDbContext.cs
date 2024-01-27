@@ -485,6 +485,9 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<ProductOL> OrderLines { get; set; }
 
+        /// <summary>
+        /// Extended order lines.
+        /// </summary>
         public DbSet<ProductOLExtended> OrderLinesExtended { get; set; }
 
         /// <summary>
@@ -778,6 +781,21 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<AssistanceRequestType> AssistanceRequestTypes { get; set; }
 
+        /// <summary>
+        /// Gets report presets.
+        /// </summary>
+        public DbSet<ReportPreset> ReportPresets { get; set; }
+
+        /// <summary>
+        /// Gets branches.
+        /// </summary>
+        public DbSet<Branch> Branches { get; set; }
+
+        /// <summary>
+        /// Gets user operator branches.
+        /// </summary>
+        public DbSet<UserOperatorBranch> UserOperatorBranches { get; set; }
+
         #endregion
 
         #region OVERRIDES
@@ -1000,6 +1018,10 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new AssistanceRequestMap());
             modelBuilder.ApplyConfiguration(new AssistanceRequestTypeMap());
             #endregion
+
+            modelBuilder.ApplyConfiguration(new ReportPresetMap());
+            modelBuilder.ApplyConfiguration(new BranchMap());
+            modelBuilder.ApplyConfiguration(new UserOperatorBranchMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
@@ -1625,6 +1647,32 @@ namespace Gizmo.DAL.Contexts
 
             if (await entitySet.Where(lambda).AnyAsync(ct) == true)
                 throw new NonUniqueEntityValueException(propertyName, value, typeof(TEntity));
+        }
+
+        /// <summary>
+        /// Demands that specified property value is unique.
+        /// </summary>
+        /// <typeparam name="TEntity">Entity type.</typeparam>
+        /// <typeparam name="TNonUniqueEntity">Non unique entity type.</typeparam>
+        /// <param name="propertyName">Entity property.</param>
+        /// <param name="value">Desired unique value.</param>
+        /// <param name="ct">Cancellation token.</param>
+        /// <returns>Associated task.</returns>
+        public async Task DemandUniqueAsync<TEntity,TNonUniqueEntity>(string propertyName, object value, CancellationToken ct = default) where TEntity : EntityBase
+        {
+            if (string.IsNullOrWhiteSpace(propertyName))
+                throw new ArgumentNullException(nameof(propertyName));
+
+            var entitySet = Set<TEntity>();
+
+            var entityExpression = Expression.Parameter(typeof(TEntity), "entity");
+            var propertyExpression = Expression.Property(entityExpression, propertyName);
+            var constant = Expression.Constant(value);
+            var equalExpression = Expression.Equal(propertyExpression, constant);
+            var lambda = Expression.Lambda<Func<TEntity, bool>>(equalExpression, entityExpression);
+
+            if (await entitySet.Where(lambda).AnyAsync(ct) == true)
+                throw new NonUniqueEntityValueException(propertyName, value, typeof(TNonUniqueEntity));
         }
 
         /// <summary>

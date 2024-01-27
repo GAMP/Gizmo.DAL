@@ -17,7 +17,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -4870,6 +4870,59 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("RegisterTransaction", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.ReportPreset", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("ReportPresetId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(5);
+
+                    b.Property<string>("Filters")
+                        .HasColumnType("text")
+                        .HasColumnOrder(4);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Range")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.Property<Guid>("Report")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("ReportPreset");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Reservation", b =>
                 {
                     b.Property<int>("Id")
@@ -9445,6 +9498,21 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("Register");
 
                     b.Navigation("Shift");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.ReportPreset", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Reservation", b =>

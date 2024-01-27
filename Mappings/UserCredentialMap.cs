@@ -30,7 +30,6 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(100)
                 .IsFixedLength();
 
-
             builder.Property(t => t.Id).
                 HasColumnName("UserId");
 
