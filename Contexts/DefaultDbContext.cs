@@ -1656,9 +1656,10 @@ namespace Gizmo.DAL.Contexts
         /// <typeparam name="TNonUniqueEntity">Non unique entity type.</typeparam>
         /// <param name="propertyName">Entity property.</param>
         /// <param name="value">Desired unique value.</param>
+        /// <param name="existingId">Existing entity id for update operations.</param>
         /// <param name="ct">Cancellation token.</param>
         /// <returns>Associated task.</returns>
-        public async Task DemandUniqueAsync<TEntity,TNonUniqueEntity>(string propertyName, object value, CancellationToken ct = default) where TEntity : EntityBase
+        public async Task DemandUniqueAsync<TEntity,TNonUniqueEntity>(string propertyName, object value, int? existingId =null, CancellationToken ct = default) where TEntity : EntityBase
         {
             if (string.IsNullOrWhiteSpace(propertyName))
                 throw new ArgumentNullException(nameof(propertyName));
@@ -1670,6 +1671,17 @@ namespace Gizmo.DAL.Contexts
             var constant = Expression.Constant(value);
             var equalExpression = Expression.Equal(propertyExpression, constant);
             var lambda = Expression.Lambda<Func<TEntity, bool>>(equalExpression, entityExpression);
+
+            if(existingId != null)
+            {
+                var existingEntityExpression = Expression.Parameter(typeof(TEntity), "entity");
+                var existingPropertyExpression = Expression.Property(existingEntityExpression, nameof(EntityBase.Id));
+                var existingConstant = Expression.Constant(existingId);
+                var notEqualExpression = Expression.NotEqual(existingPropertyExpression, existingConstant);
+                var notEqualExpressionlambda = Expression.Lambda<Func<TEntity, bool>>(notEqualExpression, existingEntityExpression);
+
+                lambda = lambda.And(notEqualExpressionlambda);
+            }
 
             if (await entitySet.Where(lambda).AnyAsync(ct) == true)
                 throw new NonUniqueEntityValueException(propertyName, value, typeof(TNonUniqueEntity));
