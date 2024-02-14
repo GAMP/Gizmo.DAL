@@ -1,10 +1,8 @@
 ﻿using Gizmo.DAL.Extensions;
 using Gizmo.DAL.Scripts;
-
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
-
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +17,7 @@ namespace Gizmo.DAL.Contexts
     public sealed class DbInitializer
     {
         private readonly DefaultDbContext _dbContext;
+        private readonly ILogger<DefaultDbContext> _logger;
 
         /// <summary>
         /// Creates new instance.
@@ -26,7 +25,12 @@ namespace Gizmo.DAL.Contexts
         /// <param name="dbContext">
         /// Database context.
         /// </param>
-        public DbInitializer(DefaultDbContext dbContext) => _dbContext = dbContext;
+        /// <param name="logger">Logger.</param>
+        public DbInitializer(DefaultDbContext dbContext, ILogger<DefaultDbContext> logger)
+        {
+            _dbContext = dbContext;
+            _logger = logger;
+        }
 
         /// <summary>
         /// Initialize database.
@@ -39,17 +43,27 @@ namespace Gizmo.DAL.Contexts
         /// </returns>
         public async Task InitializeAsync(CancellationToken cancellationToken = default)
         {
+            _logger.LogTrace("Initializing database.");
+
             if (await _dbContext.Database.CanConnectAsync(cancellationToken))
             {
+                _logger.LogTrace("Connected to existing database.");
+
+                //we will only reach this code in case that database already exist, its state or version is not know at this stage
+
+                //attempt to update ef6 database
                 var isMigrated = await TryMigrateToEF6InitialAsync(cancellationToken);
 
+                if(isMigrated)
+                    _logger.LogTrace("Existing database was migrated from EF6.");
+
+                //will conaint currently applied migrations count, zero will mean that this is initial database
                 var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cancellationToken);
+
+                //gets currently pending migrations
                 var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
 
-                pendingMigrations = isMigrated 
-                    ? pendingMigrations.Skip(1) 
-                    : pendingMigrations;
-
+                //any pending migration should be applied
                 if (pendingMigrations.Any())
                     await _dbContext.Database.MigrateAsync(cancellationToken);
 
@@ -58,6 +72,8 @@ namespace Gizmo.DAL.Contexts
             }
             else
             {
+                _logger.LogTrace("Connected to new database.");
+
                 var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
 
                 if (pendingMigrations.Any())
