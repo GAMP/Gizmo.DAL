@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gizmo.DAL.Migrations.Npgsql
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20231118152751_initial")]
-    partial class initial
+    [Migration("20231118152751_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
