@@ -1,4 +1,5 @@
-﻿using Gizmo.DAL.Extensions;
+﻿using Gizmo.DAL.Entities;
+using Gizmo.DAL.Extensions;
 using Gizmo.DAL.Scripts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -86,6 +87,9 @@ namespace Gizmo.DAL.Contexts
 
                await _dbContext.AddSeedDataAsync(cancellationToken);
             }
+
+            //create default data
+            await CreateDefaultDataAsync(cancellationToken);
         }
 
         private async Task<bool> TryMigrateToEF6InitialAsync(CancellationToken cancellationToken = default)
@@ -133,6 +137,57 @@ namespace Gizmo.DAL.Contexts
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Validates and create default required data entities.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        private async Task CreateDefaultDataAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogTrace("Initializing default data.");
+
+                using (var trx = _dbContext.Database.BeginTransaction())
+                {
+                    //check if admin account exists
+
+                    //check if any branches exists
+                    if (!await _dbContext.Branches.AnyAsync(cancellationToken))
+                    {
+                        _logger.LogTrace("Creating default branch.");
+
+                        var defaultBranch = new Branch()
+                        {
+                            Name = "Default",
+                        };
+
+                        _dbContext.Branches.Add(defaultBranch);
+                    }
+
+                    //check if any branches exists
+                    if (!await _dbContext.Registers.AnyAsync(cancellationToken))
+                    {
+                        _logger.LogTrace("Creating default register.");
+
+                        var defaultRegister = new Register()
+                        {
+                            Name = "Default",
+                            StartCash = 0,
+                            IdleTimeout = null,
+                        };
+
+                        _dbContext.Registers.Add(defaultRegister);
+                    }
+
+                    trx.Commit();
+                    await _dbContext.SaveChangesAsync(cancellationToken);
+                }
+            }catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Error creating default data.");
+            }
         }
     }
 }
