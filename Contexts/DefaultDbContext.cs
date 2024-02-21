@@ -1035,6 +1035,8 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.Configurations.Add(new AssistanceRequestTypeMap());
 
             modelBuilder.Ignore<Branch>();
+            modelBuilder.Ignore<ReportPreset>();
+            modelBuilder.Ignore<UserOperatorBranch>();
         }
         
         /// <inheritdoc/>
