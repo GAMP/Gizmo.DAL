@@ -54,5 +54,7 @@
         /// Reset user guests data.
         /// </summary>
         public const string RESET_USERGUESTS = nameof(RESET_USERGUESTS);
+
+        public const string TEST_PAGINATION_SCRIPT = nameof(TEST_PAGINATION_SCRIPT);
     }
 }

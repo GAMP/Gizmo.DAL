@@ -16,6 +16,7 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.HAS_EF6_MIGRATION_BY_MIGRATIONID => HAS_EF6_MIGRATION_BY_MIGRATIONID,
             SQLScripts.HAS_TABLE_BY_NAME => HAS_TABLE_BY_NAME,
             SQLScripts.RESET_USERGUESTS => RESET_USERGUESTS,
+            SQLScripts.TEST_PAGINATION_SCRIPT => TEST_PAGINATION_SCRIPT,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
@@ -151,5 +152,64 @@ namespace Gizmo.DAL.Scripts
             SET IsReserved=0,ReservedHostId=NULL,ReservedSlot=NULL 
             WHERE (IsReserved=1 OR ReservedHostId IS NOT NULL OR ReservedSlot IS NOT NULL);
             """;
+        private const string TEST_PAGINATION_SCRIPT = """
+                SELECT * 
+                FROM InvoicePayments AS IP
+                JOIN Payments AS P ON IP.PaymentId = P.PaymentId
+                WHERE IP.CreatedTime >= @DateFrom AND IP.CreatedTime <= @DateTo
+                    AND (@ShiftId IS NULL OR IP.ShiftId = @ShiftId)
+                    AND (@RegisterId IS NULL OR IP.RegisterId = @RegisterId)
+                    AND (@OperatorId IS NULL OR IP.CreatedById = @OperatorId)
+                    AND (@UserId IS NULL OR IP.UserId = @UserId)
+                    AND (@PaymentMethodId IS NULL OR P.PaymentMethodId = @PaymentMethodId);
+
+                SELECT * 
+                FROM DepositPayments AS DP
+                JOIN Payments AS P ON DP.PaymentId = P.PaymentId
+                WHERE DP.CreatedTime >= @DateFrom AND DP.CreatedTime <= @DateTo
+                    AND (@ShiftId IS NULL OR DP.ShiftId = @ShiftId)
+                    AND (@RegisterId IS NULL OR DP.RegisterId = @RegisterId)
+                    AND (@OperatorId IS NULL OR DP.CreatedById = @OperatorId)
+                    AND (@UserId IS NULL OR DP.UserId = @UserId)
+                    AND (@PaymentMethodId IS NULL OR P.PaymentMethodId = @PaymentMethodId);
+
+                SELECT * 
+                FROM DepositPaymentRefunds AS DPR
+                JOIN Payments AS P ON DPR.PaymentId = P.PaymentId
+                JOIN DepositTransactions AS DT ON DPR.DepositTransactionId = DT.DepositTransactionId
+                WHERE DPR.CreatedTime >= @DateFrom AND DPR.CreatedTime <= @DateTo
+                    AND (@ShiftId IS NULL OR DPR.ShiftId = @ShiftId)
+                    AND (@RegisterId IS NULL OR DPR.RegisterId = @RegisterId)
+                    AND (@OperatorId IS NULL OR DPR.CreatedById = @OperatorId)
+                    AND (@UserId IS NULL OR DT.UserId = @UserId)
+                    AND (@PaymentMethodId IS NULL OR P.PaymentMethodId = @PaymentMethodId);
+
+                SELECT * 
+                FROM InvoicePaymentRefund AS IPR
+                JOIN Payments AS P ON IPR.PaymentId = P.PaymentId
+                WHERE IPR.CreatedTime >= @DateFrom AND IPR.CreatedTime <= @DateTo
+                    AND (@ShiftId IS NULL OR IPR.ShiftId = @ShiftId)
+                    AND (@RegisterId IS NULL OR IPR.RegisterId = @RegisterId)
+                    AND (@OperatorId IS NULL OR IPR.CreatedById = @OperatorId)
+                    AND (@UserId IS NULL OR IPR.InvoiceUserId = @UserId)
+                    AND (@PaymentMethodId IS NULL OR P.PaymentMethodId = @PaymentMethodId);
+
+                SELECT * 
+                FROM RegisterTransactions AS RT
+                WHERE RT.Type = 'PayIn' 
+                    AND RT.CreatedTime >= @DateFrom AND RT.CreatedTime <= @DateTo
+                    AND (@ShiftId IS NULL OR RT.ShiftId = @ShiftId)
+                    AND (@RegisterId IS NULL OR RT.RegisterId = @RegisterId)
+                    AND (@OperatorId IS NULL OR RT.CreatedById = @OperatorId);
+
+                SELECT * 
+                FROM RegisterTransactions AS RT
+                WHERE RT.Type = 'PayOut' 
+                    AND RT.CreatedTime >= @DateFrom AND RT.CreatedTime <= @DateTo
+                    AND (@ShiftId IS NULL OR RT.ShiftId = @ShiftId)
+                    AND (@RegisterId IS NULL OR RT.RegisterId = @RegisterId)
+                    AND (@OperatorId IS NULL OR RT.CreatedById = @OperatorId);
+        
+        """;
     }
 }
