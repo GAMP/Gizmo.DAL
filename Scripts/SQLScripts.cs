@@ -55,6 +55,9 @@
         /// </summary>
         public const string RESET_USERGUESTS = nameof(RESET_USERGUESTS);
 
-        public const string TEST_PAGINATION_SCRIPT = nameof(TEST_PAGINATION_SCRIPT);
+        /// <summary>
+        /// Get payment transactions.
+        /// </summary>
+        public const string GET_PAYMENT_TRANSACTIONS = nameof(GET_PAYMENT_TRANSACTIONS);
     }
 }
