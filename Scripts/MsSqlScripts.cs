@@ -2,7 +2,8 @@
 
 namespace Gizmo.DAL.Scripts
 {
-    internal static class MsSqlScripts
+    //TODO: APestunov, return to internal
+    public static class MsSqlScripts
     {
         internal static string GetScript(string scriptName) => scriptName switch
         {
@@ -152,7 +153,13 @@ namespace Gizmo.DAL.Scripts
             SET IsReserved=0,ReservedHostId=NULL,ReservedSlot=NULL 
             WHERE (IsReserved=1 OR ReservedHostId IS NOT NULL OR ReservedSlot IS NOT NULL);
             """;
-        private const string GET_PAYMENT_TRANSACTIONS = """
+        //TODO: APestunov, return to private
+        public const string GET_PAYMENT_TRANSACTIONS = """
+            IF @PageNumber <= 0 
+                SET @PageNumber = 1;
+
+            DECLARE @Offset INT = @Limit * (@PageNumber - 1);
+            
             ;WITH PaymentTransactions AS (
                 SELECT 
                     ip.UserId,
@@ -163,6 +170,8 @@ namespace Gizmo.DAL.Scripts
                     ip.ShiftId,
                     ip.RegisterId,
                     NULL AS DepositPaymentId,
+                    NULL AS InvoiceId,
+                    NULL AS HostId,
                     'InvoicePayment' AS Type
                 FROM InvoicePayment AS ip
                 JOIN Payment AS p ON ip.PaymentId = p.PaymentId
@@ -185,7 +194,9 @@ namespace Gizmo.DAL.Scripts
                     dp.ShiftId,
                     dp.RegisterId,
                     dp.DepositPaymentId,
-                    'DepositPayment'
+                    NULL AS InvoiceId,
+                    NULL AS HostId,
+                    'DepositPayment' AS Type
                 FROM DepositPayment AS dp
                 JOIN Payment AS p ON dp.PaymentId = p.PaymentId
                 WHERE 
@@ -207,7 +218,9 @@ namespace Gizmo.DAL.Scripts
                     ip.ShiftId,
                     ip.RegisterId,
                     NULL AS DepositPaymentId,
-                    'InvoicePaymentRefund'
+                    NULL AS InvoiceId,
+                    NULL AS HostId,
+                    'InvoicePaymentRefund' AS Type
                 FROM RefundInvoicePayment AS rip
                 JOIN InvoicePayment AS ip ON rip.InvoicePaymentId = ip.InvoicePaymentId
                 JOIN Invoice AS i ON ip.InvoiceId = i.InvoiceId
@@ -231,7 +244,9 @@ namespace Gizmo.DAL.Scripts
                     dp.ShiftId,
                     dp.RegisterId,
                     NULL AS DepositPaymentId,
-                    'DepositPaymentRefund'
+                    NULL AS InvoiceId,
+                    NULL AS HostId,
+                    'DepositPaymentRefund' AS Type
                 FROM RefundDepositPayment AS rdp
                 JOIN DepositPayment AS dp ON rdp.DepositPaymentId = dp.DepositPaymentId
                 JOIN Payment AS p ON dp.PaymentId = p.PaymentId
@@ -254,10 +269,12 @@ namespace Gizmo.DAL.Scripts
                     rt.ShiftId,
                     rt.RegisterId,
                     NULL AS DepositPaymentId,
+                    NULL AS InvoiceId,
+                    NULL AS HostId,
                     CASE rt.Type 
                         WHEN 'PayIn' THEN 'PayIn'
                         WHEN 'PayOut' THEN 'PayOut'
-                        ELSE 'Other'
+                        ELSE 'Withdraw'
                     END AS Type
                 FROM RegisterTransaction AS rt
                 WHERE 
@@ -267,7 +284,10 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR rt.CreatedById = @OperatorId)
             )
 
-            SELECT * FROM PaymentTransactions;
+            SELECT * FROM PaymentTransactions
+            ORDER BY Date ASC  -- Change this as needed based on your data but it is important to have an order by clause for pagination
+            OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY
+            OPTION (RECOMPILE);
         
         """;
     }
