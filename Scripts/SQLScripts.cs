@@ -58,6 +58,6 @@
         /// <summary>
         /// Get payment transactions.
         /// </summary>
-        public const string GET_PAYMENT_TRANSACTIONS = nameof(GET_PAYMENT_TRANSACTIONS);
+        public const string GET_PAGINATED_PAYMENT_TRANSACTIONS = nameof(GET_PAGINATED_PAYMENT_TRANSACTIONS);
     }
 }

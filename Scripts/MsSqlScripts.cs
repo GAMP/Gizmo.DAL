@@ -2,8 +2,7 @@
 
 namespace Gizmo.DAL.Scripts
 {
-    //TODO: APestunov, return to internal
-    public static class MsSqlScripts
+    internal static class MsSqlScripts
     {
         internal static string GetScript(string scriptName) => scriptName switch
         {
@@ -17,7 +16,7 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.HAS_EF6_MIGRATION_BY_MIGRATIONID => HAS_EF6_MIGRATION_BY_MIGRATIONID,
             SQLScripts.HAS_TABLE_BY_NAME => HAS_TABLE_BY_NAME,
             SQLScripts.RESET_USERGUESTS => RESET_USERGUESTS,
-            SQLScripts.GET_PAYMENT_TRANSACTIONS => GET_PAYMENT_TRANSACTIONS,
+            SQLScripts.GET_PAGINATED_PAYMENT_TRANSACTIONS => GET_PAGINATED_PAYMENT_TRANSACTIONS,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
@@ -153,13 +152,7 @@ namespace Gizmo.DAL.Scripts
             SET IsReserved=0,ReservedHostId=NULL,ReservedSlot=NULL 
             WHERE (IsReserved=1 OR ReservedHostId IS NOT NULL OR ReservedSlot IS NOT NULL);
             """;
-        //TODO: APestunov, return to private
-        public const string GET_PAYMENT_TRANSACTIONS = """
-            IF @PageNumber <= 0 
-                SET @PageNumber = 1;
-
-            DECLARE @Offset INT = @Limit * (@PageNumber - 1);
-            
+        private const string GET_PAGINATED_PAYMENT_TRANSACTIONS = """
             ;WITH PaymentTransactions AS (
                 SELECT 
                     ip.UserId,

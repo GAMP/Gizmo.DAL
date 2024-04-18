@@ -91,7 +91,7 @@ namespace Gizmo.DAL.Extensions
 
             return new(optionsBuilder.Options);
         }
-        
+
         /// <summary>
         /// Add seed data to a new database.
         /// </summary>
@@ -503,12 +503,65 @@ namespace Gizmo.DAL.Extensions
             => dbContext.Database.ProviderName switch
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Set<T>().FromSqlRaw(
-                    MsSqlScripts.GetScript(scriptName), 
+                    MsSqlScripts.GetScript(scriptName),
                     parameters.Select(x => new SqlParameter(x.Key, x.Value)).ToArray()),
                 "Npgsql.EntityFrameworkCore.PostgreSQL" => dbContext.Set<T>().FromSqlRaw(
-                    NpgSqlScripts.GetScript(scriptName), 
+                    NpgSqlScripts.GetScript(scriptName),
                     parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value)).ToArray()),
                 _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
             };
+
+        /// <summary>
+        /// Executes the SQL with paginated result against the database, choosing it from the file of the 'Gizmo file.DAL.Scripts' namespace depends on the database provider.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Any class to be returned.
+        /// </typeparam>
+        /// <param name="dbContext">
+        /// Default database context.
+        /// </param>
+        /// <param name="scriptName">
+        /// SQL script name from the Gizmo.DAL.Scripts.SQLScripts.cs.
+        /// </param>
+        /// <param name="pageNumber">
+        /// Pagination page number.
+        /// </param>
+        /// <param name="pageSize">
+        /// Pagination page size.
+        /// </param>
+        /// <param name="parameters">
+        /// Sql parameters for the script. Key is parameter name, value is parameter value.
+        /// </param>
+        /// <returns>
+        /// Paginated IEnumerable of T.
+        /// </returns>
+        /// <exception cref="NotSupportedException">
+        /// Database provider is not supported for this SQL script name.
+        /// </exception>
+        public static IEnumerable<T> FromPaginatedSqlScript<T>(this DefaultDbContext dbContext, string scriptName, int pageNumber, int pageSize, Dictionary<string, object> parameters) where T : class
+        {
+            if (pageNumber < 1)
+                pageNumber = 1;
+
+            if (pageSize < 1)
+                pageSize = 10;
+
+            var totalRows = 0;
+
+            parameters.Add("Offset", (pageNumber - 1) * pageSize);
+            parameters.Add("Limit", pageSize);
+            parameters.Add("TotalRows", totalRows);
+
+            return dbContext.Database.ProviderName switch
+            {
+                "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Database.SqlQueryRaw<T>(
+                    MsSqlScripts.GetScript(scriptName),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).AsEnumerable(),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => dbContext.Database.SqlQueryRaw<T>(
+                    NpgSqlScripts.GetScript(scriptName),
+                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).AsEnumerable(),
+                _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
+            };
+        }
     }
 }
