@@ -277,10 +277,29 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR rt.CreatedById = @OperatorId)
             )
 
-            SELECT * FROM PaymentTransactions
-            ORDER BY Date ASC  -- Change this as needed based on your data but it is important to have an order by clause for pagination
-            OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY
-            OPTION (RECOMPILE);
+            -- This is required to obtain the correct paginated items count
+
+            SELECT 
+                (SELECT COUNT(*) FROM PaymentTransactions) AS Total, -- Single subquery for total count
+                ISNULL(
+                    (
+                        SELECT 
+                            UserId, 
+                            Amount, 
+                            PaymentMethodId, 
+                            Date, 
+                            OperatorId, 
+                            ShiftId, 
+                            RegisterId, 
+                            Type
+                        FROM PaymentTransactions
+                        ORDER BY Date
+                        OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY
+                        FOR JSON PATH
+                    ),
+                    '[]'
+                ) AS Items
+            FOR JSON PATH, WITHOUT_ARRAY_WRAPPER;
         
         """;
     }

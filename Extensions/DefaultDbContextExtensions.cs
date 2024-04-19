@@ -14,6 +14,7 @@ using System.Globalization;
 using Gizmo.DAL.Scripts;
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Gizmo.DAL.Extensions
 {
@@ -532,13 +533,22 @@ namespace Gizmo.DAL.Extensions
         /// <param name="parameters">
         /// Sql parameters for the script. Key is parameter name, value is parameter value.
         /// </param>
+        /// <param name="cToken">
+        /// Cancellation token.
+        /// </param>
         /// <returns>
-        /// Paginated IEnumerable of T.
+        /// Paginated array of T and total items.
         /// </returns>
         /// <exception cref="NotSupportedException">
         /// Database provider is not supported for this SQL script name.
         /// </exception>
-        public static IEnumerable<T> FromPaginatedSqlScript<T>(this DefaultDbContext dbContext, string scriptName, int pageNumber, int pageSize, Dictionary<string, object> parameters) where T : class
+        public static async Task<(int Total, T[] Items)> FromPaginatedSqlScript<T>(
+            this DefaultDbContext dbContext,
+            string scriptName,
+            int pageNumber,
+            int pageSize, Dictionary<string, object> parameters,
+            CancellationToken cToken = default)
+        where T : class
         {
             if (pageNumber < 1)
                 pageNumber = 1;
@@ -546,22 +556,35 @@ namespace Gizmo.DAL.Extensions
             if (pageSize < 1)
                 pageSize = 10;
 
-            var totalRows = 0;
-
             parameters.Add("Offset", (pageNumber - 1) * pageSize);
             parameters.Add("Limit", pageSize);
-            parameters.Add("TotalRows", totalRows);
 
-            return dbContext.Database.ProviderName switch
+            var result = dbContext.Database.ProviderName switch
             {
-                "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Database.SqlQueryRaw<T>(
+                "Microsoft.EntityFrameworkCore.SqlServer" => await dbContext.Database.SqlQueryRaw<string>(
                     MsSqlScripts.GetScript(scriptName),
-                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).AsEnumerable(),
-                "Npgsql.EntityFrameworkCore.PostgreSQL" => dbContext.Database.SqlQueryRaw<T>(
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).ToArrayAsync(cToken),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => await dbContext.Database.SqlQueryRaw<string>(
                     NpgSqlScripts.GetScript(scriptName),
-                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).AsEnumerable(),
+                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).ToArrayAsync(cToken),
                 _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
             };
+
+            if (result.Length > 1)
+                throw new InvalidOperationException($"The SQL script {scriptName} is not a paginated query.");
+
+            if (result.Length == 0)
+                return (0, []);
+
+            var paginatedResult = JsonSerializer.Deserialize<PaginatedResult<T>>(result[0]);
+
+            return (paginatedResult.Total, paginatedResult.Items);
+        }
+
+        private sealed class PaginatedResult<T>
+        {
+            public int Total { get; set; }
+            public T[] Items { get; set; }
         }
     }
 }
