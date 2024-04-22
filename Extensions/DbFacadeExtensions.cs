@@ -41,10 +41,10 @@ namespace Gizmo.DAL.Extensions
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => dbFacade.ExecuteSqlRaw(
                     MsSqlScripts.GetScript(scriptName), 
-                    parameters.Select(x => new SqlParameter(x.Key, x.Value)).ToArray()),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
                 "Npgsql.EntityFrameworkCore.PostgreSQL" => dbFacade.ExecuteSqlRaw(
                     NpgSqlScripts.GetScript(scriptName), 
-                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value)).ToArray()),
+                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
                 _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
             };
 

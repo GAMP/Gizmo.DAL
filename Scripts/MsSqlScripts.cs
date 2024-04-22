@@ -155,17 +155,17 @@ namespace Gizmo.DAL.Scripts
         private const string GET_PAGINATED_PAYMENT_TRANSACTIONS = """
             ;WITH PaymentTransactions AS (
                 SELECT 
-                    ip.UserId,
+                    'InvoicePayment' AS Type,
+                    NULL AS UserId,
                     ip.Amount,
-                    p.PaymentMethodId,
                     ip.CreatedTime AS Date,
                     ip.CreatedById AS OperatorId,
                     ip.ShiftId,
                     ip.RegisterId,
+                    ip.InvoiceId,
+                    p.PaymentMethodId,
                     NULL AS DepositPaymentId,
-                    NULL AS InvoiceId,
-                    NULL AS HostId,
-                    'InvoicePayment' AS Type
+                    NULL AS HostId
                 FROM InvoicePayment AS ip
                 JOIN Payment AS p ON ip.PaymentId = p.PaymentId
                 WHERE 
@@ -179,17 +179,17 @@ namespace Gizmo.DAL.Scripts
                 UNION ALL
 
                 SELECT
-                    dp.UserId,
+                    'DepositPayment' AS Type,
+                    NULL AS UserId,
                     p.Amount,
-                    p.PaymentMethodId,
                     dp.CreatedTime AS Date,
                     dp.CreatedById AS OperatorId,
                     dp.ShiftId,
                     dp.RegisterId,
-                    dp.DepositPaymentId,
                     NULL AS InvoiceId,
-                    NULL AS HostId,
-                    'DepositPayment' AS Type
+                    p.PaymentMethodId,
+                    dp.DepositPaymentId,
+                    NULL AS HostId
                 FROM DepositPayment AS dp
                 JOIN Payment AS p ON dp.PaymentId = p.PaymentId
                 WHERE 
@@ -203,75 +203,80 @@ namespace Gizmo.DAL.Scripts
                 UNION ALL
 
                 SELECT
-                    i.UserId,
+                    'InvoicePaymentRefund' AS Type,
+                    p.UserId,
                     p.Amount,
-                    p.PaymentMethodId,
-                    ip.CreatedTime AS Date,
-                    ip.CreatedById AS OperatorId,
-                    ip.ShiftId,
-                    ip.RegisterId,
-                    NULL AS DepositPaymentId,
+                    r.CreatedTime AS Date,
+                    r.CreatedById AS OperatorId,
+                    r.ShiftId,
+                    r.RegisterId,
                     NULL AS InvoiceId,
-                    NULL AS HostId,
-                    'InvoicePaymentRefund' AS Type
+                    p.PaymentMethodId,
+                    NULL AS DepositPaymentId,
+                    NULL AS HostId
                 FROM RefundInvoicePayment AS rip
-                JOIN InvoicePayment AS ip ON rip.InvoicePaymentId = ip.InvoicePaymentId
-                JOIN Invoice AS i ON ip.InvoiceId = i.InvoiceId
-                JOIN Payment AS p ON ip.PaymentId = p.PaymentId
+                JOIN Refund AS r ON rip.RefundId = r.RefundId
+                JOIN Payment AS p ON r.PaymentId = p.PaymentId
+                JOIN Invoice AS i ON rip.InvoiceId = i.InvoiceId
                 WHERE 
-                    ip.CreatedTime >= @DateFrom AND ip.CreatedTime <= @DateTo
-                    AND (@ShiftId IS NULL OR ip.ShiftId = @ShiftId)
-                    AND (@RegisterId IS NULL OR ip.RegisterId = @RegisterId)
-                    AND (@OperatorId IS NULL OR ip.CreatedById = @OperatorId)
+                    r.CreatedTime >= @DateFrom AND r.CreatedTime <= @DateTo
+                    AND (@ShiftId IS NULL OR r.ShiftId = @ShiftId)
+                    AND (@RegisterId IS NULL OR r.RegisterId = @RegisterId)
+                    AND (@OperatorId IS NULL OR r.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR i.UserId = @UserId)
-                    AND (@PaymentMethodId IS NULL OR p.PaymentMethodId = @PaymentMethodId)
+                    AND (@PaymentMethodId IS NULL OR r.RefundMethodId = @PaymentMethodId)
 
                 UNION ALL
 
                 SELECT
-                    dp.UserId,
-                    p.Amount,
-                    p.PaymentMethodId,
-                    dp.CreatedTime AS Date,
-                    dp.CreatedById AS OperatorId,
-                    dp.ShiftId,
-                    dp.RegisterId,
-                    NULL AS DepositPaymentId,
+                    'DepositPaymentRefund' AS Type,
+                    CASE
+                        WHEN p.UserId IS NULL THEN dt.UserId
+                        ELSE NULL
+                    END AS UserId,
+                    r.Amount,
+                    r.CreatedTime AS Date,
+                    r.CreatedById AS OperatorId,
+                    r.ShiftId,
+                    r.RegisterId,
                     NULL AS InvoiceId,
-                    NULL AS HostId,
-                    'DepositPaymentRefund' AS Type
+                    r.RefundMethodId AS PaymentMethodId,
+                    NULL AS DepositPaymentId,
+                    NULL AS HostId
                 FROM RefundDepositPayment AS rdp
+                JOIN Refund AS r ON rdp.RefundId = r.RefundId
+                JOIN Payment AS p ON r.PaymentId = p.PaymentId
+                JOIN DepositTransaction AS dt ON r.DepositTransactionId = dt.DepositTransactionId
                 JOIN DepositPayment AS dp ON rdp.DepositPaymentId = dp.DepositPaymentId
-                JOIN Payment AS p ON dp.PaymentId = p.PaymentId
                 WHERE 
-                    dp.CreatedTime >= @DateFrom AND dp.CreatedTime <= @DateTo
-                    AND (@ShiftId IS NULL OR dp.ShiftId = @ShiftId)
-                    AND (@RegisterId IS NULL OR dp.RegisterId = @RegisterId)
-                    AND (@OperatorId IS NULL OR dp.CreatedById = @OperatorId)
+                    r.CreatedTime >= @DateFrom AND r.CreatedTime <= @DateTo
+                    AND (@ShiftId IS NULL OR r.ShiftId = @ShiftId)
+                    AND (@RegisterId IS NULL OR r.RegisterId = @RegisterId)
+                    AND (@OperatorId IS NULL OR r.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR dp.UserId = @UserId)
-                    AND (@PaymentMethodId IS NULL OR p.PaymentMethodId = @PaymentMethodId)
+                    AND (@PaymentMethodId IS NULL OR r.RefundMethodId = @PaymentMethodId)
 
                 UNION ALL
 
                 SELECT
-                    NULL as UserId,
+                    CASE
+                        WHEN rt.Type = 1 THEN 'PayIn'
+                        ELSE 'PayOut'
+                    END AS Type,
+                    NULL AS UserId,
                     rt.Amount,
-                    -1 as PaymentMethodId,
                     rt.CreatedTime AS Date,
                     rt.CreatedById AS OperatorId,
                     rt.ShiftId,
                     rt.RegisterId,
-                    NULL AS DepositPaymentId,
                     NULL AS InvoiceId,
-                    NULL AS HostId,
-                    CASE rt.Type 
-                        WHEN 'PayIn' THEN 'PayIn'
-                        WHEN 'PayOut' THEN 'PayOut'
-                        ELSE 'Withdraw'
-                    END AS Type
+                    -1 AS PaymentMethodId,
+                    NULL AS DepositPaymentId,
+                    NULL AS HostId
                 FROM RegisterTransaction AS rt
                 WHERE 
                     rt.CreatedTime >= @DateFrom AND rt.CreatedTime <= @DateTo
+                    AND (rt.Type = 1 OR rt.Type = 2)
                     AND (@ShiftId IS NULL OR rt.ShiftId = @ShiftId)
                     AND (@RegisterId IS NULL OR rt.RegisterId = @RegisterId)
                     AND (@OperatorId IS NULL OR rt.CreatedById = @OperatorId)

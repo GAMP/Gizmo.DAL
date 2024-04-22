@@ -505,13 +505,18 @@ namespace Gizmo.DAL.Extensions
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Set<T>().FromSqlRaw(
                     MsSqlScripts.GetScript(scriptName),
-                    parameters.Select(x => new SqlParameter(x.Key, x.Value)).ToArray()),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
                 "Npgsql.EntityFrameworkCore.PostgreSQL" => dbContext.Set<T>().FromSqlRaw(
                     NpgSqlScripts.GetScript(scriptName),
-                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value)).ToArray()),
+                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
                 _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
             };
 
+        private sealed class PaginatedResult<T>
+        {
+            public int Total { get; set; }
+            public T[] Items { get; set; }
+        }
         /// <summary>
         /// Executes the SQL with paginated result against the database, choosing it from the file of the 'Gizmo file.DAL.Scripts' namespace depends on the database provider.
         /// </summary>
@@ -546,7 +551,8 @@ namespace Gizmo.DAL.Extensions
             this DefaultDbContext dbContext,
             string scriptName,
             int pageNumber,
-            int pageSize, Dictionary<string, object> parameters,
+            int pageSize,
+            Dictionary<string, object> parameters,
             CancellationToken cToken = default)
         where T : class
         {
@@ -556,8 +562,8 @@ namespace Gizmo.DAL.Extensions
             if (pageSize < 1)
                 pageSize = 10;
 
-            parameters.Add("Offset", (pageNumber - 1) * pageSize);
             parameters.Add("Limit", pageSize);
+            parameters.Add("Offset", pageSize * (pageNumber - 1));
 
             var result = dbContext.Database.ProviderName switch
             {
@@ -579,12 +585,6 @@ namespace Gizmo.DAL.Extensions
             var paginatedResult = JsonSerializer.Deserialize<PaginatedResult<T>>(result[0]);
 
             return (paginatedResult.Total, paginatedResult.Items);
-        }
-
-        private sealed class PaginatedResult<T>
-        {
-            public int Total { get; set; }
-            public T[] Items { get; set; }
         }
     }
 }
