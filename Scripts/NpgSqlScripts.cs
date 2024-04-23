@@ -15,6 +15,7 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID => DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID,
             SQLScripts.CREATE_DEPOSIT_PAYMENT_REFUNDS => CREATE_DEPOSIT_PAYMENT_REFUNDS,
             SQLScripts.RESET_USERGUESTS => RESET_USERGUESTS,
+            SQLScripts.GET_PAGINATED_PAYMENT_TRANSACTIONS => GET_PAGINATED_PAYMENT_TRANSACTIONS,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
@@ -118,5 +119,158 @@ namespace Gizmo.DAL.Scripts
             SET "IsReserved" = 0, "ReservedHostId" = NULL, "ReservedSlot" = NULL
             WHERE ("IsReserved" = 1 OR "ReservedHostId" IS NOT NULL OR "ReservedSlot" IS NOT NULL);
             """;
+        private const string GET_PAGINATED_PAYMENT_TRANSACTIONS = """
+               WITH PaymentTransactions AS (
+                SELECT 
+                    'InvoicePayment' AS "Type",
+                    NULL AS "UserId",
+                    ip."Amount",
+                    ip."CreatedTime" AS "Date",
+                    ip."CreatedById" AS "OperatorId",
+                    ip."ShiftId",
+                    ip."RegisterId",
+                    ip."InvoiceId",
+                    p."PaymentMethodId",
+                    NULL AS "DepositPaymentId",
+                    NULL AS "HostId"
+                FROM "InvoicePayment" AS ip
+                JOIN "Payment" AS p ON ip."PaymentId" = p."PaymentId"
+                WHERE 
+                    ip."CreatedTime" BETWEEN @DateFrom AND @DateTo
+                    AND (@ShiftId IS NULL OR ip."ShiftId" = @ShiftId)
+                    AND (@RegisterId IS NULL OR ip."RegisterId" = @RegisterId)
+                    AND (@OperatorId IS NULL OR ip."CreatedById" = @OperatorId)
+                    AND (@UserId IS NULL OR ip."UserId" = @UserId)
+                    AND (@PaymentMethodId IS NULL OR p."PaymentMethodId" = @PaymentMethodId)
+
+                UNION ALL
+
+                SELECT
+                    'DepositPayment' AS "Type",
+                    NULL AS "UserId",
+                    p."Amount",
+                    dp."CreatedTime" AS "Date",
+                    dp."CreatedById" AS "OperatorId",
+                    dp."ShiftId",
+                    dp."RegisterId",
+                    NULL AS "InvoiceId",
+                    p."PaymentMethodId",
+                    dp."DepositPaymentId",
+                    NULL AS "HostId"
+                FROM "DepositPayment" AS dp
+                JOIN "Payment" AS p ON dp."PaymentId" = p."PaymentId"
+                WHERE 
+                    dp."CreatedTime" BETWEEN @DateFrom AND @DateTo
+                    AND (@ShiftId IS NULL OR dp."ShiftId" = @ShiftId)
+                    AND (@RegisterId IS NULL OR dp."RegisterId" = @RegisterId)
+                    AND (@OperatorId IS NULL OR dp."CreatedById" = @OperatorId)
+                    AND (@UserId IS NULL OR dp."UserId" = @UserId)
+                    AND (@PaymentMethodId IS NULL OR p."PaymentMethodId" = @PaymentMethodId)
+
+                UNION ALL
+
+                SELECT
+                    'InvoicePaymentRefund' AS "Type",
+                    p."UserId",
+                    p."Amount",
+                    r."CreatedTime" AS "Date",
+                    r."CreatedById" AS "OperatorId",
+                    r."ShiftId",
+                    r."RegisterId",
+                    NULL AS "InvoiceId",
+                    p."PaymentMethodId",
+                    NULL AS "DepositPaymentId",
+                    NULL AS "HostId"
+                FROM "RefundInvoicePayment" AS rip
+                JOIN "Refund" AS r ON rip."RefundId" = r."RefundId"
+                JOIN "Payment" AS p ON r."PaymentId" = p."PaymentId"
+                JOIN "Invoice" AS i ON rip."InvoiceId" = i."InvoiceId"
+                WHERE 
+                    r."CreatedTime" BETWEEN @DateFrom AND @DateTo
+                    AND (@ShiftId IS NULL OR r."ShiftId" = @ShiftId)
+                    AND (@RegisterId IS NULL OR r."RegisterId" = @RegisterId)
+                    AND (@OperatorId IS NULL OR r."CreatedById" = @OperatorId)
+                    AND (@UserId IS NULL OR i."UserId" = @UserId)
+                    AND (@PaymentMethodId IS NULL OR r."RefundMethodId" = @PaymentMethodId)
+
+                UNION ALL
+
+                SELECT
+                    'DepositPaymentRefund' AS "Type",
+                    CASE
+                        WHEN p."UserId" IS NULL THEN dt."UserId"
+                        ELSE NULL
+                    END AS "UserId",
+                    r."Amount",
+                    r."CreatedTime" AS "Date",
+                    r."CreatedById" AS "OperatorId",
+                    r."ShiftId",
+                    r."RegisterId",
+                    NULL AS "InvoiceId",
+                    r."RefundMethodId" AS "PaymentMethodId",
+                    NULL AS "DepositPaymentId",
+                    NULL AS "HostId"
+                FROM "RefundDepositPayment" AS rdp
+                JOIN "Refund" AS r ON rdp."RefundId" = r."RefundId"
+                JOIN "Payment" AS p ON r."PaymentId" = p."PaymentId"
+                JOIN "DepositTransaction" AS dt ON r."DepositTransactionId" = dt."DepositTransactionId"
+                JOIN "DepositPayment" AS dp ON rdp."DepositPaymentId" = dp."DepositPaymentId"
+                WHERE 
+                    r."CreatedTime" BETWEEN @DateFrom AND @DateTo
+                    AND (@ShiftId IS NULL OR r."ShiftId" = @ShiftId)
+                    AND (@RegisterId IS NULL OR r."RegisterId" = @RegisterId)
+                    AND (@OperatorId IS NULL OR r."CreatedById" = @OperatorId)
+                    AND (@UserId IS NULL OR dp."UserId" = @UserId)
+                    AND (@PaymentMethodId IS NULL OR r."RefundMethodId" = @PaymentMethodId)
+
+                UNION ALL
+
+                SELECT
+                    CASE
+                        WHEN rt."Type" = 1 THEN 'PayIn'
+                        ELSE 'PayOut'
+                    END AS "Type",
+                    NULL AS "UserId",
+                    rt."Amount",
+                    rt."CreatedTime" AS "Date",
+                    rt."CreatedById" AS "OperatorId",
+                    rt."ShiftId",
+                    rt."RegisterId",
+                    NULL AS "InvoiceId",
+                    -1 AS "PaymentMethodId", --register transactions are always made in cash
+                    NULL AS "DepositPaymentId",
+                    NULL AS "HostId"
+                FROM "RegisterTransaction" AS rt
+                WHERE 
+                    rt."CreatedTime" BETWEEN @DateFrom AND @DateTo
+                    AND (rt."Type" = 1 OR rt."Type" = 2)
+                    AND (@ShiftId IS NULL OR rt."ShiftId" = @ShiftId)
+                    AND (@RegisterId IS NULL OR rt."RegisterId" = @RegisterId)
+                    AND (@OperatorId IS NULL OR rt."CreatedById" = @OperatorId)
+            )
+
+            SELECT jsonb_build_object(
+                'Total', (SELECT COUNT(*) FROM "PaymentTransactions"),
+                'Items', COALESCE(
+                    (SELECT jsonb_agg(row_to_json(t))
+                     FROM (
+                         SELECT 
+                            "UserId", 
+                            "Amount", 
+                            "PaymentMethodId", 
+                            "Date", 
+                            "OperatorId", 
+                            "ShiftId", 
+                            "RegisterId", 
+                            "Type"
+                         FROM "PaymentTransactions"
+                         ORDER BY "Date"
+                         OFFSET @Offset LIMIT @Limit
+                     ) t),
+                    '[]'::jsonb
+                )
+            );
+                
+        """;
     }
 }

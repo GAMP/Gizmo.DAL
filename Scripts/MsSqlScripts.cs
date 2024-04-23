@@ -270,7 +270,7 @@ namespace Gizmo.DAL.Scripts
                     rt.ShiftId,
                     rt.RegisterId,
                     NULL AS InvoiceId,
-                    -1 AS PaymentMethodId,
+                    -1 AS PaymentMethodId, --register transactions are always made in cash
                     NULL AS DepositPaymentId,
                     NULL AS HostId
                 FROM RegisterTransaction AS rt
@@ -282,7 +282,7 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR rt.CreatedById = @OperatorId)
             )
 
-            -- This is required to obtain the correct paginated items count
+             -- This is required to obtain the correct paginated items count
 
             SELECT 
                 (SELECT COUNT(*) FROM PaymentTransactions) AS Total, -- Single subquery for total count

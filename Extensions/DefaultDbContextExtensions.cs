@@ -519,6 +519,7 @@ namespace Gizmo.DAL.Extensions
         }
         /// <summary>
         /// Executes the SQL with paginated result against the database, choosing it from the file of the 'Gizmo file.DAL.Scripts' namespace depends on the database provider.
+        /// Uses a classic pagination algorithm.
         /// </summary>
         /// <typeparam name="T">
         /// Any class to be returned.
