@@ -155,7 +155,7 @@ namespace Gizmo.DAL.Scripts
         private const string GET_PAGINATED_PAYMENT_TRANSACTIONS = """
             ;WITH PaymentTransactions AS (
                 SELECT 
-                    'InvoicePayment' AS Type,
+                    0 AS Type, --'InvoicePayment'
                     NULL AS UserId,
                     ip.Amount,
                     ip.CreatedTime AS Date,
@@ -179,7 +179,7 @@ namespace Gizmo.DAL.Scripts
                 UNION ALL
 
                 SELECT
-                    'DepositPayment' AS Type,
+                    1 AS Type, --'DepositPayment'
                     NULL AS UserId,
                     p.Amount,
                     dp.CreatedTime AS Date,
@@ -203,7 +203,7 @@ namespace Gizmo.DAL.Scripts
                 UNION ALL
 
                 SELECT
-                    'InvoicePaymentRefund' AS Type,
+                    3 AS Type, --'RefundInvoicePayment'
                     p.UserId,
                     p.Amount,
                     r.CreatedTime AS Date,
@@ -229,7 +229,7 @@ namespace Gizmo.DAL.Scripts
                 UNION ALL
 
                 SELECT
-                    'DepositPaymentRefund' AS Type,
+                    4 AS Type, --'RefundDepositPayment'
                     CASE
                         WHEN p.UserId IS NULL THEN dt.UserId
                         ELSE NULL
@@ -260,8 +260,8 @@ namespace Gizmo.DAL.Scripts
 
                 SELECT
                     CASE
-                        WHEN rt.Type = 1 THEN 'PayIn'
-                        ELSE 'PayOut'
+                        WHEN rt.Type = 1 THEN 2 --'PayIn'
+                        ELSE 5 --'PayOut'
                     END AS Type,
                     NULL AS UserId,
                     rt.Amount,

@@ -559,12 +559,21 @@ namespace Gizmo.DAL.Extensions
         {
             if (pageNumber < 1)
                 pageNumber = 1;
+            else if (pageNumber == int.MaxValue)
+                pageNumber = int.MaxValue - 1;
 
             if (pageSize < 1)
                 pageSize = 10;
+            else if (pageSize == int.MaxValue)
+                pageSize = int.MaxValue - 1;
+                        
+            var offset = pageSize * (pageNumber - 1);
+
+            if(offset < 0)
+                offset = 0;
 
             parameters.Add("Limit", pageSize);
-            parameters.Add("Offset", pageSize * (pageNumber - 1));
+            parameters.Add("Offset", offset);
 
             var result = dbContext.Database.ProviderName switch
             {
@@ -577,13 +586,14 @@ namespace Gizmo.DAL.Extensions
                 _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
             };
 
-            if (result.Length > 1)
-                throw new InvalidOperationException($"The SQL script {scriptName} is not a paginated query.");
-
             if (result.Length == 0)
                 return (0, []);
 
-            var paginatedResult = JsonSerializer.Deserialize<PaginatedResult<T>>(result[0]);
+            var data = result.Length > 1
+                ? string.Join("", result)
+                : result[0];
+
+            var paginatedResult = JsonSerializer.Deserialize<PaginatedResult<T>>(data);
 
             return (paginatedResult.Total, paginatedResult.Items);
         }
