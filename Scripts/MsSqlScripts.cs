@@ -298,7 +298,7 @@ namespace Gizmo.DAL.Scripts
                             RegisterId, 
                             Type
                         FROM PaymentTransactions
-                        ORDER BY Date
+                        ORDER BY QUOTENAME(@SortBy)
                         OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY
                         FOR JSON PATH
                     ),

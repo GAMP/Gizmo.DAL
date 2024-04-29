@@ -536,6 +536,9 @@ namespace Gizmo.DAL.Extensions
         /// <param name="pageSize">
         /// Pagination page size.
         /// </param>
+        /// <param name="sortBy">
+        /// Sort by column (REQUIRED).
+        /// </param>
         /// <param name="parameters">
         /// Sql parameters for the script. Key is parameter name, value is parameter value.
         /// </param>
@@ -553,10 +556,14 @@ namespace Gizmo.DAL.Extensions
             string scriptName,
             int pageNumber,
             int pageSize,
+            string sortBy,
             Dictionary<string, object> parameters,
             CancellationToken cToken = default)
         where T : class
         {
+            if (string.IsNullOrEmpty(sortBy))
+                throw new ArgumentNullException(nameof(sortBy), "Order by column is required for pagination.");
+
             if (pageNumber < 1)
                 pageNumber = 1;
             else if (pageNumber == int.MaxValue)
@@ -574,6 +581,7 @@ namespace Gizmo.DAL.Extensions
 
             parameters.Add("Limit", pageSize);
             parameters.Add("Offset", offset);
+            parameters.Add("SortBy", sortBy);
 
             var result = dbContext.Database.ProviderName switch
             {

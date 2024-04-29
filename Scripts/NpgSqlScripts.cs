@@ -264,7 +264,7 @@ namespace Gizmo.DAL.Scripts
                             "RegisterId", 
                             "Type"
                          FROM "PaymentTransactions"
-                         ORDER BY "Date"
+                         ORDER BY quote_ident(@SortBy)
                          OFFSET @Offset LIMIT @Limit
                      ) t),
                     '[]'::jsonb
