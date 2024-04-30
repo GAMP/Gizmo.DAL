@@ -298,7 +298,23 @@ namespace Gizmo.DAL.Scripts
                             RegisterId, 
                             Type
                         FROM PaymentTransactions
-                        ORDER BY QUOTENAME(@SortBy)
+                        ORDER BY
+                            CASE WHEN @SortBy = 'Date' AND @SortOrder = 'ASC' THEN Date END ASC,
+                            CASE WHEN @SortBy = 'Date' AND @SortOrder = 'DESC' THEN Date END DESC,
+                            CASE WHEN @SortBy = 'Amount' AND @SortOrder = 'ASC' THEN Amount END ASC,
+                            CASE WHEN @SortBy = 'Amount' AND @SortOrder = 'DESC' THEN Amount END DESC,
+                            CASE WHEN @SortBy = 'UserId' AND @SortOrder = 'ASC' THEN UserId END ASC,
+                            CASE WHEN @SortBy = 'UserId' AND @SortOrder = 'DESC' THEN UserId END DESC,
+                            CASE WHEN @SortBy = 'PaymentMethodId' AND @SortOrder = 'ASC' THEN PaymentMethodId END ASC,
+                            CASE WHEN @SortBy = 'PaymentMethodId' AND @SortOrder = 'DESC' THEN PaymentMethodId END DESC,
+                            CASE WHEN @SortBy = 'OperatorId' AND @SortOrder = 'ASC' THEN OperatorId END ASC,
+                            CASE WHEN @SortBy = 'OperatorId' AND @SortOrder = 'DESC' THEN OperatorId END DESC,
+                            CASE WHEN @SortBy = 'ShiftId' AND @SortOrder = 'ASC' THEN ShiftId END ASC,
+                            CASE WHEN @SortBy = 'ShiftId' AND @SortOrder = 'DESC' THEN ShiftId END DESC,
+                            CASE WHEN @SortBy = 'RegisterId' AND @SortOrder = 'ASC' THEN RegisterId END ASC,
+                            CASE WHEN @SortBy = 'RegisterId' AND @SortOrder = 'DESC' THEN RegisterId END DESC,
+                            CASE WHEN @SortBy = 'Type' AND @SortOrder = 'ASC' THEN Type END ASC,
+                            CASE WHEN @SortBy = 'Type' AND @SortOrder = 'DESC' THEN Type END DESC
                         OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY
                         FOR JSON PATH
                     ),

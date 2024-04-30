@@ -539,6 +539,9 @@ namespace Gizmo.DAL.Extensions
         /// <param name="sortBy">
         /// Sort by column (REQUIRED).
         /// </param>
+        /// <param name="isAsc">
+        /// Sort direction.
+        /// </param>
         /// <param name="parameters">
         /// Sql parameters for the script. Key is parameter name, value is parameter value.
         /// </param>
@@ -551,12 +554,22 @@ namespace Gizmo.DAL.Extensions
         /// <exception cref="NotSupportedException">
         /// Database provider is not supported for this SQL script name.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Order by column is required for pagination.
+        /// </exception>
+        /// <exception cref="JsonException">
+        /// Invalid json data from the SQL script.
+        /// </exception>
+        /// <remarks>
+        /// THIS FUNCTION DOESN'T SUPPORT SortableAttribute.
+        /// </remarks>
         public static async Task<(int Total, T[] Items)> FromPaginatedSqlScript<T>(
             this DefaultDbContext dbContext,
             string scriptName,
             int pageNumber,
             int pageSize,
             string sortBy,
+            bool isAsc,
             Dictionary<string, object> parameters,
             CancellationToken cToken = default)
         where T : class
@@ -579,9 +592,12 @@ namespace Gizmo.DAL.Extensions
             if(offset < 0)
                 offset = 0;
 
+            var sortOrder = isAsc ? "ASC" : "DESC";
+            
             parameters.Add("Limit", pageSize);
             parameters.Add("Offset", offset);
             parameters.Add("SortBy", sortBy);
+            parameters.Add("SortOrder", sortOrder);
 
             var result = dbContext.Database.ProviderName switch
             {
