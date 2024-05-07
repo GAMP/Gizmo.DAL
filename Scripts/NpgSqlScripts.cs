@@ -142,6 +142,7 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR ip."CreatedById" = @OperatorId)
                     AND (@UserId IS NULL OR ip."UserId" = @UserId)
                     AND (@PaymentMethodId IS NULL OR p."PaymentMethodId" = @PaymentMethodId)
+                    AND (COALESCE(@IncludeInvoicePayments, true) AND @PaymentDirection != 1) --PaymentTransactionDirection.Out
 
                 UNION ALL
 
@@ -166,6 +167,7 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR dp."CreatedById" = @OperatorId)
                     AND (@UserId IS NULL OR dp."UserId" = @UserId)
                     AND (@PaymentMethodId IS NULL OR p."PaymentMethodId" = @PaymentMethodId)
+                    AND (COALESCE(@IncludeDepositPayments, true) AND @PaymentDirection != 1) --PaymentTransactionDirection.Out
 
                 UNION ALL
 
@@ -192,6 +194,7 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR r."CreatedById" = @OperatorId)
                     AND (@UserId IS NULL OR i."UserId" = @UserId)
                     AND (@PaymentMethodId IS NULL OR r."RefundMethodId" = @PaymentMethodId)
+                    AND (COALESCE(@IncludeInvoiceRefunds, true) AND @PaymentDirection != 0) --PaymentTransactionDirection.In
 
                 UNION ALL
 
@@ -222,13 +225,15 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR r."CreatedById" = @OperatorId)
                     AND (@UserId IS NULL OR dp."UserId" = @UserId)
                     AND (@PaymentMethodId IS NULL OR r."RefundMethodId" = @PaymentMethodId)
+                    AND (COALESCE(@IncludeDepositRefunds, true) AND @PaymentDirection != 0) --PaymentTransactionDirection.In
 
                 UNION ALL
 
                 SELECT
                     CASE
-                        WHEN rt."Type" = 1 THEN 2 --'PayIn'
-                        ELSE 5 --'PayOut'
+                        WHEN rt."Type" = 1          --RegisterTransactionType.PayIn
+                            THEN 2 --'PayIn'           --PaymentTransactionType.PayIn
+                            ELSE 5 --'PayOut'          --PaymentTransactionType.PayOut
                     END AS "Type",
                     NULL AS "UserId",
                     rt."Amount",
@@ -247,6 +252,9 @@ namespace Gizmo.DAL.Scripts
                     AND (@ShiftId IS NULL OR rt."ShiftId" = @ShiftId)
                     AND (@RegisterId IS NULL OR rt."RegisterId" = @RegisterId)
                     AND (@OperatorId IS NULL OR rt."CreatedById" = @OperatorId)
+                    AND (COALESCE(@PaymentMethodId, -1) = -1 -- cash or default to cash if NULL
+                            AND @UserId IS NOT NULL
+                            AND (COALESCE(@IncludePayIns, true) OR COALESCE(@IncludePayOuts, true)))
             )
 
             SELECT jsonb_build_object(
