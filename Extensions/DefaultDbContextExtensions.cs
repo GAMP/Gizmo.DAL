@@ -15,6 +15,7 @@ using Gizmo.DAL.Scripts;
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Reflection;
 
 namespace Gizmo.DAL.Extensions
 {
@@ -574,8 +575,18 @@ namespace Gizmo.DAL.Extensions
             CancellationToken cToken = default)
         where T : class
         {
+            var type = typeof(T);
+
+            if (type == typeof(string) || type == typeof(char))
+                throw new NotSupportedException("Type string and char are not supported for this function.");
+
             if (string.IsNullOrEmpty(sortBy))
                 throw new ArgumentNullException(nameof(sortBy), "Order by column is required for pagination.");
+            
+            var orderProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            if (!orderProperties.Any(x => x.Name == sortBy))
+                throw new NotSupportedException($"Order by column '{sortBy}' is not supported for return type '{type.Name}'. Case sensitive.");
 
             if (pageNumber < 1)
                 pageNumber = 1;

@@ -175,8 +175,8 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR ip.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR ip.UserId = @UserId)
                     AND (@PaymentMethodId IS NULL OR p.PaymentMethodId = @PaymentMethodId)
-                    AND (COALESCE(@IncludeInvoicePayments, 1) = 1 --true or default to true if NULL
-                            AND @PaymentDirection != 1) --PaymentTransactionDirection.Out
+                    AND (COALESCE(@IncludeInvoicePayments, 1) = 1) --true or default to true if NULL
+                    AND (@PaymentDirection IS NULL OR @PaymentDirection != 1) --PaymentTransactionDirection.Out
 
                 UNION ALL
 
@@ -201,8 +201,8 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR dp.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR dp.UserId = @UserId)
                     AND (@PaymentMethodId IS NULL OR p.PaymentMethodId = @PaymentMethodId)
-                    AND (COALESCE(@IncludeDepositPayments, 1) = 1 --true or default to true if NULL
-                            AND @PaymentDirection != 1) --PaymentTransactionDirection.Out
+                    AND (COALESCE(@IncludeDepositPayments, 1) = 1) --true or default to true if NULL
+                    AND (@PaymentDirection IS NULL OR @PaymentDirection != 1) --PaymentTransactionDirection.Out
 
                 UNION ALL
 
@@ -229,8 +229,8 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR r.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR i.UserId = @UserId)
                     AND (@PaymentMethodId IS NULL OR r.RefundMethodId = @PaymentMethodId)
-                    AND (COALESCE(@IncludeInvoiceRefunds, 1) = 1 --true or default to true if NULL
-                            AND @PaymentDirection != 0) --PaymentTransactionDirection.In
+                    AND (COALESCE(@IncludeInvoiceRefunds, 1) = 1) --true or default to true if NULL
+                    AND (@PaymentDirection IS NULL OR @PaymentDirection != 0) --PaymentTransactionDirection.In
 
                 UNION ALL
 
@@ -261,8 +261,8 @@ namespace Gizmo.DAL.Scripts
                     AND (@OperatorId IS NULL OR r.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR dp.UserId = @UserId)
                     AND (@PaymentMethodId IS NULL OR r.RefundMethodId = @PaymentMethodId)
-                    AND (COALESCE(@IncludeDepositRefunds, 1) = 1 --true or default to true if NULL
-                            AND @PaymentDirection != 0) --PaymentTransactionDirection.In
+                    AND (COALESCE(@IncludeDepositRefunds, 1) = 1) --true or default to true if NULL
+                    AND (@PaymentDirection IS NULL OR @PaymentDirection != 0) --PaymentTransactionDirection.In
 
                 UNION ALL
 
