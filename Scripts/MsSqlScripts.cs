@@ -156,7 +156,7 @@ namespace Gizmo.DAL.Scripts
             ;WITH PaymentTransactions AS (
                 SELECT 
                     0 AS Type, --'InvoicePayment'
-                    NULL AS UserId,
+                    ip.UserId,
                     ip.Amount,
                     ip.CreatedTime AS Date,
                     ip.CreatedById AS OperatorId,
@@ -182,7 +182,7 @@ namespace Gizmo.DAL.Scripts
 
                 SELECT
                     1 AS Type, --'DepositPayment'
-                    NULL AS UserId,
+                    dp.UserId,
                     p.Amount,
                     dp.CreatedTime AS Date,
                     dp.CreatedById AS OperatorId,
@@ -236,10 +236,7 @@ namespace Gizmo.DAL.Scripts
 
                 SELECT
                     4 AS Type, --'RefundDepositPayment'
-                    CASE
-                        WHEN p.UserId IS NULL THEN dt.UserId
-                        ELSE NULL
-                    END AS UserId,
+                    p.UserId,
                     r.Amount,
                     r.CreatedTime AS Date,
                     r.CreatedById AS OperatorId,
