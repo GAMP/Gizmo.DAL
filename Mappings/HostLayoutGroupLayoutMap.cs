@@ -40,6 +40,14 @@ namespace Gizmo.DAL.Mappings
             builder.Property(x => x.IsHidden)
                 .HasColumnOrder(7);
 
+            builder.Property(x => x.Row)
+                .HasColumnOrder(8)
+                .HasDefaultValue(0);
+
+            builder.Property(x => x.Column)
+                .HasColumnOrder(9)
+                .HasDefaultValue(0);  
+
             // Indexes
             builder.HasIndex(x => new { x.HostLayoutGroupId, x.HostId }).IsUnique();
 

@@ -44,6 +44,14 @@ namespace Gizmo.DAL.Mappings
             builder.Property(t => t.IsDeleted)
                 .HasColumnOrder(7);
 
+            builder.Property(t => t.PaymentTerminalNumber)
+                .IsRequired(false)
+                .HasColumnOrder(8);
+
+            builder.Property(t => t.FiscalReceiptPrinterNumber)
+                .IsRequired(false)
+                .HasColumnOrder(9);
+
             // Indexes
             builder.HasIndex(t => t.MacAddress).IsUnique();
 

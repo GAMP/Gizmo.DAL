@@ -2447,6 +2447,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Column")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnOrder(9);
+
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
@@ -2474,6 +2480,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Row")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnOrder(8);
 
                     b.Property<int>("Width")
                         .HasColumnType("int")
@@ -4872,6 +4884,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("FiscalReceiptPrinterNumber")
+                        .HasColumnType("int")
+                        .HasColumnOrder(9);
+
                     b.Property<int?>("IdleTimeout")
                         .HasColumnType("int")
                         .HasColumnOrder(5);
@@ -4904,6 +4920,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Options")
                         .HasColumnType("int")
                         .HasColumnOrder(6);
+
+                    b.Property<int?>("PaymentTerminalNumber")
+                        .HasColumnType("int")
+                        .HasColumnOrder(8);
 
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
