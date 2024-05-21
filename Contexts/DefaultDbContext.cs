@@ -1037,6 +1037,12 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.Ignore<Branch>();
             modelBuilder.Ignore<ReportPreset>();
             modelBuilder.Ignore<UserOperatorBranch>();
+
+            modelBuilder.Entity<Entities.Register>().Ignore(x => x.PaymentTerminalNumber);
+            modelBuilder.Entity<Entities.Register>().Ignore(x => x.FiscalReceiptPrinterNumber);
+
+            modelBuilder.Entity<Entities.HostLayoutGroupLayout>().Ignore(x => x.Column);
+            modelBuilder.Entity<Entities.HostLayoutGroupLayout>().Ignore(x => x.Row);
         }
         
         /// <inheritdoc/>
