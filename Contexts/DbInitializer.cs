@@ -58,7 +58,7 @@ namespace Gizmo.DAL.Contexts
                 if(isMigrated)
                     _logger.LogTrace("Existing database was migrated from EF6.");
 
-                //will conaint currently applied migrations count, zero will mean that this is initial database
+                //will contain currently applied migrations count, zero will mean that this is initial database
                 var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cancellationToken);
 
                 //gets currently pending migrations
