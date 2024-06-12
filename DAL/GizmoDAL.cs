@@ -548,7 +548,7 @@ namespace Gizmo.DAL
 
                 //VOIDS
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VoidInvoice];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VoidDepositPayment];", ct);   
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[VoidDepositPayment];", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Void];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[Void]', RESEED, 1);", ct);
@@ -575,7 +575,7 @@ namespace Gizmo.DAL
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineSession];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineTime];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineTimeFixed];", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineExtended];", ct);               
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineExtended];", ct);
 
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLine];", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[InvoiceLine]', RESEED, 1);", ct);
@@ -672,7 +672,7 @@ namespace Gizmo.DAL
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriod];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriodDayTime];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductTimePeriodDay];", ct);
-                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimePeriodDay]', RESEED, 1);", ct);                    
+                    await cx.Database.ExecuteSqlCommandAsync("DBCC CHECKIDENT ('[dbo].[ProductTimePeriodDay]', RESEED, 1);", ct);
 
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductBundle];", ct);
                     await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Product];", ct);
@@ -1317,6 +1317,45 @@ namespace Gizmo.DAL
                 }
             }
         }
+
+        /// <summary>
+        /// Hard deletes any user that is marked as deleted from the database.
+        /// </summary>
+        /// <param name="dbContext">Database context.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns></returns>
+        public async Task RemoveDeletedUsersAsync(DefaultDbContext dbContext, CancellationToken cancellationToken = default)
+        {
+            if (dbContext == null)
+                throw new ArgumentNullException(nameof(dbContext));
+
+            using (var trx = dbContext.Database.BeginTransaction(System.Data.IsolationLevel.Serializable))
+            {
+                dbContext.Sessions.RemoveRange(dbContext.Sessions.Where(usage => usage.User.IsDeleted));
+                dbContext.Usage.RemoveRange(dbContext.Usage.Where(usage => usage.User.IsDeleted));
+                dbContext.UsageSessions.RemoveRange(dbContext.UsageSessions.Where(usageSession => usageSession.User.IsDeleted));
+
+                dbContext.AppRatings.RemoveRange(dbContext.AppRatings.Where(state => state.User.IsDeleted));
+                dbContext.AppStats.RemoveRange(dbContext.AppStats.Where(state => state.User.IsDeleted));
+                dbContext.AssistanceRequests.RemoveRange(dbContext.AssistanceRequests.Where(state => state.User.IsDeleted));
+                dbContext.WaitingLineEntries.RemoveRange(dbContext.WaitingLineEntries.Where(state => state.User.IsDeleted));
+                dbContext.PaymentIntents.RemoveRange(dbContext.PaymentIntents.Where(state => state.User.IsDeleted));
+                dbContext.ReservationUsers.RemoveRange(dbContext.ReservationUsers.Where(state => state.User.IsDeleted));
+                dbContext.UserNotes.RemoveRange(dbContext.UserNotes.Where(state => state.User.IsDeleted));
+                dbContext.Reservations.RemoveRange(dbContext.Reservations.Where(state => state.UserId != null && state.User.IsDeleted));
+                dbContext.UserAgreementStates.RemoveRange(dbContext.UserAgreementStates.Where(state => state.User.IsDeleted));
+                dbContext.Invoices.RemoveRange(dbContext.Invoices.Where(invoice => invoice.User.IsDeleted));
+                dbContext.Orders.RemoveRange(dbContext.Orders.Where(order => order.User.IsDeleted));
+
+                dbContext.UsersPictures.RemoveRange(dbContext.UsersPictures.Where(userMember => userMember.User.IsDeleted));
+                dbContext.UserAttribute.RemoveRange(dbContext.UserAttribute.Where(permission => permission.User.IsDeleted));
+                dbContext.UsersMember.RemoveRange(dbContext.UsersMember.Where(userMember=>userMember.IsDeleted));
+
+                await dbContext.SaveChangesAsync(cancellationToken);
+                trx.Commit();
+            }
+        }
+    
 
         #endregion
 
