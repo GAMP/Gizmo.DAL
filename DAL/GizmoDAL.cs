@@ -1021,15 +1021,23 @@ namespace Gizmo.DAL
                 cx.Configuration.AutoDetectChangesEnabled = false;
                 cx.Database.CommandTimeout = int.MaxValue;
 
-
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AssetTransaction] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AppStat] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AppRating] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AssistanceRequest] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ReservationUser] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Reservation] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AssistanceRequest] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UsageTime] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UsageTimeFixed] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UsageRate] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UsageUserSession] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UsageSession] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Usage] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserSessionChange] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserSession] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[RefundInvoicePayment] WHERE InvoicePaymentId IN (SELECT InvoicePaymentId FROM [dbo].[InvoicePayment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[RefundDepositPayment] WHERE DepositPaymentId IN (SELECT DepositPaymentId FROM [dbo].[DepositPayment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Refund] WHERE PaymentId IN (SELECT PaymentId FROM [dbo].[Payment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
@@ -1038,23 +1046,39 @@ namespace Gizmo.DAL
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[PaymentIntent] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[DepositPayment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Payment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+
+                await cx.Database.ExecuteSqlCommandAsync("UPDATE InvoiceLineExtended SET BundleLineId=NULL WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineProduct] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineSession] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineTime] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineTimeFixed] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLineExtended] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Invoice] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+
+                await cx.Database.ExecuteSqlCommandAsync("UPDATE ProductOLExtended SET BundleLineId=NULL WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOLTimeFixed] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOLTime] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOLSession] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOLProduct] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOLExtended] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOL] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOrder] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[DepositTransaction] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[PointTransaction] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[HostGroupWaitingLineEntry] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AssetTransaction] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AppRating] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserCreditLimit] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserAttribute] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Note] WHERE NoteId IN (SELECT NoteId FROM [dbo].[UserNote] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                //await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Note] WHERE NoteId IN (SELECT NoteId FROM [dbo].[UserNote] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserNote] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Verification] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
                 await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Token] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
 
-                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [USER] WHERE IsDeleted=1", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [UserMember] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [User] WHERE IsDeleted=1", ct);
 
 
                 //detect any changes made
