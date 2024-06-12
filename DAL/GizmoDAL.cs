@@ -1011,6 +1011,63 @@ namespace Gizmo.DAL
             }
         }
 
+        public async Task CleanupUsersAsync(DefaultDbContext cx, CancellationToken ct)
+        {
+            if (cx == null)
+                throw new ArgumentNullException(nameof(cx));
+
+            using (var trx = cx.Database.BeginTransaction(System.Data.IsolationLevel.Serializable))
+            {
+                cx.Configuration.AutoDetectChangesEnabled = false;
+                cx.Database.CommandTimeout = int.MaxValue;
+
+
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AppStat] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ReservationUser] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Reservation] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AssistanceRequest] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UsageSession] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Usage] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserSessionChange] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserSession] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[RefundInvoicePayment] WHERE InvoicePaymentId IN (SELECT InvoicePaymentId FROM [dbo].[InvoicePayment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[RefundDepositPayment] WHERE DepositPaymentId IN (SELECT DepositPaymentId FROM [dbo].[DepositPayment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Refund] WHERE PaymentId IN (SELECT PaymentId FROM [dbo].[Payment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Refund] WHERE DepositTransactionId IN (SELECT DepositTransactionId FROM [dbo].[DepositTransaction] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoicePayment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[PaymentIntent] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[DepositPayment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Payment] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Invoice] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOL] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[ProductOrder] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[DepositTransaction] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[PointTransaction] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[HostGroupWaitingLineEntry] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AssetTransaction] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[AppRating] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserCreditLimit] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserAttribute] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Note] WHERE NoteId IN (SELECT NoteId FROM [dbo].[UserNote] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1));", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[UserNote] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Verification] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Token] WHERE UserId IN (SELECT UserId FROM [USER] WHERE IsDeleted=1);", ct);
+
+                await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [USER] WHERE IsDeleted=1", ct);
+
+
+                //detect any changes made
+                cx.ChangeTracker.DetectChanges();
+
+                //save any changes made
+                await cx.SaveChangesAsync(ct);
+
+                //commit changes
+                trx.Commit();
+            }
+        }
+
         //TODO Add invoice correcting functionality
 
         //using(var cx = GetDbNonProxyContext())
