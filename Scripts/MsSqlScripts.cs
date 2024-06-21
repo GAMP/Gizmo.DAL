@@ -17,6 +17,7 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.HAS_TABLE_BY_NAME => HAS_TABLE_BY_NAME,
             SQLScripts.RESET_USERGUESTS => RESET_USERGUESTS,
             SQLScripts.GET_PAGINATED_PAYMENT_TRANSACTIONS => GET_PAGINATED_PAYMENT_TRANSACTIONS,
+            SQLScripts.DELETE_USER_FOREVER => DELETE_USER_FOREVER,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
@@ -332,6 +333,71 @@ namespace Gizmo.DAL.Scripts
                 ) AS Items
             FOR JSON PATH, WITHOUT_ARRAY_WRAPPER;
         
+        """;
+        private const string DELETE_USER_FOREVER = """
+            BEGIN TRANSACTION;
+
+            DECLARE @UserId INT = <YourUserId>;
+
+            BEGIN TRY
+                -- Set CurrentUsageId to NULL in UsageSessions
+                UPDATE UsageSessions
+                SET CurrentUsageId = NULL
+                WHERE UserId = @UserId;
+
+                -- Delete from all related tables
+                DELETE FROM AssistanceRequests WHERE UserId = @UserId;
+                DELETE FROM WaitingLineEntries WHERE UserId = @UserId;
+                DELETE FROM UserAgreementStates WHERE UserId = @UserId;
+                DELETE FROM UserAttribute WHERE UserId = @UserId;
+                DELETE FROM UserPermissions WHERE UserId = @UserId;
+                DELETE FROM PaymentIntents WHERE UserId = @UserId;
+                DELETE FROM ReservationUsers WHERE UserId = @UserId;
+                DELETE FROM ReservationHosts WHERE PreferedUserId = @UserId;
+                DELETE FROM Reservations WHERE UserId = @UserId;
+                DELETE FROM EmailVerifications WHERE UserId = @UserId;
+                DELETE FROM MobilePhoneVerifications WHERE UserId = @UserId;
+                DELETE FROM Verifications WHERE UserId = @UserId;
+                DELETE FROM Tokens WHERE UserId = @UserId;
+                DELETE FROM AppRatings WHERE UserId = @UserId;
+                DELETE FROM AppStats WHERE UserId = @UserId;
+                DELETE FROM AssetTransactions WHERE UserId = @UserId;
+
+                -- Handle Refunds related to DepositTransactions
+                DELETE FROM Refunds 
+                WHERE DepositTransactionId IN (SELECT Id FROM DepositTransactions WHERE UserId = @UserId);
+
+                DELETE FROM DepositTransactions WHERE UserId = @UserId;
+                DELETE FROM UsageTime WHERE UserId = @UserId;
+                DELETE FROM UsageFixed WHERE UserId = @UserId;
+
+                -- Handle InvoicePayments and related Refunds
+                DELETE FROM Refunds 
+                WHERE PaymentId IN (SELECT Id FROM Payments WHERE UserId = @UserId);
+
+                DELETE FROM InvoicePayments WHERE UserId = @UserId;
+                DELETE FROM Payments WHERE UserId = @UserId;
+                DELETE FROM Invoices WHERE UserId = @UserId;
+                DELETE FROM PointsTransaction WHERE UserId = @UserId;
+                DELETE FROM UsageSessions WHERE UserId = @UserId;
+                DELETE FROM Usage WHERE UserId = @UserId;
+                DELETE FROM SessionsChanges WHERE UserId = @UserId;
+                DELETE FROM Sessions WHERE UserId = @UserId;
+                DELETE FROM Orders WHERE UserId = @UserId;
+                DELETE FROM UserNotes WHERE UserId = @UserId;
+
+                -- Delete UserCreditLimit if it exists
+                DELETE FROM UserCreditLimit WHERE UserId = @UserId;
+
+                -- Finally, delete the user
+                DELETE FROM UsersMember WHERE Id = @UserId;
+
+                COMMIT TRANSACTION;
+            END TRY
+            BEGIN CATCH
+                ROLLBACK TRANSACTION;
+                THROW;
+            END CATCH;
         """;
     }
 }
