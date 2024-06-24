@@ -59,10 +59,5 @@
         /// Get payment transactions.
         /// </summary>
         public const string GET_PAGINATED_PAYMENT_TRANSACTIONS = nameof(GET_PAGINATED_PAYMENT_TRANSACTIONS);
-
-        /// <summary>
-        /// User hard delete.
-        /// </summary>
-        public const string DELETE_USER_FOREVER = nameof(DELETE_USER_FOREVER);
     }
 }
