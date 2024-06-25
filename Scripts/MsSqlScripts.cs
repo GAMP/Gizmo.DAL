@@ -17,6 +17,7 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.HAS_TABLE_BY_NAME => HAS_TABLE_BY_NAME,
             SQLScripts.RESET_USERGUESTS => RESET_USERGUESTS,
             SQLScripts.GET_PAGINATED_PAYMENT_TRANSACTIONS => GET_PAGINATED_PAYMENT_TRANSACTIONS,
+            SQLScripts.USER_HARD_DELETE => USER_HARD_DELETE,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
@@ -332,6 +333,97 @@ namespace Gizmo.DAL.Scripts
                 ) AS Items
             FOR JSON PATH, WITHOUT_ARRAY_WRAPPER;
         
+        """;
+        private const string USER_HARD_DELETE = """
+            BEGIN TRANSACTION;
+
+            BEGIN TRY
+                DELETE UsageSession WHERE UserId = @UserId;
+
+                DELETE ucl
+                FROM UserCreditLimit AS ucl
+                INNER JOIN UserMember AS u ON ucl.UserId = u.UserId
+                WHERE u.UserId = @UserId;
+
+
+                DELETE r
+                FROM Refund AS r
+                INNER JOIN DepositTransaction AS dt ON r.DepositTransactionId = dt.DepositTransactionId
+                WHERE dt.UserId = @UserId;
+
+                DELETE r
+                FROM Refund AS r
+                INNER JOIN Payment AS p ON r.PaymentId = p.PaymentId
+                WHERE p.UserId = @UserId;
+
+
+                DELETE vmp 
+                FROM VerificationMobilePhone AS vmp
+                INNER JOIN Verification AS v ON vmp.VerificationId = v.VerificationId
+            	WHERE v.UserId = @UserId;
+
+                DELETE ve  FROM VerificationEmail AS ve
+                INNER JOIN Verification AS v ON ve.VerificationId = v.VerificationId
+            	WHERE v.UserId = @UserId;
+
+                DELETE FROM Verification WHERE UserId = @UserId;
+
+
+                DELETE ut FROM UsageTime AS ut
+                INNER JOIN Usage AS u ON ut.UsageId = u.UsageId
+            	WHERE u.UserId = @UserId;
+
+                DELETE utf FROM UsageTimeFixed AS utf
+                INNER JOIN Usage AS u ON utf.UsageId = u.UsageId
+                WHERE u.UserId = @UserId;
+
+                DELETE FROM Usage WHERE UserId = @UserId;
+
+
+                DELETE FROM InvoicePayment WHERE UserId = @UserId;
+                DELETE FROM PaymentIntent WHERE UserId = @UserId;
+                DELETE FROM Payment WHERE UserId = @UserId;
+
+                DELETE FROM AssistanceRequest WHERE UserId = @UserId;
+
+                DELETE FROM HostGroupWaitingLineEntry WHERE UserId = @UserId;
+
+                DELETE FROM UserAgreementState WHERE UserId = @UserId;
+                DELETE FROM UserAttribute WHERE UserId = @UserId;
+                DELETE FROM UserPermission WHERE UserId = @UserId;
+                DELETE FROM UserNote WHERE UserId = @UserId;
+
+                DELETE FROM ReservationUser WHERE UserId = @UserId;
+                DELETE FROM ReservationHost WHERE PreferedUserId = @UserId;
+                DELETE FROM Reservation WHERE UserId = @UserId;
+
+                DELETE FROM Token WHERE UserId = @UserId;
+
+                DELETE FROM AppRating WHERE UserId = @UserId;
+                DELETE FROM AppStat WHERE UserId = @UserId;
+
+                DELETE FROM AssetTransaction WHERE UserId = @UserId;
+                DELETE FROM DepositTransaction WHERE UserId = @UserId;
+                DELETE FROM PointTransaction WHERE UserId = @UserId;
+
+                DELETE FROM UserSessionChange WHERE UserId = @UserId;
+                DELETE FROM UserSession WHERE UserId = @UserId;
+
+
+                DELETE FROM ProductOrder WHERE UserId = @UserId;
+
+                DELETE FROM InvoiceLine WHERE UserId = @UserId;
+                DELETE FROM Invoice WHERE UserId = @UserId;
+
+
+                DELETE FROM UserMember WHERE UserId = @UserId;
+
+                ROLLBACK TRANSACTION;
+            END TRY
+            BEGIN CATCH
+                ROLLBACK TRANSACTION;
+                THROW;
+            END CATCH;
         """;
     }
 }
