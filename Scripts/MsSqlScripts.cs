@@ -338,92 +338,340 @@ namespace Gizmo.DAL.Scripts
             BEGIN TRANSACTION;
 
             BEGIN TRY
-                DELETE UsageSession WHERE UserId = @UserId;
+                DELETE UsageSession
+                WHERE
+                (@UserId IS NULL OR UserId = @UserId);
+
 
                 DELETE ucl
                 FROM UserCreditLimit AS ucl
                 INNER JOIN UserMember AS u ON ucl.UserId = u.UserId
-                WHERE u.UserId = @UserId;
+                WHERE
+                (@UserId IS NULL OR u.UserId = @UserId);
 
 
                 DELETE r
                 FROM Refund AS r
                 INNER JOIN DepositTransaction AS dt ON r.DepositTransactionId = dt.DepositTransactionId
-                WHERE dt.UserId = @UserId;
+                WHERE
+                (@UserId IS NULL OR dt.UserId = @UserId);
 
                 DELETE r
                 FROM Refund AS r
                 INNER JOIN Payment AS p ON r.PaymentId = p.PaymentId
-                WHERE p.UserId = @UserId;
+                WHERE
+                (@UserId IS NULL OR p.UserId = @UserId);
 
 
                 DELETE vmp 
                 FROM VerificationMobilePhone AS vmp
                 INNER JOIN Verification AS v ON vmp.VerificationId = v.VerificationId
-            	WHERE v.UserId = @UserId;
+            	WHERE
+                (@UserId IS NULL OR v.UserId = @UserId);
 
                 DELETE ve  FROM VerificationEmail AS ve
                 INNER JOIN Verification AS v ON ve.VerificationId = v.VerificationId
-            	WHERE v.UserId = @UserId;
+            	WHERE
+                (@UserId IS NULL OR v.UserId = @UserId);
 
-                DELETE FROM Verification WHERE UserId = @UserId;
+                DELETE FROM Verification 
+                WHERE
+                (@UserId IS NULL OR UserId = @UserId);
 
 
                 DELETE ut FROM UsageTime AS ut
                 INNER JOIN Usage AS u ON ut.UsageId = u.UsageId
-            	WHERE u.UserId = @UserId;
+            	WHERE
+                (@UserId IS NULL OR u.UserId = @UserId);
 
                 DELETE utf FROM UsageTimeFixed AS utf
                 INNER JOIN Usage AS u ON utf.UsageId = u.UsageId
-                WHERE u.UserId = @UserId;
+                WHERE
+                (@UserId IS NULL OR u.UserId = @UserId);
 
-                DELETE FROM Usage WHERE UserId = @UserId;
-
-
-                DELETE FROM InvoicePayment WHERE UserId = @UserId;
-                DELETE FROM PaymentIntent WHERE UserId = @UserId;
-                DELETE FROM Payment WHERE UserId = @UserId;
-
-                DELETE FROM AssistanceRequest WHERE UserId = @UserId;
-
-                DELETE FROM HostGroupWaitingLineEntry WHERE UserId = @UserId;
-
-                DELETE FROM UserAgreementState WHERE UserId = @UserId;
-                DELETE FROM UserAttribute WHERE UserId = @UserId;
-                DELETE FROM UserPermission WHERE UserId = @UserId;
-                DELETE FROM UserNote WHERE UserId = @UserId;
-
-                DELETE FROM ReservationUser WHERE UserId = @UserId;
-                DELETE FROM ReservationHost WHERE PreferedUserId = @UserId;
-                DELETE FROM Reservation WHERE UserId = @UserId;
-
-                DELETE FROM Token WHERE UserId = @UserId;
-
-                DELETE FROM AppRating WHERE UserId = @UserId;
-                DELETE FROM AppStat WHERE UserId = @UserId;
-
-                DELETE FROM AssetTransaction WHERE UserId = @UserId;
-                DELETE FROM DepositTransaction WHERE UserId = @UserId;
-                DELETE FROM PointTransaction WHERE UserId = @UserId;
-
-                DELETE FROM UserSessionChange WHERE UserId = @UserId;
-                DELETE FROM UserSession WHERE UserId = @UserId;
+                DELETE FROM Usage 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
 
 
-                DELETE FROM ProductOrder WHERE UserId = @UserId;
+                DELETE FROM InvoicePayment 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM PaymentIntent 
+                WHERE
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM Payment 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
 
-                DELETE FROM InvoiceLine WHERE UserId = @UserId;
-                DELETE FROM Invoice WHERE UserId = @UserId;
+                DELETE FROM AssistanceRequest 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+
+                DELETE FROM HostGroupWaitingLineEntry 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+
+                DELETE FROM UserAgreementState 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM UserAttribute 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM UserPermission 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM UserNote 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+
+                DELETE FROM ReservationUser 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM ReservationHost 
+                WHERE 
+                (@UserId IS NULL OR PreferedUserId = @UserId);
+                DELETE FROM Reservation 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+
+                DELETE FROM Token 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+
+                DELETE FROM AppRating 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM AppStat 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+
+                DELETE FROM AssetTransaction 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM DepositTransaction 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM PointTransaction 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+
+                DELETE FROM UserSessionChange 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM UserSession 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
 
 
-                DELETE FROM UserMember WHERE UserId = @UserId;
+                DELETE FROM ProductOrder 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
 
-                ROLLBACK TRANSACTION;
+                DELETE FROM InvoiceLine 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM Invoice 
+                WHERE 
+                (@UserId IS NULL OR UserId = @UserId);
+
+
+                DELETE FROM UserMember 
+                WHERE
+                (@UserId IS NULL OR UserId = @UserId);
+
+                COMMIT TRANSACTION;
             END TRY
             BEGIN CATCH
                 ROLLBACK TRANSACTION;
                 THROW;
             END CATCH;
+        """;
+        private const string USER_HARD_DELETE_VERIFICATION = """
+            DECLARE @UserId INT = 12;
+
+            SELECT TableName, UserId, COUNT(*) AS DeletingCount
+            FROM (
+        	    SELECT 'UsageSession' AS TableName, UserId 
+        	    FROM UsageSession 
+
+        	    UNION ALL
+
+        	    SELECT 'UserCreditLimit' AS TableName, ucl.UserId 
+        	    FROM UserCreditLimit AS ucl
+        	    INNER JOIN UserMember AS u ON ucl.UserId = u.UserId
+
+        	    UNION ALL
+
+        	    SELECT 'Refund_DepositTransaction' AS TableName, dt.UserId
+        	    FROM Refund AS r
+        	    INNER JOIN DepositTransaction AS dt ON r.DepositTransactionId = dt.DepositTransactionId
+
+        	    UNION ALL
+
+        	    SELECT 'Refund_Payment' AS TableName, p.UserId
+        	    FROM Refund AS r
+        	    INNER JOIN Payment AS p ON r.PaymentId = p.PaymentId
+
+        	    UNION ALL
+
+        	    SELECT 'VerificationMobilePhone' AS TableName, v.UserId
+        	    FROM VerificationMobilePhone AS vmp
+        	    INNER JOIN Verification AS v ON vmp.VerificationId = v.VerificationId
+
+        	    UNION ALL
+
+        	    SELECT 'VerificationEmail' AS TableName, v.UserId
+        	    FROM VerificationEmail AS ve
+        	    INNER JOIN Verification AS v ON ve.VerificationId = v.VerificationId
+
+        	    UNION ALL
+
+        	    SELECT 'Verification' AS TableName, UserId 
+        	    FROM Verification 
+
+        	    UNION ALL
+
+        	    SELECT 'UsageTime' AS TableName, u.UserId
+        	    FROM UsageTime AS ut
+        	    INNER JOIN Usage AS u ON ut.UsageId = u.UsageId
+
+        	    UNION ALL
+
+        	    SELECT 'UsageTimeFixed' AS TableName, u.UserId
+        	    FROM UsageTimeFixed AS utf
+        	    INNER JOIN Usage AS u ON utf.UsageId = u.UsageId
+
+        	    UNION ALL
+
+        	    SELECT 'Usage' AS TableName, UserId 
+        	    FROM Usage 
+
+        	    UNION ALL
+
+        	    SELECT 'InvoicePayment' AS TableName, UserId 
+        	    FROM InvoicePayment 
+
+        	    UNION ALL
+
+        	    SELECT 'PaymentIntent' AS TableName, UserId 
+        	    FROM PaymentIntent 
+
+        	    UNION ALL
+
+        	    SELECT 'Payment' AS TableName, UserId 
+        	    FROM Payment 
+
+        	    UNION ALL
+
+        	    SELECT 'AssistanceRequest' AS TableName, UserId 
+        	    FROM AssistanceRequest 
+
+        	    UNION ALL
+
+        	    SELECT 'HostGroupWaitingLineEntry' AS TableName, UserId 
+        	    FROM HostGroupWaitingLineEntry 
+
+        	    UNION ALL
+
+        	    SELECT 'UserAgreementState' AS TableName, UserId 
+        	    FROM UserAgreementState 
+
+        	    UNION ALL
+
+        	    SELECT 'UserAttribute' AS TableName, UserId 
+        	    FROM UserAttribute 
+
+        	    UNION ALL
+
+        	    SELECT 'UserPermission' AS TableName, UserId 
+        	    FROM UserPermission 
+
+        	    UNION ALL
+
+        	    SELECT 'UserNote' AS TableName, UserId 
+        	    FROM UserNote 
+
+        	    UNION ALL
+
+        	    SELECT 'ReservationUser' AS TableName, UserId 
+        	    FROM ReservationUser 
+
+        	    UNION ALL
+
+        	    SELECT 'ReservationHost' AS TableName, PreferedUserId AS UserId 
+        	    FROM ReservationHost 
+
+        	    UNION ALL
+
+        	    SELECT 'Reservation' AS TableName, UserId 
+        	    FROM Reservation 
+
+        	    UNION ALL
+
+        	    SELECT 'Token' AS TableName, UserId 
+        	    FROM Token 
+
+        	    UNION ALL
+
+        	    SELECT 'AppRating' AS TableName, UserId 
+        	    FROM AppRating 
+
+        	    UNION ALL
+
+        	    SELECT 'AppStat' AS TableName, UserId 
+        	    FROM AppStat 
+
+        	    UNION ALL
+
+        	    SELECT 'AssetTransaction' AS TableName, UserId 
+        	    FROM AssetTransaction 
+
+        	    UNION ALL
+
+        	    SELECT 'DepositTransaction' AS TableName, UserId 
+        	    FROM DepositTransaction 
+
+        	    UNION ALL
+
+        	    SELECT 'PointTransaction' AS TableName, UserId 
+        	    FROM PointTransaction 
+
+        	    UNION ALL
+
+        	    SELECT 'UserSessionChange' AS TableName, UserId 
+        	    FROM UserSessionChange 
+
+        	    UNION ALL
+
+        	    SELECT 'UserSession' AS TableName, UserId 
+        	    FROM UserSession 
+
+        	    UNION ALL
+
+        	    SELECT 'ProductOrder' AS TableName, UserId 
+        	    FROM ProductOrder 
+
+        	    UNION ALL
+
+        	    SELECT 'InvoiceLine' AS TableName, UserId 
+        	    FROM InvoiceLine 
+
+        	    UNION ALL
+
+        	    SELECT 'Invoice' AS TableName, UserId 
+        	    FROM Invoice 
+
+        	    UNION ALL
+
+        	    SELECT 'UserMember' AS TableName, UserId 
+        	    FROM UserMember 
+
+            ) AS DeletedRecords
+            WHERE 
+            (@UserId IS NULL OR UserId = @UserId)
+            GROUP BY TableName, UserId
+            ORDER BY DeletingCount;
         """;
     }
 }
