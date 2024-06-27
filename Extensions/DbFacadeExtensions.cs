@@ -80,11 +80,11 @@ namespace Gizmo.DAL.Extensions
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => await dbFacade.ExecuteSqlRawAsync(
                     MsSqlScripts.GetScript(scriptName), 
-                    parameters.Select(x => new SqlParameter(x.Key, x.Value)).ToArray(),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray(),
                     cToken),
                 "Npgsql.EntityFrameworkCore.PostgreSQL" => await dbFacade.ExecuteSqlRawAsync(
                     NpgSqlScripts.GetScript(scriptName),
-                    parameters?.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value)).ToArray(),
+                    parameters?.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray(),
                     cToken),
                 _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
             };
@@ -127,18 +127,18 @@ namespace Gizmo.DAL.Extensions
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => withReseed
                     ? where is not null && where.Count > 0
-                        ? await dbFacade.ExecuteSqlRawAsync($"DELETE FROM [dbo].[{tableName}] WHERE {string.Join(" AND ", where.Select(x => $"{x.Key} = {x.Value}"))}; DBCC CHECKIDENT ('{tableName}', RESEED, 1);", cToken)
-                        : await dbFacade.ExecuteSqlRawAsync($"DELETE FROM [dbo].[{tableName}]; DBCC CHECKIDENT ('{tableName}', RESEED, 1);", cToken)
+                        ? await dbFacade.ExecuteSqlAsync($"DELETE FROM [dbo].[{tableName}] WHERE {string.Join(" AND ", where.Select(x => $"{x.Key} = {x.Value}"))}; DBCC CHECKIDENT ('{tableName}', RESEED, 1);", cToken)
+                        : await dbFacade.ExecuteSqlAsync($"DELETE FROM [dbo].[{tableName}]; DBCC CHECKIDENT ('{tableName}', RESEED, 1);", cToken)
                     : where is not null && where.Count > 0
-                        ? await dbFacade.ExecuteSqlRawAsync($"DELETE FROM [dbo].[{tableName}] WHERE {string.Join(" AND ", where.Select(x => $"{x.Key} = {x.Value}"))};", cToken)
-                        : await dbFacade.ExecuteSqlRawAsync($"DELETE FROM [dbo].[{tableName}];", cToken),
+                        ? await dbFacade.ExecuteSqlAsync($"DELETE FROM [dbo].[{tableName}] WHERE {string.Join(" AND ", where.Select(x => $"{x.Key} = {x.Value}"))};", cToken)
+                        : await dbFacade.ExecuteSqlAsync($"DELETE FROM [dbo].[{tableName}];", cToken),
                 "Npgsql.EntityFrameworkCore.PostgreSQL" => withReseed 
                     ? where is not null && where.Count > 0
-                        ? await dbFacade.ExecuteSqlRawAsync($"DELETE FROM \"{tableName}\" WHERE {string.Join(" AND ", where.Select(x => $"\"{x.Key}\" = {x.Value}"))}; ALTER SEQUENCE \"{tableName}_{tableName}Id_seq\" RESTART;", cToken)
-                        : await dbFacade.ExecuteSqlRawAsync($"DELETE FROM \"{tableName}\"; ALTER SEQUENCE \"{tableName}_{tableName}Id_seq\" RESTART;", cToken)
+                        ? await dbFacade.ExecuteSqlAsync($"DELETE FROM \"{tableName}\" WHERE {string.Join(" AND ", where.Select(x => $"\"{x.Key}\" = {x.Value}"))}; ALTER SEQUENCE \"{tableName}_{tableName}Id_seq\" RESTART;", cToken)
+                        : await dbFacade.ExecuteSqlAsync($"DELETE FROM \"{tableName}\"; ALTER SEQUENCE \"{tableName}_{tableName}Id_seq\" RESTART;", cToken)
                     : where is not null && where.Count > 0
-                        ? await dbFacade.ExecuteSqlRawAsync($"DELETE FROM \"{tableName}\" WHERE {string.Join(" AND ", where.Select(x => $"\"{x.Key}\" = {x.Value}"))};", cToken)
-                        : await dbFacade.ExecuteSqlRawAsync($"DELETE FROM \"{tableName}\";", cToken),
+                        ? await dbFacade.ExecuteSqlAsync($"DELETE FROM \"{tableName}\" WHERE {string.Join(" AND ", where.Select(x => $"\"{x.Key}\" = {x.Value}"))};", cToken)
+                        : await dbFacade.ExecuteSqlAsync($"DELETE FROM \"{tableName}\";", cToken),
                 _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
             };
 
@@ -182,11 +182,11 @@ namespace Gizmo.DAL.Extensions
             var result = dbFacade.ProviderName switch
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => where is not null && where.Count > 0
-                    ? await dbFacade.ExecuteSqlRawAsync($"UPDATE [dbo].[{tableName}] SET {string.Join(", ", parameters.Select(x => $"{x.Key} = {x.Value}"))} WHERE {string.Join(" AND ", where.Select(x => $"{x.Key} = {x.Value}"))};", cToken)
-                    : await dbFacade.ExecuteSqlRawAsync($"UPDATE [dbo].[{tableName}] SET {string.Join(", ", parameters.Select(x => $"{x.Key} = {x.Value}"))};", cToken),
+                    ? await dbFacade.ExecuteSqlAsync($"UPDATE [dbo].[{tableName}] SET {string.Join(", ", parameters.Select(x => $"{x.Key} = {x.Value}"))} WHERE {string.Join(" AND ", where.Select(x => $"{x.Key} = {x.Value}"))};", cToken)
+                    : await dbFacade.ExecuteSqlAsync($"UPDATE [dbo].[{tableName}] SET {string.Join(", ", parameters.Select(x => $"{x.Key} = {x.Value}"))};", cToken),
                 "Npgsql.EntityFrameworkCore.PostgreSQL" =>  where is not null && where.Count > 0
-                    ? await dbFacade.ExecuteSqlRawAsync($"UPDATE \"{tableName}\" SET {string.Join(", ", parameters.Select(x => $"\"{x.Key}\" = {x.Value}"))} WHERE {string.Join(" AND ", where.Select(x => $"\"{x.Key}\" = {x.Value}"))};", cToken)
-                    : await dbFacade.ExecuteSqlRawAsync($"UPDATE \"{tableName}\" SET {string.Join(", ", parameters.Select(x => $"\"{x.Key}\" = {x.Value}"))};", cToken),
+                    ? await dbFacade.ExecuteSqlAsync($"UPDATE \"{tableName}\" SET {string.Join(", ", parameters.Select(x => $"\"{x.Key}\" = {x.Value}"))} WHERE {string.Join(" AND ", where.Select(x => $"\"{x.Key}\" = {x.Value}"))};", cToken)
+                    : await dbFacade.ExecuteSqlAsync($"UPDATE \"{tableName}\" SET {string.Join(", ", parameters.Select(x => $"\"{x.Key}\" = {x.Value}"))};", cToken),
                 _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
             };
 

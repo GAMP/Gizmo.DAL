@@ -17,7 +17,7 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.HAS_TABLE_BY_NAME => HAS_TABLE_BY_NAME,
             SQLScripts.RESET_USERGUESTS => RESET_USERGUESTS,
             SQLScripts.GET_PAGINATED_PAYMENT_TRANSACTIONS => GET_PAGINATED_PAYMENT_TRANSACTIONS,
-            SQLScripts.USER_HARD_DELETE => USER_HARD_DELETE,
+            SQLScripts.USERS_HARD_DELETE => USERS_HARD_DELETE,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
@@ -334,151 +334,129 @@ namespace Gizmo.DAL.Scripts
             FOR JSON PATH, WITHOUT_ARRAY_WRAPPER;
         
         """;
-        private const string USER_HARD_DELETE = """
+        private const string USERS_HARD_DELETE = """
+            -- if compatibility level is less than 130, set it to 130 to use STRING_SPLIT function
+            --ALTER DATABASE Gizmo
+            --SET COMPATIBILITY_LEVEL = 130;
+
             BEGIN TRANSACTION;
 
             BEGIN TRY
-                DELETE UsageSession
-                WHERE
-                (@UserId IS NULL OR UserId = @UserId);
-
+                DELETE FROM UsageSession
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
                 DELETE ucl
                 FROM UserCreditLimit AS ucl
                 INNER JOIN UserMember AS u ON ucl.UserId = u.UserId
-                WHERE
-                (@UserId IS NULL OR u.UserId = @UserId);
-
+                WHERE u.UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
                 DELETE r
                 FROM Refund AS r
                 INNER JOIN DepositTransaction AS dt ON r.DepositTransactionId = dt.DepositTransactionId
-                WHERE
-                (@UserId IS NULL OR dt.UserId = @UserId);
+                WHERE dt.UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
                 DELETE r
                 FROM Refund AS r
                 INNER JOIN Payment AS p ON r.PaymentId = p.PaymentId
-                WHERE
-                (@UserId IS NULL OR p.UserId = @UserId);
+                WHERE p.UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-
-                DELETE vmp 
+                DELETE vmp
                 FROM VerificationMobilePhone AS vmp
                 INNER JOIN Verification AS v ON vmp.VerificationId = v.VerificationId
-            	WHERE
-                (@UserId IS NULL OR v.UserId = @UserId);
+                WHERE v.UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE ve  FROM VerificationEmail AS ve
+                DELETE ve
+                FROM VerificationEmail AS ve
                 INNER JOIN Verification AS v ON ve.VerificationId = v.VerificationId
-            	WHERE
-                (@UserId IS NULL OR v.UserId = @UserId);
+                WHERE v.UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM Verification 
-                WHERE
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM Verification
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-
-                DELETE ut FROM UsageTime AS ut
+                DELETE ut
+                FROM UsageTime AS ut
                 INNER JOIN Usage AS u ON ut.UsageId = u.UsageId
-            	WHERE
-                (@UserId IS NULL OR u.UserId = @UserId);
+                WHERE u.UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE utf FROM UsageTimeFixed AS utf
+                DELETE utf
+                FROM UsageTimeFixed AS utf
                 INNER JOIN Usage AS u ON utf.UsageId = u.UsageId
-                WHERE
-                (@UserId IS NULL OR u.UserId = @UserId);
+                WHERE u.UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM Usage 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM Usage
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
+                DELETE FROM InvoicePayment
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM InvoicePayment 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM PaymentIntent 
-                WHERE
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM Payment 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM PaymentIntent
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM AssistanceRequest 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM Payment
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM HostGroupWaitingLineEntry 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM AssistanceRequest
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM UserAgreementState 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM UserAttribute 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM UserPermission 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM UserNote 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM HostGroupWaitingLineEntry
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM ReservationUser 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM ReservationHost 
-                WHERE 
-                (@UserId IS NULL OR PreferedUserId = @UserId);
-                DELETE FROM Reservation 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM UserAgreementState
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM Token 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM UserAttribute
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM AppRating 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM AppStat 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM UserPermission
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM AssetTransaction 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM DepositTransaction 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM PointTransaction 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM UserNote
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM UserSessionChange 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM UserSession 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM ReservationUser
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
+                DELETE FROM ReservationHost
+                WHERE PreferedUserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM ProductOrder 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM Reservation
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM InvoiceLine 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
-                DELETE FROM Invoice 
-                WHERE 
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM Token
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
+                DELETE FROM AppRating
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
-                DELETE FROM UserMember 
-                WHERE
-                (@UserId IS NULL OR UserId = @UserId);
+                DELETE FROM AppStat
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
+
+                DELETE FROM AssetTransaction
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
+
+                DELETE FROM DepositTransaction
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
+
+                DELETE FROM PointTransaction
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
+
+                DELETE FROM UserSessionChange
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
+
+                DELETE FROM UserSession
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
+
+                DELETE FROM ProductOrder
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
+
+                DELETE FROM InvoiceLine
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
+
+                DELETE FROM Invoice
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
+
+                DELETE FROM UserMember
+                WHERE UserId IN (SELECT value FROM STRING_SPLIT(@UserIds, ','));
 
                 COMMIT TRANSACTION;
             END TRY
@@ -487,7 +465,7 @@ namespace Gizmo.DAL.Scripts
                 THROW;
             END CATCH;
         """;
-        private const string USER_HARD_DELETE_VERIFICATION = """
+        private const string USERS_HARD_DELETE_DATA = """
             DECLARE @UserId INT = 12;
 
             SELECT TableName, UserId, COUNT(*) AS DeletingCount

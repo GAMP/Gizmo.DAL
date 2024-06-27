@@ -61,8 +61,8 @@
         public const string GET_PAGINATED_PAYMENT_TRANSACTIONS = nameof(GET_PAGINATED_PAYMENT_TRANSACTIONS);
 
         /// <summary>
-        /// Delete user and related data from the database.
+        /// Delete users and related data from the database by array of user ids.
         /// </summary>
-        public const string USER_HARD_DELETE = nameof(USER_HARD_DELETE);
+        public const string USERS_HARD_DELETE = nameof(USERS_HARD_DELETE);
     }
 }
