@@ -336,6 +336,11 @@ namespace Gizmo.DAL.Scripts
         """;
         private const string USERS_HARD_DELETE = """
             -- if compatibility level is less than 130, set it to 130 to use STRING_SPLIT function
+            --check--
+            --SELECT compatibility_level
+            --FROM sys.databases
+            --WHERE name = 'Gizmo';
+            --alter--
             --ALTER DATABASE Gizmo
             --SET COMPATIBILITY_LEVEL = 130;
 
