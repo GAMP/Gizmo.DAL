@@ -2154,6 +2154,55 @@ namespace Gizmo.DAL.Contexts
         }
 
         /// <summary>
+        /// Retries an operation.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="retries"></param>
+        /// <param name="minWaitTime"></param>
+        /// <param name="maxWaitTime"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public static async Task RetryBeforeThrowAsync(Func<Task> action, int retries = 10, int minWaitTime = 100, int maxWaitTime = 1000)
+        {
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
+
+            for (int tries = 1; tries <= retries; tries++)
+            {
+                try
+                {
+                    await action();
+                    return;
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    if (IsRetriableException(ex))
+                    {
+                        if (tries >= retries)
+                        {
+                            PreserveStackTrace(ex);
+                            throw;
+                        }
+
+                        Thread.Sleep(new Random().Next(minWaitTime, maxWaitTime));
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            //this should not happen but just in case
+            throw new ArgumentException("Maximum retries reached.", nameof(retries));
+        }
+
+        /// <summary>
         /// Sets a flag on an <see cref="T:System.Exception"/> so that all the stack trace information is preserved 
         /// when the exception is re-thrown.
         /// </summary>
