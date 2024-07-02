@@ -63,6 +63,7 @@
         /// <summary>
         /// Delete users and related data from the database by array of user ids.
         /// </summary>
+        /// <remarks> Returns the deleted user members. </remarks>
         public const string USERS_HARD_DELETE = nameof(USERS_HARD_DELETE);
     }
 }
