@@ -469,7 +469,7 @@ namespace Gizmo.DAL.Scripts
 
                     DELETE FROM UserMember
                         OUTPUT DELETED.UserId
-                        ,OUTPUT DELETED.UserName
+                        ,OUTPUT DELETED.Username
                         ,OUTPUT DELETED.Email
                         ,OUTPUT DELETED.UserGroupId
                         ,OUTPUT DELETED.IsNegativeBalanceAllowed
