@@ -354,8 +354,7 @@ namespace Gizmo.DAL.Scripts
             BEGIN TRANSACTION;
                 BEGIN TRY
 
-                    DELETE FROM UsageSession
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM UsageSession WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
                     DELETE ucl
                     FROM UserCreditLimit AS ucl
@@ -382,8 +381,7 @@ namespace Gizmo.DAL.Scripts
                     INNER JOIN Verification AS v ON ve.VerificationId = v.VerificationId
                     WHERE v.UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM Verification
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM Verification WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
                     DELETE ut
                     FROM UsageTime AS ut
@@ -395,88 +393,65 @@ namespace Gizmo.DAL.Scripts
                     INNER JOIN Usage AS u ON utf.UsageId = u.UsageId
                     WHERE u.UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM Usage
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM Usage WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM InvoicePayment
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM InvoicePayment WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM PaymentIntent
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM PaymentIntent WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM Payment
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM Payment WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM AssistanceRequest
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM AssistanceRequest WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM HostGroupWaitingLineEntry
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM HostGroupWaitingLineEntry WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM UserAgreementState
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM UserAgreementState WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM UserAttribute
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM UserAttribute WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM UserPermission
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM UserPermission WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM UserNote
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM UserNote WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM ReservationUser
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM ReservationUser WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM ReservationHost
-                    WHERE PreferedUserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM ReservationHost WHERE PreferedUserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM Reservation
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM Reservation WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM Token
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM Token WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM AppRating
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM AppRating WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM AppStat
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM AppStat WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM AssetTransaction
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM AssetTransaction WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM DepositTransaction
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM DepositTransaction WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM PointTransaction
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM PointTransaction WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM UserSessionChange
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM UserSessionChange WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM UserSession
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM UserSession WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM ProductOrder
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM ProductOrder WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM InvoiceLine
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM InvoiceLine WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM Invoice
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM Invoice WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
                     DELETE FROM UserMember
-                        OUTPUT DELETED.UserId
-                        ,OUTPUT DELETED.Username
-                        ,OUTPUT DELETED.Email
-                        ,OUTPUT DELETED.UserGroupId
-                        ,OUTPUT DELETED.IsNegativeBalanceAllowed
-                        ,OUTPUT DELETED.IsPersonalInfoRequested
-                        ,OUTPUT DELETED.BillingOptions
-                        ,OUTPUT DELETED.EnableDate
-                        ,OUTPUT DELETED.DisableDate
+                    OUTPUT 
+                        DELETED.UserId
+                        ,DELETED.Username
+                        ,DELETED.Email
+                        ,DELETED.UserGroupId
+                        ,DELETED.IsNegativeBalanceAllowed
+                        ,DELETED.IsPersonalInfoRequested
+                        ,DELETED.BillingOptions
+                        ,DELETED.EnableDate
+                        ,DELETED.DisabledDate
                     WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
                     COMMIT TRANSACTION;
