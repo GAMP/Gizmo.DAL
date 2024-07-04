@@ -28,7 +28,7 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY45);
 
             // Indexes
-            builder.HasIndex(t => t.Name).IsUnique();
+            builder.HasIndex(t => new { t.Name, t.BranchId }).IsUnique().HasFilter(null);
 
             //is enabled property
             builder.Property(e => e.IsEnabled)
