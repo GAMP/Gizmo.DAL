@@ -393,7 +393,9 @@ namespace Gizmo.DAL.Scripts
 
                 DELETE FROM "Invoice" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
 
-                DELETE FROM "UserMember"
+                DELETE FROM "UserMember" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "User" 
                 WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList")
                 RETURNING "UserId";
 
