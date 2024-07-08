@@ -48,7 +48,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("HostGroupId");
 
             // Indexes
-            builder.HasIndex(t => t.Name).IsUnique();
+            builder.HasIndex(t => new { t.Name, t.BranchId }).IsUnique().HasFilter(null);
 
             // Relationships
             builder.HasOne(t => t.AppGroup)

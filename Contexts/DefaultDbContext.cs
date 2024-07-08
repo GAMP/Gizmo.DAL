@@ -1038,6 +1038,8 @@ namespace Gizmo.DAL.Contexts
         /// <returns></returns>
         public override int SaveChanges()
         {
+            SetBranchAsync().GetAwaiter().GetResult();
+
             #region OBJECT CONTEXT
 
             var objectStateEntries = this.ChangeTracker.Entries()
@@ -1234,6 +1236,8 @@ namespace Gizmo.DAL.Contexts
         /// <returns></returns>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
+            await SetBranchAsync(cancellationToken);
+
             #region OBJECT CONTEXT
 
             var objectStateEntries = this.ChangeTracker.Entries()
@@ -1427,6 +1431,37 @@ namespace Gizmo.DAL.Contexts
         #endregion
 
         #region FUNCTIONS
+
+        private async Task SetBranchAsync(CancellationToken cancellationToken =default)
+        {
+            var objectStateEntries = this.ChangeTracker.Entries()
+             .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+             .ToList();
+
+            var addedEntries = objectStateEntries.Where(x => x.State == EntityState.Added)
+                .Select(x => x.Entity)
+                .OfType<IBranchedEntity>()
+                .Where(entity => entity.BranchId == 0)
+                .ToList();
+
+            var modifiedEntries = objectStateEntries
+                .Where(x => x.State == EntityState.Modified)
+                .Where(x => x.Entity is IBranchedEntity branchedEntity && branchedEntity.BranchId == 0)
+                .ToList();
+
+            if (addedEntries.Count > 0)
+            {
+                int defaultBranchId = await Branches.Select(branch => branch.Id).FirstAsync(cancellationToken);
+                foreach (var addedEntity in addedEntries)
+                    addedEntity.BranchId = defaultBranchId;
+            }
+
+            if (modifiedEntries.Count > 0)
+            {
+                foreach (var modifiedEntity in modifiedEntries)
+                    modifiedEntity.Property(nameof(IBranchedEntity.BranchId)).IsModified = false;                
+            }
+        }
 
         /// <summary>
         /// Implements default method to be used by SaltGenerator delegate
@@ -1659,7 +1694,7 @@ namespace Gizmo.DAL.Contexts
         /// <param name="existingId">Existing entity id for update operations.</param>
         /// <param name="ct">Cancellation token.</param>
         /// <returns>Associated task.</returns>
-        public async Task DemandUniqueAsync<TEntity,TNonUniqueEntity>(string propertyName, object value, int? existingId =null, CancellationToken ct = default) where TEntity : EntityBase
+        public async Task DemandUniqueAsync<TEntity, TNonUniqueEntity>(string propertyName, object value, int? existingId = null, CancellationToken ct = default) where TEntity : EntityBase
         {
             if (string.IsNullOrWhiteSpace(propertyName))
                 throw new ArgumentNullException(nameof(propertyName));
@@ -1672,7 +1707,7 @@ namespace Gizmo.DAL.Contexts
             var equalExpression = Expression.Equal(propertyExpression, constant);
             var lambda = Expression.Lambda<Func<TEntity, bool>>(equalExpression, entityExpression);
 
-            if(existingId != null)
+            if (existingId != null)
             {
                 var existingEntityExpression = Expression.Parameter(typeof(TEntity), "entity");
                 var existingPropertyExpression = Expression.Property(existingEntityExpression, nameof(EntityBase.Id));

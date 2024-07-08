@@ -27,7 +27,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2);
 
             // Indexes
-            builder.HasIndex(t => t.Name).IsUnique();
+            builder.HasIndex(t => new { t.Name, t.BranchId }).IsUnique().HasFilter(null);
 
             // Table & Column Mappings
             builder.ToTable("HostLayoutGroup");

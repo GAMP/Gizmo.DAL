@@ -53,6 +53,9 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(9);
 
             // Indexes
+
+            builder.HasIndex(t => new { t.Name, t.BranchId }).HasFilter(null);
+
             builder.HasIndex(t => t.MacAddress).IsUnique();
 
             // Table & Column Mappings

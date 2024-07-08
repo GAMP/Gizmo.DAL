@@ -48,6 +48,11 @@ namespace Gizmo.DAL.Mappings
             // Indexes
             builder.HasIndex(t => t.Id);
 
+            builder.HasOne(x => x.Branch)
+                .WithMany(x => x.Shifts)
+                .HasForeignKey(x => x.BranchId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder.HasOne(x => x.EndedBy)
                 .WithMany()
                 .HasForeignKey(x => x.EndedById);
