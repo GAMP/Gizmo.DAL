@@ -442,16 +442,7 @@ namespace Gizmo.DAL.Scripts
                     DELETE FROM Invoice WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
                     DELETE FROM UserMember
-                    OUTPUT 
-                        DELETED.UserId
-                        ,DELETED.Username
-                        ,DELETED.Email
-                        ,DELETED.UserGroupId
-                        ,DELETED.IsNegativeBalanceAllowed
-                        ,DELETED.IsPersonalInfoRequested
-                        ,DELETED.BillingOptions
-                        ,DELETED.EnableDate
-                        ,DELETED.DisabledDate
+                    OUTPUT DELETED.UserId
                     WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
                     COMMIT TRANSACTION;
