@@ -35,7 +35,7 @@ namespace Gizmo.DAL.Extensions
         /// <exception cref="NotSupportedException">
         /// Database provider is not supported for this SQL script name.
         /// </exception>
-        public static int ExecuteSqlScript(this DatabaseFacade dbFacade, string scriptName, IDictionary<string, object> parameters)
+        public static int ExecuteSqlScript(this DatabaseFacade dbFacade, string scriptName, Dictionary<string, object> parameters)
         {
             var result =  dbFacade.ProviderName switch
             {
@@ -74,7 +74,7 @@ namespace Gizmo.DAL.Extensions
         /// <exception cref="NotSupportedException">
         /// Database provider is not supported for this SQL script name.
         /// </exception>
-        public static async Task<int> ExecuteSqlScriptAsync(this DatabaseFacade dbFacade, string scriptName, IDictionary<string, object> parameters = null, CancellationToken cToken = default)
+        public static async Task<int> ExecuteSqlScriptAsync(this DatabaseFacade dbFacade, string scriptName, Dictionary<string, object> parameters = null, CancellationToken cToken = default)
         {
             var result = dbFacade.ProviderName switch
             {
@@ -121,7 +121,7 @@ namespace Gizmo.DAL.Extensions
         /// <exception cref="InvalidOperationException">
         /// Error executing sql script to delete from table.
         /// </exception>
-        public static async Task<int> DeleteFromAsync(this DatabaseFacade dbFacade, string tableName, bool withReseed, IDictionary<string, string> where = null, CancellationToken cToken = default)
+        public static async Task<int> DeleteFromAsync(this DatabaseFacade dbFacade, string tableName, bool withReseed, Dictionary<string, string> where = null, CancellationToken cToken = default)
         {
             var result = dbFacade.ProviderName switch
             {
@@ -174,7 +174,7 @@ namespace Gizmo.DAL.Extensions
         /// <exception cref="InvalidOperationException">
         /// Error executing sql script to update table.
         /// </exception>
-        public static async Task<int> UpdateAsync(this DatabaseFacade dbFacade, string tableName, IDictionary<string, string> parameters, IDictionary<string, string> where = null, CancellationToken cToken = default)
+        public static async Task<int> UpdateAsync(this DatabaseFacade dbFacade, string tableName, IDictionary<string, string> parameters, Dictionary<string, string> where = null, CancellationToken cToken = default)
         {
             if(parameters is null || parameters.Count == 0)
                 throw new ArgumentException("Parameters cannot be null or empty.", nameof(parameters));

@@ -522,7 +522,7 @@ namespace Gizmo.DAL.Extensions
         /// <param name="parameters"> Sql parameters for the script. Key is parameter name, value is parameter value. </param>
         /// <param name="cToken"> Cancellation token. </param>
         /// <returns> Identifiers array of script result. </returns>
-        public static Task<int[]> FromSqlSqriptToIdsResultAsync(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters, CancellationToken cToken)
+        public static Task<int[]> FromSqlSqriptToIdsAsync(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters, CancellationToken cToken)
             => dbContext.Database.ProviderName switch
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Database.SqlQueryRaw<int>(
@@ -533,6 +533,31 @@ namespace Gizmo.DAL.Extensions
                     parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).ToArrayAsync(cToken),
                 _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
             };
+
+        /// TODO: Check this method for correctness
+        public static async Task<T[]> FromSqlSqriptToModelsAsync<T>(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters, CancellationToken cToken = default)
+            where T : class
+        {
+            var result = dbContext.Database.ProviderName switch
+            {
+                "Microsoft.EntityFrameworkCore.SqlServer" => await dbContext.Database.SqlQueryRaw<string>(
+                    MsSqlScripts.GetScript(scriptName),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).ToArrayAsync(cToken),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => await dbContext.Database.SqlQueryRaw<string>(
+                    NpgSqlScripts.GetScript(scriptName),
+                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).ToArrayAsync(cToken),
+                _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
+            };
+
+            if (result.Length == 0)
+                return [];
+
+            var data = result.Length > 1
+                ? string.Join("", result)
+                : result[0];
+
+            return JsonSerializer.Deserialize<T[]>(data);
+        }
 
         private sealed class PaginatedResult<T>
         {

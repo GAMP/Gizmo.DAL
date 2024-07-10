@@ -6,6 +6,7 @@ namespace Gizmo.DAL.Scripts
     {
         internal static string GetScript(string scriptName) => scriptName switch
         {
+            SQLScripts.APPLY_SPECIFIC_DATABASE_SETTINGS => APPLY_SPECIFIC_SETTINGS,
             SQLScripts.CREATE_DEPOSIT_PAYMENT_REFUNDS => CREATE_DEPOSIT_PAYMENT_REFUNDS,
             SQLScripts.SESSION_BILLED_SPAN_UPDATE => SESSION_BILLED_SPAN_UPDATE,
             SQLScripts.SESSION_UPDATE_SQL => SESSION_UPDATE_SQL,
@@ -21,6 +22,15 @@ namespace Gizmo.DAL.Scripts
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
+        private const string APPLY_SPECIFIC_SETTINGS = """
+            IF (SELECT compatibility_level FROM sys.databases WHERE name = 'Gizmo') < 130
+                ALTER DATABASE Gizmo SET COMPATIBILITY_LEVEL = 130;
+
+            -- Create a temporary table to return success result
+            CREATE TABLE #temp (id INT);
+            UPDATE #temp SET id = id WHERE 1 = 0;
+            DROP TABLE #temp;
+        """;
         private const string CREATE_DEPOSIT_PAYMENT_REFUNDS = """
             BEGIN TRANSACTION;
                 
@@ -334,17 +344,7 @@ namespace Gizmo.DAL.Scripts
             FOR JSON PATH, WITHOUT_ARRAY_WRAPPER;
         
         """;
-        private const string USERS_HARD_DELETE =
-        """
-            -- if compatibility level is less than 130, set it to 130 to use STRING_SPLIT function
-            --check--
-            --SELECT compatibility_level
-            --FROM sys.databases
-            --WHERE name = 'Gizmo';
-            --alter--
-            --ALTER DATABASE Gizmo
-            --SET COMPATIBILITY_LEVEL = 130;
-
+        private const string USERS_HARD_DELETE = """
             DECLARE @UserIdList TABLE (UserId INT);
 
             INSERT INTO @UserIdList (UserId)

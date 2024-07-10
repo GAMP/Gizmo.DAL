@@ -6,6 +6,11 @@
     public static class SQLScripts
     {
         /// <summary>
+        /// Apply specific required settings for the concrete database.
+        /// </summary>
+        public const string APPLY_SPECIFIC_DATABASE_SETTINGS = nameof(APPLY_SPECIFIC_DATABASE_SETTINGS);
+        
+        /// <summary>
         /// Deposit payment refund migration script.
         /// </summary>
         public const string CREATE_DEPOSIT_PAYMENT_REFUNDS = nameof(CREATE_DEPOSIT_PAYMENT_REFUNDS);
