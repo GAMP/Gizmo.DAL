@@ -23,8 +23,8 @@ namespace Gizmo.DAL.Scripts
         };
 
         private const string APPLY_SPECIFIC_SETTINGS = """
-            IF (SELECT compatibility_level FROM sys.databases WHERE name = 'Gizmo') < 130
-                ALTER DATABASE Gizmo SET COMPATIBILITY_LEVEL = 130;
+            IF (SELECT compatibility_level FROM sys.databases WHERE name = @DbName) < 130
+                ALTER DATABASE [@DbName] SET COMPATIBILITY_LEVEL = 130;
 
             -- Create a temporary table to return success result
             CREATE TABLE #temp (id INT);
