@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.MSSQL
+namespace Gizmo.DAL.Migrations.Npgsql
 {
     /// <inheritdoc />
     public partial class Update3 : Migration
@@ -25,56 +25,56 @@ namespace Gizmo.DAL.Migrations.MSSQL
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "StockTransaction",
-                type: "int",
+                type: "integer",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "Shift",
-                type: "int",
+                type: "integer",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "Reservation",
-                type: "int",
+                type: "integer",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "Register",
-                type: "int",
+                type: "integer",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "HostLayoutGroup",
-                type: "int",
+                type: "integer",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "HostGroup",
-                type: "int",
+                type: "integer",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "Device",
-                type: "int",
+                type: "integer",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "Asset",
-                type: "int",
+                type: "integer",
                 nullable: false,
                 defaultValue: 0);
 
@@ -83,7 +83,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
             migrationBuilder.CreateIndex(
                 name: "IX_StockTransaction_BranchId",
                 table: "StockTransaction",
-                column: "BranchId");       
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Shift_BranchId",
@@ -338,8 +338,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "IX_Device_Name",
                 table: "Device",
                 column: "Name",
-                unique: true,
-                filter: "[Name] IS NOT NULL");
+                unique: true);
         }
     }
 }
