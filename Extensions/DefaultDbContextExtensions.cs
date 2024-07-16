@@ -513,6 +513,52 @@ namespace Gizmo.DAL.Extensions
                 _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
             };
 
+        /// <summary>
+        /// Executes the SQL against the database, choosing it from the file of the 'Gizmo file.DAL.Scripts' namespace depends on the database provider.
+        /// </summary>
+        /// <typeparam name="T"> Type of DbSet. </typeparam>
+        /// <param name="dbContext"> Default database context. </param>
+        /// <param name="scriptName"> SQL script name from the Gizmo.DAL.Scripts.SQLScripts.cs. </param>
+        /// <param name="parameters"> Sql parameters for the script. Key is parameter name, value is parameter value. </param>
+        /// <param name="cToken"> Cancellation token. </param>
+        /// <returns> Identifiers array of script result. </returns>
+        public static Task<int[]> FromSqlSqriptToIdsAsync(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters, CancellationToken cToken)
+            => dbContext.Database.ProviderName switch
+            {
+                "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Database.SqlQueryRaw<int>(
+                    MsSqlScripts.GetScript(scriptName),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).ToArrayAsync(cToken),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => dbContext.Database.SqlQueryRaw<int>(
+                    NpgSqlScripts.GetScript(scriptName),
+                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).ToArrayAsync(cToken),
+                _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
+            };
+
+        /// TODO: Check this method for correctness
+        public static async Task<T[]> FromSqlSqriptToModelsAsync<T>(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters, CancellationToken cToken = default)
+            where T : class
+        {
+            var result = dbContext.Database.ProviderName switch
+            {
+                "Microsoft.EntityFrameworkCore.SqlServer" => await dbContext.Database.SqlQueryRaw<string>(
+                    MsSqlScripts.GetScript(scriptName),
+                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).ToArrayAsync(cToken),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => await dbContext.Database.SqlQueryRaw<string>(
+                    NpgSqlScripts.GetScript(scriptName),
+                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()).ToArrayAsync(cToken),
+                _ => throw new NotSupportedException($"Database provider {dbContext.Database.ProviderName} is not supported for this sql command."),
+            };
+
+            if (result.Length == 0)
+                return [];
+
+            var data = result.Length > 1
+                ? string.Join("", result)
+                : result[0];
+
+            return JsonSerializer.Deserialize<T[]>(data);
+        }
+
         private sealed class PaginatedResult<T>
         {
             public int Total { get; set; }
@@ -582,7 +628,7 @@ namespace Gizmo.DAL.Extensions
 
             if (string.IsNullOrEmpty(sortBy))
                 throw new ArgumentNullException(nameof(sortBy), "Order by column is required for pagination.");
-            
+
             var orderProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
             if (!orderProperties.Any(x => x.Name == sortBy))
@@ -597,14 +643,14 @@ namespace Gizmo.DAL.Extensions
                 pageSize = 10;
             else if (pageSize == int.MaxValue)
                 pageSize = int.MaxValue - 1;
-                        
+
             var offset = pageSize * (pageNumber - 1);
 
-            if(offset < 0)
+            if (offset < 0)
                 offset = 0;
 
             var sortOrder = isAsc ? "ASC" : "DESC";
-            
+
             parameters.Add("Limit", pageSize);
             parameters.Add("Offset", offset);
             parameters.Add("SortBy", sortBy);

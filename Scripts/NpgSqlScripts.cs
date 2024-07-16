@@ -6,6 +6,7 @@ namespace Gizmo.DAL.Scripts
     {
         internal static string GetScript(string scriptName) => scriptName switch
         {
+            SQLScripts.APPLY_SPECIFIC_DATABASE_SETTINGS => APPLY_SPECIFIC_SETTINGS,
             SQLScripts.SESSION_UPDATE_SQL => SESSION_UPDATE_SQL,
             SQLScripts.LOG_LIMIT_SQL => LOG_LIMIT_SQL,
             SQLScripts.SESSION_BILLED_SPAN_UPDATE => SESSION_BILLED_SPAN_UPDATE,
@@ -16,9 +17,16 @@ namespace Gizmo.DAL.Scripts
             SQLScripts.CREATE_DEPOSIT_PAYMENT_REFUNDS => CREATE_DEPOSIT_PAYMENT_REFUNDS,
             SQLScripts.RESET_USERGUESTS => RESET_USERGUESTS,
             SQLScripts.GET_PAGINATED_PAYMENT_TRANSACTIONS => GET_PAGINATED_PAYMENT_TRANSACTIONS,
+            SQLScripts.USERS_HARD_DELETE => USERS_HARD_DELETE,
             _ => throw new NotSupportedException($"Script name {scriptName} is not supported for this database provider."),
         };
 
+        private const string APPLY_SPECIFIC_SETTINGS = """
+            -- Create a temporary table to return success result
+            CREATE TEMP TABLE temp_table (id INT);
+            UPDATE temp_table SET id = id WHERE 1 = 0;
+            DROP TABLE temp_table;
+        """;
         private const string CREATE_DEPOSIT_PAYMENT_REFUNDS = """
             BEGIN;
 
@@ -296,6 +304,109 @@ namespace Gizmo.DAL.Scripts
                 )
             );
                 
+        """;
+        private const string USERS_HARD_DELETE =
+        """
+            CREATE TEMP TABLE "UserIdList" ("UserId" INT);
+            INSERT INTO "UserIdList" ("UserId")
+            SELECT UNNEST(STRING_TO_ARRAY(@UserIds, ',')::INT[]);
+
+            BEGIN;
+
+                DELETE FROM "UsageSession" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UserCreditLimit"
+                USING "UserMember" AS u
+                WHERE "UserCreditLimit"."UserId" = u."UserId"
+                AND u."UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "Refund"
+                USING "DepositTransaction" AS dt
+                WHERE "Refund"."DepositTransactionId" = dt."DepositTransactionId"
+                AND dt."UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "Refund"
+                USING "Payment" AS p
+                WHERE "Refund"."PaymentId" = p."PaymentId"
+                AND p."UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "VerificationMobilePhone"
+                USING "Verification" AS v
+                WHERE "VerificationMobilePhone"."VerificationId" = v."VerificationId"
+                AND v."UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "VerificationEmail"
+                USING "Verification" AS v
+                WHERE "VerificationEmail"."VerificationId" = v."VerificationId"
+                AND v."UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "Verification" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UsageTime"
+                USING "Usage" AS u
+                WHERE "UsageTime"."UsageId" = u."UsageId"
+                AND u."UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UsageTimeFixed"
+                USING "Usage" AS u
+                WHERE "UsageTimeFixed"."UsageId" = u."UsageId"
+                AND u."UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "Usage" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "InvoicePayment" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "PaymentIntent" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "Payment" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "AssistanceRequest" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "HostGroupWaitingLineEntry" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UserAgreementState" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UserAttribute" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UserPermission" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UserNote" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "ReservationUser" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "ReservationHost" WHERE "PreferedUserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "Reservation" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "Token" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "AppRating" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "AppStat" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "AssetTransaction" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "DepositTransaction" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "PointTransaction" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UserSessionChange" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UserSession" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "ProductOrder" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "InvoiceLine" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "Invoice" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UserMember" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "User" 
+                WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList")
+                RETURNING "UserId";
+
+            COMMIT;
         """;
     }
 }

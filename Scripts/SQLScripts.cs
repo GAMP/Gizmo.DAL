@@ -6,6 +6,11 @@
     public static class SQLScripts
     {
         /// <summary>
+        /// Apply specific required settings for the concrete database.
+        /// </summary>
+        public const string APPLY_SPECIFIC_DATABASE_SETTINGS = nameof(APPLY_SPECIFIC_DATABASE_SETTINGS);
+        
+        /// <summary>
         /// Deposit payment refund migration script.
         /// </summary>
         public const string CREATE_DEPOSIT_PAYMENT_REFUNDS = nameof(CREATE_DEPOSIT_PAYMENT_REFUNDS);
@@ -59,5 +64,11 @@
         /// Get payment transactions.
         /// </summary>
         public const string GET_PAGINATED_PAYMENT_TRANSACTIONS = nameof(GET_PAGINATED_PAYMENT_TRANSACTIONS);
+
+        /// <summary>
+        /// Delete users and related data from the database by array of user ids.
+        /// </summary>
+        /// <remarks> Returns the deleted user ids. </remarks>
+        public const string USERS_HARD_DELETE = nameof(USERS_HARD_DELETE);
     }
 }
