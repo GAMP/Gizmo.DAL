@@ -76,18 +76,22 @@ namespace Gizmo.DAL.Extensions
         /// </exception>
         public static async Task<int> ExecuteSqlScriptAsync(this DatabaseFacade dbFacade, string scriptName, Dictionary<string, object> parameters = null, CancellationToken cToken = default)
         {
-            var result = dbFacade.ProviderName switch
+            var (script, sqlParameters) = dbFacade.ProviderName switch
             {
-                "Microsoft.EntityFrameworkCore.SqlServer" => await dbFacade.ExecuteSqlRawAsync(
-                    MsSqlScripts.GetScript(scriptName), 
-                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray(),
-                    cToken),
-                "Npgsql.EntityFrameworkCore.PostgreSQL" => await dbFacade.ExecuteSqlRawAsync(
-                    NpgSqlScripts.GetScript(scriptName),
-                    parameters?.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray(),
-                    cToken),
+                "Microsoft.EntityFrameworkCore.SqlServer" =>
+                    (MsSqlScripts.GetScript(scriptName),
+                    parameters is null or { Count: 0 } 
+                        ? Enumerable.Empty<object>()
+                        : parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
+                "Npgsql.EntityFrameworkCore.PostgreSQL" => 
+                    (NpgSqlScripts.GetScript(scriptName),
+                    parameters is null or { Count: 0 }
+                        ? Enumerable.Empty<object>()
+                        : parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
                 _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
             };
+
+            var result = await dbFacade.ExecuteSqlRawAsync(script, sqlParameters, cToken);
 
             return result == -1
                 ? throw new InvalidOperationException($"Error executing sql script {scriptName}.")

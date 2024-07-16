@@ -130,9 +130,10 @@ namespace Gizmo.DAL.Scripts
             """;
         private const string TRUNCATE_LOGS = """
             TRUNCATE TABLE [LogException];
-            ALTER TABLE [LogException] DROP CONSTRAINT  [FK_dbo.LogException_dbo.Log_LogId];
+            ALTER TABLE [LogException] DROP CONSTRAINT  [FK_LogException_Log_LogId];
             TRUNCATE TABLE [Log];
-            ALTER TABLE [LogException] ADD CONSTRAINT  ""FK_dbo.LogException_dbo.Log_LogId"" FOREIGN KEY(LogId) REFERENCES [Log] (LogId) ON DELETE CASCADE;
+            ALTER TABLE [LogException] ADD CONSTRAINT  [FK_LogException_Log_LogId] FOREIGN KEY(LogId) REFERENCES [Log] (LogId) ON DELETE CASCADE;
+            DELETE FROM [Log];
             """;
         private const string DELETE_USERAGREEMENTSTATE_BY_USERID = "DELETE FROM UserAgreementState WHERE UserId = @UserId";
         private const string DELETE_USERAGREEMENTSTATE_BY_USERAGREEMENTID = "DELETE FROM UserAgreementState WHERE UserAgreementId = @UserAgreementId";
