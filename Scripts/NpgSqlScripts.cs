@@ -105,6 +105,7 @@ namespace Gizmo.DAL.Scripts
             """;
         private const string TRUNCATE_LOGS = """
             TRUNCATE TABLE "LogException", "Log" RESTART IDENTITY;
+            DELETE FROM "Log"
             """;
         private const string DELETE_USERAGREEMENTSTATE_BY_USERID = """
             DELETE FROM "UserAgreementState" WHERE "UserId" = @UserId;
@@ -282,22 +283,22 @@ namespace Gizmo.DAL.Scripts
                             "Type"
                          FROM "PaymentTransactions"
                          ORDER BY
-                            CASE WHEN @SortBy = 'Date' AND @SortOrder = 'ASC' THEN Date END ASC,
-                            CASE WHEN @SortBy = 'Date' AND @SortOrder = 'DESC' THEN Date END DESC,
-                            CASE WHEN @SortBy = 'Amount' AND @SortOrder = 'ASC' THEN Amount END ASC,
-                            CASE WHEN @SortBy = 'Amount' AND @SortOrder = 'DESC' THEN Amount END DESC,
-                            CASE WHEN @SortBy = 'UserId' AND @SortOrder = 'ASC' THEN UserId END ASC,
-                            CASE WHEN @SortBy = 'UserId' AND @SortOrder = 'DESC' THEN UserId END DESC,
-                            CASE WHEN @SortBy = 'PaymentMethodId' AND @SortOrder = 'ASC' THEN PaymentMethodId END ASC,
-                            CASE WHEN @SortBy = 'PaymentMethodId' AND @SortOrder = 'DESC' THEN PaymentMethodId END DESC,
-                            CASE WHEN @SortBy = 'OperatorId' AND @SortOrder = 'ASC' THEN OperatorId END ASC,
-                            CASE WHEN @SortBy = 'OperatorId' AND @SortOrder = 'DESC' THEN OperatorId END DESC,
-                            CASE WHEN @SortBy = 'ShiftId' AND @SortOrder = 'ASC' THEN ShiftId END ASC,
-                            CASE WHEN @SortBy = 'ShiftId' AND @SortOrder = 'DESC' THEN ShiftId END DESC,
-                            CASE WHEN @SortBy = 'RegisterId' AND @SortOrder = 'ASC' THEN RegisterId END ASC,
-                            CASE WHEN @SortBy = 'RegisterId' AND @SortOrder = 'DESC' THEN RegisterId END DESC,
-                            CASE WHEN @SortBy = 'Type' AND @SortOrder = 'ASC' THEN Type END ASC,
-                            CASE WHEN @SortBy = 'Type' AND @SortOrder = 'DESC' THEN Type END DESC
+                            CASE WHEN SortBy = 'Date' AND SortOrder = 'ASC' THEN "Date" END ASC,
+                            CASE WHEN SortBy = 'Date' AND SortOrder = 'DESC' THEN "Date" END DESC,
+                            CASE WHEN SortBy = 'Amount' AND SortOrder = 'ASC' THEN "Amount" END ASC,
+                            CASE WHEN SortBy = 'Amount' AND SortOrder = 'DESC' THEN "Amount" END DESC,
+                            CASE WHEN SortBy = 'UserId' AND SortOrder = 'ASC' THEN "UserId" END ASC,
+                            CASE WHEN SortBy = 'UserId' AND SortOrder = 'DESC' THEN "UserId" END DESC,
+                            CASE WHEN SortBy = 'PaymentMethodId' AND SortOrder = 'ASC' THEN "PaymentMethodId" END ASC,
+                            CASE WHEN SortBy = 'PaymentMethodId' AND SortOrder = 'DESC' THEN "PaymentMethodId" END DESC,
+                            CASE WHEN SortBy = 'OperatorId' AND SortOrder = 'ASC' THEN "OperatorId" END ASC,
+                            CASE WHEN SortBy = 'OperatorId' AND SortOrder = 'DESC' THEN "OperatorId" END DESC,
+                            CASE WHEN SortBy = 'ShiftId' AND SortOrder = 'ASC' THEN "ShiftId" END ASC,
+                            CASE WHEN SortBy = 'ShiftId' AND SortOrder = 'DESC' THEN "ShiftId" END DESC,
+                            CASE WHEN SortBy = 'RegisterId' AND SortOrder = 'ASC' THEN "RegisterId" END ASC,
+                            CASE WHEN SortBy = 'RegisterId' AND SortOrder = 'DESC' THEN "RegisterId" END DESC,
+                            CASE WHEN SortBy = 'Type' AND SortOrder = 'ASC' THEN "Type" END ASC,
+                            CASE WHEN SortBy = 'Type' AND SortOrder = 'DESC' THEN "Type" END DESC
                          OFFSET @Offset LIMIT @Limit
                      ) t),
                     '[]'::jsonb

@@ -109,6 +109,16 @@ namespace Gizmo.DAL.Extensions
             {
                 dbContext.Database.BeginTransaction();
 
+#if DEBUG
+                var branch = new Branch()
+                {
+                    Name = "Default",
+                    Guid = Guid.NewGuid()
+                };
+
+                dbContext.Branches.Add(branch);
+#endif
+
                 #region AddPaymentMethods
 
                 dbContext.PaymentMethods.AddRange(new PaymentMethod[]
