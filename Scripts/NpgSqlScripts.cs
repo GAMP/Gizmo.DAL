@@ -129,18 +129,48 @@ namespace Gizmo.DAL.Scripts
             WHERE ("IsReserved" = 1 OR "ReservedHostId" IS NOT NULL OR "ReservedSlot" IS NOT NULL);
             """;
         private const string GET_PAGINATED_PAYMENT_TRANSACTIONS = """
-            ------------------------------------------------------------------------
-            WITH myconstants (
-                DateFrom, DateTo, ShiftId, RegisterId, OperatorId, UserId, PaymentMethodId, 
-                IncludeInvoicePayments, IncludeDepositPayments, IncludeInvoiceRefunds, IncludeDepositRefunds, 
-                IncludePayIns, IncludePayOuts, PaymentDirection, SortBy, SortOrder, Offset1, Limit1
+            WITH vars (
+                DateFrom, 
+                DateTo, 
+                ShiftId, 
+                RegisterId, 
+                OperatorId, 
+                UserId, 
+                PaymentMethodId, 
+                IncludeInvoicePayments, 
+                IncludeDepositPayments, 
+                IncludeInvoiceRefunds, 
+                IncludeDepositRefunds, 
+                IncludePayIns, 
+                IncludePayOuts, 
+                PaymentDirection, 
+                SortBy, 
+                SortOrder, 
+                "Offset", 
+                "Limit"
             ) AS (
                 VALUES (
-                    '1970-01-01 00:00:00'::timestamp, '9999-12-31 23:59:59'::timestamp, NULL::int, NULL::int, NULL::int, NULL::int, 
-                    NULL::int, true, true, true, true, true, true, NULL::int, 'Date', 'ASC', 0, 100
+                    @DateFrom::timestamp, 
+                    @DateTo::timestamp, 
+                    @ShiftId::int, 
+                    @RegisterId::int, 
+                    @OperatorId::int, 
+                    @UserId::int, 
+                    @PaymentMethodId::int, 
+                    @IncludeInvoicePayments::boolean,
+                    @IncludeDepositPayments::boolean,
+                    @IncludeInvoiceRefunds::boolean, 
+                    @IncludeDepositRefunds::boolean,
+                    @IncludePayIns::boolean,
+                    @IncludePayOuts::boolean,
+                    @PaymentDirection::int, 
+                    @SortBy::text,
+                    @SortOrder::text,
+                    @Offset::int,
+                    @Limit::int
                 )
             ),
-            pt AS (
+            "PaymentTransactions" AS (
                 SELECT 
                     0 AS "Type", --'InvoicePayment'
                     ip."UserId",
@@ -155,16 +185,16 @@ namespace Gizmo.DAL.Scripts
                     NULL AS "HostId"
                 FROM "InvoicePayment" AS ip
                 JOIN "Payment" AS p ON ip."PaymentId" = p."PaymentId"
-                JOIN myconstants mc ON true
+                JOIN vars ON true
                 WHERE 
-                    ip."CreatedTime" BETWEEN mc.DateFrom AND mc.DateTo
-                    AND (mc.ShiftId IS NULL OR ip."ShiftId" = mc.ShiftId)
-                    AND (mc.RegisterId IS NULL OR ip."RegisterId" = mc.RegisterId)
-                    AND (mc.OperatorId IS NULL OR ip."CreatedById" = mc.OperatorId)
-                    AND (mc.UserId IS NULL OR ip."UserId" = mc.UserId)
-                    AND (mc.PaymentMethodId IS NULL OR p."PaymentMethodId" = mc.PaymentMethodId)
-                    AND (COALESCE(mc.IncludeInvoicePayments, true)) 
-                    AND (mc.PaymentDirection IS NULL OR mc.PaymentDirection != 1) --PaymentTransactionDirection.Out
+                    ip."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
+                    AND (vars.ShiftId IS NULL OR ip."ShiftId" = vars.ShiftId)
+                    AND (vars.RegisterId IS NULL OR ip."RegisterId" = vars.RegisterId)
+                    AND (vars.OperatorId IS NULL OR ip."CreatedById" = vars.OperatorId)
+                    AND (vars.UserId IS NULL OR ip."UserId" = vars.UserId)
+                    AND (vars.PaymentMethodId IS NULL OR p."PaymentMethodId" = vars.PaymentMethodId)
+                    AND (COALESCE(vars.IncludeInvoicePayments, true)) 
+                    AND (vars.PaymentDirection IS NULL OR vars.PaymentDirection != 1) --PaymentTransactionDirection.Out
 
                 UNION ALL
 
@@ -182,16 +212,16 @@ namespace Gizmo.DAL.Scripts
                     NULL AS "HostId"
                 FROM "DepositPayment" AS dp
                 JOIN "Payment" AS p ON dp."PaymentId" = p."PaymentId"
-                JOIN myconstants mc ON true
+                JOIN vars ON true
                 WHERE 
-                    dp."CreatedTime" BETWEEN mc.DateFrom AND mc.DateTo
-                    AND (mc.ShiftId IS NULL OR dp."ShiftId" = mc.ShiftId)
-                    AND (mc.RegisterId IS NULL OR dp."RegisterId" = mc.RegisterId)
-                    AND (mc.OperatorId IS NULL OR dp."CreatedById" = mc.OperatorId)
-                    AND (mc.UserId IS NULL OR dp."UserId" = mc.UserId)
-                    AND (mc.PaymentMethodId IS NULL OR p."PaymentMethodId" = mc.PaymentMethodId)
-                    AND (COALESCE(mc.IncludeDepositPayments, true))
-                    AND (mc.PaymentDirection IS NULL OR mc.PaymentDirection != 1) --PaymentTransactionDirection.Out
+                    dp."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
+                    AND (vars.ShiftId IS NULL OR dp."ShiftId" = vars.ShiftId)
+                    AND (vars.RegisterId IS NULL OR dp."RegisterId" = vars.RegisterId)
+                    AND (vars.OperatorId IS NULL OR dp."CreatedById" = vars.OperatorId)
+                    AND (vars.UserId IS NULL OR dp."UserId" = vars.UserId)
+                    AND (vars.PaymentMethodId IS NULL OR p."PaymentMethodId" = vars.PaymentMethodId)
+                    AND (COALESCE(vars.IncludeDepositPayments, true))
+                    AND (vars.PaymentDirection IS NULL OR vars.PaymentDirection != 1) --PaymentTransactionDirection.Out
 
                 UNION ALL
 
@@ -211,16 +241,16 @@ namespace Gizmo.DAL.Scripts
                 JOIN "Refund" AS r ON rip."RefundId" = r."RefundId"
                 JOIN "Payment" AS p ON r."PaymentId" = p."PaymentId"
                 JOIN "Invoice" AS i ON rip."InvoiceId" = i."InvoiceId"
-                JOIN myconstants mc ON true
+                JOIN vars ON true
                 WHERE 
-                    r."CreatedTime" BETWEEN mc.DateFrom AND mc.DateTo
-                    AND (mc.ShiftId IS NULL OR r."ShiftId" = mc.ShiftId)
-                    AND (mc.RegisterId IS NULL OR r."RegisterId" = mc.RegisterId)
-                    AND (mc.OperatorId IS NULL OR r."CreatedById" = mc.OperatorId)
-                    AND (mc.UserId IS NULL OR i."UserId" = mc.UserId)
-                    AND (mc.PaymentMethodId IS NULL OR r."RefundMethodId" = mc.PaymentMethodId)
-                    AND (COALESCE(mc.IncludeInvoiceRefunds, true))
-                    AND (mc.PaymentDirection IS NULL OR mc.PaymentDirection != 0) --PaymentTransactionDirection.In
+                    r."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
+                    AND (vars.ShiftId IS NULL OR r."ShiftId" = vars.ShiftId)
+                    AND (vars.RegisterId IS NULL OR r."RegisterId" = vars.RegisterId)
+                    AND (vars.OperatorId IS NULL OR r."CreatedById" = vars.OperatorId)
+                    AND (vars.UserId IS NULL OR i."UserId" = vars.UserId)
+                    AND (vars.PaymentMethodId IS NULL OR r."RefundMethodId" = vars.PaymentMethodId)
+                    AND (COALESCE(vars.IncludeInvoiceRefunds, true))
+                    AND (vars.PaymentDirection IS NULL OR vars.PaymentDirection != 0) --PaymentTransactionDirection.In
 
                 UNION ALL
 
@@ -241,22 +271,23 @@ namespace Gizmo.DAL.Scripts
                 JOIN "Payment" AS p ON r."PaymentId" = p."PaymentId"
                 JOIN "DepositTransaction" AS dt ON r."DepositTransactionId" = dt."DepositTransactionId"
                 JOIN "DepositPayment" AS dp ON rdp."DepositPaymentId" = dp."DepositPaymentId"
-                JOIN myconstants mc ON true
+                JOIN vars ON true
                 WHERE 
-                    r."CreatedTime" BETWEEN mc.DateFrom AND mc.DateTo
-                    AND (mc.ShiftId IS NULL OR r."ShiftId" = mc.ShiftId)
-                    AND (mc.RegisterId IS NULL OR r."RegisterId" = mc.RegisterId)
-                    AND (mc.OperatorId IS NULL OR r."CreatedById" = mc.OperatorId)
-                    AND (mc.UserId IS NULL OR dp."UserId" = mc.UserId)
-                    AND (mc.PaymentMethodId IS NULL OR r."RefundMethodId" = mc.PaymentMethodId)
-                    AND (COALESCE(mc.IncludeDepositRefunds, true))
-                    AND (mc.PaymentDirection IS NULL OR mc.PaymentDirection != 0) --PaymentTransactionDirection.In
+                    r."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
+                    AND (vars.ShiftId IS NULL OR r."ShiftId" = vars.ShiftId)
+                    AND (vars.RegisterId IS NULL OR r."RegisterId" = vars.RegisterId)
+                    AND (vars.OperatorId IS NULL OR r."CreatedById" = vars.OperatorId)
+                    AND (vars.UserId IS NULL OR dp."UserId" = vars.UserId)
+                    AND (vars.PaymentMethodId IS NULL OR r."RefundMethodId" = vars.PaymentMethodId)
+                    AND (COALESCE(vars.IncludeDepositRefunds, true))
+                    AND (vars.PaymentDirection IS NULL OR vars.PaymentDirection != 0) --PaymentTransactionDirection.In
 
                 UNION ALL
 
                 SELECT
                     CASE
-                        WHEN rt."Type" = 1 THEN 2 -- RegisterTransactionType.PayIn to PaymentTransactionType.PayIn
+                        WHEN rt."Type" = 1 
+                        THEN 2 -- RegisterTransactionType.PayIn to PaymentTransactionType.PayIn
                         ELSE 5 -- RegisterTransactionType.PayOut to PaymentTransactionType.PayOut
                     END AS "Type",
                     NULL AS "UserId",
@@ -270,221 +301,54 @@ namespace Gizmo.DAL.Scripts
                     NULL AS "DepositPaymentId",
                     NULL AS "HostId"
                 FROM "RegisterTransaction" AS rt
-                JOIN myconstants mc ON true
+                JOIN vars ON true
                 WHERE 
-                    rt."CreatedTime" BETWEEN mc.DateFrom AND mc.DateTo
+                    rt."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
                     AND (rt."Type" = 1 OR rt."Type" = 2)
-                    AND (mc.ShiftId IS NULL OR rt."ShiftId" = mc.ShiftId)
-                    AND (mc.RegisterId IS NULL OR rt."RegisterId" = mc.RegisterId)
-                    AND (mc.OperatorId IS NULL OR rt."CreatedById" = mc.OperatorId)
-                    AND (COALESCE(mc.PaymentMethodId, -1) = -1 -- cash or default to cash if NULL
-                        AND mc.UserId IS NOT NULL
-                        AND (COALESCE(mc.IncludePayIns, true) OR COALESCE(mc.IncludePayOuts, true))))
-            SELECT 
-                "UserId", 
-                "Amount", 
-                "PaymentMethodId", 
-                "Date", 
-                "OperatorId", 
-                "ShiftId", 
-                "RegisterId", 
-                "Type"
-            FROM pt
-            JOIN myconstants AS mc ON true
-            ORDER BY
-                CASE WHEN mc.SortBy = 'Date' AND mc.SortOrder = 'ASC' THEN "Date" END ASC,
-                CASE WHEN mc.SortBy = 'Date' AND mc.SortOrder = 'DESC' THEN "Date" END DESC,
-                CASE WHEN mc.SortBy = 'Amount' AND mc.SortOrder = 'ASC' THEN "Amount" END ASC,
-                CASE WHEN mc.SortBy = 'Amount' AND mc.SortOrder = 'DESC' THEN "Amount" END DESC,
-                CASE WHEN mc.SortBy = 'UserId' AND mc.SortOrder = 'ASC' THEN "UserId" END ASC,
-                CASE WHEN mc.SortBy = 'UserId' AND mc.SortOrder = 'DESC' THEN "UserId" END DESC,
-                CASE WHEN mc.SortBy = 'PaymentMethodId' AND mc.SortOrder = 'ASC' THEN "PaymentMethodId" END ASC,
-                CASE WHEN mc.SortBy = 'PaymentMethodId' AND mc.SortOrder = 'DESC' THEN "PaymentMethodId" END DESC,
-                CASE WHEN mc.SortBy = 'OperatorId' AND mc.SortOrder = 'ASC' THEN "OperatorId" END ASC,
-                CASE WHEN mc.SortBy = 'OperatorId' AND mc.SortOrder = 'DESC' THEN "OperatorId" END DESC
-            OFFSET (SELECT Offset1 FROM myconstants) LIMIT (SELECT Limit1 FROM myconstants)
-            -------------------------------------------------------------------------------------------
+                    AND (vars.ShiftId IS NULL OR rt."ShiftId" = vars.ShiftId)
+                    AND (vars.RegisterId IS NULL OR rt."RegisterId" = vars.RegisterId)
+                    AND (vars.OperatorId IS NULL OR rt."CreatedById" = vars.OperatorId)
+                    AND (COALESCE(vars.PaymentMethodId, -1) = -1 -- cash or default to cash if NULL
+                        AND vars.UserId IS NOT NULL
+                        AND (COALESCE(vars.IncludePayIns, true) OR COALESCE(vars.IncludePayOuts, true))))
 
-               WITH PaymentTransactions AS (
-                SELECT 
-                    0 AS "Type", --'InvoicePayment'
-                    ip."UserId",
-                    ip."Amount",
-                    ip."CreatedTime" AS "Date",
-                    ip."CreatedById" AS "OperatorId",
-                    ip."ShiftId",
-                    ip."RegisterId",
-                    ip."InvoiceId",
-                    p."PaymentMethodId",
-                    NULL AS "DepositPaymentId",
-                    NULL AS "HostId"
-                FROM "InvoicePayment" AS ip
-                JOIN "Payment" AS p ON ip."PaymentId" = p."PaymentId"
-                WHERE 
-                    ip."CreatedTime" BETWEEN @DateFrom AND @DateTo
-                    AND (@ShiftId IS NULL OR ip."ShiftId" = @ShiftId)
-                    AND (@RegisterId IS NULL OR ip."RegisterId" = @RegisterId)
-                    AND (@OperatorId IS NULL OR ip."CreatedById" = @OperatorId)
-                    AND (@UserId IS NULL OR ip."UserId" = @UserId)
-                    AND (@PaymentMethodId IS NULL OR p."PaymentMethodId" = @PaymentMethodId)
-                    AND (COALESCE(@IncludeInvoicePayments, true)) 
-                    AND (@PaymentDirection IS NULL OR @PaymentDirection != 1) --PaymentTransactionDirection.Out
-
-                UNION ALL
-
-                SELECT
-                    1 AS "Type", --'DepositPayment'
-                    dp."UserId",
-                    p."Amount",
-                    dp."CreatedTime" AS "Date",
-                    dp."CreatedById" AS "OperatorId",
-                    dp."ShiftId",
-                    dp."RegisterId",
-                    NULL AS "InvoiceId",
-                    p."PaymentMethodId",
-                    dp."DepositPaymentId",
-                    NULL AS "HostId"
-                FROM "DepositPayment" AS dp
-                JOIN "Payment" AS p ON dp."PaymentId" = p."PaymentId"
-                WHERE 
-                    dp."CreatedTime" BETWEEN @DateFrom AND @DateTo
-                    AND (@ShiftId IS NULL OR dp."ShiftId" = @ShiftId)
-                    AND (@RegisterId IS NULL OR dp."RegisterId" = @RegisterId)
-                    AND (@OperatorId IS NULL OR dp."CreatedById" = @OperatorId)
-                    AND (@UserId IS NULL OR dp."UserId" = @UserId)
-                    AND (@PaymentMethodId IS NULL OR p."PaymentMethodId" = @PaymentMethodId)
-                    AND (COALESCE(@IncludeDepositPayments, true))
-                    AND (@PaymentDirection IS NULL OR @PaymentDirection != 1) --PaymentTransactionDirection.Out
-
-                UNION ALL
-
-                SELECT
-                    3 AS "Type", --'RefundInvoicePayment'
-                    p."UserId",
-                    p."Amount",
-                    r."CreatedTime" AS "Date",
-                    r."CreatedById" AS "OperatorId",
-                    r."ShiftId",
-                    r."RegisterId",
-                    NULL AS "InvoiceId",
-                    p."PaymentMethodId",
-                    NULL AS "DepositPaymentId",
-                    NULL AS "HostId"
-                FROM "RefundInvoicePayment" AS rip
-                JOIN "Refund" AS r ON rip."RefundId" = r."RefundId"
-                JOIN "Payment" AS p ON r."PaymentId" = p."PaymentId"
-                JOIN "Invoice" AS i ON rip."InvoiceId" = i."InvoiceId"
-                WHERE 
-                    r."CreatedTime" BETWEEN @DateFrom AND @DateTo
-                    AND (@ShiftId IS NULL OR r."ShiftId" = @ShiftId)
-                    AND (@RegisterId IS NULL OR r."RegisterId" = @RegisterId)
-                    AND (@OperatorId IS NULL OR r."CreatedById" = @OperatorId)
-                    AND (@UserId IS NULL OR i."UserId" = @UserId)
-                    AND (@PaymentMethodId IS NULL OR r."RefundMethodId" = @PaymentMethodId)
-                    AND (COALESCE(@IncludeInvoiceRefunds, true))
-                    AND (@PaymentDirection IS NULL OR @PaymentDirection != 0) --PaymentTransactionDirection.In
-
-                UNION ALL
-
-                SELECT
-                    4 AS "Type", --'RefundDepositPayment'
-                    p."UserId",
-                    r."Amount",
-                    r."CreatedTime" AS "Date",
-                    r."CreatedById" AS "OperatorId",
-                    r."ShiftId",
-                    r."RegisterId",
-                    NULL AS "InvoiceId",
-                    r."RefundMethodId" AS "PaymentMethodId",
-                    NULL AS "DepositPaymentId",
-                    NULL AS "HostId"
-                FROM "RefundDepositPayment" AS rdp
-                JOIN "Refund" AS r ON rdp."RefundId" = r."RefundId"
-                JOIN "Payment" AS p ON r."PaymentId" = p."PaymentId"
-                JOIN "DepositTransaction" AS dt ON r."DepositTransactionId" = dt."DepositTransactionId"
-                JOIN "DepositPayment" AS dp ON rdp."DepositPaymentId" = dp."DepositPaymentId"
-                WHERE 
-                    r."CreatedTime" BETWEEN @DateFrom AND @DateTo
-                    AND (@ShiftId IS NULL OR r."ShiftId" = @ShiftId)
-                    AND (@RegisterId IS NULL OR r."RegisterId" = @RegisterId)
-                    AND (@OperatorId IS NULL OR r."CreatedById" = @OperatorId)
-                    AND (@UserId IS NULL OR dp."UserId" = @UserId)
-                    AND (@PaymentMethodId IS NULL OR r."RefundMethodId" = @PaymentMethodId)
-                    AND (COALESCE(@IncludeDepositRefunds, true))
-                    AND (@PaymentDirection IS NULL OR @PaymentDirection != 0) --PaymentTransactionDirection.In
-
-                UNION ALL
-
-                SELECT
-                    CASE
-                        WHEN rt."Type" = 1          --RegisterTransactionType.PayIn
-                            THEN 2                       --PaymentTransactionType.PayIn
-                            ELSE 5                        --PaymentTransactionType.PayOut
-                    END AS "Type",
-                    NULL AS "UserId",
-                    rt."Amount",
-                    rt."CreatedTime" AS "Date",
-                    rt."CreatedById" AS "OperatorId",
-                    rt."ShiftId",
-                    rt."RegisterId",
-                    NULL AS "InvoiceId",
-                    -1 AS "PaymentMethodId", --register transactions are always made in cash
-                    NULL AS "DepositPaymentId",
-                    NULL AS "HostId"
-                FROM "RegisterTransaction" AS rt
-                WHERE 
-                    rt."CreatedTime" BETWEEN @DateFrom AND @DateTo
-                    AND (rt."Type" = 1 OR rt."Type" = 2)
-                    AND (@ShiftId IS NULL OR rt."ShiftId" = @ShiftId)
-                    AND (@RegisterId IS NULL OR rt."RegisterId" = @RegisterId)
-                    AND (@OperatorId IS NULL OR rt."CreatedById" = @OperatorId)
-                    AND (COALESCE(@PaymentMethodId, -1) = -1 -- cash or default to cash if NULL
-                            AND @UserId IS NOT NULL
-                            AND (COALESCE(@IncludePayIns, true) OR COALESCE(@IncludePayOuts, true)))
-            )
-
-            SELECT jsonb_build_object(
-                'Total', (SELECT COUNT(*) FROM "PaymentTransactions"),
-                'Items', COALESCE(
-                    (SELECT jsonb_agg(row_to_json(t))
-                     FROM (
-                         SELECT 
-                            "UserId", 
-                            "Amount", 
-                            "PaymentMethodId", 
-                            "Date", 
-                            "OperatorId", 
-                            "ShiftId", 
-                            "RegisterId", 
-                            "Type"
-                         FROM "PaymentTransactions"
-                         ORDER BY
-                            CASE WHEN SortBy = 'Date' AND SortOrder = 'ASC' THEN "Date" END ASC,
-                            CASE WHEN SortBy = 'Date' AND SortOrder = 'DESC' THEN "Date" END DESC,
-                            CASE WHEN SortBy = 'Amount' AND SortOrder = 'ASC' THEN "Amount" END ASC,
-                            CASE WHEN SortBy = 'Amount' AND SortOrder = 'DESC' THEN "Amount" END DESC,
-                            CASE WHEN SortBy = 'UserId' AND SortOrder = 'ASC' THEN "UserId" END ASC,
-                            CASE WHEN SortBy = 'UserId' AND SortOrder = 'DESC' THEN "UserId" END DESC,
-                            CASE WHEN SortBy = 'PaymentMethodId' AND SortOrder = 'ASC' THEN "PaymentMethodId" END ASC,
-                            CASE WHEN SortBy = 'PaymentMethodId' AND SortOrder = 'DESC' THEN "PaymentMethodId" END DESC,
-                            CASE WHEN SortBy = 'OperatorId' AND SortOrder = 'ASC' THEN "OperatorId" END ASC,
-                            CASE WHEN SortBy = 'OperatorId' AND SortOrder = 'DESC' THEN "OperatorId" END DESC,
-                            CASE WHEN SortBy = 'ShiftId' AND SortOrder = 'ASC' THEN "ShiftId" END ASC,
-                            CASE WHEN SortBy = 'ShiftId' AND SortOrder = 'DESC' THEN "ShiftId" END DESC,
-                            CASE WHEN SortBy = 'RegisterId' AND SortOrder = 'ASC' THEN "RegisterId" END ASC,
-                            CASE WHEN SortBy = 'RegisterId' AND SortOrder = 'DESC' THEN "RegisterId" END DESC,
-                            CASE WHEN SortBy = 'Type' AND SortOrder = 'ASC' THEN "Type" END ASC,
-                            CASE WHEN SortBy = 'Type' AND SortOrder = 'DESC' THEN "Type" END DESC
-                         OFFSET @Offset LIMIT @Limit
-                     ) t),
-                    '[]'::jsonb
-                )
-            );
-                
+            SELECT json_build_object(
+        	    'Total', (SELECT COUNT(*) FROM "PaymentTransactions"),
+        	    'Items', COALESCE(
+        		    (SELECT jsonb_agg(row_to_json("PaginatedResult"))
+        		     FROM (
+        			    SELECT 
+        				    "UserId", 
+        				    "Amount", 
+        				    "PaymentMethodId", 
+        				    "Date", 
+        				    "OperatorId", 
+        				    "ShiftId", 
+        				    "RegisterId", 
+        				    "Type"
+        			    FROM "PaymentTransactions"
+        			    JOIN vars ON true
+        			    ORDER BY
+        				    CASE WHEN vars.SortBy = 'Date' AND vars.SortOrder = 'ASC' THEN "Date" END ASC,
+        				    CASE WHEN vars.SortBy = 'Date' AND vars.SortOrder = 'DESC' THEN "Date" END DESC,
+        				    CASE WHEN vars.SortBy = 'Amount' AND vars.SortOrder = 'ASC' THEN "Amount" END ASC,
+        				    CASE WHEN vars.SortBy = 'Amount' AND vars.SortOrder = 'DESC' THEN "Amount" END DESC,
+        				    CASE WHEN vars.SortBy = 'UserId' AND vars.SortOrder = 'ASC' THEN "UserId" END ASC,
+        				    CASE WHEN vars.SortBy = 'UserId' AND vars.SortOrder = 'DESC' THEN "UserId" END DESC,
+        				    CASE WHEN vars.SortBy = 'PaymentMethodId' AND vars.SortOrder = 'ASC' THEN "PaymentMethodId" END ASC,
+        				    CASE WHEN vars.SortBy = 'PaymentMethodId' AND vars.SortOrder = 'DESC' THEN "PaymentMethodId" END DESC,
+        				    CASE WHEN vars.SortBy = 'OperatorId' AND vars.SortOrder = 'ASC' THEN "OperatorId" END ASC,
+        				    CASE WHEN vars.SortBy = 'OperatorId' AND vars.SortOrder = 'DESC' THEN "OperatorId" END DESC
+        			    OFFSET (SELECT "Offset" FROM vars) LIMIT (SELECT "Limit" FROM vars)) "PaginatedResult"),
+        		    '[]'::jsonb
+        		    )
+        	    );
         """;
         private const string USERS_HARD_DELETE =
         """
             CREATE TEMP TABLE "UserIdList" ("UserId" INT);
+            CREATE TEMP TABLE "UserMemberIdList" ("UserMemberId" INT);
+
             INSERT INTO "UserIdList" ("UserId")
             SELECT UNNEST(STRING_TO_ARRAY(@UserIds, ',')::INT[]);
 
@@ -577,10 +441,13 @@ namespace Gizmo.DAL.Scripts
 
                 DELETE FROM "Invoice" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
 
-                DELETE FROM "UserMember" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+                INSERT INTO "UserMemberIdList" ("UserMemberId")
+                SELECT "UserId" FROM "UserMember" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "UserMember" WHERE "UserId" IN (SELECT "UserMemberId" FROM "UserMemberIdList");
 
                 DELETE FROM "User" 
-                WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList")
+                WHERE "UserId" IN (SELECT "UserMemberId" FROM "UserMemberIdList")
                 RETURNING "UserId";
 
             COMMIT;

@@ -347,6 +347,7 @@ namespace Gizmo.DAL.Scripts
         """;
         private const string USERS_HARD_DELETE = """
             DECLARE @UserIdList TABLE (UserId INT);
+            DECLARE @UserMemberIdList TABLE (UserMemberId INT);
 
             INSERT INTO @UserIdList (UserId)
             SELECT value
@@ -442,11 +443,16 @@ namespace Gizmo.DAL.Scripts
 
                     DELETE FROM Invoice WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
-                    DELETE FROM UserMember WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    INSERT INTO @UserMemberIdList (UserMemberId)
+                    SELECT UserId
+                    FROM UserMember
+                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+
+                    DELETE FROM UserMember WHERE UserId IN (SELECT UserMemberId FROM @UserMemberIdList);
 
                     DELETE FROM [User]
                     OUTPUT DELETED.UserId
-                    WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    WHERE UserId IN (SELECT UserMemberId FROM @UserMemberIdList);
 
                     COMMIT TRANSACTION;
                 END TRY
