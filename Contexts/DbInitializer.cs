@@ -55,7 +55,7 @@ namespace Gizmo.DAL.Contexts
                 //attempt to update ef6 database
                 var isMigrated = await TryMigrateToEF6InitialAsync(cancellationToken);
 
-                if(isMigrated)
+                if (isMigrated)
                     _logger.LogTrace("Existing database was migrated from EF6.");
 
                 //will contain currently applied migrations count, zero will mean that this is initial database
@@ -85,7 +85,7 @@ namespace Gizmo.DAL.Contexts
                     return;
                 }
 
-               await _dbContext.AddSeedDataAsync(cancellationToken);
+                await _dbContext.AddSeedDataAsync(cancellationToken);
             }
 
             //create default data
@@ -96,9 +96,9 @@ namespace Gizmo.DAL.Contexts
         {
             if (_dbContext.Database.IsSqlServer())
             {
-                var hasEF6MigrationHistoryTable = await _dbContext.Database.ExecuteSqlScriptAsync(SQLScripts.HAS_TABLE_BY_NAME, new Dictionary<string, object> 
+                var hasEF6MigrationHistoryTable = await _dbContext.Database.ExecuteSqlScriptAsync(SQLScripts.HAS_TABLE_BY_NAME, new Dictionary<string, object>
                 {
-                    { "name", "__MigrationHistory" } 
+                    { "name", "__MigrationHistory" }
                 }, cancellationToken) == 1;
 
                 if (hasEF6MigrationHistoryTable)
@@ -152,39 +152,77 @@ namespace Gizmo.DAL.Contexts
                 using (var trx = _dbContext.Database.BeginTransaction())
                 {
                     //check if admin account exists
+                    var adminOperatorId = await _dbContext.UsersOperator.Where(userOperator => userOperator.Username.ToLower() == "admin")
+                        .Select(userOperator => (int?)userOperator.Id)
+                        .FirstOrDefaultAsync(cancellationToken);
 
-                    //check if any branches exists
-                    if (!await _dbContext.Branches.AnyAsync(cancellationToken))
+                    if (adminOperatorId == null)
+                    {
+                        //create default operator account
+                    }
+
+                    //get existing default branch id
+                    int? defaultBranchId = await _dbContext.Branches.Where(branch => branch.Name.ToLower() == "default")
+                        .Select(branch => (int?)branch.Id)
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    //check if any default branches exists
+                    if (defaultBranchId == null)
                     {
                         _logger.LogTrace("Creating default branch.");
-
                         var defaultBranch = new Branch()
                         {
                             Name = "Default",
+                            IsEnabled = true,
+                            IsDeleted = false,
                         };
 
                         _dbContext.Branches.Add(defaultBranch);
+
+                        //save changes so we can receive branch id
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+
+                        //use id of default branch
+                        defaultBranchId = defaultBranch.Id;
                     }
 
                     //check if any branches exists
                     if (!await _dbContext.Registers.AnyAsync(cancellationToken))
                     {
                         _logger.LogTrace("Creating default register.");
-
                         var defaultRegister = new Register()
                         {
                             Name = "Default",
                             StartCash = 0,
                             IdleTimeout = null,
+                            BranchId = defaultBranchId!.Value,
                         };
 
                         _dbContext.Registers.Add(defaultRegister);
                     }
 
-                    trx.Commit();
+                    //check if one found
+                    if (adminOperatorId != null)
+                    {
+                        if (!await _dbContext.UserOperatorBranches.Where(operatorBranch => operatorBranch.OperatorId == adminOperatorId).AnyAsync(cancellationToken: cancellationToken))
+                        {
+                            _logger.LogInformation("Adding admin operator to default branch.");
+                            _dbContext.UserOperatorBranches.Add(new UserOperatorBranch()
+                            {
+                                BranchId = defaultBranchId!.Value,
+                                OperatorId = adminOperatorId!.Value,
+                            });                           
+                        }
+                    }
+
+                    //save any changes made
                     await _dbContext.SaveChangesAsync(cancellationToken);
+
+                    //commit any changes made
+                    trx.Commit();
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Error creating default data.");
             }
