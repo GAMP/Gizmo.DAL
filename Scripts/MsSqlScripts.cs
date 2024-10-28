@@ -431,6 +431,11 @@ namespace Gizmo.DAL.Scripts
 
                     DELETE FROM DepositTransaction WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
+                    DELETE FROM InvoiceLine 
+                    WHERE PointsTransactionId IN (SELECT PointsTransactionId FROM PointTransaction WHERE UserId IN (SELECT UserId FROM @UserIdList));
+
+                    DELETE FROM Invoice WHERE UserId IN (SELECT UserId FROM @UserIdList);
+                    
                     DELETE FROM PointTransaction WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
                     DELETE FROM UserSessionChange WHERE UserId IN (SELECT UserId FROM @UserIdList);
@@ -438,10 +443,6 @@ namespace Gizmo.DAL.Scripts
                     DELETE FROM UserSession WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
                     DELETE FROM ProductOrder WHERE UserId IN (SELECT UserId FROM @UserIdList);
-
-                    DELETE FROM InvoiceLine WHERE UserId IN (SELECT UserId FROM @UserIdList);
-
-                    DELETE FROM Invoice WHERE UserId IN (SELECT UserId FROM @UserIdList);
 
                     INSERT INTO @UserMemberIdList (UserMemberId)
                     SELECT UserId
