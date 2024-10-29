@@ -758,6 +758,9 @@ namespace Gizmo.DAL
 
                         await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[AssistanceRequest] Set CreatedById=NULL", ct);
                         await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[AssistanceRequest] Set ModifiedById=NULL", ct);
+
+                        await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[ReportPreset] Set CreatedById=NULL", ct);
+                        await cx.Database.ExecuteSqlCommandAsync("UPDATE [dbo].[ReportPreset] Set ModifiedById=NULL", ct);
                     }
 
                     if (!deleteHosts)
