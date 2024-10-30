@@ -348,108 +348,87 @@ namespace Gizmo.DAL.Scripts
         """
             CREATE TEMP TABLE "UserIdList" ("UserId" INT);
             CREATE TEMP TABLE "UserMemberIdList" ("UserMemberId" INT);
-
+            
             INSERT INTO "UserIdList" ("UserId")
             SELECT UNNEST(STRING_TO_ARRAY(@UserIds, ',')::INT[]);
-
+            
             BEGIN;
-
-                DELETE FROM "UsageSession" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+            
                 DELETE FROM "UserCreditLimit"
                 USING "UserMember" AS u
                 WHERE "UserCreditLimit"."UserId" = u."UserId"
                 AND u."UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+            
                 DELETE FROM "Refund"
                 USING "DepositTransaction" AS dt
                 WHERE "Refund"."DepositTransactionId" = dt."DepositTransactionId"
                 AND dt."UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+            
                 DELETE FROM "Refund"
                 USING "Payment" AS p
                 WHERE "Refund"."PaymentId" = p."PaymentId"
                 AND p."UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+            
                 DELETE FROM "VerificationMobilePhone"
                 USING "Verification" AS v
                 WHERE "VerificationMobilePhone"."VerificationId" = v."VerificationId"
                 AND v."UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+            
                 DELETE FROM "VerificationEmail"
                 USING "Verification" AS v
                 WHERE "VerificationEmail"."VerificationId" = v."VerificationId"
                 AND v."UserId" IN (SELECT "UserId" FROM "UserIdList");
-
-                DELETE FROM "Verification" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+            
                 DELETE FROM "UsageTime"
                 USING "Usage" AS u
                 WHERE "UsageTime"."UsageId" = u."UsageId"
                 AND u."UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+            
                 DELETE FROM "UsageTimeFixed"
                 USING "Usage" AS u
                 WHERE "UsageTimeFixed"."UsageId" = u."UsageId"
                 AND u."UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+            
+                DELETE FROM "InvoiceLine"
+                USING "PointTransaction" AS pt
+                WHERE "InvoiceLine"."PointsTransactionId" = pt."PointTransactionId"
+                AND pt."UserId" IN (SELECT "UserId" FROM "UserIdList");
+            
+                DELETE FROM "UsageSession" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+                DELETE FROM "Verification" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
                 DELETE FROM "Usage" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "InvoicePayment" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "PaymentIntent" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "Payment" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "AssistanceRequest" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "HostGroupWaitingLineEntry" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "UserAgreementState" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "UserAttribute" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "UserPermission" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "UserNote" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "ReservationUser" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "ReservationHost" WHERE "PreferedUserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "Reservation" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "Token" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "AppRating" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "AppStat" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "AssetTransaction" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "DepositTransaction" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
-                DELETE FROM "PointTransaction" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
-                DELETE FROM "UserSessionChange" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
-                DELETE FROM "UserSession" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
-                DELETE FROM "ProductOrder" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
-                DELETE FROM "InvoiceLine" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
                 DELETE FROM "Invoice" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+                DELETE FROM "PointTransaction" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+                DELETE FROM "UserSessionChange" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+                DELETE FROM "UserSession" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+                DELETE FROM "ProductOrder" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+            
                 INSERT INTO "UserMemberIdList" ("UserMemberId")
                 SELECT "UserId" FROM "UserMember" WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
-
+            
                 DELETE FROM "UserMember" WHERE "UserId" IN (SELECT "UserMemberId" FROM "UserMemberIdList");
-
-                DELETE FROM "User" 
+            
+                DELETE FROM "User"
                 WHERE "UserId" IN (SELECT "UserMemberId" FROM "UserMemberIdList")
                 RETURNING "UserId";
-
+            
             COMMIT;
         """;
     }
