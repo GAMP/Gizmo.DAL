@@ -38,7 +38,7 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(PointTransaction));
 
             builder.HasOne(x => x.User)
-                .WithMany(x => x.LoayalityPoints)
+                .WithMany(x => x.LoyaltyPoints)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 

@@ -36,7 +36,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(x => x.ProductId);
 
             builder.HasOne(x => x.UserGroup)
-                .WithMany(x => x.DissalowedProducts)
+                .WithMany(x => x.DisallowedProducts)
                 .HasForeignKey(x => x.UserGroupId);
         }
     }

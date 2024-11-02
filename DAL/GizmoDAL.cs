@@ -1126,7 +1126,7 @@ namespace Gizmo.DAL
                             };
 
                             //add points
-                            userMember.LoayalityPoints.Add(pointsTransaction);
+                            userMember.LoyaltyPoints.Add(pointsTransaction);
                         }
                     }
 

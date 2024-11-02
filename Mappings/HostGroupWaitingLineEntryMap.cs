@@ -46,7 +46,7 @@ namespace Gizmo.DAL.Mappings
                 .WithMany()
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(entity => entity.WatingLine)
+            builder.HasOne(entity => entity.WaitingLine)
                 .WithMany(waitingLine => waitingLine.Entries)
                 .HasForeignKey(entity => entity.HostGroupId)
                 .OnDelete(DeleteBehavior.Cascade);

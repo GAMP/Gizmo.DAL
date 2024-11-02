@@ -32,7 +32,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasIndex(x => new { x.UserGroupId, x.HostGroupId }).IsUnique();
 
             builder.HasOne(x => x.UserGroup)
-                .WithMany(x => x.DissalowedHostGroups)
+                .WithMany(x => x.DisallowedHostGroups)
                 .HasForeignKey(x => x.UserGroupId)
                 .OnDelete(DeleteBehavior.NoAction);
 
