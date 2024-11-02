@@ -1023,6 +1023,11 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new BranchMap());
             modelBuilder.ApplyConfiguration(new UserOperatorBranchMap());
 
+            modelBuilder.ApplyConfiguration(new AppExeBranchMap());
+            modelBuilder.ApplyConfiguration(new ProductBranchMap());
+            modelBuilder.ApplyConfiguration(new FeedBranchMap());
+            modelBuilder.ApplyConfiguration(new NewsBranchMap());
+
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
             #endregion
@@ -2049,7 +2054,7 @@ namespace Gizmo.DAL.Contexts
                 throw new ArgumentNullException(nameof(ex));
 
             if (ex.GetBaseException() is SqlException sqlException)
-                return Enum.IsDefined(typeof(MSSQLServerRetryableErrors), sqlException.Number);
+                return Enum.IsDefined(typeof(MSSQLServerRetriableErrors), sqlException.Number);
 
             return false;
         }
@@ -2255,7 +2260,7 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Microsoft SQL Server retriable error codes.
         /// </summary>
-        public enum MSSQLServerRetryableErrors
+        public enum MSSQLServerRetriableErrors
         {
             TimeoutExpired = -2,
             EncryptionNotSupported = 20,
