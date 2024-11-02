@@ -25,7 +25,7 @@ namespace Gizmo.DAL.Extensions
     public static class DefaultDbContextExtensions
     {
         /// <summary>
-        /// Updates database to target migration.
+        /// Updates database to target migrations.
         /// </summary>
         /// <param name="dbContext">
         /// Database context.
@@ -535,7 +535,7 @@ namespace Gizmo.DAL.Extensions
         /// <param name="parameters"> Sql parameters for the script. Key is parameter name, value is parameter value. </param>
         /// <param name="cToken"> Cancellation token. </param>
         /// <returns> Identifiers array of script result. </returns>
-        public static Task<int[]> FromSqlSqriptToIdsAsync(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters, CancellationToken cToken)
+        public static Task<int[]> FromSqlScriptToIdsAsync(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters, CancellationToken cToken)
             => dbContext.Database.ProviderName switch
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => dbContext.Database.SqlQueryRaw<int>(
@@ -548,7 +548,7 @@ namespace Gizmo.DAL.Extensions
             };
 
         /// TODO: Check this method for correctness
-        public static async Task<T[]> FromSqlSqriptToModelsAsync<T>(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters, CancellationToken cToken = default)
+        public static async Task<T[]> FromSqlScriptToModelsAsync<T>(this DefaultDbContext dbContext, string scriptName, Dictionary<string, object> parameters, CancellationToken cToken = default)
             where T : class
         {
             var result = dbContext.Database.ProviderName switch
@@ -577,6 +577,7 @@ namespace Gizmo.DAL.Extensions
             public int Total { get; set; }
             public T[] Items { get; set; }
         }
+
         /// <summary>
         /// Executes the SQL with paginated result against the database, choosing it from the file of the 'Gizmo file.DAL.Scripts' namespace depends on the database provider.
         /// Uses a classic pagination algorithm.
