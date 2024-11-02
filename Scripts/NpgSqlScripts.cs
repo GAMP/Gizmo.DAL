@@ -87,7 +87,7 @@ namespace Gizmo.DAL.Scripts
                 RETURNING
                     "UserSessionId", "UserId", "HostId", "State", "Span", "BilledSpan", "PendTime", "PendSpan", "EndTime", 
                     "CreatedById", "CreatedTime", "Slot", "PendSpanTotal", "PauseSpan", "PauseSpanTotal", "GraceTime", 
-                    "GraceSpan", "GraceSpanTotal"
+                    "GraceSpan", "GraceSpanTotal" , "BranchId"
             )
             SELECT * FROM updated;
             """;

@@ -97,6 +97,7 @@ namespace Gizmo.DAL.Scripts
                 ,INSERTED.GraceTime
                 ,INSERTED.GraceSpan
                 ,INSERTED.GraceSpanTotal
+                ,INSERTED.BranchId
             WHERE 
                 State & 1 = 1;
             """;
