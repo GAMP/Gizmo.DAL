@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Gizmo.DAL.Mappings;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Npgsql;
 
 namespace Gizmo.DAL.Contexts
 {
@@ -749,6 +750,26 @@ namespace Gizmo.DAL.Contexts
         /// Gets payment intents.
         /// </summary>
         public DbSet<PaymentIntent> PaymentIntents { get; set; }
+
+        /// <summary>
+        /// AppExe branches.
+        /// </summary>
+        public DbSet<AppExeBranch> AppExeBranches { get; set; }
+
+        /// <summary>
+        /// Product branches.
+        /// </summary>
+        public DbSet<ProductBranch> ProductBranches { get; set; }
+
+        /// <summary>
+        /// Feed branches.
+        /// </summary>
+        public DbSet<FeedBranch> FeedBranches { get; set; }
+
+        /// <summary>
+        /// News branches.
+        /// </summary>
+        public DbSet<NewsBranch> NewsBranches { get; set; }
 
         #region DEVICES
 
@@ -1504,6 +1525,15 @@ namespace Gizmo.DAL.Contexts
             }
         }
 
+        /// <summary>
+        /// Validates credentials.
+        /// </summary>
+        /// <param name="password">Password.</param>
+        /// <param name="salt">Salt.</param>
+        /// <param name="pwdHash">Password hash.</param>
+        /// <returns>True or false.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public bool CredentialsIsPasswordValid(string password, byte[] salt, byte[] pwdHash)
         {
             if (string.IsNullOrWhiteSpace(password))
@@ -1517,19 +1547,6 @@ namespace Gizmo.DAL.Contexts
 
             byte[] testHash = GetHashedPassword(password, salt);
             return testHash.SequenceEqual(pwdHash);
-        }
-
-        /// <summary>
-        /// Check if proxy is of specified type.
-        /// </summary>
-        /// <param name="type">Poco type.</param>
-        /// <returns>True or false.</returns>
-        public bool IsProxy(object type)
-        {
-            // TO DO
-            //return type != null && ObjectContext.GetObjectType(type.GetType()) != type.GetType();
-
-            return false;
         }
 
         /// <summary>
@@ -2050,11 +2067,13 @@ namespace Gizmo.DAL.Contexts
         /// <exception cref="ArgumentNullException">thrown in case <paramref name="ex"/> parameter is equal to null.</exception>
         public static bool IsRetriableException(Exception ex)
         {
-            if (ex == null)
-                throw new ArgumentNullException(nameof(ex));
+            ArgumentNullException.ThrowIfNull(ex);
 
             if (ex.GetBaseException() is SqlException sqlException)
                 return Enum.IsDefined(typeof(MSSQLServerRetriableErrors), sqlException.Number);
+
+            else if (ex.GetBaseException() is NpgsqlException npgsqlException)
+                return Enum.IsDefined(typeof(NPGSQLRetriableErrors), npgsqlException.ErrorCode);
 
             return false;
         }
@@ -2257,23 +2276,125 @@ namespace Gizmo.DAL.Contexts
         #endregion
 
         #region MSSQLSERVERRETRYABLEERRORS
+
         /// <summary>
         /// Microsoft SQL Server retriable error codes.
         /// </summary>
         public enum MSSQLServerRetriableErrors
         {
+            /// <summary>
+            /// Timeout expired. The timeout period elapsed before completion of the operation.
+            /// Error code: -2
+            /// </summary>
             TimeoutExpired = -2,
+
+            /// <summary>
+            /// Encryption is not supported on the SQL Server instance.
+            /// Error code: 20
+            /// </summary>
             EncryptionNotSupported = 20,
+
+            /// <summary>
+            /// A login error occurred, often due to network issues.
+            /// Error code: 64
+            /// </summary>
             LoginError = 64,
+
+            /// <summary>
+            /// Connection initialization error. SQL Server is unable to initialize a connection.
+            /// Error code: 233
+            /// </summary>
             ConnectionInitialization = 233,
+
+            /// <summary>
+            /// Deadlock detected. One or more processes were chosen as the deadlock victim.
+            /// Error code: 1205
+            /// </summary>
             Deadlock = 1205,
+
+            /// <summary>
+            /// Transport-level error while receiving results from the server, typically caused by network issues.
+            /// Error code: 10053
+            /// </summary>
             TransportLevelReceiving = 10053,
+
+            /// <summary>
+            /// Transport-level error while sending results to the server, typically caused by network issues.
+            /// Error code: 10054
+            /// </summary>
             TransportLevelSending = 10054,
+
+            /// <summary>
+            /// Error while establishing a connection, often due to network timeouts or server unavailability.
+            /// Error code: 10060
+            /// </summary>
             EstablishingConnection = 10060,
+
+            /// <summary>
+            /// Error encountered while processing the request. Temporary server issue, retry might succeed.
+            /// Error code: 40143
+            /// </summary>
             ProcessingRequest = 40143,
+
+            /// <summary>
+            /// The service is currently too busy to process the request.
+            /// Error code: 40501
+            /// </summary>
             ServiceBusy = 40501,
+
+            /// <summary>
+            /// Database or server is temporarily unavailable. Retry after some time may succeed.
+            /// Error code: 40613
+            /// </summary>
             DatabaseOrServerNotAvailable = 40613
         }
+
+        #endregion
+
+        #region NPGSQLRETRIABLEERRORS
+
+        /// <summary>
+        /// Npgsql PostgreSQL retriable error codes.
+        /// </summary>
+        public enum NPGSQLRetriableErrors
+        {
+            /// <summary>
+            /// A deadlock has been detected, and the transaction can be retried.
+            /// Error code: 40P01
+            /// </summary>
+            DeadlockDetected = 40001,
+
+            /// <summary>
+            /// A transaction serialization failure occurred.
+            /// Error code: 40001
+            /// </summary>
+            SerializationFailure = 40001,
+
+            /// <summary>
+            /// Connection exception due to a timeout, often retriable.
+            /// Error code: 08006
+            /// </summary>
+            ConnectionExceptionTimeout = 8006,
+
+            /// <summary>
+            /// Could not obtain a lock on the resource, often retriable.
+            /// Error code: 55P03
+            /// </summary>
+            LockNotAvailable = 55003,
+
+            /// <summary>
+            /// Too many connections, retrying later might succeed.
+            /// Error code: 53300
+            /// </summary>
+            TooManyConnections = 53300,
+
+            /// <summary>
+            /// Server is too busy to handle the request, retry might succeed.
+            /// Error code: 57P03
+            /// </summary>
+            CannotConnectNow = 57003
+        }
+
         #endregion
     }
 
