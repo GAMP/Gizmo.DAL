@@ -58,6 +58,11 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(x => x.Asset)
                 .WithMany(x => x.Transactions)
                 .HasForeignKey(x => x.AssetId);
+
+            builder.HasOne(x => x.Branch)
+                .WithMany(x => x.AssetTransactions)
+                .HasForeignKey(x => x.BranchId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
