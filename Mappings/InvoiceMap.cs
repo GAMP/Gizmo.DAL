@@ -41,7 +41,7 @@ namespace Gizmo.DAL.Mappings
             builder.Property(x => x.Outstanding)
                  .HasColumnOrder(8);
 
-            builder.Property(x => x.OutstandngPoints)
+            builder.Property(x => x.OutstandingPoints)
                  .HasColumnOrder(9);
 
             builder.Property(x => x.ShiftId)

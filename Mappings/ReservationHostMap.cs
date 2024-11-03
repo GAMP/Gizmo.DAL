@@ -24,7 +24,7 @@ namespace Gizmo.DAL.Mappings
             builder.Property(e => e.HostId)
                 .IsRequired();
 
-            builder.Property(e => e.PreferedUserId)
+            builder.Property(e => e.PreferredUserId)
                 .IsRequired(false);
 
             // Indexes
@@ -39,9 +39,9 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(e => e.HostId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(e => e.PreferedUser)
+            builder.HasOne(e => e.PreferredUser)
                 .WithMany()
-                .HasForeignKey(e => e.PreferedUserId)
+                .HasForeignKey(e => e.PreferredUserId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
