@@ -841,34 +841,6 @@ namespace Gizmo.DAL
             }
         }
 
-        //TODO Add invoice correcting functionality
-
-        //using(var cx = GetDbNonProxyContext())
-        //{
-        //    var list = cx.Database.SqlQuery<int>("select InvoiceLineId FROM InvoiceLine").ToList();
-
-        //    var extendedList = cx.Database.SqlQuery<int>("SELECT INVOICELINEID FROM INVOICELINEEXTENDED").ToList();
-
-        //    var sessionList = cx.Database.SqlQuery<int>("SELECT INVOICELINEID FROM INVOICELINESESSION").ToList();
-        //    var fixedList = cx.Database.SqlQuery<int>("SELECT INVOICELINEID FROM INVOICELINETIMEFIXED").ToList();
-
-        //    var productList = cx.Database.SqlQuery<int>("SELECT INVOICELINEID FROM INVOICELINEPRODUCT").ToList();
-        //    var timeList = cx.Database.SqlQuery<int>("SELECT INVOICELINEID FROM INVOICELINETIME").ToList();
-
-        //    //list of extended records, entities using extended table are Prouduct and Product time.
-        //    var orphanedExtended = extendedList.Where(id => !productList.Contains(id) && !timeList.Contains(id))
-        //        .ToList();       
-
-        //    foreach (var id in orphanedExtended)
-        //    {
-        //        cx.Database.ExecuteSqlCommand($"DELETE FROM INVOICELINEEXTENDED WHERE INVOICELINEID={id}");
-        //        cx.Database.ExecuteSqlCommand($"DELETE FROM INVOICELINE WHERE INVOICELINEID={id}");
-        //    }
-
-        //    var l = cx.InvoiceLines.ToList();
-
-        //}
-
         /// <summary>
         /// Truncates log and dependent tables.
         /// </summary>
