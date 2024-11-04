@@ -12,7 +12,7 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<ProductBranch> builder)
         {
-            builder.HasNoKey();
+            builder.HasKey(t => new { t.ProductId, t.BranchId });
 
             builder.Property(e => e.ProductId)
                 .HasColumnOrder(0);
@@ -22,6 +22,10 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             builder.HasIndex(t => new { t.ProductId, t.BranchId }).IsUnique().HasFilter(null);
+
+            builder.HasOne(x => x.Branch)
+                .WithMany(x => x.Products)
+                .HasForeignKey(x => x.BranchId);
 
             builder.ToTable(nameof(ProductBranch));
         }

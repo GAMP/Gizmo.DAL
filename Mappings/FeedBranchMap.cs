@@ -12,7 +12,7 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<FeedBranch> builder)
         {
-            builder.HasNoKey();
+            builder.HasKey(t => new { t.FeedId, t.BranchId });
 
             builder.Property(e => e.FeedId)
                 .HasColumnOrder(0);
@@ -22,6 +22,10 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             builder.HasIndex(t => new { t.FeedId, t.BranchId }).IsUnique().HasFilter(null);
+
+            builder.HasOne(x => x.Branch)
+                .WithMany(x => x.Feeds)
+                .HasForeignKey(x => x.BranchId);
 
             builder.ToTable(nameof(FeedBranch));
         }
