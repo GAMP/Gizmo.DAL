@@ -58,8 +58,17 @@ namespace Gizmo.DAL.Mappings
             builder.HasIndex(t => t.Identification).IsUnique();
 
             // Relations
-            builder.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById);
-            builder.HasOne(x => x.ModifiedBy).WithMany().HasForeignKey(x => x.ModifiedById);
+            builder.HasOne(x => x.CreatedBy)
+                .WithMany()
+                .HasForeignKey(x => x.CreatedById);
+
+            builder.HasOne(x => x.ModifiedBy)
+                .WithMany()
+                .HasForeignKey(x => x.ModifiedById);
+
+            builder.HasOne(x => x.Branch)
+                .WithMany(x => x.Users)
+                .HasForeignKey(x => x.BranchId);
 
             // Table & Column Mappings
             builder.ToTable("User");

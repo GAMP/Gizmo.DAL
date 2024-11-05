@@ -31,45 +31,65 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(x => x.Phone)
+            builder.Property(x => x.PostalCode)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.Email)
-                .HasColumnOrder(5)
-                .HasMaxLength(SQLStringSize.TINY);
-
-            builder.Property(x => x.PostalCode)
-                .HasColumnOrder(6)
-                .HasMaxLength(SQLStringSize.TINY45);
-
             builder.Property(x => x.Region)
-                .HasColumnOrder(7)
+                .HasColumnOrder(5)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.WebSite)
-                .HasColumnOrder(8)
-                .HasMaxLength(SQLStringSize.TINY);
+            builder.Property(x => x.Latitude)
+                .HasColumnOrder(6)
+                .HasPrecision(9, 6);
 
-            builder.Property(x => x.Info)
+            builder.Property(x => x.Longitude)
+                .HasColumnOrder(7)
+                .HasPrecision(9, 6);
+
+            builder.Property(x => x.Phone)
+                .HasColumnOrder(8)
+                .HasMaxLength(SQLStringSize.TINY45);
+
+            builder.Property(x => x.Email)
                 .HasColumnOrder(9)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(x => x.TimeZone)
+            builder.Property(x => x.WebSite)
                 .HasColumnOrder(10)
+                .HasMaxLength(SQLStringSize.TINY);
+
+            builder.Property(x => x.Info)
+                .HasColumnOrder(11)
+                .HasMaxLength(SQLStringSize.TINY);
+
+            builder.Property(x => x.TimeZone)
+                .HasColumnOrder(12)
                 .HasMaxLength(SQLStringSize.TINY45);
 
             builder.Property(x => x.IsEnabled)
-                 .HasColumnOrder(11);
+                 .HasColumnOrder(13);
 
             builder.Property(x => x.IsDeleted)
-                .HasColumnOrder(12);
+                .HasColumnOrder(14);
+
+            builder.Property(x => x.Guid)
+                .HasColumnOrder(15)
+                .IsRequired();
 
             builder.HasIndex(x => x.Name)
                 .IsUnique();
 
             builder.HasIndex(x => x.Guid)
                 .IsUnique();
+
+            builder.HasOne(x => x.CreatedBy)
+                .WithMany(x => x.CreatedBranches)
+                .HasForeignKey(x => x.CreatedById);
+
+            builder.HasOne(x => x.ModifiedBy)
+               .WithMany(x => x.ModifiedBranches)
+               .HasForeignKey(x => x.ModifiedById);
 
             builder.ToTable(nameof(Branch));
         }

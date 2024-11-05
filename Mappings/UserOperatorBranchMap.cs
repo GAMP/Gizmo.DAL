@@ -9,9 +9,7 @@ namespace Gizmo.DAL.Mappings
     /// </summary>
     public sealed class UserOperatorBranchMap : IEntityTypeConfiguration<UserOperatorBranch>
     {
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
         public void Configure(EntityTypeBuilder<UserOperatorBranch> builder)
         {
             builder.HasKey(x => x.Id);
