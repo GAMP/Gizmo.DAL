@@ -1786,7 +1786,7 @@ namespace Gizmo.DAL.Contexts
         }
 
         /// <summary>
-        /// Apply gloable configurations on common properties types
+        /// Apply global configurations on common properties types
         /// </summary>
         /// <param name="modelBuilder"></param>
         public void ApplyGlobalMapConfigurations(ModelBuilder modelBuilder)
@@ -1813,6 +1813,11 @@ namespace Gizmo.DAL.Contexts
                         modelBuilder.Entity(entity).Property(property.Name).HasColumnType("datetime2");
                 }
 
+
+                //branch has custom latitude/longitude decimal configuration, we should not alter the model
+                if (entity == typeof(Branch))
+                    continue;
+
                 //make all decimal properties to have 19,4 precision
                 var decimalProperties = entity.GetProperties().Where(p => p.PropertyType == typeof(decimal) || p.PropertyType.GenericTypeArguments?.FirstOrDefault() == typeof(decimal)).ToList();
                 foreach (var property in decimalProperties)
@@ -1833,7 +1838,7 @@ namespace Gizmo.DAL.Contexts
         }
 
         /// <summary>
-        /// Guard the tables/columns/indexes against exceed the max limit of chars in naming convension 
+        /// Guard the tables/columns/indexes against exceed the max limit of chars in naming convention 
         /// </summary>
         /// <param name="modelBuilder"></param>
         private static void GuardDatabaseNameExceedLimits(ModelBuilder modelBuilder)
