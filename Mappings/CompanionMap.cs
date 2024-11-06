@@ -41,11 +41,13 @@ namespace Gizmo.DAL.Mappings
             // Relationships
             builder.HasMany(t => t.Branches)
                 .WithOne(t => t.Companion)
-                .HasForeignKey(t => t.CompanionId);
+                .HasForeignKey(t => t.CompanionId)
+                .OnDelete(DeleteBehavior.SetNull); // since companion is optional we should set to null on delete
 
             builder.HasMany(t => t.Registers)
                 .WithOne(t => t.Companion)
-                .HasForeignKey(t => t.CompanionId);
+                .HasForeignKey(t => t.CompanionId)
+                .OnDelete(DeleteBehavior.SetNull); // since companion is optional we should set to null on delete
         }
     }
 }
