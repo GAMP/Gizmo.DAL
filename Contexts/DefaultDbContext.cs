@@ -89,7 +89,7 @@ namespace Gizmo.DAL.Contexts
         public DbSet<UserGroup> UserGroups { get; set; }
 
         /// <summary>
-        /// Gets user group dissalowed host groups.
+        /// Gets user group disallowed host groups.
         /// </summary>
         public DbSet<UserGroupHostDisallowed> UserGroupHostDisallowed { get; set; }
 
@@ -224,7 +224,7 @@ namespace Gizmo.DAL.Contexts
         public DbSet<UserGuest> UsersGuest { get; set; }
 
         /// <summary>
-        /// Gets user perimssions.
+        /// Gets user permissions.
         /// </summary>
         public DbSet<UserPermission> UserPermissions { get; set; }
 
@@ -350,7 +350,7 @@ namespace Gizmo.DAL.Contexts
         public DbSet<HostLayoutGroup> HostLayoutGroups { get; set; }
 
         /// <summary>
-        /// Gets hostlayout group images.
+        /// Gets host layout group images.
         /// </summary>
         public DbSet<HostLayoutGroupImage> HostLayoutGroupImages { get; set; }
 
@@ -572,7 +572,7 @@ namespace Gizmo.DAL.Contexts
         public DbSet<ProductUserDisallowed> ProductUserGroupDisallowed { get; set; }
 
         /// <summary>
-        /// Get or sets product time dissalowed host groups.
+        /// Get or sets product time disallowed host groups.
         /// </summary>
         public DbSet<ProductTimeHostDisallowed> ProductTimeHostDisallowed { get; set; }
 
@@ -612,7 +612,7 @@ namespace Gizmo.DAL.Contexts
         public DbSet<ProductTimePeriodDay> ProductTimePeriodDays { get; set; }
 
         /// <summary>
-        /// Gets product time priods times.
+        /// Gets product time period times.
         /// </summary>
         public DbSet<ProductTimePeriodDayTime> ProductTimePeriodsTimes { get; set; }
 
@@ -629,7 +629,7 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Gets bundled product user prices.
         /// </summary>
-        public DbSet<BundleProductUserPrice> BunledProductUserPrices { get; set; }
+        public DbSet<BundleProductUserPrice> BundledProductUserPrices { get; set; }
 
         /// <summary>
         /// Gets registers.
@@ -816,6 +816,11 @@ namespace Gizmo.DAL.Contexts
         /// Gets user operator branches.
         /// </summary>
         public DbSet<UserOperatorBranch> UserOperatorBranches { get; set; }
+
+        /// <summary>
+        /// Gets companions.
+        /// </summary>
+        public DbSet<Companion> Companions { get; set; }
 
         #endregion
 
@@ -1048,6 +1053,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new ProductBranchMap());
             modelBuilder.ApplyConfiguration(new FeedBranchMap());
             modelBuilder.ApplyConfiguration(new NewsBranchMap());
+            modelBuilder.ApplyConfiguration(new CompanionMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
@@ -1172,7 +1178,7 @@ namespace Gizmo.DAL.Contexts
             {
                 var addedGroups = addedEntries.GroupBy(x => x.Entity.GetType());
                 var modifiedGroups = modifiedEntries.GroupBy(x => x.Entity.GetType());
-                var deltedGroups = deletedEntries.GroupBy(x => x.Entity.GetType());
+                var deletedGroups = deletedEntries.GroupBy(x => x.Entity.GetType());
 
                 foreach (var entityGroup in addedGroups)
                 {
@@ -1206,7 +1212,7 @@ namespace Gizmo.DAL.Contexts
                     events.Add(eventArgs);
                 }
 
-                foreach (var entityGroup in deltedGroups)
+                foreach (var entityGroup in deletedGroups)
                 {
                     if (!IsNotificationRegistered(entityGroup.Key))
                         continue;
@@ -1230,7 +1236,7 @@ namespace Gizmo.DAL.Contexts
             {
                 int result = base.SaveChanges();
 
-                // if save was sucessfull save events to cache
+                // if save was successful save events to cache
                 if (IsEventsCached)
                 {
                     foreach (var argument in events)
@@ -1371,7 +1377,7 @@ namespace Gizmo.DAL.Contexts
             {
                 var addedGroups = addedEntries.GroupBy(x => x.Entity.GetType());
                 var modifiedGroups = modifiedEntries.GroupBy(x => x.Entity.GetType());
-                var deltedGroups = deletedEntries.GroupBy(x => x.Entity.GetType());
+                var deletedGroups = deletedEntries.GroupBy(x => x.Entity.GetType());
 
                 foreach (var entityGroup in addedGroups)
                 {
@@ -1405,7 +1411,7 @@ namespace Gizmo.DAL.Contexts
                     events.Add(eventArgs);
                 }
 
-                foreach (var entityGroup in deltedGroups)
+                foreach (var entityGroup in deletedGroups)
                 {
                     if (!IsNotificationRegistered(entityGroup.Key))
                         continue;
@@ -1429,7 +1435,7 @@ namespace Gizmo.DAL.Contexts
             {
                 int result = await base.SaveChangesAsync(cancellationToken);
 
-                // if save was sucessfull save events to cache
+                // if save was successful save events to cache
                 if (IsEventsCached)
                 {
                     foreach (var argument in events)
@@ -1735,9 +1741,9 @@ namespace Gizmo.DAL.Contexts
                 var existingPropertyExpression = Expression.Property(existingEntityExpression, nameof(EntityBase.Id));
                 var existingConstant = Expression.Constant(existingId);
                 var notEqualExpression = Expression.NotEqual(existingPropertyExpression, existingConstant);
-                var notEqualExpressionlambda = Expression.Lambda<Func<TEntity, bool>>(notEqualExpression, existingEntityExpression);
+                var notEqualExpressionLambda = Expression.Lambda<Func<TEntity, bool>>(notEqualExpression, existingEntityExpression);
 
-                lambda = lambda.And(notEqualExpressionlambda);
+                lambda = lambda.And(notEqualExpressionLambda);
             }
 
             if (await entitySet.Where(lambda).AnyAsync(ct) == true)
@@ -2031,7 +2037,7 @@ namespace Gizmo.DAL.Contexts
         }
 
         /// <summary>
-        /// Sets event cache from exising enumerable.
+        /// Sets event cache from existing enumerable.
         /// </summary>
         /// <param name="cache">Cache source.</param>
         public void SetEventCache(IEnumerable<IEntityEventArgs> cache)

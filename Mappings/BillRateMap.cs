@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Bill rate entity map.
+    /// </summary>
     public class BillRateMap : IEntityTypeConfiguration<BillRate>
     {
         /// <summary>

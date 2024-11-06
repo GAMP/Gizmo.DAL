@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Register entity map.
+    /// </summary>
     public class RegisterMap : IEntityTypeConfiguration<Register>
     {
         /// <summary>

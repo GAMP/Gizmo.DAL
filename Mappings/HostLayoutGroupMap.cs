@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Host layout group entity map.
+    /// </summary>
     public class HostLayoutGroupMap : IEntityTypeConfiguration<HostLayoutGroup>
     {
         /// <summary>
