@@ -411,7 +411,7 @@ namespace Gizmo.DAL.Scripts
                     DELETE FROM UserPermission WHERE UserId IN (SELECT UserId FROM @UserIdList);
                     DELETE FROM UserNote WHERE UserId IN (SELECT UserId FROM @UserIdList);
                     DELETE FROM ReservationUser WHERE UserId IN (SELECT UserId FROM @UserIdList);
-                    DELETE FROM ReservationHost WHERE PreferedUserId IN (SELECT UserId FROM @UserIdList);
+                    DELETE FROM ReservationHost WHERE PreferredUserId IN (SELECT UserId FROM @UserIdList);
                     DELETE FROM Reservation WHERE UserId IN (SELECT UserId FROM @UserIdList);
                     DELETE FROM Token WHERE UserId IN (SELECT UserId FROM @UserIdList);
                     DELETE FROM AppRating WHERE UserId IN (SELECT UserId FROM @UserIdList);
