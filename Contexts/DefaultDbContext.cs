@@ -1055,6 +1055,27 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new NewsBranchMap());
             modelBuilder.ApplyConfiguration(new CompanionMap());
 
+            modelBuilder.ApplyConfiguration(new DiscountMap());
+            modelBuilder.ApplyConfiguration(new DiscountBasicMap());
+            modelBuilder.ApplyConfiguration(new DiscountGroupMap());
+            modelBuilder.ApplyConfiguration(new DiscountGroupDiscountMap());
+            modelBuilder.ApplyConfiguration(new TargetGroupMap());
+            modelBuilder.ApplyConfiguration(new TargetMap());
+            modelBuilder.ApplyConfiguration(new TargetGroupProductMap());
+            modelBuilder.ApplyConfiguration(new TargetGroupProductTimeMap());
+            modelBuilder.ApplyConfiguration(new TargetGroupProductGroupMap());
+            modelBuilder.ApplyConfiguration(new TargetGroupBillProfileMap());
+            modelBuilder.ApplyConfiguration(new TargetProductMap());
+            modelBuilder.ApplyConfiguration(new TargetProductTimeMap());
+            modelBuilder.ApplyConfiguration(new TargetProductGroupMap());
+            modelBuilder.ApplyConfiguration(new TargetBillProfileMap());
+
+            modelBuilder.ApplyConfiguration(new PromotionMap());
+            modelBuilder.ApplyConfiguration(new PromotionPeriodMap());
+            modelBuilder.ApplyConfiguration(new PromotionCodeMap());
+            modelBuilder.ApplyConfiguration(new PromotionDiscountMap());
+            modelBuilder.ApplyConfiguration(new PromotionDiscountGroupMap());
+
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
             #endregion
