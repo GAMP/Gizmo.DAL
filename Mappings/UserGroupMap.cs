@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// User group entity map.
+    /// </summary>
     public class UserGroupMap : IEntityTypeConfiguration<UserGroup>
     {
         /// <summary>
@@ -92,6 +95,11 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(x => x.BillProfile)
                 .WithMany(x => x.UserGroups)
                 .HasForeignKey(x => x.BillProfileId);
+
+            builder.HasOne(userGroup => userGroup.DiscountGroup)
+                .WithMany(discountGroup => discountGroup.UserGroups)
+                .HasForeignKey(userGroup => userGroup.DiscountGroupId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

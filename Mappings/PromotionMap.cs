@@ -18,6 +18,16 @@ namespace Gizmo.DAL.Mappings
             builder.HasKey(promotion => promotion.Id);
             builder.Property(promotion => promotion.Id)
                 .HasColumnName("PromotionId");
+
+            builder.Property(x => x.Name)
+                .HasMaxLength(SQLStringSize.TINY45);
+
+            builder.Property(x => x.Description)
+                .HasMaxLength(SQLStringSize.TINY)
+                .IsRequired(false);
+
+            builder.Property(x => x.Template)
+                .IsRequired(false);
         }
     }
 }

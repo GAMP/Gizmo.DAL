@@ -38,13 +38,111 @@ namespace Gizmo.DAL.Mappings
     /// <summary>
     /// Discount basic entity map.
     /// </summary>
+    public sealed class DiscountPeriodicMap : IEntityTypeConfiguration<DiscountPeriodic>
+    {
+        /// <inheritdoc/>
+        public void Configure(EntityTypeBuilder<DiscountPeriodic> builder)
+        {
+            builder.ToTable(nameof(DiscountPeriodic))
+                .HasBaseType<Discount>();
+        }
+    }
+
+    /// <summary>
+    /// Discount period entity map.
+    /// </summary>
+    public sealed class DiscountPeriodMap : IEntityTypeConfiguration<DiscountPeriod>
+    {
+        /// <inheritdoc/>
+        public void Configure(EntityTypeBuilder<DiscountPeriod> builder)
+        {
+            builder.ToTable(nameof(DiscountPeriod));
+
+            builder.HasKey(x => x.Id);
+            builder.HasIndex(t => t.Id);
+            builder.Property(x => x.Id)
+                .ValueGeneratedNever();
+
+            builder.Property(x => x.Id)
+                .HasColumnName("DiscountId");
+
+            builder.HasOne(x => x.Discount)
+                .WithOne(x => x.Period)
+                .HasForeignKey<DiscountPeriod>(x => x.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+    /// <summary>
+    /// Discount period day entity map.
+    /// </summary>
+    public sealed class DiscountPeriodDayMap : IEntityTypeConfiguration<DiscountPeriodDay>
+    {
+        /// <inheritdoc/>
+        public void Configure(EntityTypeBuilder<DiscountPeriodDay> builder)
+        {
+            builder.ToTable(nameof(DiscountPeriodDay));
+            
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Id)
+                .HasColumnName("DiscountPeriodDayId");
+
+            builder.Property(x => x.DiscountPeriodId);
+            builder.Property(x => x.Day);
+
+            builder.HasIndex(t => new { t.DiscountPeriodId, t.Day }).IsUnique();
+
+            builder.HasOne(x => x.Period)
+                .WithMany(x => x.Days)
+                .HasForeignKey(x => x.DiscountPeriodId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+    /// <summary>
+    /// Discount period day time entity map.
+    /// </summary>
+    public sealed class DiscountPeriodDayTimeMap : IEntityTypeConfiguration<DiscountPeriodDayTime>
+    {
+        /// <inheritdoc/>
+        public void Configure(EntityTypeBuilder<DiscountPeriodDayTime> builder)
+        {
+            builder.ToTable(nameof(DiscountPeriodDayTime));
+
+            builder.HasKey(x => new { x.DiscountPeriodDayId, x.StartSecond, x.EndSecond });
+            builder.HasIndex(t => t.DiscountPeriodDayId);
+
+            builder.HasOne(x => x.Day)
+                .WithMany(x => x.Times)
+                .HasForeignKey(x => x.DiscountPeriodDayId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+    /// <summary>
+    /// Discount bonus map.
+    /// </summary>
+    public sealed class DiscountBonusMap : IEntityTypeConfiguration<DiscountBonus>
+    {
+        /// <inheritdoc/>
+        public void Configure(EntityTypeBuilder<DiscountBonus> builder)
+        {
+            builder.ToTable(nameof(DiscountBonus))
+                .HasBaseType<Discount>();
+        }
+    }
+
+    /// <summary>
+    /// Discount basic entity map.
+    /// </summary>
     public sealed class DiscountBasicMap : IEntityTypeConfiguration<DiscountBasic>
     {
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<DiscountBasic> builder)
         {
             builder.ToTable(nameof(DiscountBasic))
-                .HasBaseType<Discount>();
+                .HasBaseType<DiscountPeriodic>();
         }
     }
 
@@ -209,7 +307,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(target => target.TargetGroupProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(target => new { target.TargetGroupProductId, target.ProductId }).IsUnique();
+            builder.HasIndex(target => new { target.TargetGroupProductId, target.ProductId }).IsUnique().HasFilter(null);
         }
     }
 
@@ -234,7 +332,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(target => target.TargetGroupProductTimeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(target => new { target.TargetGroupProductTimeId, target.ProductTimeId }).IsUnique();
+            builder.HasIndex(target => new { target.TargetGroupProductTimeId, target.ProductTimeId }).IsUnique().HasFilter(null);
         }
     }
 
@@ -259,7 +357,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(target => target.TargetGroupProductGroupId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(target => new { target.TargetGroupProductGroupId, target.ProductGroupId }).IsUnique();
+            builder.HasIndex(target => new { target.TargetGroupProductGroupId, target.ProductGroupId }).IsUnique().HasFilter(null);
         }
     }
 
@@ -284,7 +382,7 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(target => target.TargetGroupBillProfileId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(target => new { target.TargetGroupBillProfileId, target.BillProfileId }).IsUnique();
+            builder.HasIndex(target => new { target.TargetGroupBillProfileId, target.BillProfileId }).IsUnique().HasFilter(null);
         }
     }
 }

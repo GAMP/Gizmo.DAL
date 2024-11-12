@@ -1056,6 +1056,11 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new CompanionMap());
 
             modelBuilder.ApplyConfiguration(new DiscountMap());
+            modelBuilder.ApplyConfiguration(new DiscountPeriodicMap());
+            modelBuilder.ApplyConfiguration(new DiscountPeriodMap());
+            modelBuilder.ApplyConfiguration(new DiscountPeriodDayMap());
+            modelBuilder.ApplyConfiguration(new DiscountPeriodDayTimeMap());
+            modelBuilder.ApplyConfiguration(new DiscountBonusMap());
             modelBuilder.ApplyConfiguration(new DiscountBasicMap());
             modelBuilder.ApplyConfiguration(new DiscountGroupMap());
             modelBuilder.ApplyConfiguration(new DiscountGroupDiscountMap());
@@ -1071,7 +1076,10 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new TargetBillProfileMap());
 
             modelBuilder.ApplyConfiguration(new PromotionMap());
+            modelBuilder.ApplyConfiguration(new PromotionLimitMap());
             modelBuilder.ApplyConfiguration(new PromotionPeriodMap());
+            modelBuilder.ApplyConfiguration(new PromotionPeriodDayMap());
+            modelBuilder.ApplyConfiguration(new PromotionPeriodDayTimeMap());
             modelBuilder.ApplyConfiguration(new PromotionCodeMap());
             modelBuilder.ApplyConfiguration(new PromotionDiscountMap());
             modelBuilder.ApplyConfiguration(new PromotionDiscountGroupMap());
