@@ -14,6 +14,9 @@ namespace Gizmo.DAL.Mappings
         {
             builder.HasKey(stock => stock.Id);
 
+            builder.Property(stock => stock.Id)
+                .HasColumnOrder(0);
+
             builder.Property(stock => stock.Name)
                 .HasColumnOrder(1)
                 .IsRequired()
@@ -24,6 +27,12 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired();
 
             builder.HasIndex(stock => new { stock.Name, stock.BranchId }).IsUnique().HasFilter(null);
+
+            builder.HasOne(stock => stock.Branch)
+                .WithMany(branch => branch.Stocks)
+                .HasForeignKey(stock => stock.BranchId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
