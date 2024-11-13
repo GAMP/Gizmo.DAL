@@ -1062,6 +1062,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new DiscountPeriodDayTimeMap());
             modelBuilder.ApplyConfiguration(new DiscountBonusMap());
             modelBuilder.ApplyConfiguration(new DiscountBasicMap());
+            modelBuilder.ApplyConfiguration(new DiscountBranchMap());
             modelBuilder.ApplyConfiguration(new DiscountGroupMap());
             modelBuilder.ApplyConfiguration(new DiscountGroupDiscountMap());
             modelBuilder.ApplyConfiguration(new TargetGroupMap());
@@ -1083,6 +1084,11 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new PromotionCodeMap());
             modelBuilder.ApplyConfiguration(new PromotionDiscountMap());
             modelBuilder.ApplyConfiguration(new PromotionDiscountGroupMap());
+            modelBuilder.ApplyConfiguration(new PromotionBranchMap());
+
+            modelBuilder.ApplyConfiguration(new StockMap());
+            modelBuilder.ApplyConfiguration(new StockCountMap());
+            modelBuilder.ApplyConfiguration(new StockCountEntryMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
@@ -1093,10 +1099,7 @@ namespace Gizmo.DAL.Contexts
             #endregion
         }
 
-        /// <summary>
-        /// Override Save Changes
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public override int SaveChanges()
         {
             SetBranchAsync().GetAwaiter().GetResult();
@@ -1290,11 +1293,7 @@ namespace Gizmo.DAL.Contexts
             #endregion
         }
 
-        /// <summary>
-        /// Override Save Changes Async
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             await SetBranchAsync(cancellationToken);

@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Product branch entity map.
+    /// </summary>
     public class ProductBranchMap : IEntityTypeConfiguration<ProductBranch>
     {
         /// <summary>
@@ -12,6 +15,8 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<ProductBranch> builder)
         {
+            builder.ToTable(nameof(ProductBranch));
+
             builder.HasKey(t => new { t.ProductId, t.BranchId });
 
             builder.Property(e => e.ProductId)
@@ -19,15 +24,13 @@ namespace Gizmo.DAL.Mappings
             builder.Property(e => e.BranchId)
                 .HasColumnOrder(1);
             builder.Property(e => e.IsEnabled)
-                .HasColumnOrder(3);
+                .HasColumnOrder(2);
 
             builder.HasIndex(t => new { t.ProductId, t.BranchId }).IsUnique().HasFilter(null);
 
             builder.HasOne(x => x.Branch)
                 .WithMany(x => x.Products)
-                .HasForeignKey(x => x.BranchId);
-
-            builder.ToTable(nameof(ProductBranch));
+                .HasForeignKey(x => x.BranchId);         
         }
     }
 }

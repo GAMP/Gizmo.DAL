@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// App exe branch entity map.
+    /// </summary>
     public class AppExeBranchMap : IEntityTypeConfiguration<AppExeBranch>
     {
         /// <summary>
@@ -12,6 +15,8 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<AppExeBranch> builder)
         {
+            builder.ToTable(nameof(AppExeBranch));
+
             builder.HasKey(t => new { t.AppExeId, t.BranchId });
 
             builder.Property(e => e.AppExeId)
@@ -19,15 +24,13 @@ namespace Gizmo.DAL.Mappings
             builder.Property(e => e.BranchId)
                 .HasColumnOrder(1);
             builder.Property(e => e.IsEnabled)
-                .HasColumnOrder(3);
+                .HasColumnOrder(2);
 
             builder.HasIndex(t => new { t.AppExeId, t.BranchId }).IsUnique().HasFilter(null);
 
             builder.HasOne(x => x.Branch)
                 .WithMany(x => x.Executables)
-                .HasForeignKey(x => x.BranchId);
-
-            builder.ToTable(nameof(AppExeBranch));
+                .HasForeignKey(x => x.BranchId);           
         }
     }
 }

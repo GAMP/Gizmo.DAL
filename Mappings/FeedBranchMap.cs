@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Feed branch entity map.
+    /// </summary>
     public class FeedBranchMap : IEntityTypeConfiguration<FeedBranch>
     {
         /// <summary>
@@ -12,6 +15,8 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<FeedBranch> builder)
         {
+            builder.ToTable(nameof(FeedBranch));
+
             builder.HasKey(t => new { t.FeedId, t.BranchId });
 
             builder.Property(e => e.FeedId)
@@ -26,8 +31,6 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(x => x.Branch)
                 .WithMany(x => x.Feeds)
                 .HasForeignKey(x => x.BranchId);
-
-            builder.ToTable(nameof(FeedBranch));
         }
     }
 }

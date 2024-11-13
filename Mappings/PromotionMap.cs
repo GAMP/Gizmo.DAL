@@ -27,7 +27,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false);
 
             builder.Property(x => x.Template)
-                .IsRequired(false);
+                .IsRequired(false);                
         }
     }
 }
