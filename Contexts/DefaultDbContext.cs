@@ -1090,6 +1090,21 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new StockCountMap());
             modelBuilder.ApplyConfiguration(new StockCountEntryMap());
 
+            modelBuilder.ApplyConfiguration(new InventoryMap());
+            modelBuilder.ApplyConfiguration(new InventoryInboundMap());
+            modelBuilder.ApplyConfiguration(new InventoryAdjustmentMap());
+            modelBuilder.ApplyConfiguration(new InventoryTransferMap());
+            modelBuilder.ApplyConfiguration(new InventoryEntryMap());
+            modelBuilder.ApplyConfiguration(new InventoryInboundEntryMap());
+            modelBuilder.ApplyConfiguration(new InventoryAdjustmentEntryMap());
+            modelBuilder.ApplyConfiguration(new InventoryTransferEntryMap());
+            modelBuilder.ApplyConfiguration(new InventoryAdjustmentReasonMap());
+
+            modelBuilder.ApplyConfiguration(new DocumentTypeMap());
+            modelBuilder.ApplyConfiguration(new DocumentMap());
+            modelBuilder.ApplyConfiguration(new InventoryDocumentMap());
+
+
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
             #endregion
@@ -1492,7 +1507,7 @@ namespace Gizmo.DAL.Contexts
 
         #region FUNCTIONS
 
-        private async Task SetBranchAsync(CancellationToken cancellationToken =default)
+        private async Task SetBranchAsync(CancellationToken cancellationToken = default)
         {
             var objectStateEntries = this.ChangeTracker.Entries()
              .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
@@ -1519,7 +1534,7 @@ namespace Gizmo.DAL.Contexts
             if (modifiedEntries.Count > 0)
             {
                 foreach (var modifiedEntity in modifiedEntries)
-                    modifiedEntity.Property(nameof(IBranchedEntity.BranchId)).IsModified = false;                
+                    modifiedEntity.Property(nameof(IBranchedEntity.BranchId)).IsModified = false;
             }
         }
 
@@ -1833,7 +1848,7 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Apply default types configurations
         /// </summary>
-        /// <param name="modelBuilder"></param>
+        /// <param name="modelBuilder">Model builder.</param>
         private void ApplyDefaultTypesConfigurations(ModelBuilder modelBuilder)
         {
             var entities = modelBuilder.Model.GetEntityTypes().Select(e => e.ClrType).ToList();
@@ -1874,7 +1889,7 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Guard the tables/columns/indexes against exceed the max limit of chars in naming convention 
         /// </summary>
-        /// <param name="modelBuilder"></param>
+        /// <param name="modelBuilder">Model builder.</param>
         private static void GuardDatabaseNameExceedLimits(ModelBuilder modelBuilder)
         {
             const int MaxLengthLimit = 63;

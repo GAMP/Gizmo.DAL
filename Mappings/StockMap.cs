@@ -1,4 +1,4 @@
-﻿using Gizmo.DAL.Entities.Entities;
+﻿using Gizmo.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,6 +15,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasKey(stock => stock.Id);
 
             builder.Property(stock => stock.Id)
+                .HasColumnName("StockId")
                 .HasColumnOrder(0);
 
             builder.Property(stock => stock.Name)
