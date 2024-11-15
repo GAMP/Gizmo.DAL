@@ -3,17 +3,17 @@ using System;
 using Gizmo.DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.Npgsql
+namespace Gizmo.DAL.Migrations.MSSQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20240715120404_Update3")]
-    partial class Update3
+    [Migration("20241115083253_Update1")]
+    partial class Update1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,78 +21,78 @@ namespace Gizmo.DAL.Migrations.Npgsql
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.1")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Gizmo.DAL.Entities.App", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AgeRating")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<int>("AppCategoryId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DefaultExecutableId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(11);
 
                     b.Property<string>("Description")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("DeveloperId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(10);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("PublisherId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<DateTime?>("ReleaseDate")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Version")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(7);
 
                     b.HasKey("Id");
@@ -117,36 +117,36 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppCategoryId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ParentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -167,32 +167,32 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppEnterpriseId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -214,84 +214,84 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Accessible")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(14);
 
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Arguments")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Caption")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DefaultDeploymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(11);
 
                     b.Property<string>("ExecutablePath")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(13);
 
                     b.Property<int>("Modes")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(12);
 
                     b.Property<int>("ReservationType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(10);
 
                     b.Property<int>("RunMode")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<string>("WorkingDirectory")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(6);
 
                     b.HasKey("Id");
@@ -307,54 +307,78 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("AppExe", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.AppExeBranch", b =>
+                {
+                    b.Property<int>("AppExeId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("AppExeId", "BranchId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("AppExeId", "BranchId")
+                        .IsUnique();
+
+                    b.ToTable("AppExeBranch", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExeCdImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeCdImageId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("CheckExitCode")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DeviceId")
                         .HasMaxLength(3)
-                        .HasColumnType("character varying(3)")
+                        .HasColumnType("nvarchar(3)")
                         .HasColumnOrder(4);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("MountOptions")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -374,25 +398,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExeDeployment", b =>
                 {
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("DeploymentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("AppExeId", "DeploymentId");
 
@@ -410,25 +434,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExeImage", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -444,25 +468,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExeLicense", b =>
                 {
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("LicenseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("AppExeId", "LicenseId");
 
@@ -481,35 +505,35 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeMaxUserId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("MaxUsers")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Mode")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -526,25 +550,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExePersonalFile", b =>
                 {
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("PersonalFileId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("AppExeId", "PersonalFileId");
 
@@ -563,37 +587,37 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppExeTaskId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Activation")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("TaskBaseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -612,32 +636,32 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppGroupId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -658,11 +682,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.AppGroupApp", b =>
                 {
                     b.Property<int>("AppGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(0);
 
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("AppGroupId", "AppId");
@@ -677,25 +701,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.AppImage", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -712,50 +736,50 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppLinkId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Caption")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -775,19 +799,19 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.AppRating", b =>
                 {
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(0);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Value")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("AppId", "UserId");
@@ -803,34 +827,37 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AppStatId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AppExeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("AppId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<double>("Span")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(5);
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -838,6 +865,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasIndex("AppExeId");
 
                     b.HasIndex("AppId");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("HostId");
 
@@ -850,57 +879,57 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AssetId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AssetTypeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Barcode")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Number")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<string>("SerialNumber")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(6);
 
                     b.Property<string>("SmartCardUID")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<string>("Tag")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -908,7 +937,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasIndex("AssetTypeId");
 
                     b.HasIndex("Barcode")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Barcode] IS NOT NULL");
 
                     b.HasIndex("BranchId");
 
@@ -917,7 +947,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("SmartCardUID")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[SmartCardUID] IS NOT NULL");
 
                     b.ToTable("Asset", (string)null);
                 });
@@ -926,64 +957,69 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AssetTransactionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AssetId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("AssetTypeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("AssetTypeName")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("CheckInTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("CheckedInById")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AssetId");
 
                     b.HasIndex("AssetTypeId");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CheckedInById");
 
@@ -1000,38 +1036,38 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AssetTypeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("PartNumber")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -1050,48 +1086,53 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AssistanceRequestId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AssistanceRequestTypeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
                     b.HasIndex("AssistanceRequestTypeId");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -1108,36 +1149,36 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AssistanceRequestTypeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -1153,33 +1194,33 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("AttributeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FriendlyName")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -1198,28 +1239,28 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BillProfileId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -1238,44 +1279,47 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BillRateId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BillProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("ChargeAfter")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int>("ChargeEvery")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("MinimumFee")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<decimal>("Rate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("StartFee")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -1289,16 +1333,16 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BillRatePeriodDayId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BillRateId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Day")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1311,13 +1355,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.BillRatePeriodDayTime", b =>
                 {
                     b.Property<int>("PeriodDayId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("StartSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("EndSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("PeriodDayId", "StartSecond", "EndSecond");
 
@@ -1330,36 +1374,36 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BillRateStepId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Action")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("BillRateId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("Charge")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Minute")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<decimal>("Rate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("TargetMinute")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.HasKey("Id");
@@ -1374,87 +1418,103 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BranchId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("City")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
+                    b.Property<int?>("CompanionId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnOrder(5);
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(9);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(15);
 
                     b.Property<string>("Info")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnOrder(9);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnOrder(12);
-
-                    b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(11);
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(14);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(13);
+
+                    b.Property<decimal>("Latitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)")
+                        .HasColumnOrder(6);
+
+                    b.Property<decimal>("Longitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)")
+                        .HasColumnOrder(7);
+
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Phone")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
-                        .HasColumnOrder(4);
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(8);
 
                     b.Property<string>("PostalCode")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
-                        .HasColumnOrder(6);
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("Region")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
-                        .HasColumnOrder(7);
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("TimeZone")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
-                        .HasColumnOrder(10);
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(12);
 
                     b.Property<string>("WebSite")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnOrder(8);
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(10);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanionId");
 
                     b.HasIndex("CreatedById");
 
@@ -1475,45 +1535,45 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BundleProductId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("ProductBundleId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -1533,34 +1593,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("BundleProductUserPriceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BundleProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1580,34 +1640,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ClientTaskId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Activation")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("TaskBaseId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1620,81 +1680,128 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("ClientTask", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Companion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("CompanionId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Companion", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Deployment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DeploymentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ComparisonLevel")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(10);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Destination")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("ExcludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(4);
 
                     b.Property<string>("ExcludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(5);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(9);
 
                     b.Property<string>("IncludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(6);
 
                     b.Property<string>("IncludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(11);
 
                     b.Property<string>("RegistryString")
                         .HasMaxLength(16777215)
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(8);
 
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -1715,25 +1822,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.DeploymentDeployment", b =>
                 {
                     b.Property<int>("ParentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ChildId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("ParentId", "ChildId");
 
@@ -1752,65 +1859,70 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DepositPaymentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DepositTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("FiscalReceiptId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int>("FiscalReceiptStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(9);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("RefundStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<decimal>("RefundedAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -1835,50 +1947,50 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DepositTransactionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Balance")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -1900,34 +2012,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DeviceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnName("Name")
                         .HasColumnOrder(1);
 
@@ -1951,33 +2063,33 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DeviceHostId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DeviceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("DeviceId")
                         .HasColumnOrder(1);
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostId")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -1993,42 +2105,344 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("DeviceHost", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Discount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("DiscountId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Discount", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBranch", b =>
+                {
+                    b.Property<int>("DiscountId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("DiscountId", "BranchId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("DiscountId", "BranchId")
+                        .IsUnique();
+
+                    b.ToTable("DiscountBranch", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("DiscountGroupId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("DiscountGroup");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountGroupDiscount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("DiscountGroupDiscountId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DiscountGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiscountId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DiscountId");
+
+                    b.HasIndex("DiscountGroupId", "DiscountId")
+                        .IsUnique();
+
+                    b.ToTable("DiscountGroupDiscount");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriod", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnName("DiscountId");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Options")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("DiscountPeriod", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodDay", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("DiscountPeriodDayId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiscountPeriodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiscountPeriodId", "Day")
+                        .IsUnique();
+
+                    b.ToTable("DiscountPeriodDay", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodDayTime", b =>
+                {
+                    b.Property<int>("DiscountPeriodDayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StartSecond")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EndSecond")
+                        .HasColumnType("int");
+
+                    b.HasKey("DiscountPeriodDayId", "StartSecond", "EndSecond");
+
+                    b.HasIndex("DiscountPeriodDayId");
+
+                    b.ToTable("DiscountPeriodDayTime", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.Document", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("DocumentId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("DocumentTypeId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(4);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(5);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DocumentTypeId");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("Document", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DocumentType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("DocumentTypeId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(3);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("DocumentType", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Feed", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("FeedId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Maximum")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -2040,42 +2454,66 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("Feed", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.FeedBranch", b =>
+                {
+                    b.Property<int>("FeedId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("FeedId", "BranchId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("FeedId", "BranchId")
+                        .IsUnique();
+
+                    b.ToTable("FeedBranch", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.FiscalReceipt", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("FiscalReceiptId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DocumentNumber")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Signature")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("TaxSystem")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -2095,52 +2533,52 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("IconId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Number")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -2165,52 +2603,52 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostGroupId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AppGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DefaultGuestGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("SecurityProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<string>("SkinName")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -2237,25 +2675,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostGroupUserBillProfileId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BillProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -2272,28 +2710,28 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.HostGroupWaitingLine", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HosGroupId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("EnablePriorities")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("TimeOutOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -2312,53 +2750,53 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsManualPosition")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<bool>("IsReadyTimedOut")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Position")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<double>("ReadyTime")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(6);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<double>("TimeInLine")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(5);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -2378,35 +2816,35 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostLayoutGroupId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -2426,25 +2864,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.HostLayoutGroupImage", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostLayoutGroupId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -2461,62 +2899,62 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("HostLayoutGroupLayoutId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Column")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasDefaultValue(0)
                         .HasColumnOrder(9);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Height")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("HostLayoutGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsHidden")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Row")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasDefaultValue(0)
                         .HasColumnOrder(8);
 
                     b.Property<int>("Width")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int>("X")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Y")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -2537,28 +2975,28 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("IconId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .IsRequired()
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -2569,89 +3007,273 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("Icon", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Inventory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("InventoryId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ShiftId");
+
+                    b.HasIndex("StockId");
+
+                    b.ToTable("Inventory", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustmentReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("InventoryAdjustmentReasonId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(2);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(3);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("InventoryAdjustmentReason", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("InventoryDocumentId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InventoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("InventoryId", "DocumentId")
+                        .IsUnique();
+
+                    b.ToTable("InventoryDocument", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("InventoryEntryId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("InventoryId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("StockTransactionId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("InventoryId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ShiftId");
+
+                    b.HasIndex("StockId");
+
+                    b.HasIndex("StockTransactionId");
+
+                    b.ToTable("InventoryEntry", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Invoice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("InvoiceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(12);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Outstanding")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(8);
 
-                    b.Property<int>("OutstandngPoints")
-                        .HasColumnType("integer")
+                    b.Property<int>("OutstandingPoints")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<int>("PointsTotal")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int>("ProductOrderId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(11);
 
                     b.Property<int>("ReturnFiscalReceiptStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.Property<int>("SaleFiscalReceiptStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(13);
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(10);
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("SubTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("TaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(7);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -2672,30 +3294,30 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("InvoiceFiscalReceiptId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("FiscalReceiptId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -2717,123 +3339,123 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("InvoiceLineId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("Cost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(10);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(20);
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(21);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PayType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(18);
 
                     b.Property<int?>("Points")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(15);
 
                     b.Property<int>("PointsAward")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(16);
 
                     b.Property<int>("PointsTotal")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.Property<int?>("PointsTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(19);
 
                     b.Property<decimal>("PreTaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(12);
 
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TaxRate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(11);
 
                     b.Property<decimal>("TaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(17);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(13);
 
                     b.Property<decimal?>("UnitCost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(9);
 
                     b.Property<decimal>("UnitListPrice")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("UnitPointsListPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int>("UnitPointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -2845,7 +3467,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("PointsTransactionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[PointsTransactionId] IS NOT NULL");
 
                     b.HasIndex("RegisterId");
 
@@ -2862,54 +3485,59 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("InvoicePaymentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("RefundStatus")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("RefundedAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -2932,49 +3560,49 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("LicenseId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Assembly")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Plugin")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<byte[]>("Settings")
                         .HasMaxLength(65535)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -2996,49 +3624,49 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("LicenseKeyId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AssignedHostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Comment")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(4);
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int>("LicenseId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Value")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -3061,46 +3689,46 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("LogId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Category")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("HostNumber")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<string>("Hostname")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(8);
 
                     b.Property<int>("MessageType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<int>("ModuleType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<string>("ModuleVersion")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(5);
 
                     b.Property<DateTime>("Time")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -3119,14 +3747,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.LogException", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("LogId")
                         .HasColumnOrder(0);
 
                     b.Property<byte[]>("ExceptionData")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -3141,61 +3769,61 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("MappingId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Label")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("MountPoint")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<string>("Password")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(7);
 
                     b.Property<int>("Size")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<string>("Username")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(6);
 
                     b.HasKey("Id");
@@ -3214,40 +3842,40 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("MonetaryUnitId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("Value")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -3266,58 +3894,58 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("NewsId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BackgroundUrl")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Data")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(2);
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<string>("MediaUrl")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Url")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -3329,44 +3957,68 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("News", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.NewsBranch", b =>
+                {
+                    b.Property<int>("NewsId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("NewsId", "BranchId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("NewsId", "BranchId")
+                        .IsUnique();
+
+                    b.ToTable("NewsBranch", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Note", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("NoteId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Sevirity")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(16777215)
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -3383,84 +4035,91 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PaymentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("AmountReceived")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DepositTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("PointTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<int>("RefundStatus")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("RefundedAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BranchId");
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DepositTransactionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[DepositTransactionId] IS NOT NULL");
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("PointTransactionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[PointTransactionId] IS NOT NULL");
 
                     b.HasIndex("RegisterId");
 
@@ -3475,59 +4134,64 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PaymentIntentId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<Guid>("Provider")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(7);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<string>("TransactionId")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(5);
 
                     b.Property<DateTime?>("TransactionTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(6);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -3548,68 +4212,68 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.PaymentMethod", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PaymentMethodId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<bool>("IsClient")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(10);
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsManager")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(8);
 
                     b.Property<bool>("IsPortal")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(9);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<Guid?>("PaymentProvider")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(11);
 
                     b.Property<decimal>("Surcharge")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -3628,96 +4292,96 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PersonalFileId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Accessible")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(16);
 
                     b.Property<int>("Activation")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Caption")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("CompressionLevel")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Deactivation")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<string>("ExcludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(9);
 
                     b.Property<string>("ExcludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(10);
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(13);
 
                     b.Property<string>("IncludeDirectories")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(11);
 
                     b.Property<string>("IncludeFiles")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(12);
 
                     b.Property<int>("MaxQuota")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(15);
 
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.HasKey("Id");
@@ -3739,33 +4403,33 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PluginLibraryId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Scope")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -3783,48 +4447,48 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PointTransactionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Amount")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Balance")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -3846,30 +4510,30 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PresetTimeSaleId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Value")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -3885,31 +4549,31 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("PresetTimeSaleMoneyId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Value")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -3925,95 +4589,96 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Barcode")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(8);
 
                     b.Property<decimal?>("Cost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("OrderOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("Points")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("PointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<decimal>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("ProductGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("PurchaseOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("StockAlert")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("StockOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("StockProductAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("StockProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Barcode")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Barcode] IS NOT NULL");
 
                     b.HasIndex("CreatedById");
 
@@ -4031,47 +4696,71 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.UseTptMappingStrategy();
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.ProductBranch", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("ProductId", "BranchId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("ProductId", "BranchId")
+                        .IsUnique();
+
+                    b.ToTable("ProductBranch", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductBundleUserPrice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductBundleUserPriceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("PointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("ProductBundleId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("PurchaseOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -4092,39 +4781,39 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductGroupId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<int?>("ParentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("SortOption")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -4144,34 +4833,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductHostHiddenId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsHidden")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -4192,32 +4881,32 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductImageId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
                         .IsRequired()
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -4234,129 +4923,129 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductOLId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("Cost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(10);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("DeliveredQuantity")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<DateTime?>("DeliveredTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(19);
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(20);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PayType")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(18);
 
                     b.Property<int?>("Points")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(15);
 
                     b.Property<int>("PointsAward")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(16);
 
                     b.Property<int>("PointsTotal")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.Property<decimal>("PreTaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(12);
 
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("ProductOrderId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TaxRate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(11);
 
                     b.Property<decimal>("TaxTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(17);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(13);
 
                     b.Property<decimal?>("UnitCost")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(9);
 
                     b.Property<decimal>("UnitListPrice")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("UnitPointsListPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int>("UnitPointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -4385,82 +5074,82 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductOrderId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeliveredTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PointsTotal")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
-                    b.Property<int?>("PreferedPaymentMethodId")
-                        .HasColumnType("integer");
+                    b.Property<int?>("PreferredPaymentMethodId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Source")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<decimal>("SubTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Tax")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("UserNote")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
@@ -4470,7 +5159,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
                     b.HasIndex("ModifiedById");
 
-                    b.HasIndex("PreferedPaymentMethodId");
+                    b.HasIndex("PreferredPaymentMethodId");
 
                     b.HasIndex("RegisterId");
 
@@ -4484,17 +5173,17 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductPeriod", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductId");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -4507,16 +5196,16 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductPeriodDayId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Day")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductPeriodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductPeriodId");
 
                     b.HasKey("Id");
@@ -4530,13 +5219,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductPeriodDayTime", b =>
                 {
                     b.Property<int>("PeriodDayId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("StartSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("EndSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("PeriodDayId", "StartSecond", "EndSecond");
 
@@ -4549,38 +5238,38 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductTaxId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("TaxId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -4601,34 +5290,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductTimeHostDisallowedId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsDisallowed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductTimeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -4648,17 +5337,17 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductTimePeriod", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductId");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -4672,16 +5361,16 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductTimePeriodDayId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Day")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductTimePeriodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductTimePeriodId");
 
                     b.HasKey("Id");
@@ -4697,13 +5386,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductTimePeriodDayTime", b =>
                 {
                     b.Property<int>("PeriodDayId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("StartSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("EndSecond")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("PeriodDayId", "StartSecond", "EndSecond");
 
@@ -4716,34 +5405,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductUserDisallowedId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDisallowed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -4764,46 +5453,46 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ProductUserPriceId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("PointsPrice")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("PurchaseOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -4820,50 +5509,252 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("ProductUserPrice", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Promotion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("PromotionId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CodeType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("Template")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("Promotion", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionBranch", b =>
+                {
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("PromotionId", "BranchId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("PromotionId", "BranchId")
+                        .IsUnique();
+
+                    b.ToTable("PromotionBranch", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("PromotionCodeId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("PromotionId");
+
+                    b.HasIndex("Value")
+                        .IsUnique();
+
+                    b.ToTable("PromotionCode", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionLimit", b =>
+                {
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("PromotionId", "Type");
+
+                    b.ToTable("PromotionLimit", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionPeriod", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnName("PromotionId");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Options")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("PromotionPeriod", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionPeriodDay", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("PromotionPeriodDayId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PromotionPeriodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PromotionPeriodId", "Day")
+                        .IsUnique();
+
+                    b.ToTable("PromotionPeriodDay", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionPeriodDayTime", b =>
+                {
+                    b.Property<int>("PromotionPeriodDayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StartSecond")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EndSecond")
+                        .HasColumnType("int");
+
+                    b.HasKey("PromotionPeriodDayId", "StartSecond", "EndSecond");
+
+                    b.HasIndex("PromotionPeriodDayId");
+
+                    b.ToTable("PromotionPeriodDayTime", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Refund", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("RefundId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(2);
 
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DepositTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("PaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("PointTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("RefundMethodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -4888,77 +5779,88 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("RegisterId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanionId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("FiscalReceiptPrinterNumber")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<int?>("IdleTimeout")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(7);
 
                     b.Property<string>("MacAddress")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Number")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("PaymentTerminalNumber")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
+
+                    b.Property<int?>("StockId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
 
+                    b.HasIndex("CompanionId");
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("MacAddress")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[MacAddress] IS NOT NULL");
 
                     b.HasIndex("ModifiedById");
+
+                    b.HasIndex("StockId");
 
                     b.HasIndex("Name", "BranchId");
 
@@ -4969,43 +5871,43 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("RegisterTransactionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("RegisterId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
@@ -5025,44 +5927,44 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ReportPresetId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<string>("Filters")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Range")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<Guid>("Report")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -5081,53 +5983,53 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ReservationId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("ContactEmail")
                         .HasMaxLength(254)
-                        .HasColumnType("character varying(254)");
+                        .HasColumnType("nvarchar(254)");
 
                     b.Property<string>("ContactPhone")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Duration")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Pin")
                         .IsRequired()
                         .HasMaxLength(6)
-                        .HasColumnType("character varying(6)");
+                        .HasColumnType("nvarchar(6)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -5149,31 +6051,31 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ReservationHostId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
-                    b.Property<int?>("PreferedUserId")
-                        .HasColumnType("integer");
+                    b.Property<int?>("PreferredUserId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ReservationId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -5183,7 +6085,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
                     b.HasIndex("ModifiedById");
 
-                    b.HasIndex("PreferedUserId");
+                    b.HasIndex("PreferredUserId");
 
                     b.HasIndex("ReservationId", "HostId")
                         .IsUnique();
@@ -5195,28 +6097,28 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ReservationUserId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ReservationId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -5236,32 +6138,32 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("SecurityProfileId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisabledDrives")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -5280,30 +6182,30 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("SecurityProfilePolicyId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SecurityProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -5322,36 +6224,36 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("SecurityProfileRestrictionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Parameter")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("SecurityProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -5369,37 +6271,37 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("SettingId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("GroupName")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Value")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -5418,58 +6320,58 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ShiftId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("EndTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(8);
 
                     b.Property<int?>("EndedById")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsEnding")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("OperatorId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("RegisterId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<DateTime>("Start")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.HasKey("Id");
@@ -5495,89 +6397,89 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ShiftCountId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Actual")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(12);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Deposits")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(5);
 
                     b.Property<decimal>("Difference")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(13);
 
                     b.Property<decimal>("Expected")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(11);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(14);
 
                     b.Property<decimal>("PayIns")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(6);
 
                     b.Property<decimal>("PayOuts")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(8);
 
                     b.Property<int>("PaymentMethodId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<decimal>("Refunds")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(9);
 
                     b.Property<decimal>("Sales")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(4);
 
                     b.Property<int>("ShiftId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Voids")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(10);
 
                     b.Property<decimal>("Withdrawals")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(7);
 
                     b.HasKey("Id");
@@ -5594,63 +6496,197 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("ShiftCount", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Stock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("StockId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("Name", "BranchId")
+                        .IsUnique();
+
+                    b.ToTable("Stock");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.StockCount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("StockId");
+
+                    b.ToTable("StockCount", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.StockCountEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Actual")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Difference")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.Property<decimal>("Expected")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockCountId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("StockCountId");
+
+                    b.HasIndex("ProductId", "StockCountId")
+                        .IsUnique();
+
+                    b.ToTable("StockCountEntry", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.StockTransaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("StockTransactionId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsVoided")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("OnHand")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("SourceProductAmount")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int?>("SourceProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("SourceProductOnHand")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -5667,36 +6703,112 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("StockTransaction", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Target", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("TargetId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TargetGroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("TargetGroupId");
+
+                    b.ToTable("Target", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("TargetGroupId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DiscountId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IncludeAll")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Requirement")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Value")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DiscountId");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("TargetGroup", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.TaskBase", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("TaskId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -5723,34 +6835,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("TaxId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Value")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.HasKey("Id");
 
@@ -5768,43 +6880,43 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("TokenId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConfirmationCode")
                         .HasMaxLength(6)
-                        .HasColumnType("character varying(6)");
+                        .HasColumnType("nvarchar(6)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("Expires")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
+                        .HasColumnType("nvarchar(32)");
 
                     b.HasKey("Id");
 
@@ -5824,28 +6936,28 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UsageId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("Seconds")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UsageSessionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -5863,50 +6975,55 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UsageSessionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("CurrentSecond")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CurrentUsageId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(4);
 
                     b.Property<decimal>("MinimumFee")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("NegativeSeconds")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<decimal>("RatesTotal")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<decimal>("StartFee")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CurrentUsageId");
 
@@ -5921,79 +7038,84 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime?>("BirthDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<string>("City")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("Country")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Identification")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDisabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("MobilePhone")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PostCode")
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("Sex")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SmartCardUID")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -6001,12 +7123,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .IsUnique();
 
                     b.HasIndex("Identification")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Identification] IS NOT NULL");
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("SmartCardUID")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[SmartCardUID] IS NOT NULL");
 
                     b.ToTable("User", (string)null);
 
@@ -6017,49 +7141,49 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserAgreementId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Agreement")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DisplayOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -6075,34 +7199,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserAgreementStateId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AcceptState")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserAgreementId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -6122,36 +7246,36 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserAttributeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AttributeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -6171,31 +7295,31 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.UserCredential", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Password")
                         .HasMaxLength(64)
-                        .HasColumnType("bytea")
+                        .HasColumnType("binary(64)")
                         .HasColumnOrder(3)
                         .IsFixedLength();
 
                     b.Property<byte[]>("Salt")
                         .HasMaxLength(100)
-                        .HasColumnType("bytea")
+                        .HasColumnType("binary(100)")
                         .HasColumnOrder(4)
                         .IsFixedLength();
 
@@ -6213,28 +7337,28 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.UserCreditLimit", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("CreditLimit")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -6252,104 +7376,107 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserGroupId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AppGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("BillProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<int>("BillingOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("CreditLimit")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(11);
 
                     b.Property<int>("CreditLimitOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(9);
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
+                    b.Property<int?>("DiscountGroupId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsAgeRatingEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(16);
 
                     b.Property<bool>("IsNegativeBalanceAllowed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(10);
 
                     b.Property<bool>("IsWaitingLinePriorityEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(8);
 
                     b.Property<int>("Overrides")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(7);
 
                     b.Property<int?>("Points")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(15);
 
                     b.Property<int>("PointsAwardOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(12);
 
                     b.Property<decimal>("PointsMoneyRatio")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(13);
 
                     b.Property<int>("PointsTimeRatio")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(14);
 
                     b.Property<int>("RequiredUserInfo")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<int?>("SecurityProfileId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("WaitingLinePriority")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -6358,6 +7485,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasIndex("BillProfileId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("DiscountGroupId");
 
                     b.HasIndex("ModifiedById");
 
@@ -6373,34 +7502,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserGroupHostDisallowedId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<bool>("IsDisallowed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -6421,34 +7550,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("OperatorBranchId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BranchId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("OperatorId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -6469,38 +7598,38 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserPermissionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -6518,25 +7647,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.UserPicture", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Picture")
                         .HasMaxLength(16777215)
-                        .HasColumnType("bytea")
+                        .HasColumnType("varbinary(max)")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -6554,73 +7683,78 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserSessionId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<double>("BilledSpan")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(6);
 
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("EndTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(9);
 
                     b.Property<double>("GraceSpan")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<double>("GraceSpanTotal")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("GraceTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<double>("PauseSpan")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<double>("PauseSpanTotal")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<double>("PendSpan")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(8);
 
                     b.Property<double>("PendSpanTotal")
-                        .HasColumnType("double precision");
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("PendTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("datetime2")
                         .HasColumnOrder(7);
 
                     b.Property<int>("Slot")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<double>("Span")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(5);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -6635,40 +7769,40 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("UserSessionChangeId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("HostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("Slot")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(5);
 
                     b.Property<double>("Span")
-                        .HasColumnType("double precision")
+                        .HasColumnType("float")
                         .HasColumnOrder(6);
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("UserSessionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasKey("Id");
@@ -6688,42 +7822,42 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("VariableId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Scope")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(2);
 
                     b.HasKey("Id");
@@ -6742,31 +7876,31 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("VerificationId");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("TokenId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -6787,25 +7921,30 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("VoidId")
                         .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("RegisterId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -6825,7 +7964,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Property<string>("UniqueId")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasIndex("Id")
@@ -6837,6 +7976,23 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("DeviceHdmi", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Discount");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.ToTable("DiscountBonus", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodic", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Discount");
+
+                    b.ToTable("DiscountPeriodic", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.HostComputer", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.Host");
@@ -6844,13 +8000,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Property<string>("Hostname")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<string>("MACAddress")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.HasIndex("Id");
@@ -6866,7 +8022,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.Host");
 
                     b.Property<int>("MaximumUsers")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -6874,20 +8030,119 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("HostEndpoint", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustment", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Inventory");
+
+                    b.Property<int>("AdjustmentType")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.ToTable("InventoryAdjustment", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryInbound", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Inventory");
+
+                    b.Property<decimal>("Cost")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.ToTable("InventoryInbound", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransfer", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Inventory");
+
+                    b.Property<int>("TransferStockId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.HasIndex("TransferStockId");
+
+                    b.ToTable("InventoryTransfer", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustmentEntry", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.InventoryEntry");
+
+                    b.Property<int?>("AdjustmentReasonId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(1);
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(3);
+
+                    b.Property<decimal>("UnitCost")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(0);
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(2);
+
+                    b.HasIndex("AdjustmentReasonId");
+
+                    b.ToTable("InventoryAdjustmentEntry", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryInboundEntry", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.InventoryEntry");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.Property<decimal>("UnitCost")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.ToTable("InventoryInboundEntry", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferEntry", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.InventoryEntry");
+
+                    b.Property<int>("TransferStockId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("TransferStockId");
+
+                    b.ToTable("InventoryTransferEntry", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineExtended", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLine");
 
                     b.Property<int?>("BundleLineId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("StockReturnTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("StockTransactionId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasIndex("BundleLineId");
@@ -6896,10 +8151,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .IsUnique();
 
                     b.HasIndex("StockReturnTransactionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[StockReturnTransactionId] IS NOT NULL");
 
                     b.HasIndex("StockTransactionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[StockTransactionId] IS NOT NULL");
 
                     b.ToTable("InvoiceLineExtended", (string)null);
                 });
@@ -6909,10 +8166,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLine");
 
                     b.Property<int>("OrderLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UsageSessionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -6930,10 +8187,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLine");
 
                     b.Property<bool>("IsDepleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int>("OrderLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -6949,10 +8206,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.Note");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UserNoteOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -6967,11 +8224,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.PaymentIntent");
 
                     b.Property<int?>("DepositPaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("DepositPaymentId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[DepositPaymentId] IS NOT NULL");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -6984,18 +8242,19 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.PaymentIntent");
 
                     b.Property<int?>("InvoicePaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("ProductOrderId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("Id")
                         .IsUnique();
 
                     b.HasIndex("InvoicePaymentId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[InvoicePaymentId] IS NOT NULL");
 
                     b.HasIndex("ProductOrderId");
 
@@ -7017,37 +8276,37 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.ProductBase");
 
                     b.Property<int?>("AppGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpirationOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpireAfterType")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpireAtDayTimeMinute")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpireFromOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ExpiresAfter")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("Minutes")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UsageOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("UseOrder")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("WeekDayMaxMinutes")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int?>("WeekEndMaxMinutes")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("AppGroupId");
 
@@ -7062,7 +8321,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.ProductOL");
 
                     b.Property<int?>("BundleLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("BundleLineId");
 
@@ -7074,7 +8333,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.ProductOL");
 
                     b.Property<int>("UsageSessionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("UsageSessionId");
 
@@ -7088,24 +8347,49 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("ProductOLTimeFixed", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionDiscount", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Promotion");
+
+                    b.Property<int>("DiscountId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("DiscountId");
+
+                    b.ToTable("PromotionDiscount", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionDiscountGroup", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Promotion");
+
+                    b.Property<int>("DiscountGroupId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("DiscountGroupId");
+
+                    b.ToTable("PromotionDiscountGroup", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.RefundDepositPayment", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.Refund");
 
                     b.Property<int?>("DepositPaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("FiscalReceiptId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int>("FiscalReceiptStatus")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.HasIndex("DepositPaymentId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[DepositPaymentId] IS NOT NULL");
 
                     b.HasIndex("FiscalReceiptId");
 
@@ -7120,11 +8404,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.Refund");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(2);
 
                     b.Property<int>("InvoicePaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("Id")
@@ -7138,6 +8422,106 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("RefundInvoicePayment", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetBillProfile", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Target");
+
+                    b.Property<int>("BillProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetGroupBillProfileId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("BillProfileId");
+
+                    b.HasIndex("TargetGroupBillProfileId", "BillProfileId")
+                        .IsUnique();
+
+                    b.ToTable("TargetBillProfile", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetProduct", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Target");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetGroupProductId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("TargetGroupProductId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("TargetProduct", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetProductGroup", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Target");
+
+                    b.Property<int>("ProductGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetGroupProductGroupId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("ProductGroupId");
+
+                    b.HasIndex("TargetGroupProductGroupId", "ProductGroupId")
+                        .IsUnique();
+
+                    b.ToTable("TargetProductGroup", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetProductTime", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Target");
+
+                    b.Property<int>("ProductTimeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetGroupProductTimeId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("ProductTimeId");
+
+                    b.HasIndex("TargetGroupProductTimeId", "ProductTimeId")
+                        .IsUnique();
+
+                    b.ToTable("TargetProductTime", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupBillProfile", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.TargetGroup");
+
+                    b.ToTable("TargetGroupBillProfile", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupProduct", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.TargetGroup");
+
+                    b.ToTable("TargetGroupProduct", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupProductGroup", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.TargetGroup");
+
+                    b.ToTable("TargetGroupProductGroup", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupProductTime", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.TargetGroup");
+
+                    b.ToTable("TargetGroupProductTime", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.TaskJunction", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.TaskBase");
@@ -7145,15 +8529,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Property<string>("DestinationDirectory")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("Options")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("SourceDirectory")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.ToTable("TaskJunction", (string)null);
                 });
@@ -7165,15 +8549,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NotificationOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.ToTable("TaskNotification", (string)null);
                 });
@@ -7184,32 +8568,32 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
                     b.Property<string>("Arguments")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Password")
                         .HasMaxLength(45)
-                        .HasColumnType("character varying(45)")
+                        .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(5);
 
                     b.Property<int>("ProcessOptions")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(6);
 
                     b.Property<string>("Username")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(4);
 
                     b.Property<string>("WorkingDirectory")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(3);
 
                     b.ToTable("TaskProcess", (string)null);
@@ -7222,13 +8606,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Property<string>("Data")
                         .IsRequired()
                         .HasMaxLength(65535)
-                        .HasColumnType("character varying(65535)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProcessOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ScriptType")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.ToTable("TaskScript", (string)null);
                 });
@@ -7238,7 +8622,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.Usage");
 
                     b.Property<int>("UserSessionId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -7253,34 +8637,35 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.User");
 
                     b.Property<int?>("BillingOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DisabledDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(254)
-                        .HasColumnType("character varying(254)");
+                        .HasColumnType("nvarchar(254)");
 
                     b.Property<DateTime?>("EnableDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsNegativeBalanceAllowed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsPersonalInfoRequested")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int>("UserGroupId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -7299,18 +8684,19 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
                     b.Property<string>("Email")
                         .HasMaxLength(254)
-                        .HasColumnType("character varying(254)");
+                        .HasColumnType("nvarchar(254)");
 
                     b.Property<int>("ShiftOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -7328,7 +8714,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(254)
-                        .HasColumnType("character varying(254)");
+                        .HasColumnType("nvarchar(254)");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -7343,7 +8729,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -7356,7 +8742,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.Void");
 
                     b.Property<int>("DepositPaymentId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("DepositPaymentId")
@@ -7373,7 +8759,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.Void");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.HasIndex("Id")
@@ -7385,15 +8771,32 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.ToTable("VoidInvoice", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.DiscountPeriodic");
+
+                    b.Property<int>("ApplyType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Value")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.ToTable("DiscountBasic", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineProduct", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLineExtended");
 
                     b.Property<int>("OrderLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("OrderLineId")
                         .IsUnique();
@@ -7408,13 +8811,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.InvoiceLineExtended");
 
                     b.Property<bool>("IsDepleted")
-                        .HasColumnType("boolean");
+                        .HasColumnType("bit");
 
                     b.Property<int>("OrderLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductTimeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("OrderLineId")
                         .IsUnique();
@@ -7436,7 +8839,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.ProductBaseExtended");
 
                     b.Property<int>("BundleStockOptions")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.ToTable("ProductBundle", (string)null);
                 });
@@ -7446,10 +8849,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.ProductOLExtended");
 
                     b.Property<string>("Mark")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("ProductId");
 
@@ -7461,7 +8864,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.ProductOLExtended");
 
                     b.Property<int>("ProductTimeId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("ProductTimeId");
 
@@ -7473,20 +8876,20 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.UsageUserSession");
 
                     b.Property<DateTime>("BillProfileStamp")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("BillRateId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<decimal>("Rate")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(3);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)")
+                        .HasColumnType("decimal(19,4)")
                         .HasColumnOrder(2);
 
                     b.HasIndex("BillRateId");
@@ -7499,7 +8902,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.UsageUserSession");
 
                     b.Property<int>("InvoiceLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("InvoiceLineId");
 
@@ -7511,7 +8914,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.UsageUserSession");
 
                     b.Property<int>("InvoiceLineId")
-                        .HasColumnType("integer");
+                        .HasColumnType("int");
 
                     b.HasIndex("InvoiceLineId");
 
@@ -7523,23 +8926,24 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasBaseType("Gizmo.DAL.Entities.UserMember");
 
                     b.Property<bool>("IsJoined")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("IsReserved")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnOrder(2);
 
                     b.Property<int?>("ReservedHostId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("ReservedSlot")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.HasIndex("ReservedHostId", "ReservedSlot")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
 
                     b.ToTable("UserGuest", (string)null);
                 });
@@ -7642,6 +9046,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("DefaultDeployment");
 
                     b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AppExeBranch", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AppExe", "AppExe")
+                        .WithMany()
+                        .HasForeignKey("AppExeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("Executables")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppExe");
+
+                    b.Navigation("Branch");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AppExeCdImage", b =>
@@ -7950,6 +9373,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Gizmo.DAL.Entities.HostComputer", "Host")
                         .WithMany("AppStats")
                         .HasForeignKey("HostId")
@@ -7965,6 +9394,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("App");
 
                     b.Navigation("AppExe");
+
+                    b.Navigation("Branch");
 
                     b.Navigation("Host");
 
@@ -8016,6 +9447,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("AssetTransactions")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CheckedInBy")
                         .WithMany()
                         .HasForeignKey("CheckedInById");
@@ -8037,6 +9474,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("Asset");
 
                     b.Navigation("AssetType");
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CheckedInBy");
 
@@ -8070,6 +9509,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -8089,6 +9534,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("UserId");
 
                     b.Navigation("AssistanceRequestType");
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CreatedBy");
 
@@ -8190,13 +9637,20 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Branch", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Companion", "Companion")
+                        .WithMany("Branches")
+                        .HasForeignKey("CompanionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
-                        .WithMany()
+                        .WithMany("CreatedBranches")
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
-                        .WithMany()
+                        .WithMany("ModifiedBranches")
                         .HasForeignKey("ModifiedById");
+
+                    b.Navigation("Companion");
 
                     b.Navigation("CreatedBy");
 
@@ -8288,6 +9742,21 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("TaskBase");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Companion", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Deployment", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
@@ -8336,6 +9805,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.DepositPayment", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -8373,6 +9846,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CreatedBy");
 
@@ -8480,6 +9955,151 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("ModifiedBy");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Discount", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBranch", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("Discounts")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Discount", "Discount")
+                        .WithMany("Branches")
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountGroup", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountGroupDiscount", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.DiscountGroup", "DiscountGroup")
+                        .WithMany("Discounts")
+                        .HasForeignKey("DiscountGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Discount", "Discount")
+                        .WithMany()
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Discount");
+
+                    b.Navigation("DiscountGroup");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriod", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DiscountPeriodic", "Discount")
+                        .WithOne("Period")
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountPeriod", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodDay", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DiscountPeriod", "Period")
+                        .WithMany("Days")
+                        .HasForeignKey("DiscountPeriodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Period");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodDayTime", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DiscountPeriodDay", "Day")
+                        .WithMany("Times")
+                        .HasForeignKey("DiscountPeriodDayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Day");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.Document", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.DocumentType", "DocumentType")
+                        .WithMany("Documents")
+                        .HasForeignKey("DocumentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DocumentType");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DocumentType", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Feed", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
@@ -8493,6 +10113,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("CreatedBy");
 
                     b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.FeedBranch", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("Feeds")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Feed", "Feed")
+                        .WithMany()
+                        .HasForeignKey("FeedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Feed");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.FiscalReceipt", b =>
@@ -8646,7 +10285,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Gizmo.DAL.Entities.HostGroupWaitingLine", "WatingLine")
+                    b.HasOne("Gizmo.DAL.Entities.HostGroupWaitingLine", "WaitingLine")
                         .WithMany("Entries")
                         .HasForeignKey("HostGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -8670,7 +10309,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
                     b.Navigation("User");
 
-                    b.Navigation("WatingLine");
+                    b.Navigation("WaitingLine");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.HostLayoutGroup", b =>
@@ -8765,8 +10404,122 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("ModifiedBy");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Inventory", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
+                        .WithMany()
+                        .HasForeignKey("ShiftId");
+
+                    b.HasOne("Gizmo.DAL.Entities.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Shift");
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustmentReason", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryDocument", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.Document", "Document")
+                        .WithMany("InventoryDocuments")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Inventory", "Inventory")
+                        .WithMany("Documents")
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Document");
+
+                    b.Navigation("Inventory");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryEntry", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.Inventory", "Inventory")
+                        .WithMany("Entries")
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
+                        .WithMany("InventoryEntries")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
+                        .WithMany()
+                        .HasForeignKey("ShiftId");
+
+                    b.HasOne("Gizmo.DAL.Entities.Stock", "Stock")
+                        .WithMany("InventoryEntries")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.StockTransaction", "StockTransaction")
+                        .WithMany("InventoryEntries")
+                        .HasForeignKey("StockTransactionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Inventory");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Shift");
+
+                    b.Navigation("Stock");
+
+                    b.Navigation("StockTransaction");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Invoice", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -8794,6 +10547,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CreatedBy");
 
@@ -8897,6 +10652,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoicePayment", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -8930,6 +10689,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CreatedBy");
 
@@ -9046,6 +10807,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("ModifiedBy");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.NewsBranch", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("News")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.News", "News")
+                        .WithMany()
+                        .HasForeignKey("NewsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("News");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Note", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
@@ -9063,6 +10843,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Payment", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany("CreatedPayments")
                         .HasForeignKey("CreatedById");
@@ -9099,6 +10883,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("Branch");
+
                     b.Navigation("CreatedBy");
 
                     b.Navigation("DepositTransaction");
@@ -9118,6 +10904,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.PaymentIntent", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -9137,6 +10927,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CreatedBy");
 
@@ -9211,7 +11003,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("ShiftId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
-                        .WithMany("LoayalityPoints")
+                        .WithMany("LoyaltyPoints")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -9284,6 +11076,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("ProductGroup");
 
                     b.Navigation("StockProduct");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.ProductBranch", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("Products")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductBundleUserPrice", b =>
@@ -9449,9 +11260,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .WithMany("ModifiedOrders")
                         .HasForeignKey("ModifiedById");
 
-                    b.HasOne("Gizmo.DAL.Entities.PaymentMethod", "PreferedPaymentMethod")
+                    b.HasOne("Gizmo.DAL.Entities.PaymentMethod", "PreferredPaymentMethod")
                         .WithMany()
-                        .HasForeignKey("PreferedPaymentMethodId");
+                        .HasForeignKey("PreferredPaymentMethodId");
 
                     b.HasOne("Gizmo.DAL.Entities.Register", "Register")
                         .WithMany()
@@ -9473,7 +11284,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
                     b.Navigation("ModifiedBy");
 
-                    b.Navigation("PreferedPaymentMethod");
+                    b.Navigation("PreferredPaymentMethod");
 
                     b.Navigation("Register");
 
@@ -9627,7 +11438,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.UserGroup", "UserGroup")
-                        .WithMany("DissalowedProducts")
+                        .WithMany("DisallowedProducts")
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -9672,8 +11483,113 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("UserGroup");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Promotion", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionBranch", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("Promotions")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Promotion", "Promotion")
+                        .WithMany("Branches")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Promotion");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionCode", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.Promotion", "Promotion")
+                        .WithMany("Codes")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+
+                    b.Navigation("Promotion");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionLimit", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Promotion", "Promotion")
+                        .WithMany("Limits")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Promotion");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionPeriod", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Promotion", "Promotion")
+                        .WithOne("Period")
+                        .HasForeignKey("Gizmo.DAL.Entities.PromotionPeriod", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Promotion");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionPeriodDay", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.PromotionPeriod", "Period")
+                        .WithMany("Days")
+                        .HasForeignKey("PromotionPeriodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Period");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionPeriodDayTime", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.PromotionPeriodDay", "Day")
+                        .WithMany("Times")
+                        .HasForeignKey("PromotionPeriodDayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Day");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Refund", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -9705,6 +11621,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("ShiftId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.Navigation("Branch");
+
                     b.Navigation("CreatedBy");
 
                     b.Navigation("DepositTransaction");
@@ -9728,6 +11646,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Gizmo.DAL.Entities.Companion", "Companion")
+                        .WithMany("Registers")
+                        .HasForeignKey("CompanionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -9736,11 +11659,20 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .WithMany()
                         .HasForeignKey("ModifiedById");
 
+                    b.HasOne("Gizmo.DAL.Entities.Stock", "Stock")
+                        .WithMany("Registers")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Branch");
+
+                    b.Navigation("Companion");
 
                     b.Navigation("CreatedBy");
 
                     b.Navigation("ModifiedBy");
+
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.RegisterTransaction", b =>
@@ -9834,9 +11766,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .WithMany()
                         .HasForeignKey("ModifiedById");
 
-                    b.HasOne("Gizmo.DAL.Entities.UserMember", "PreferedUser")
+                    b.HasOne("Gizmo.DAL.Entities.UserMember", "PreferredUser")
                         .WithMany()
-                        .HasForeignKey("PreferedUserId")
+                        .HasForeignKey("PreferredUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Gizmo.DAL.Entities.Reservation", "Reservation")
@@ -9851,7 +11783,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
                     b.Navigation("ModifiedBy");
 
-                    b.Navigation("PreferedUser");
+                    b.Navigation("PreferredUser");
 
                     b.Navigation("Reservation");
                 });
@@ -10039,6 +11971,70 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("Shift");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Stock", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("Stocks")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.StockCount", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.Stock", "Stock")
+                        .WithMany("Counts")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.StockCountEntry", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.StockCount", "StockCount")
+                        .WithMany("Entries")
+                        .HasForeignKey("StockCountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("StockCount");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.StockTransaction", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
@@ -10074,6 +12070,46 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("Product");
 
                     b.Navigation("SourceProduct");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.Target", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.TargetGroup", "TargetGroup")
+                        .WithMany("Targets")
+                        .HasForeignKey("TargetGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("TargetGroup");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroup", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.Discount", "Discount")
+                        .WithMany("TargetGroups")
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Discount");
+
+                    b.Navigation("ModifiedBy");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.TaskBase", b =>
@@ -10150,6 +12186,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UsageSession", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Gizmo.DAL.Entities.Usage", "CurrentUsage")
                         .WithMany()
                         .HasForeignKey("CurrentUsageId")
@@ -10161,6 +12203,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("Branch");
+
                     b.Navigation("CurrentUsage");
 
                     b.Navigation("User");
@@ -10168,6 +12212,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.User", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("Users")
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -10175,6 +12223,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
                         .HasForeignKey("ModifiedById");
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CreatedBy");
 
@@ -10318,6 +12368,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("Gizmo.DAL.Entities.DiscountGroup", "DiscountGroup")
+                        .WithMany("UserGroups")
+                        .HasForeignKey("DiscountGroupId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
                         .HasForeignKey("ModifiedById");
@@ -10331,6 +12386,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("BillProfile");
 
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("DiscountGroup");
 
                     b.Navigation("ModifiedBy");
 
@@ -10354,7 +12411,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("ModifiedById");
 
                     b.HasOne("Gizmo.DAL.Entities.UserGroup", "UserGroup")
-                        .WithMany("DissalowedHostGroups")
+                        .WithMany("DisallowedHostGroups")
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -10447,6 +12504,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserSession", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany("CreatedUserSessions")
                         .HasForeignKey("CreatedById");
@@ -10462,6 +12525,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CreatedBy");
 
@@ -10551,6 +12616,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Void", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -10562,6 +12631,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany()
                         .HasForeignKey("ShiftId");
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CreatedBy");
 
@@ -10575,6 +12646,24 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.HasOne("Gizmo.DAL.Entities.Device", null)
                         .WithOne()
                         .HasForeignKey("Gizmo.DAL.Entities.DeviceHdmi", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Discount", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBonus", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodic", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Discount", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountPeriodic", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -10595,6 +12684,83 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .HasForeignKey("Gizmo.DAL.Entities.HostEndpoint", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustment", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Inventory", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.InventoryAdjustment", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryInbound", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Inventory", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.InventoryInbound", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransfer", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Inventory", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.InventoryTransfer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Stock", "TransferStock")
+                        .WithMany()
+                        .HasForeignKey("TransferStockId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("TransferStock");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustmentEntry", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.InventoryAdjustmentReason", "AdjustmentReason")
+                        .WithMany("AdjustmentEntries")
+                        .HasForeignKey("AdjustmentReasonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gizmo.DAL.Entities.InventoryEntry", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.InventoryAdjustmentEntry", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AdjustmentReason");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryInboundEntry", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.InventoryEntry", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.InventoryInboundEntry", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferEntry", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.InventoryEntry", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.InventoryTransferEntry", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Stock", "TransferStock")
+                        .WithMany()
+                        .HasForeignKey("TransferStockId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("TransferStock");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineExtended", b =>
@@ -10788,6 +12954,40 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionDiscount", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Discount", "Discount")
+                        .WithMany()
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Promotion", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.PromotionDiscount", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionDiscountGroup", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DiscountGroup", "DiscountGroup")
+                        .WithMany()
+                        .HasForeignKey("DiscountGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Promotion", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.PromotionDiscountGroup", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DiscountGroup");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.RefundDepositPayment", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.DepositPayment", "DepositPayment")
@@ -10834,6 +13034,142 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("Invoice");
 
                     b.Navigation("InvoicePayment");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetBillProfile", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.BillProfile", "BillProfile")
+                        .WithMany()
+                        .HasForeignKey("BillProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Target", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.TargetBillProfile", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.TargetGroupBillProfile", "TargetGroupBillProfile")
+                        .WithMany("BilliProfiles")
+                        .HasForeignKey("TargetGroupBillProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BillProfile");
+
+                    b.Navigation("TargetGroupBillProfile");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetProduct", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Target", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.TargetProduct", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductBaseExtended", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.TargetGroupProduct", "TargetGroupProduct")
+                        .WithMany("Products")
+                        .HasForeignKey("TargetGroupProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("TargetGroupProduct");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetProductGroup", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Target", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.TargetProductGroup", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductGroup", "ProductGroup")
+                        .WithMany()
+                        .HasForeignKey("ProductGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.TargetGroupProductGroup", "TargetGroupProductGroup")
+                        .WithMany("ProductGroups")
+                        .HasForeignKey("TargetGroupProductGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProductGroup");
+
+                    b.Navigation("TargetGroupProductGroup");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetProductTime", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Target", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.TargetProductTime", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductTime", "ProductTime")
+                        .WithMany()
+                        .HasForeignKey("ProductTimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.TargetGroupProductTime", "TargetGroupProductTime")
+                        .WithMany("ProductTimes")
+                        .HasForeignKey("TargetGroupProductTimeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProductTime");
+
+                    b.Navigation("TargetGroupProductTime");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupBillProfile", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.TargetGroup", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.TargetGroupBillProfile", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupProduct", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.TargetGroup", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.TargetGroupProduct", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupProductGroup", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.TargetGroup", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.TargetGroupProductGroup", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupProductTime", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.TargetGroup", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.TargetGroupProductTime", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.TaskJunction", b =>
@@ -10965,6 +13301,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .IsRequired();
 
                     b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DiscountPeriodic", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBasic", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineProduct", b =>
@@ -11234,14 +13579,39 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Branch", b =>
                 {
+                    b.Navigation("AssetTransactions");
+
+                    b.Navigation("Discounts");
+
+                    b.Navigation("Executables");
+
+                    b.Navigation("Feeds");
+
+                    b.Navigation("News");
+
                     b.Navigation("Operators");
 
+                    b.Navigation("Products");
+
+                    b.Navigation("Promotions");
+
                     b.Navigation("Shifts");
+
+                    b.Navigation("Stocks");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.BundleProduct", b =>
                 {
                     b.Navigation("UserPrices");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.Companion", b =>
+                {
+                    b.Navigation("Branches");
+
+                    b.Navigation("Registers");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Deployment", b =>
@@ -11263,6 +13633,40 @@ namespace Gizmo.DAL.Migrations.Npgsql
             modelBuilder.Entity("Gizmo.DAL.Entities.Device", b =>
                 {
                     b.Navigation("Hosts");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.Discount", b =>
+                {
+                    b.Navigation("Branches");
+
+                    b.Navigation("TargetGroups");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountGroup", b =>
+                {
+                    b.Navigation("Discounts");
+
+                    b.Navigation("UserGroups");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriod", b =>
+                {
+                    b.Navigation("Days");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodDay", b =>
+                {
+                    b.Navigation("Times");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.Document", b =>
+                {
+                    b.Navigation("InventoryDocuments");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DocumentType", b =>
+                {
+                    b.Navigation("Documents");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Host", b =>
@@ -11311,6 +13715,18 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("Layouts");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Inventory", b =>
+                {
+                    b.Navigation("Documents");
+
+                    b.Navigation("Entries");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustmentReason", b =>
+                {
+                    b.Navigation("AdjustmentEntries");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Invoice", b =>
                 {
                     b.Navigation("FiscalReceipts");
@@ -11353,6 +13769,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("HiddenHostGroups");
 
                     b.Navigation("Images");
+
+                    b.Navigation("InventoryEntries");
 
                     b.Navigation("Period");
 
@@ -11401,6 +13819,28 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("Times");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Promotion", b =>
+                {
+                    b.Navigation("Branches");
+
+                    b.Navigation("Codes");
+
+                    b.Navigation("Limits");
+
+                    b.Navigation("Period")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionPeriod", b =>
+                {
+                    b.Navigation("Days");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PromotionPeriodDay", b =>
+                {
+                    b.Navigation("Times");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Register", b =>
                 {
                     b.Navigation("Shifts");
@@ -11441,6 +13881,30 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("RegisterTransactions");
 
                     b.Navigation("ShiftCounts");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.Stock", b =>
+                {
+                    b.Navigation("Counts");
+
+                    b.Navigation("InventoryEntries");
+
+                    b.Navigation("Registers");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.StockCount", b =>
+                {
+                    b.Navigation("Entries");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.StockTransaction", b =>
+                {
+                    b.Navigation("InventoryEntries");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroup", b =>
+                {
+                    b.Navigation("Targets");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.TaskBase", b =>
@@ -11490,9 +13954,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserGroup", b =>
                 {
-                    b.Navigation("DissalowedHostGroups");
+                    b.Navigation("DisallowedHostGroups");
 
-                    b.Navigation("DissalowedProducts");
+                    b.Navigation("DisallowedProducts");
 
                     b.Navigation("ProductPrices");
 
@@ -11504,6 +13968,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("Usage");
 
                     b.Navigation("UserSessionChanges");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodic", b =>
+                {
+                    b.Navigation("Period");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.HostComputer", b =>
@@ -11534,6 +14003,26 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     b.Navigation("UsePeriod");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupBillProfile", b =>
+                {
+                    b.Navigation("BilliProfiles");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupProduct", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupProductGroup", b =>
+                {
+                    b.Navigation("ProductGroups");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupProductTime", b =>
+                {
+                    b.Navigation("ProductTimes");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.UserMember", b =>
                 {
                     b.Navigation("AppRatings");
@@ -11552,7 +14041,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
                     b.Navigation("Invoices");
 
-                    b.Navigation("LoayalityPoints");
+                    b.Navigation("LoyaltyPoints");
 
                     b.Navigation("Notes");
 
@@ -11581,11 +14070,15 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     b.Navigation("Branches");
 
+                    b.Navigation("CreatedBranches");
+
                     b.Navigation("CreatedDeposits");
 
                     b.Navigation("CreatedOrders");
 
                     b.Navigation("CreatedPayments");
+
+                    b.Navigation("ModifiedBranches");
 
                     b.Navigation("ModifiedDeposits");
 

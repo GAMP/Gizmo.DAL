@@ -8,7 +8,7 @@
         public static readonly string EF_6_BRANCH_SET = """
             IF NOT EXISTS (SELECT BranchId FROM Branch)
             BEGIN
-            INSERT INTO Branch (Name,Guid,IsEnabled,IsDeleted,CreatedTime,Latitude,Longitude) VALUES ('Main',NEWID(),1,0,GETDATE(),0,0)
+            INSERT INTO Branch (Name,Guid,IsEnabled,IsDeleted,CreatedTime,Latitude,Longitude) VALUES ('Default',NEWID(),1,0,GETDATE(),0,0)
             END
             UPDATE [dbo].[Register] Set BranchId=(SELECT min(BranchId) FROM [dbo].[Branch]);
             UPDATE [dbo].[Asset] Set BranchId=(SELECT min(BranchId) FROM [dbo].[Branch]);

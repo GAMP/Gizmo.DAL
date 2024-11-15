@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.Npgsql
+namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -153,6 +153,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         principalTable: "App",
                         principalColumn: "AppId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppExeBranch",
+                columns: table => new
+                {
+                    AppExeId = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppExeBranch", x => new { x.AppExeId, x.BranchId });
+                    table.ForeignKey(
+                        name: "FK_AppExeBranch_AppExe_AppExeId",
+                        column: x => x.AppExeId,
+                        principalTable: "AppExe",
+                        principalColumn: "AppExeId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -449,7 +468,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     HostId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     Span = table.Column<double>(type: "double precision", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    StartTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -481,6 +501,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     Barcode = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     SerialNumber = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -505,6 +526,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     CheckInTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     ShiftId = table.Column<int>(type: "integer", nullable: true),
                     RegisterId = table.Column<int>(type: "integer", nullable: true),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -552,6 +574,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     AssistanceRequestTypeId = table.Column<int>(type: "integer", nullable: false),
                     Note = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -629,7 +652,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     ChargeEvery = table.Column<int>(type: "integer", nullable: false),
                     ChargeAfter = table.Column<int>(type: "integer", nullable: false),
                     Options = table.Column<int>(type: "integer", nullable: false),
-                    IsDefault = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDefault = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -706,6 +730,38 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 });
 
             migrationBuilder.CreateTable(
+                name: "Branch",
+                columns: table => new
+                {
+                    BranchId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    City = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: true),
+                    Address = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    PostalCode = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: true),
+                    Region = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: true),
+                    Latitude = table.Column<decimal>(type: "numeric(9,6)", precision: 9, scale: 6, nullable: false),
+                    Longitude = table.Column<decimal>(type: "numeric(9,6)", precision: 9, scale: 6, nullable: false),
+                    Phone = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: true),
+                    Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    WebSite = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Info = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    TimeZone = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: true),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    CompanionId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Branch", x => x.BranchId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BundleProduct",
                 columns: table => new
                 {
@@ -770,6 +826,24 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientTask", x => x.ClientTaskId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Companion",
+                columns: table => new
+                {
+                    CompanionId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Companion", x => x.CompanionId);
                 });
 
             migrationBuilder.CreateTable(
@@ -843,6 +917,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     FiscalReceiptStatus = table.Column<int>(type: "integer", nullable: false),
                     FiscalReceiptId = table.Column<int>(type: "integer", nullable: true),
                     IsVoided = table.Column<bool>(type: "boolean", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -852,6 +927,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DepositPayment", x => x.DepositPaymentId);
+                    table.ForeignKey(
+                        name: "FK_DepositPayment_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                 });
 
             migrationBuilder.CreateTable(
@@ -885,6 +965,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: true),
                     IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -893,6 +974,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Device", x => x.DeviceId);
+                    table.ForeignKey(
+                        name: "FK_Device_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -938,6 +1025,246 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 });
 
             migrationBuilder.CreateTable(
+                name: "Discount",
+                columns: table => new
+                {
+                    DiscountId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Discount", x => x.DiscountId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountBonus",
+                columns: table => new
+                {
+                    DiscountId = table.Column<int>(type: "integer", nullable: false),
+                    Value = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountBonus", x => x.DiscountId);
+                    table.ForeignKey(
+                        name: "FK_DiscountBonus_Discount_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "Discount",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountBranch",
+                columns: table => new
+                {
+                    DiscountId = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountBranch", x => new { x.DiscountId, x.BranchId });
+                    table.ForeignKey(
+                        name: "FK_DiscountBranch_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DiscountBranch_Discount_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "Discount",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountPeriodic",
+                columns: table => new
+                {
+                    DiscountId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountPeriodic", x => x.DiscountId);
+                    table.ForeignKey(
+                        name: "FK_DiscountPeriodic_Discount_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "Discount",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountBasic",
+                columns: table => new
+                {
+                    DiscountId = table.Column<int>(type: "integer", nullable: false),
+                    ApplyType = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Value = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountBasic", x => x.DiscountId);
+                    table.ForeignKey(
+                        name: "FK_DiscountBasic_DiscountPeriodic_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "DiscountPeriodic",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountPeriod",
+                columns: table => new
+                {
+                    DiscountId = table.Column<int>(type: "integer", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Options = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountPeriod", x => x.DiscountId);
+                    table.ForeignKey(
+                        name: "FK_DiscountPeriod_DiscountPeriodic_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "DiscountPeriodic",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountPeriodDay",
+                columns: table => new
+                {
+                    DiscountPeriodDayId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DiscountPeriodId = table.Column<int>(type: "integer", nullable: false),
+                    Day = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountPeriodDay", x => x.DiscountPeriodDayId);
+                    table.ForeignKey(
+                        name: "FK_DiscountPeriodDay_DiscountPeriod_DiscountPeriodId",
+                        column: x => x.DiscountPeriodId,
+                        principalTable: "DiscountPeriod",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountPeriodDayTime",
+                columns: table => new
+                {
+                    StartSecond = table.Column<int>(type: "integer", nullable: false),
+                    EndSecond = table.Column<int>(type: "integer", nullable: false),
+                    DiscountPeriodDayId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountPeriodDayTime", x => new { x.DiscountPeriodDayId, x.StartSecond, x.EndSecond });
+                    table.ForeignKey(
+                        name: "FK_DiscountPeriodDayTime_DiscountPeriodDay_DiscountPeriodDayId",
+                        column: x => x.DiscountPeriodDayId,
+                        principalTable: "DiscountPeriodDay",
+                        principalColumn: "DiscountPeriodDayId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountGroup",
+                columns: table => new
+                {
+                    DiscountGroupId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountGroup", x => x.DiscountGroupId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountGroupDiscount",
+                columns: table => new
+                {
+                    DiscountGroupDiscountId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DiscountGroupId = table.Column<int>(type: "integer", nullable: false),
+                    DiscountId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountGroupDiscount", x => x.DiscountGroupDiscountId);
+                    table.ForeignKey(
+                        name: "FK_DiscountGroupDiscount_DiscountGroup_DiscountGroupId",
+                        column: x => x.DiscountGroupId,
+                        principalTable: "DiscountGroup",
+                        principalColumn: "DiscountGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DiscountGroupDiscount_Discount_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "Discount",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Document",
+                columns: table => new
+                {
+                    DocumentId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DocumentTypeId = table.Column<int>(type: "integer", nullable: false),
+                    Description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Document", x => x.DocumentId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentType",
+                columns: table => new
+                {
+                    DocumentTypeId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentType", x => x.DocumentTypeId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Feed",
                 columns: table => new
                 {
@@ -954,6 +1281,31 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Feed", x => x.FeedId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FeedBranch",
+                columns: table => new
+                {
+                    FeedId = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeedBranch", x => new { x.FeedId, x.BranchId });
+                    table.ForeignKey(
+                        name: "FK_FeedBranch_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FeedBranch_Feed_FeedId",
+                        column: x => x.FeedId,
+                        principalTable: "Feed",
+                        principalColumn: "FeedId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1048,6 +1400,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     SkinName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Options = table.Column<int>(type: "integer", nullable: false),
                     DefaultGuestGroupId = table.Column<int>(type: "integer", nullable: true),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -1061,6 +1414,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         column: x => x.AppGroupId,
                         principalTable: "AppGroup",
                         principalColumn: "AppGroupId");
+                    table.ForeignKey(
+                        name: "FK_HostGroup_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1158,6 +1517,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
                     DisplayOrder = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -1166,6 +1526,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HostLayoutGroup", x => x.HostLayoutGroupId);
+                    table.ForeignKey(
+                        name: "FK_HostLayoutGroup_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1203,6 +1569,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     Height = table.Column<int>(type: "integer", nullable: false),
                     Width = table.Column<int>(type: "integer", nullable: false),
                     IsHidden = table.Column<bool>(type: "boolean", nullable: false),
+                    Row = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    Column = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -1243,6 +1611,204 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 });
 
             migrationBuilder.CreateTable(
+                name: "Inventory",
+                columns: table => new
+                {
+                    InventoryId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StockId = table.Column<int>(type: "integer", nullable: false),
+                    ShiftId = table.Column<int>(type: "integer", nullable: true),
+                    Note = table.Column<string>(type: "text", nullable: true),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventory", x => x.InventoryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryAdjustment",
+                columns: table => new
+                {
+                    InventoryId = table.Column<int>(type: "integer", nullable: false),
+                    AdjustmentType = table.Column<int>(type: "integer", nullable: false),
+                    InvoiceId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryAdjustment", x => x.InventoryId);
+                    table.ForeignKey(
+                        name: "FK_InventoryAdjustment_Inventory_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventory",
+                        principalColumn: "InventoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryInbound",
+                columns: table => new
+                {
+                    InventoryId = table.Column<int>(type: "integer", nullable: false),
+                    Cost = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryInbound", x => x.InventoryId);
+                    table.ForeignKey(
+                        name: "FK_InventoryInbound_Inventory_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventory",
+                        principalColumn: "InventoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryAdjustmentEntry",
+                columns: table => new
+                {
+                    InventoryEntryId = table.Column<int>(type: "integer", nullable: false),
+                    UnitCost = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    TotalCost = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    AdjustmentReasonId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryAdjustmentEntry", x => x.InventoryEntryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryAdjustmentReason",
+                columns: table => new
+                {
+                    InventoryAdjustmentReasonId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryAdjustmentReason", x => x.InventoryAdjustmentReasonId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryDocument",
+                columns: table => new
+                {
+                    InventoryDocumentId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    InventoryId = table.Column<int>(type: "integer", nullable: false),
+                    DocumentId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryDocument", x => x.InventoryDocumentId);
+                    table.ForeignKey(
+                        name: "FK_InventoryDocument_Document_DocumentId",
+                        column: x => x.DocumentId,
+                        principalTable: "Document",
+                        principalColumn: "DocumentId");
+                    table.ForeignKey(
+                        name: "FK_InventoryDocument_Inventory_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventory",
+                        principalColumn: "InventoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryEntry",
+                columns: table => new
+                {
+                    InventoryEntryId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    InventoryId = table.Column<int>(type: "integer", nullable: false),
+                    StockId = table.Column<int>(type: "integer", nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    StockTransactionId = table.Column<int>(type: "integer", nullable: false),
+                    Quantity = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    Note = table.Column<string>(type: "text", nullable: true),
+                    ShiftId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryEntry", x => x.InventoryEntryId);
+                    table.ForeignKey(
+                        name: "FK_InventoryEntry_Inventory_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventory",
+                        principalColumn: "InventoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryInboundEntry",
+                columns: table => new
+                {
+                    InventoryEntryId = table.Column<int>(type: "integer", nullable: false),
+                    UnitCost = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    TotalCost = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryInboundEntry", x => x.InventoryEntryId);
+                    table.ForeignKey(
+                        name: "FK_InventoryInboundEntry_InventoryEntry_InventoryEntryId",
+                        column: x => x.InventoryEntryId,
+                        principalTable: "InventoryEntry",
+                        principalColumn: "InventoryEntryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryTransfer",
+                columns: table => new
+                {
+                    InventoryId = table.Column<int>(type: "integer", nullable: false),
+                    TransferStockId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryTransfer", x => x.InventoryId);
+                    table.ForeignKey(
+                        name: "FK_InventoryTransfer_Inventory_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventory",
+                        principalColumn: "InventoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryTransferEntry",
+                columns: table => new
+                {
+                    InventoryEntryId = table.Column<int>(type: "integer", nullable: false),
+                    TransferStockId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryTransferEntry", x => x.InventoryEntryId);
+                    table.ForeignKey(
+                        name: "FK_InventoryTransferEntry_InventoryEntry_InventoryEntryId",
+                        column: x => x.InventoryEntryId,
+                        principalTable: "InventoryEntry",
+                        principalColumn: "InventoryEntryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Invoice",
                 columns: table => new
                 {
@@ -1256,12 +1822,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     TaxTotal = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     Outstanding = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
-                    OutstandngPoints = table.Column<int>(type: "integer", nullable: false),
+                    OutstandingPoints = table.Column<int>(type: "integer", nullable: false),
                     ShiftId = table.Column<int>(type: "integer", nullable: true),
                     RegisterId = table.Column<int>(type: "integer", nullable: true),
                     IsVoided = table.Column<bool>(type: "boolean", nullable: false),
                     SaleFiscalReceiptStatus = table.Column<int>(type: "integer", nullable: false),
                     ReturnFiscalReceiptStatus = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -1270,6 +1837,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Invoice", x => x.InvoiceId);
+                    table.ForeignKey(
+                        name: "FK_Invoice_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1458,6 +2030,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     RegisterId = table.Column<int>(type: "integer", nullable: true),
                     RefundedAmount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     RefundStatus = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -1466,6 +2039,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_InvoicePayment", x => x.InvoicePaymentId);
+                    table.ForeignKey(
+                        name: "FK_InvoicePayment_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                     table.ForeignKey(
                         name: "FK_InvoicePayment_Invoice_InvoiceId",
                         column: x => x.InvoiceId,
@@ -1597,6 +2175,31 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 });
 
             migrationBuilder.CreateTable(
+                name: "NewsBranch",
+                columns: table => new
+                {
+                    NewsId = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NewsBranch", x => new { x.NewsId, x.BranchId });
+                    table.ForeignKey(
+                        name: "FK_NewsBranch_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NewsBranch_News_NewsId",
+                        column: x => x.NewsId,
+                        principalTable: "News",
+                        principalColumn: "NewsId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Note",
                 columns: table => new
                 {
@@ -1634,6 +2237,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     RegisterId = table.Column<int>(type: "integer", nullable: true),
                     RefundedAmount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     RefundStatus = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -1642,6 +2246,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payment", x => x.PaymentId);
+                    table.ForeignKey(
+                        name: "FK_Payment_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                     table.ForeignKey(
                         name: "FK_Payment_DepositTransaction_DepositTransactionId",
                         column: x => x.DepositTransactionId,
@@ -1663,6 +2272,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     TransactionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Provider = table.Column<Guid>(type: "uuid", nullable: false),
                     Guid = table.Column<Guid>(type: "uuid", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -1671,6 +2281,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PaymentIntent", x => x.PaymentIntentId);
+                    table.ForeignKey(
+                        name: "FK_PaymentIntent_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1916,6 +2531,31 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     table.PrimaryKey("PK_ProductBaseExtended", x => x.ProductId);
                     table.ForeignKey(
                         name: "FK_ProductBaseExtended_ProductBase_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "ProductBase",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductBranch",
+                columns: table => new
+                {
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductBranch", x => new { x.ProductId, x.BranchId });
+                    table.ForeignKey(
+                        name: "FK_ProductBranch_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductBranch_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
@@ -2356,7 +2996,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     IsVoided = table.Column<bool>(type: "boolean", nullable: false),
                     ShiftId = table.Column<int>(type: "integer", nullable: true),
                     RegisterId = table.Column<int>(type: "integer", nullable: true),
-                    PreferedPaymentMethodId = table.Column<int>(type: "integer", nullable: true),
+                    PreferredPaymentMethodId = table.Column<int>(type: "integer", nullable: true),
                     IsDelivered = table.Column<bool>(type: "boolean", nullable: false),
                     DeliveredTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Source = table.Column<int>(type: "integer", nullable: false),
@@ -2375,8 +3015,8 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         principalTable: "Host",
                         principalColumn: "HostId");
                     table.ForeignKey(
-                        name: "FK_ProductOrder_PaymentMethod_PreferedPaymentMethodId",
-                        column: x => x.PreferedPaymentMethodId,
+                        name: "FK_ProductOrder_PaymentMethod_PreferredPaymentMethodId",
+                        column: x => x.PreferredPaymentMethodId,
                         principalTable: "PaymentMethod",
                         principalColumn: "PaymentMethodId");
                 });
@@ -2491,6 +3131,202 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 });
 
             migrationBuilder.CreateTable(
+                name: "Promotion",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Template = table.Column<string>(type: "text", nullable: true),
+                    CodeType = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Promotion", x => x.PromotionId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PromotionBranch",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PromotionBranch", x => new { x.PromotionId, x.BranchId });
+                    table.ForeignKey(
+                        name: "FK_PromotionBranch_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PromotionBranch_Promotion_PromotionId",
+                        column: x => x.PromotionId,
+                        principalTable: "Promotion",
+                        principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PromotionDiscount",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "integer", nullable: false),
+                    DiscountId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PromotionDiscount", x => x.PromotionId);
+                    table.ForeignKey(
+                        name: "FK_PromotionDiscount_Discount_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "Discount",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PromotionDiscount_Promotion_PromotionId",
+                        column: x => x.PromotionId,
+                        principalTable: "Promotion",
+                        principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PromotionDiscountGroup",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "integer", nullable: false),
+                    DiscountGroupId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PromotionDiscountGroup", x => x.PromotionId);
+                    table.ForeignKey(
+                        name: "FK_PromotionDiscountGroup_DiscountGroup_DiscountGroupId",
+                        column: x => x.DiscountGroupId,
+                        principalTable: "DiscountGroup",
+                        principalColumn: "DiscountGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PromotionDiscountGroup_Promotion_PromotionId",
+                        column: x => x.PromotionId,
+                        principalTable: "Promotion",
+                        principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PromotionLimit",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Value = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PromotionLimit", x => new { x.PromotionId, x.Type });
+                    table.ForeignKey(
+                        name: "FK_PromotionLimit_Promotion_PromotionId",
+                        column: x => x.PromotionId,
+                        principalTable: "Promotion",
+                        principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PromotionPeriod",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "integer", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Options = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PromotionPeriod", x => x.PromotionId);
+                    table.ForeignKey(
+                        name: "FK_PromotionPeriod_Promotion_PromotionId",
+                        column: x => x.PromotionId,
+                        principalTable: "Promotion",
+                        principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PromotionPeriodDay",
+                columns: table => new
+                {
+                    PromotionPeriodDayId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PromotionPeriodId = table.Column<int>(type: "integer", nullable: false),
+                    Day = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PromotionPeriodDay", x => x.PromotionPeriodDayId);
+                    table.ForeignKey(
+                        name: "FK_PromotionPeriodDay_PromotionPeriod_PromotionPeriodId",
+                        column: x => x.PromotionPeriodId,
+                        principalTable: "PromotionPeriod",
+                        principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PromotionPeriodDayTime",
+                columns: table => new
+                {
+                    StartSecond = table.Column<int>(type: "integer", nullable: false),
+                    EndSecond = table.Column<int>(type: "integer", nullable: false),
+                    PromotionPeriodDayId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PromotionPeriodDayTime", x => new { x.PromotionPeriodDayId, x.StartSecond, x.EndSecond });
+                    table.ForeignKey(
+                        name: "FK_PromotionPeriodDayTime_PromotionPeriodDay_PromotionPeriodDa~",
+                        column: x => x.PromotionPeriodDayId,
+                        principalTable: "PromotionPeriodDay",
+                        principalColumn: "PromotionPeriodDayId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PromotionCode",
+                columns: table => new
+                {
+                    PromotionCodeId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Value = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    PromotionId = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PromotionCode", x => x.PromotionCodeId);
+                    table.ForeignKey(
+                        name: "FK_PromotionCode_Promotion_PromotionId",
+                        column: x => x.PromotionId,
+                        principalTable: "Promotion",
+                        principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Refund",
                 columns: table => new
                 {
@@ -2501,6 +3337,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     DepositTransactionId = table.Column<int>(type: "integer", nullable: true),
                     PointTransactionId = table.Column<int>(type: "integer", nullable: true),
                     RefundMethodId = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ShiftId = table.Column<int>(type: "integer", nullable: true),
@@ -2509,6 +3346,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Refund", x => x.RefundId);
+                    table.ForeignKey(
+                        name: "FK_Refund_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                     table.ForeignKey(
                         name: "FK_Refund_DepositTransaction_DepositTransactionId",
                         column: x => x.DepositTransactionId,
@@ -2608,6 +3450,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     IdleTimeout = table.Column<int>(type: "integer", nullable: true),
                     Options = table.Column<int>(type: "integer", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    PaymentTerminalNumber = table.Column<int>(type: "integer", nullable: true),
+                    FiscalReceiptPrinterNumber = table.Column<int>(type: "integer", nullable: true),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
+                    CompanionId = table.Column<int>(type: "integer", nullable: true),
+                    StockId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -2616,6 +3463,18 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Register", x => x.RegisterId);
+                    table.ForeignKey(
+                        name: "FK_Register_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Register_Companion_CompanionId",
+                        column: x => x.CompanionId,
+                        principalTable: "Companion",
+                        principalColumn: "CompanionId",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -2646,6 +3505,27 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 });
 
             migrationBuilder.CreateTable(
+                name: "ReportPreset",
+                columns: table => new
+                {
+                    ReportPresetId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    Report = table.Column<Guid>(type: "uuid", nullable: false),
+                    Range = table.Column<int>(type: "integer", nullable: false),
+                    Filters = table.Column<string>(type: "text", nullable: true),
+                    DisplayOrder = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportPreset", x => x.ReportPresetId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reservation",
                 columns: table => new
                 {
@@ -2659,6 +3539,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     ContactEmail = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: true),
                     Note = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -2667,6 +3548,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reservation", x => x.ReservationId);
+                    table.ForeignKey(
+                        name: "FK_Reservation_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -2677,7 +3564,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ReservationId = table.Column<int>(type: "integer", nullable: false),
                     HostId = table.Column<int>(type: "integer", nullable: false),
-                    PreferedUserId = table.Column<int>(type: "integer", nullable: true),
+                    PreferredUserId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -2824,6 +3711,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     IsEnding = table.Column<bool>(type: "boolean", nullable: false),
                     EndedById = table.Column<int>(type: "integer", nullable: true),
                     EndTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -2832,6 +3720,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Shift", x => x.ShiftId);
+                    table.ForeignKey(
+                        name: "FK_Shift_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                     table.ForeignKey(
                         name: "FK_Shift_Register_RegisterId",
                         column: x => x.RegisterId,
@@ -2883,6 +3776,86 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 });
 
             migrationBuilder.CreateTable(
+                name: "Stock",
+                columns: table => new
+                {
+                    StockId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Stock", x => x.StockId);
+                    table.ForeignKey(
+                        name: "FK_Stock_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StockCount",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Note = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    StockId = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockCount", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockCount_Stock_StockId",
+                        column: x => x.StockId,
+                        principalTable: "Stock",
+                        principalColumn: "StockId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StockCountEntry",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Expected = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    Actual = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    StockCountId = table.Column<int>(type: "integer", nullable: false),
+                    Difference = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockCountEntry", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockCountEntry_ProductBase_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "ProductBase",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StockCountEntry_StockCount_StockCountId",
+                        column: x => x.StockCountId,
+                        principalTable: "StockCount",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "StockTransaction",
                 columns: table => new
                 {
@@ -2898,6 +3871,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     IsVoided = table.Column<bool>(type: "boolean", nullable: false),
                     ShiftId = table.Column<int>(type: "integer", nullable: true),
                     RegisterId = table.Column<int>(type: "integer", nullable: true),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -2906,6 +3880,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StockTransaction", x => x.StockTransactionId);
+                    table.ForeignKey(
+                        name: "FK_StockTransaction_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StockTransaction_ProductBase_ProductId",
                         column: x => x.ProductId,
@@ -2917,6 +3897,233 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         column: x => x.SourceProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Target",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TargetGroupId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Target", x => x.TargetId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetBillProfile",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "integer", nullable: false),
+                    BillProfileId = table.Column<int>(type: "integer", nullable: false),
+                    TargetGroupBillProfileId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetBillProfile", x => x.TargetId);
+                    table.ForeignKey(
+                        name: "FK_TargetBillProfile_BillProfile_BillProfileId",
+                        column: x => x.BillProfileId,
+                        principalTable: "BillProfile",
+                        principalColumn: "BillProfileId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TargetBillProfile_Target_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Target",
+                        principalColumn: "TargetId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroup",
+                columns: table => new
+                {
+                    TargetGroupId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DiscountId = table.Column<int>(type: "integer", nullable: false),
+                    IncludeAll = table.Column<bool>(type: "boolean", nullable: false),
+                    Requirement = table.Column<int>(type: "integer", nullable: false),
+                    Value = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: true),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroup", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroup_Discount_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "Discount",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroupBillProfile",
+                columns: table => new
+                {
+                    TargetGroupId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroupBillProfile", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupBillProfile_TargetGroup_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroupProduct",
+                columns: table => new
+                {
+                    TargetGroupId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroupProduct", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupProduct_TargetGroup_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroupProductGroup",
+                columns: table => new
+                {
+                    TargetGroupId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroupProductGroup", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupProductGroup_TargetGroup_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroupProductTime",
+                columns: table => new
+                {
+                    TargetGroupId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroupProductTime", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupProductTime_TargetGroup_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetProduct",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "integer", nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    TargetGroupProductId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetProduct", x => x.TargetId);
+                    table.ForeignKey(
+                        name: "FK_TargetProduct_ProductBaseExtended_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "ProductBaseExtended",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TargetProduct_TargetGroupProduct_TargetGroupProductId",
+                        column: x => x.TargetGroupProductId,
+                        principalTable: "TargetGroupProduct",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetProduct_Target_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Target",
+                        principalColumn: "TargetId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetProductGroup",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "integer", nullable: false),
+                    ProductGroupId = table.Column<int>(type: "integer", nullable: false),
+                    TargetGroupProductGroupId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetProductGroup", x => x.TargetId);
+                    table.ForeignKey(
+                        name: "FK_TargetProductGroup_ProductGroup_ProductGroupId",
+                        column: x => x.ProductGroupId,
+                        principalTable: "ProductGroup",
+                        principalColumn: "ProductGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TargetProductGroup_TargetGroupProductGroup_TargetGroupProdu~",
+                        column: x => x.TargetGroupProductGroupId,
+                        principalTable: "TargetGroupProductGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetProductGroup_Target_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Target",
+                        principalColumn: "TargetId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetProductTime",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "integer", nullable: false),
+                    ProductTimeId = table.Column<int>(type: "integer", nullable: false),
+                    TargetGroupProductTimeId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetProductTime", x => x.TargetId);
+                    table.ForeignKey(
+                        name: "FK_TargetProductTime_ProductTime_ProductTimeId",
+                        column: x => x.ProductTimeId,
+                        principalTable: "ProductTime",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TargetProductTime_TargetGroupProductTime_TargetGroupProduct~",
+                        column: x => x.TargetGroupProductTimeId,
+                        principalTable: "TargetGroupProductTime",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetProductTime_Target_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Target",
+                        principalColumn: "TargetId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -3114,11 +4321,18 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     MinimumFee = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     RatesTotal = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UsageSession", x => x.UsageSessionId);
+                    table.ForeignKey(
+                        name: "FK_UsageSession_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UsageSession_Usage_CurrentUsageId",
                         column: x => x.CurrentUsageId,
@@ -3200,6 +4414,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     SmartCardUID = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Identification = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    BranchId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -3208,6 +4423,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_User_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                     table.ForeignKey(
                         name: "FK_User_User_ModifiedById",
                         column: x => x.ModifiedById,
@@ -3441,6 +4661,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     BillingOptions = table.Column<int>(type: "integer", nullable: false),
                     WaitingLinePriority = table.Column<int>(type: "integer", nullable: false),
                     IsWaitingLinePriorityEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    DiscountGroupId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -3460,6 +4681,12 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         principalTable: "BillProfile",
                         principalColumn: "BillProfileId");
                     table.ForeignKey(
+                        name: "FK_UserGroup_DiscountGroup_DiscountGroupId",
+                        column: x => x.DiscountGroupId,
+                        principalTable: "DiscountGroup",
+                        principalColumn: "DiscountGroupId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
                         name: "FK_UserGroup_SecurityProfile_SecurityProfileId",
                         column: x => x.SecurityProfileId,
                         principalTable: "SecurityProfile",
@@ -3474,6 +4701,47 @@ namespace Gizmo.DAL.Migrations.Npgsql
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserOperatorBranch",
+                columns: table => new
+                {
+                    OperatorBranchId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OperatorId = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
+                    IsDefault = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserOperatorBranch", x => x.OperatorBranchId);
+                    table.ForeignKey(
+                        name: "FK_UserOperatorBranch_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserOperatorBranch_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserOperatorBranch_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserOperatorBranch_UserOperator_OperatorId",
+                        column: x => x.OperatorId,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -3547,6 +4815,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 {
                     VoidId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    BranchId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ShiftId = table.Column<int>(type: "integer", nullable: true),
@@ -3555,6 +4824,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Void", x => x.VoidId);
+                    table.ForeignKey(
+                        name: "FK_Void_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                     table.ForeignKey(
                         name: "FK_Void_Register_RegisterId",
                         column: x => x.RegisterId,
@@ -3871,12 +5145,19 @@ namespace Gizmo.DAL.Migrations.Npgsql
                     GraceTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     GraceSpan = table.Column<double>(type: "double precision", nullable: false),
                     GraceSpanTotal = table.Column<double>(type: "double precision", nullable: false),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserSession", x => x.UserSessionId);
+                    table.ForeignKey(
+                        name: "FK_UserSession_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserSession_Host_HostId",
                         column: x => x.HostId,
@@ -4030,6 +5311,17 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_AppExe_ModifiedById",
                 table: "AppExe",
                 column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppExeBranch_AppExeId_BranchId",
+                table: "AppExeBranch",
+                columns: new[] { "AppExeId", "BranchId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppExeBranch_BranchId",
+                table: "AppExeBranch",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppExeCdImage_AppExeId",
@@ -4252,6 +5544,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "AppId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AppStat_BranchId",
+                table: "AppStat",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AppStat_HostId",
                 table: "AppStat",
                 column: "HostId");
@@ -4271,6 +5568,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 table: "Asset",
                 column: "Barcode",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Asset_BranchId",
+                table: "Asset",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Asset_CreatedById",
@@ -4297,6 +5599,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_AssetTransaction_AssetTypeId",
                 table: "AssetTransaction",
                 column: "AssetTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssetTransaction_BranchId",
+                table: "AssetTransaction",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AssetTransaction_CheckedInById",
@@ -4338,6 +5645,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_AssistanceRequest_AssistanceRequestTypeId",
                 table: "AssistanceRequest",
                 column: "AssistanceRequestTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AssistanceRequest_BranchId",
+                table: "AssistanceRequest",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AssistanceRequest_CreatedById",
@@ -4424,6 +5736,38 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Branch_BranchId",
+                table: "Branch",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_CompanionId",
+                table: "Branch",
+                column: "CompanionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_CreatedById",
+                table: "Branch",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_Guid",
+                table: "Branch",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_ModifiedById",
+                table: "Branch",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_Name",
+                table: "Branch",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BundleProduct_CreatedById",
                 table: "BundleProduct",
                 column: "CreatedById");
@@ -4480,6 +5824,28 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "TaskBaseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Companion_CreatedById",
+                table: "Companion",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Companion_Guid",
+                table: "Companion",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Companion_ModifiedById",
+                table: "Companion",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Companion_Name",
+                table: "Companion",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Deployment_CreatedById",
                 table: "Deployment",
                 column: "CreatedById");
@@ -4520,6 +5886,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_DeploymentDeployment_ParentId",
                 table: "DeploymentDeployment",
                 column: "ParentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DepositPayment_BranchId",
+                table: "DepositPayment",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DepositPayment_CreatedById",
@@ -4587,6 +5958,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Device_BranchId",
+                table: "Device",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Device_CreatedById",
                 table: "Device",
                 column: "CreatedById");
@@ -4597,9 +5973,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Device_Name",
+                name: "IX_Device_Name_BranchId",
                 table: "Device",
-                column: "Name",
+                columns: new[] { "Name", "BranchId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -4636,6 +6012,113 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Discount_CreatedById",
+                table: "Discount",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Discount_ModifiedById",
+                table: "Discount",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Discount_Name",
+                table: "Discount",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountBranch_BranchId",
+                table: "DiscountBranch",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountBranch_DiscountId_BranchId",
+                table: "DiscountBranch",
+                columns: new[] { "DiscountId", "BranchId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountGroup_CreatedById",
+                table: "DiscountGroup",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountGroup_ModifiedById",
+                table: "DiscountGroup",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountGroup_Name",
+                table: "DiscountGroup",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountGroupDiscount_CreatedById",
+                table: "DiscountGroupDiscount",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountGroupDiscount_DiscountGroupId_DiscountId",
+                table: "DiscountGroupDiscount",
+                columns: new[] { "DiscountGroupId", "DiscountId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountGroupDiscount_DiscountId",
+                table: "DiscountGroupDiscount",
+                column: "DiscountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountPeriod_DiscountId",
+                table: "DiscountPeriod",
+                column: "DiscountId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountPeriodDay_DiscountPeriodId_Day",
+                table: "DiscountPeriodDay",
+                columns: new[] { "DiscountPeriodId", "Day" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DiscountPeriodDayTime_DiscountPeriodDayId",
+                table: "DiscountPeriodDayTime",
+                column: "DiscountPeriodDayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Document_CreatedById",
+                table: "Document",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Document_DocumentTypeId",
+                table: "Document",
+                column: "DocumentTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Document_ModifiedById",
+                table: "Document",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentType_CreatedById",
+                table: "DocumentType",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentType_ModifiedById",
+                table: "DocumentType",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentType_Name",
+                table: "DocumentType",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Feed_CreatedById",
                 table: "Feed",
                 column: "CreatedById");
@@ -4644,6 +6127,17 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_Feed_ModifiedById",
                 table: "Feed",
                 column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FeedBranch_BranchId",
+                table: "FeedBranch",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FeedBranch_FeedId_BranchId",
+                table: "FeedBranch",
+                columns: new[] { "FeedId", "BranchId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_FiscalReceipt_CreatedById",
@@ -4714,6 +6208,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "AppGroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_HostGroup_BranchId",
+                table: "HostGroup",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HostGroup_CreatedById",
                 table: "HostGroup",
                 column: "CreatedById");
@@ -4729,9 +6228,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostGroup_Name",
+                name: "IX_HostGroup_Name_BranchId",
                 table: "HostGroup",
-                column: "Name",
+                columns: new[] { "Name", "BranchId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -4792,6 +6291,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_HostLayoutGroup_BranchId",
+                table: "HostLayoutGroup",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HostLayoutGroup_CreatedById",
                 table: "HostLayoutGroup",
                 column: "CreatedById");
@@ -4802,9 +6306,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HostLayoutGroup_Name",
+                name: "IX_HostLayoutGroup_Name_BranchId",
                 table: "HostLayoutGroup",
-                column: "Name",
+                columns: new[] { "Name", "BranchId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -4852,6 +6356,97 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_Icon_ModifiedById",
                 table: "Icon",
                 column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventory_CreatedById",
+                table: "Inventory",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventory_ShiftId",
+                table: "Inventory",
+                column: "ShiftId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventory_StockId",
+                table: "Inventory",
+                column: "StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryAdjustmentEntry_AdjustmentReasonId",
+                table: "InventoryAdjustmentEntry",
+                column: "AdjustmentReasonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryAdjustmentReason_CreatedById",
+                table: "InventoryAdjustmentReason",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryAdjustmentReason_ModifiedById",
+                table: "InventoryAdjustmentReason",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryDocument_CreatedById",
+                table: "InventoryDocument",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryDocument_DocumentId",
+                table: "InventoryDocument",
+                column: "DocumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryDocument_InventoryId_DocumentId",
+                table: "InventoryDocument",
+                columns: new[] { "InventoryId", "DocumentId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryEntry_CreatedById",
+                table: "InventoryEntry",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryEntry_InventoryId",
+                table: "InventoryEntry",
+                column: "InventoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryEntry_ProductId",
+                table: "InventoryEntry",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryEntry_ShiftId",
+                table: "InventoryEntry",
+                column: "ShiftId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryEntry_StockId",
+                table: "InventoryEntry",
+                column: "StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryEntry_StockTransactionId",
+                table: "InventoryEntry",
+                column: "StockTransactionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransfer_TransferStockId",
+                table: "InventoryTransfer",
+                column: "TransferStockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferEntry_TransferStockId",
+                table: "InventoryTransferEntry",
+                column: "TransferStockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoice_BranchId",
+                table: "Invoice",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoice_CreatedById",
@@ -5032,6 +6627,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_InvoicePayment_BranchId",
+                table: "InvoicePayment",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoicePayment_CreatedById",
                 table: "InvoicePayment",
                 column: "CreatedById");
@@ -5183,6 +6783,17 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NewsBranch_BranchId",
+                table: "NewsBranch",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NewsBranch_NewsId_BranchId",
+                table: "NewsBranch",
+                columns: new[] { "NewsId", "BranchId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Note_CreatedById",
                 table: "Note",
                 column: "CreatedById");
@@ -5191,6 +6802,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_Note_ModifiedById",
                 table: "Note",
                 column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payment_BranchId",
+                table: "Payment",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payment_CreatedById",
@@ -5233,6 +6849,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_Payment_UserId",
                 table: "Payment",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentIntent_BranchId",
+                table: "PaymentIntent",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentIntent_CreatedById",
@@ -5433,6 +7054,17 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductBranch_BranchId",
+                table: "ProductBranch",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductBranch_ProductId_BranchId",
+                table: "ProductBranch",
+                columns: new[] { "ProductId", "BranchId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductBundle_ProductId",
                 table: "ProductBundle",
                 column: "ProductId",
@@ -5618,9 +7250,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOrder_PreferedPaymentMethodId",
+                name: "IX_ProductOrder_PreferredPaymentMethodId",
                 table: "ProductOrder",
-                column: "PreferedPaymentMethodId");
+                column: "PreferredPaymentMethodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductOrder_RegisterId",
@@ -5771,6 +7403,80 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "UserGroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Promotion_CreatedById",
+                table: "Promotion",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Promotion_ModifiedById",
+                table: "Promotion",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionBranch_BranchId",
+                table: "PromotionBranch",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionBranch_PromotionId_BranchId",
+                table: "PromotionBranch",
+                columns: new[] { "PromotionId", "BranchId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionCode_CreatedById",
+                table: "PromotionCode",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionCode_ModifiedById",
+                table: "PromotionCode",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionCode_PromotionId",
+                table: "PromotionCode",
+                column: "PromotionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionCode_Value",
+                table: "PromotionCode",
+                column: "Value",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionDiscount_DiscountId",
+                table: "PromotionDiscount",
+                column: "DiscountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionDiscountGroup_DiscountGroupId",
+                table: "PromotionDiscountGroup",
+                column: "DiscountGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionPeriod_PromotionId",
+                table: "PromotionPeriod",
+                column: "PromotionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionPeriodDay_PromotionPeriodId_Day",
+                table: "PromotionPeriodDay",
+                columns: new[] { "PromotionPeriodId", "Day" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PromotionPeriodDayTime_PromotionPeriodDayId",
+                table: "PromotionPeriodDayTime",
+                column: "PromotionPeriodDayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Refund_BranchId",
+                table: "Refund",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Refund_CreatedById",
                 table: "Refund",
                 column: "CreatedById");
@@ -5840,6 +7546,16 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Register_BranchId",
+                table: "Register",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Register_CompanionId",
+                table: "Register",
+                column: "CompanionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Register_CreatedById",
                 table: "Register",
                 column: "CreatedById");
@@ -5854,6 +7570,16 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_Register_ModifiedById",
                 table: "Register",
                 column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Register_Name_BranchId",
+                table: "Register",
+                columns: new[] { "Name", "BranchId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Register_StockId",
+                table: "Register",
+                column: "StockId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RegisterTransaction_CreatedById",
@@ -5874,6 +7600,27 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_RegisterTransaction_ShiftId",
                 table: "RegisterTransaction",
                 column: "ShiftId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportPreset_CreatedById",
+                table: "ReportPreset",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportPreset_ModifiedById",
+                table: "ReportPreset",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportPreset_Name",
+                table: "ReportPreset",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reservation_BranchId",
+                table: "Reservation",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservation_CreatedById",
@@ -5912,9 +7659,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReservationHost_PreferedUserId",
+                name: "IX_ReservationHost_PreferredUserId",
                 table: "ReservationHost",
-                column: "PreferedUserId");
+                column: "PreferredUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReservationHost_ReservationId_HostId",
@@ -6007,6 +7754,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Shift_BranchId",
+                table: "Shift",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Shift_CreatedById",
                 table: "Shift",
                 column: "CreatedById");
@@ -6058,6 +7810,58 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Stock_BranchId",
+                table: "Stock",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stock_CreatedById",
+                table: "Stock",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stock_ModifiedById",
+                table: "Stock",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stock_Name_BranchId",
+                table: "Stock",
+                columns: new[] { "Name", "BranchId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockCount_CreatedById",
+                table: "StockCount",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockCount_StockId",
+                table: "StockCount",
+                column: "StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockCountEntry_CreatedById",
+                table: "StockCountEntry",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockCountEntry_ProductId_StockCountId",
+                table: "StockCountEntry",
+                columns: new[] { "ProductId", "StockCountId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockCountEntry_StockCountId",
+                table: "StockCountEntry",
+                column: "StockCountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockTransaction_BranchId",
+                table: "StockTransaction",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StockTransaction_CreatedById",
                 table: "StockTransaction",
                 column: "CreatedById");
@@ -6076,6 +7880,75 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_StockTransaction_SourceProductId",
                 table: "StockTransaction",
                 column: "SourceProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Target_CreatedById",
+                table: "Target",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Target_TargetGroupId",
+                table: "Target",
+                column: "TargetGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetBillProfile_BillProfileId",
+                table: "TargetBillProfile",
+                column: "BillProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetBillProfile_TargetGroupBillProfileId_BillProfileId",
+                table: "TargetBillProfile",
+                columns: new[] { "TargetGroupBillProfileId", "BillProfileId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetGroup_CreatedById",
+                table: "TargetGroup",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetGroup_DiscountId",
+                table: "TargetGroup",
+                column: "DiscountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetGroup_ModifiedById",
+                table: "TargetGroup",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetProduct_ProductId",
+                table: "TargetProduct",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetProduct_TargetGroupProductId_ProductId",
+                table: "TargetProduct",
+                columns: new[] { "TargetGroupProductId", "ProductId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetProductGroup_ProductGroupId",
+                table: "TargetProductGroup",
+                column: "ProductGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetProductGroup_TargetGroupProductGroupId_ProductGroupId",
+                table: "TargetProductGroup",
+                columns: new[] { "TargetGroupProductGroupId", "ProductGroupId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetProductTime_ProductTimeId",
+                table: "TargetProductTime",
+                column: "ProductTimeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetProductTime_TargetGroupProductTimeId_ProductTimeId",
+                table: "TargetProductTime",
+                columns: new[] { "TargetGroupProductTimeId", "ProductTimeId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskBase_CreatedById",
@@ -6188,6 +8061,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_UsageSession_BranchId",
+                table: "UsageSession",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UsageSession_CurrentUsageId",
                 table: "UsageSession",
                 column: "CurrentUsageId");
@@ -6234,6 +8112,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_UsageUserSession_UserSessionId",
                 table: "UsageUserSession",
                 column: "UserSessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_BranchId",
+                table: "User",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_CreatedById",
@@ -6362,6 +8245,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserGroup_DiscountGroupId",
+                table: "UserGroup",
+                column: "DiscountGroupId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserGroup_ModifiedById",
                 table: "UserGroup",
                 column: "ModifiedById");
@@ -6463,6 +8351,27 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserOperatorBranch_BranchId_OperatorId",
+                table: "UserOperatorBranch",
+                columns: new[] { "BranchId", "OperatorId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserOperatorBranch_CreatedById",
+                table: "UserOperatorBranch",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserOperatorBranch_ModifiedById",
+                table: "UserOperatorBranch",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserOperatorBranch_OperatorId",
+                table: "UserOperatorBranch",
+                column: "OperatorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserPermission_CreatedById",
                 table: "UserPermission",
                 column: "CreatedById");
@@ -6492,6 +8401,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "IX_UserPicture_UserId",
                 table: "UserPicture",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSession_BranchId",
+                table: "UserSession",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSession_CreatedById",
@@ -6575,6 +8489,11 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 table: "VerificationMobilePhone",
                 column: "VerificationId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Void_BranchId",
+                table: "Void",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Void_CreatedById",
@@ -6699,6 +8618,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AppExeBranch_Branch_BranchId",
+                table: "AppExeBranch",
+                column: "BranchId",
+                principalTable: "Branch",
+                principalColumn: "BranchId",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AppExeCdImage_UserOperator_CreatedById",
@@ -6881,6 +8808,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_AppStat_Branch_BranchId",
+                table: "AppStat",
+                column: "BranchId",
+                principalTable: "Branch",
+                principalColumn: "BranchId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_AppStat_HostComputer_HostId",
                 table: "AppStat",
                 column: "HostId",
@@ -6903,6 +8838,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Asset_Branch_BranchId",
+                table: "Asset",
+                column: "BranchId",
+                principalTable: "Branch",
+                principalColumn: "BranchId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Asset_UserOperator_CreatedById",
                 table: "Asset",
                 column: "CreatedById",
@@ -6922,6 +8865,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "AssetTypeId",
                 principalTable: "AssetType",
                 principalColumn: "AssetTypeId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AssetTransaction_Branch_BranchId",
+                table: "AssetTransaction",
+                column: "BranchId",
+                principalTable: "Branch",
+                principalColumn: "BranchId",
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
@@ -6972,6 +8923,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "AssistanceRequestTypeId",
                 principalTable: "AssistanceRequestType",
                 principalColumn: "AssistanceRequestTypeId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AssistanceRequest_Branch_BranchId",
+                table: "AssistanceRequest",
+                column: "BranchId",
+                principalTable: "Branch",
+                principalColumn: "BranchId",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
@@ -7046,6 +9005,28 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Branch_Companion_CompanionId",
+                table: "Branch",
+                column: "CompanionId",
+                principalTable: "Companion",
+                principalColumn: "CompanionId",
+                onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Branch_UserOperator_CreatedById",
+                table: "Branch",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Branch_UserOperator_ModifiedById",
+                table: "Branch",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_BundleProduct_ProductBase_ProductId",
                 table: "BundleProduct",
                 column: "ProductId",
@@ -7113,6 +9094,20 @@ namespace Gizmo.DAL.Migrations.Npgsql
             migrationBuilder.AddForeignKey(
                 name: "FK_ClientTask_UserOperator_ModifiedById",
                 table: "ClientTask",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Companion_UserOperator_CreatedById",
+                table: "Companion",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Companion_UserOperator_ModifiedById",
+                table: "Companion",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
@@ -7271,6 +9266,77 @@ namespace Gizmo.DAL.Migrations.Npgsql
             migrationBuilder.AddForeignKey(
                 name: "FK_DeviceHost_UserOperator_ModifiedById",
                 table: "DeviceHost",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Discount_UserOperator_CreatedById",
+                table: "Discount",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Discount_UserOperator_ModifiedById",
+                table: "Discount",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DiscountGroup_UserOperator_CreatedById",
+                table: "DiscountGroup",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DiscountGroup_UserOperator_ModifiedById",
+                table: "DiscountGroup",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DiscountGroupDiscount_UserOperator_CreatedById",
+                table: "DiscountGroupDiscount",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Document_DocumentType_DocumentTypeId",
+                table: "Document",
+                column: "DocumentTypeId",
+                principalTable: "DocumentType",
+                principalColumn: "DocumentTypeId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Document_UserOperator_CreatedById",
+                table: "Document",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Document_UserOperator_ModifiedById",
+                table: "Document",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DocumentType_UserOperator_CreatedById",
+                table: "DocumentType",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DocumentType_UserOperator_ModifiedById",
+                table: "DocumentType",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
@@ -7464,6 +9530,116 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Inventory_Shift_ShiftId",
+                table: "Inventory",
+                column: "ShiftId",
+                principalTable: "Shift",
+                principalColumn: "ShiftId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Inventory_Stock_StockId",
+                table: "Inventory",
+                column: "StockId",
+                principalTable: "Stock",
+                principalColumn: "StockId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Inventory_UserOperator_CreatedById",
+                table: "Inventory",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryAdjustmentEntry_InventoryAdjustmentReason_Adjustme~",
+                table: "InventoryAdjustmentEntry",
+                column: "AdjustmentReasonId",
+                principalTable: "InventoryAdjustmentReason",
+                principalColumn: "InventoryAdjustmentReasonId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryAdjustmentEntry_InventoryEntry_InventoryEntryId",
+                table: "InventoryAdjustmentEntry",
+                column: "InventoryEntryId",
+                principalTable: "InventoryEntry",
+                principalColumn: "InventoryEntryId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryAdjustmentReason_UserOperator_CreatedById",
+                table: "InventoryAdjustmentReason",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryAdjustmentReason_UserOperator_ModifiedById",
+                table: "InventoryAdjustmentReason",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryDocument_UserOperator_CreatedById",
+                table: "InventoryDocument",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryEntry_ProductBase_ProductId",
+                table: "InventoryEntry",
+                column: "ProductId",
+                principalTable: "ProductBase",
+                principalColumn: "ProductId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryEntry_Shift_ShiftId",
+                table: "InventoryEntry",
+                column: "ShiftId",
+                principalTable: "Shift",
+                principalColumn: "ShiftId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryEntry_StockTransaction_StockTransactionId",
+                table: "InventoryEntry",
+                column: "StockTransactionId",
+                principalTable: "StockTransaction",
+                principalColumn: "StockTransactionId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryEntry_Stock_StockId",
+                table: "InventoryEntry",
+                column: "StockId",
+                principalTable: "Stock",
+                principalColumn: "StockId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryEntry_UserOperator_CreatedById",
+                table: "InventoryEntry",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryTransfer_Stock_TransferStockId",
+                table: "InventoryTransfer",
+                column: "TransferStockId",
+                principalTable: "Stock",
+                principalColumn: "StockId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryTransferEntry_Stock_TransferStockId",
+                table: "InventoryTransferEntry",
+                column: "TransferStockId",
+                principalTable: "Stock",
+                principalColumn: "StockId",
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Invoice_ProductOrder_ProductOrderId",
@@ -8234,6 +10410,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Promotion_UserOperator_CreatedById",
+                table: "Promotion",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Promotion_UserOperator_ModifiedById",
+                table: "Promotion",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_PromotionCode_UserOperator_CreatedById",
+                table: "PromotionCode",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_PromotionCode_UserOperator_ModifiedById",
+                table: "PromotionCode",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Refund_Register_RegisterId",
                 table: "Refund",
                 column: "RegisterId",
@@ -8254,6 +10458,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 column: "CreatedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Register_Stock_StockId",
+                table: "Register",
+                column: "StockId",
+                principalTable: "Stock",
+                principalColumn: "StockId",
+                onDelete: ReferentialAction.SetNull);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Register_UserOperator_CreatedById",
@@ -8291,6 +10503,20 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_ReportPreset_UserOperator_CreatedById",
+                table: "ReportPreset",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ReportPreset_UserOperator_ModifiedById",
+                table: "ReportPreset",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Reservation_UserMember_UserId",
                 table: "Reservation",
                 column: "UserId",
@@ -8314,9 +10540,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ReservationHost_UserMember_PreferedUserId",
+                name: "FK_ReservationHost_UserMember_PreferredUserId",
                 table: "ReservationHost",
-                column: "PreferedUserId",
+                column: "PreferredUserId",
                 principalTable: "UserMember",
                 principalColumn: "UserId",
                 onDelete: ReferentialAction.Restrict);
@@ -8456,6 +10682,34 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Stock_UserOperator_CreatedById",
+                table: "Stock",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Stock_UserOperator_ModifiedById",
+                table: "Stock",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_StockCount_UserOperator_CreatedById",
+                table: "StockCount",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_StockCountEntry_UserOperator_CreatedById",
+                table: "StockCountEntry",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_StockTransaction_UserOperator_CreatedById",
                 table: "StockTransaction",
                 column: "CreatedById",
@@ -8465,6 +10719,43 @@ namespace Gizmo.DAL.Migrations.Npgsql
             migrationBuilder.AddForeignKey(
                 name: "FK_StockTransaction_UserOperator_ModifiedById",
                 table: "StockTransaction",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Target_TargetGroup_TargetGroupId",
+                table: "Target",
+                column: "TargetGroupId",
+                principalTable: "TargetGroup",
+                principalColumn: "TargetGroupId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Target_UserOperator_CreatedById",
+                table: "Target",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_TargetBillProfile_TargetGroupBillProfile_TargetGroupBillPro~",
+                table: "TargetBillProfile",
+                column: "TargetGroupBillProfileId",
+                principalTable: "TargetGroupBillProfile",
+                principalColumn: "TargetGroupId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_TargetGroup_UserOperator_CreatedById",
+                table: "TargetGroup",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_TargetGroup_UserOperator_ModifiedById",
+                table: "TargetGroup",
                 column: "ModifiedById",
                 principalTable: "UserOperator",
                 principalColumn: "UserId");
@@ -8603,6 +10894,30 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 table: "BillProfile");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_Branch_UserOperator_CreatedById",
+                table: "Branch");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Branch_UserOperator_ModifiedById",
+                table: "Branch");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Companion_UserOperator_CreatedById",
+                table: "Companion");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Companion_UserOperator_ModifiedById",
+                table: "Companion");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_DiscountGroup_UserOperator_CreatedById",
+                table: "DiscountGroup");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_DiscountGroup_UserOperator_ModifiedById",
+                table: "DiscountGroup");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_Host_UserOperator_CreatedById",
                 table: "Host");
 
@@ -8723,6 +11038,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 table: "Shift");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_Stock_UserOperator_CreatedById",
+                table: "Stock");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Stock_UserOperator_ModifiedById",
+                table: "Stock");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_StockTransaction_UserOperator_CreatedById",
                 table: "StockTransaction");
 
@@ -8741,6 +11064,38 @@ namespace Gizmo.DAL.Migrations.Npgsql
             migrationBuilder.DropForeignKey(
                 name: "FK_UserGroup_UserOperator_ModifiedById",
                 table: "UserGroup");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_HostGroup_Branch_BranchId",
+                table: "HostGroup");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Invoice_Branch_BranchId",
+                table: "Invoice");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Register_Branch_BranchId",
+                table: "Register");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Shift_Branch_BranchId",
+                table: "Shift");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Stock_Branch_BranchId",
+                table: "Stock");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_StockTransaction_Branch_BranchId",
+                table: "StockTransaction");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_UsageSession_Branch_BranchId",
+                table: "UsageSession");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_User_Branch_BranchId",
+                table: "User");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_HostGroup_AppGroup_AppGroupId",
@@ -8781,6 +11136,10 @@ namespace Gizmo.DAL.Migrations.Npgsql
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductOrder_Host_HostId",
                 table: "ProductOrder");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Register_Companion_CompanionId",
+                table: "Register");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductBaseExtended_ProductBase_ProductId",
@@ -8839,6 +11198,14 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 table: "ProductOrder");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_InvoiceLineExtended_StockTransaction_StockReturnTransaction~",
+                table: "InvoiceLineExtended");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_InvoiceLineExtended_StockTransaction_StockTransactionId",
+                table: "InvoiceLineExtended");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_Invoice_ProductOrder_ProductOrderId",
                 table: "Invoice");
 
@@ -8869,6 +11236,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
             migrationBuilder.DropForeignKey(
                 name: "FK_Usage_UsageSession_UsageSessionId",
                 table: "Usage");
+
+            migrationBuilder.DropTable(
+                name: "AppExeBranch");
 
             migrationBuilder.DropTable(
                 name: "AppExeCdImage");
@@ -8934,7 +11304,22 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "DeviceHost");
 
             migrationBuilder.DropTable(
-                name: "Feed");
+                name: "DiscountBasic");
+
+            migrationBuilder.DropTable(
+                name: "DiscountBonus");
+
+            migrationBuilder.DropTable(
+                name: "DiscountBranch");
+
+            migrationBuilder.DropTable(
+                name: "DiscountGroupDiscount");
+
+            migrationBuilder.DropTable(
+                name: "DiscountPeriodDayTime");
+
+            migrationBuilder.DropTable(
+                name: "FeedBranch");
 
             migrationBuilder.DropTable(
                 name: "HostEndpoint");
@@ -8950,6 +11335,27 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             migrationBuilder.DropTable(
                 name: "HostLayoutGroupLayout");
+
+            migrationBuilder.DropTable(
+                name: "InventoryAdjustment");
+
+            migrationBuilder.DropTable(
+                name: "InventoryAdjustmentEntry");
+
+            migrationBuilder.DropTable(
+                name: "InventoryDocument");
+
+            migrationBuilder.DropTable(
+                name: "InventoryInbound");
+
+            migrationBuilder.DropTable(
+                name: "InventoryInboundEntry");
+
+            migrationBuilder.DropTable(
+                name: "InventoryTransfer");
+
+            migrationBuilder.DropTable(
+                name: "InventoryTransferEntry");
 
             migrationBuilder.DropTable(
                 name: "InvoiceFiscalReceipt");
@@ -8970,7 +11376,7 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "MonetaryUnit");
 
             migrationBuilder.DropTable(
-                name: "News");
+                name: "NewsBranch");
 
             migrationBuilder.DropTable(
                 name: "PaymentIntentDeposit");
@@ -8989,6 +11395,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             migrationBuilder.DropTable(
                 name: "Product");
+
+            migrationBuilder.DropTable(
+                name: "ProductBranch");
 
             migrationBuilder.DropTable(
                 name: "ProductBundleUserPrice");
@@ -9018,6 +11427,24 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "ProductUserPrice");
 
             migrationBuilder.DropTable(
+                name: "PromotionBranch");
+
+            migrationBuilder.DropTable(
+                name: "PromotionCode");
+
+            migrationBuilder.DropTable(
+                name: "PromotionDiscount");
+
+            migrationBuilder.DropTable(
+                name: "PromotionDiscountGroup");
+
+            migrationBuilder.DropTable(
+                name: "PromotionLimit");
+
+            migrationBuilder.DropTable(
+                name: "PromotionPeriodDayTime");
+
+            migrationBuilder.DropTable(
                 name: "RefundDepositPayment");
 
             migrationBuilder.DropTable(
@@ -9025,6 +11452,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             migrationBuilder.DropTable(
                 name: "RegisterTransaction");
+
+            migrationBuilder.DropTable(
+                name: "ReportPreset");
 
             migrationBuilder.DropTable(
                 name: "ReservationHost");
@@ -9043,6 +11473,21 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             migrationBuilder.DropTable(
                 name: "ShiftCount");
+
+            migrationBuilder.DropTable(
+                name: "StockCountEntry");
+
+            migrationBuilder.DropTable(
+                name: "TargetBillProfile");
+
+            migrationBuilder.DropTable(
+                name: "TargetProduct");
+
+            migrationBuilder.DropTable(
+                name: "TargetProductGroup");
+
+            migrationBuilder.DropTable(
+                name: "TargetProductTime");
 
             migrationBuilder.DropTable(
                 name: "TaskJunction");
@@ -9085,6 +11530,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             migrationBuilder.DropTable(
                 name: "UserNote");
+
+            migrationBuilder.DropTable(
+                name: "UserOperatorBranch");
 
             migrationBuilder.DropTable(
                 name: "UserPermission");
@@ -9132,10 +11580,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "Device");
 
             migrationBuilder.DropTable(
+                name: "DiscountPeriodDay");
+
+            migrationBuilder.DropTable(
+                name: "Feed");
+
+            migrationBuilder.DropTable(
                 name: "HostGroupWaitingLine");
 
             migrationBuilder.DropTable(
                 name: "HostLayoutGroup");
+
+            migrationBuilder.DropTable(
+                name: "InventoryAdjustmentReason");
+
+            migrationBuilder.DropTable(
+                name: "Document");
+
+            migrationBuilder.DropTable(
+                name: "InventoryEntry");
 
             migrationBuilder.DropTable(
                 name: "ProductOLSession");
@@ -9150,6 +11613,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "Log");
 
             migrationBuilder.DropTable(
+                name: "News");
+
+            migrationBuilder.DropTable(
                 name: "PaymentIntent");
 
             migrationBuilder.DropTable(
@@ -9162,6 +11628,9 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "ProductTimePeriodDay");
 
             migrationBuilder.DropTable(
+                name: "PromotionPeriodDay");
+
+            migrationBuilder.DropTable(
                 name: "InvoicePayment");
 
             migrationBuilder.DropTable(
@@ -9169,6 +11638,24 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             migrationBuilder.DropTable(
                 name: "Reservation");
+
+            migrationBuilder.DropTable(
+                name: "StockCount");
+
+            migrationBuilder.DropTable(
+                name: "TargetGroupBillProfile");
+
+            migrationBuilder.DropTable(
+                name: "TargetGroupProduct");
+
+            migrationBuilder.DropTable(
+                name: "TargetGroupProductGroup");
+
+            migrationBuilder.DropTable(
+                name: "TargetGroupProductTime");
+
+            migrationBuilder.DropTable(
+                name: "Target");
 
             migrationBuilder.DropTable(
                 name: "TaskBase");
@@ -9216,10 +11703,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "ProductBundle");
 
             migrationBuilder.DropTable(
+                name: "DiscountPeriod");
+
+            migrationBuilder.DropTable(
+                name: "DocumentType");
+
+            migrationBuilder.DropTable(
+                name: "Inventory");
+
+            migrationBuilder.DropTable(
                 name: "ProductPeriod");
 
             migrationBuilder.DropTable(
                 name: "ProductTimePeriod");
+
+            migrationBuilder.DropTable(
+                name: "PromotionPeriod");
+
+            migrationBuilder.DropTable(
+                name: "TargetGroup");
 
             migrationBuilder.DropTable(
                 name: "ProductOLTime");
@@ -9246,13 +11748,25 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "AppEnterprise");
 
             migrationBuilder.DropTable(
+                name: "DiscountPeriodic");
+
+            migrationBuilder.DropTable(
+                name: "Promotion");
+
+            migrationBuilder.DropTable(
                 name: "ProductTime");
 
             migrationBuilder.DropTable(
                 name: "DepositTransaction");
 
             migrationBuilder.DropTable(
+                name: "Discount");
+
+            migrationBuilder.DropTable(
                 name: "UserOperator");
+
+            migrationBuilder.DropTable(
+                name: "Branch");
 
             migrationBuilder.DropTable(
                 name: "AppGroup");
@@ -9279,7 +11793,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "BillProfile");
 
             migrationBuilder.DropTable(
+                name: "DiscountGroup");
+
+            migrationBuilder.DropTable(
                 name: "SecurityProfile");
+
+            migrationBuilder.DropTable(
+                name: "Companion");
 
             migrationBuilder.DropTable(
                 name: "ProductBase");
@@ -9291,7 +11811,13 @@ namespace Gizmo.DAL.Migrations.Npgsql
                 name: "Register");
 
             migrationBuilder.DropTable(
+                name: "Stock");
+
+            migrationBuilder.DropTable(
                 name: "Shift");
+
+            migrationBuilder.DropTable(
+                name: "StockTransaction");
 
             migrationBuilder.DropTable(
                 name: "ProductOrder");
@@ -9313,9 +11839,6 @@ namespace Gizmo.DAL.Migrations.Npgsql
 
             migrationBuilder.DropTable(
                 name: "InvoiceLine");
-
-            migrationBuilder.DropTable(
-                name: "StockTransaction");
 
             migrationBuilder.DropTable(
                 name: "ProductBaseExtended");
