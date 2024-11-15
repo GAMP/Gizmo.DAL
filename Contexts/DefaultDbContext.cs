@@ -827,6 +827,11 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<DocumentType> DocumentTypes { get; set; }
 
+        /// <summary>
+        /// Get documents.
+        /// </summary>
+        public DbSet<Document> Documents { get; set; }
+
         #endregion
 
         #region OVERRIDES
