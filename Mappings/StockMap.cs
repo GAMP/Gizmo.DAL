@@ -12,6 +12,8 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Stock> builder)
         {
+            builder.ToTable(nameof(Stock));
+
             builder.HasKey(stock => stock.Id);
 
             builder.Property(stock => stock.Id)
