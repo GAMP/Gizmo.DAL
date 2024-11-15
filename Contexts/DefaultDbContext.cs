@@ -832,6 +832,21 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<Document> Documents { get; set; }
 
+        /// <summary>
+        /// Gets inventories.
+        /// </summary>
+        public DbSet<Inventory> Inventories { get; set; }
+
+        /// <summary>
+        /// Gets inventory entries.
+        /// </summary>
+        public DbSet<InventoryEntry> InventoryEntries { get; set; }
+
+        /// <summary>
+        /// Gets stocks.
+        /// </summary>
+        public DbSet<Stock> Stocks { get; set; }
+
         #endregion
 
         #region OVERRIDES
