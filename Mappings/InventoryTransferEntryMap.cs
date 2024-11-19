@@ -23,6 +23,10 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(1)
                 .IsRequired();
 
+            builder.Property(transferEntry => transferEntry.TransferStockTransactionId)
+                .HasColumnOrder(2)
+                .IsRequired();
+
             builder.HasOne(transferEntry => transferEntry.TransferStock)
                 .WithMany()
                 .HasForeignKey(transferEntry => transferEntry.TransferStockId)

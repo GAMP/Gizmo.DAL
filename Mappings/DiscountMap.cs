@@ -105,10 +105,16 @@ namespace Gizmo.DAL.Mappings
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id)
-                .HasColumnName("DiscountPeriodDayId");
+                .HasColumnName("DiscountPeriodDayId")
+                .HasColumnOrder(0);
 
-            builder.Property(x => x.DiscountPeriodId);
-            builder.Property(x => x.Day);
+            builder.Property(x => x.DiscountPeriodId)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(x => x.Day)
+                .IsRequired()
+                .HasColumnOrder(2);
 
             builder.HasIndex(t => new { t.DiscountPeriodId, t.Day }).IsUnique();
 
@@ -131,6 +137,18 @@ namespace Gizmo.DAL.Mappings
 
             builder.HasKey(x => new { x.DiscountPeriodDayId, x.StartSecond, x.EndSecond });
             builder.HasIndex(t => t.DiscountPeriodDayId);
+
+            builder.Property(x => x.DiscountPeriodDayId)
+                .IsRequired()
+                .HasColumnOrder(0);
+
+            builder.Property(x => x.StartSecond)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(x => x.EndSecond)
+                .IsRequired()
+                .HasColumnOrder(2);
 
             builder.HasOne(x => x.Day)
                 .WithMany(x => x.Times)
@@ -201,7 +219,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2);
 
             builder.Property(discountBasic => discountBasic.Value)
-                .IsRequired()
+                .IsRequired(false)
                 .HasColumnOrder(3);
         }
     }
@@ -242,6 +260,18 @@ namespace Gizmo.DAL.Mappings
             builder.Property(discountGroupDiscount => discountGroupDiscount.Id)
                 .HasColumnName("DiscountGroupDiscountId");
 
+            builder.Property(discountGroup => discountGroup.Id)
+                .IsRequired()
+                .HasColumnOrder(0);
+
+            builder.Property(discountGroup => discountGroup.DiscountGroupId)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(discountGroup => discountGroup.DiscountId)
+                .IsRequired()
+                .HasColumnOrder(2);
+
             builder.HasOne(discountGroupDiscount => discountGroupDiscount.DiscountGroup)
                 .WithMany(discountGroup => discountGroup.Discounts)
                 .HasForeignKey(discountGroupDiscount => discountGroupDiscount.DiscountGroupId)
@@ -265,6 +295,26 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(targetGroup => targetGroup.Id)
                 .HasColumnName("TargetGroupId");
+
+            builder.Property(targetGroup => targetGroup.Id)
+                .IsRequired()
+                .HasColumnOrder(0);
+
+            builder.Property(targetGroup => targetGroup.DiscountId)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(targetGroup => targetGroup.Requirement)
+                .IsRequired()
+                .HasColumnOrder(2);
+
+            builder.Property(targetGroup => targetGroup.Value)
+                .IsRequired(false)
+                .HasColumnOrder(3);
+
+            builder.Property(targetGroup => targetGroup.IncludeAll)
+                .IsRequired()
+                .HasColumnOrder(4);
 
             builder.HasMany(targetGroup => targetGroup.Targets)
                 .WithOne(target => target.TargetGroup);
@@ -339,6 +389,14 @@ namespace Gizmo.DAL.Mappings
             builder.Property(target => target.Id)
                 .HasColumnName("TargetId");
 
+            builder.Property(target => target.Id)
+                .IsRequired()
+                .HasColumnOrder(0);
+
+            builder.Property(target => target.TargetGroupId)
+                .IsRequired()
+                .HasColumnOrder(1);
+
             builder.HasOne(target => target.TargetGroup)
                 .WithMany(targetGroup => targetGroup.Targets)
                 .HasForeignKey(target => target.TargetGroupId)
@@ -356,6 +414,18 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(TargetProduct))
                 .HasBaseType<Target>();
+
+            builder.Property(targetProduct => targetProduct.Id)
+                .IsRequired()
+                .HasColumnOrder(0);
+
+            builder.Property(targetProduct => targetProduct.TargetGroupProductId)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(targetProduct => targetProduct.ProductId)
+                .IsRequired()
+                .HasColumnOrder(2);
 
             builder.HasOne(target => target.Product)
                 .WithMany()
@@ -382,6 +452,18 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(TargetProductTime))
                 .HasBaseType<Target>();
 
+            builder.Property(targetProductTime => targetProductTime.Id)
+                .IsRequired()
+                .HasColumnOrder(0);
+
+            builder.Property(targetProductTime => targetProductTime.TargetGroupProductTimeId)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(targetProductTime => targetProductTime.ProductTimeId)
+                .IsRequired()
+                .HasColumnOrder(2);
+
             builder.HasOne(target => target.ProductTime)
                 .WithMany()
                 .HasForeignKey(target => target.ProductTimeId)
@@ -407,6 +489,18 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(TargetProductGroup))
                 .HasBaseType<Target>();
 
+            builder.Property(targetProductGroup => targetProductGroup.Id)
+                .IsRequired()
+                .HasColumnOrder(0);
+
+            builder.Property(targetProductGroup => targetProductGroup.TargetGroupProductGroupId)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(targetProductGroup => targetProductGroup.ProductGroupId)
+                .IsRequired()
+                .HasColumnOrder(2);
+
             builder.HasOne(target => target.ProductGroup)
                 .WithMany()
                 .HasForeignKey(target => target.ProductGroupId)
@@ -431,6 +525,18 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(TargetBillProfile))
                 .HasBaseType<Target>();
+
+            builder.Property(targetBillProfile => targetBillProfile.Id)
+                .IsRequired()
+                .HasColumnOrder(0);
+
+            builder.Property(targetBillProfile => targetBillProfile.TargetGroupBillProfileId)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(targetBillProfile => targetBillProfile.BillProfileId)
+                .IsRequired()
+                .HasColumnOrder(2);
 
             builder.HasOne(target => target.BillProfile)
                 .WithMany()

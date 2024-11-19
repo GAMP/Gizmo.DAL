@@ -23,6 +23,11 @@
             UPDATE [dbo].[UserSession] Set BranchId=(SELECT min(BranchId) FROM [dbo].[Branch]);
             UPDATE [dbo].[AssetTransaction] Set BranchId=(SELECT min(BranchId) FROM [dbo].[Branch]);
             UPDATE [dbo].[AssistanceRequest] Set BranchId=(SELECT min(BranchId) FROM [dbo].[Branch]);
+
+            IF NOT EXISTS (SELECT StockId FROM Stock)
+            BEGIN
+            INSERT INTO Stock (Name,Type,IsDeleted,CreatedTime) VALUES ('Default',0,0,GETDATE())
+            END
         """;
     }
 }
