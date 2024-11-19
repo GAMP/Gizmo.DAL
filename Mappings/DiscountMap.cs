@@ -45,6 +45,25 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(DiscountPeriodic))
                 .HasBaseType<Discount>();
+
+            builder.Property(discountPeriodic => discountPeriodic.Id)
+                .HasColumnOrder(0);
+        }
+    }
+
+    /// <summary>
+    /// Discount targeted entity map.
+    /// </summary>
+    public sealed class DiscountTargetedMap : IEntityTypeConfiguration<DiscountTargeted>
+    {
+        /// <inheritdoc/>
+        public void Configure(EntityTypeBuilder<DiscountTargeted> builder)
+        {
+            builder.ToTable(nameof(DiscountTargeted))
+                .HasBaseType<DiscountPeriodic>();
+
+            builder.Property(discountTargeted => discountTargeted.Id)
+                .HasColumnOrder(0);
         }
     }
 
@@ -82,7 +101,7 @@ namespace Gizmo.DAL.Mappings
         public void Configure(EntityTypeBuilder<DiscountPeriodDay> builder)
         {
             builder.ToTable(nameof(DiscountPeriodDay));
-            
+
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id)
@@ -121,6 +140,26 @@ namespace Gizmo.DAL.Mappings
     }
 
     /// <summary>
+    /// Discount bonus flat map.
+    /// </summary>
+    public sealed class DiscountBonusFlatMap : IEntityTypeConfiguration<DiscountBonusFlat>
+    {
+        /// <inheritdoc/>
+        public void Configure(EntityTypeBuilder<DiscountBonusFlat> builder)
+        {
+            builder.ToTable(nameof(DiscountBonusFlat))
+                .HasBaseType<Discount>();
+
+            builder.Property(discountBonusFlat => discountBonusFlat.Id)
+                .HasColumnOrder(0);
+
+            builder.Property(discountBonusFlat => discountBonusFlat.Value)
+                .HasColumnOrder(1)
+                .IsRequired();
+        }
+    }
+
+    /// <summary>
     /// Discount bonus map.
     /// </summary>
     public sealed class DiscountBonusMap : IEntityTypeConfiguration<DiscountBonus>
@@ -129,7 +168,13 @@ namespace Gizmo.DAL.Mappings
         public void Configure(EntityTypeBuilder<DiscountBonus> builder)
         {
             builder.ToTable(nameof(DiscountBonus))
-                .HasBaseType<Discount>();
+                .HasBaseType<DiscountTargeted>();
+
+            builder.Property(discountBonus => discountBonus.Id)
+                .HasColumnOrder(0);
+
+            builder.Property(discountBonus => discountBonus.Value)
+                .HasColumnOrder(1);
         }
     }
 
@@ -142,7 +187,22 @@ namespace Gizmo.DAL.Mappings
         public void Configure(EntityTypeBuilder<DiscountBasic> builder)
         {
             builder.ToTable(nameof(DiscountBasic))
-                .HasBaseType<DiscountPeriodic>();
+                .HasBaseType<DiscountTargeted>();
+
+            builder.Property(discountBasic => discountBasic.Id)
+                .HasColumnOrder(0);
+
+            builder.Property(discountBasic => discountBasic.ApplyType)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(discountBasic => discountBasic.Type)
+                .IsRequired()
+                .HasColumnOrder(2);
+
+            builder.Property(discountBasic => discountBasic.Value)
+                .IsRequired()
+                .HasColumnOrder(3);
         }
     }
 

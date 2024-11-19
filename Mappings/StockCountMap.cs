@@ -20,9 +20,13 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired();
 
             builder.Property(stockCount => stockCount.Note)
+                .IsRequired(false)
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY);
 
+            builder.Property(stockCount => stockCount.UnexpectedEntries)
+                .IsRequired()
+                .HasColumnOrder(2);
 
             builder.HasOne(stockCount => stockCount.Stock)
                 .WithMany(stock => stock.Counts)

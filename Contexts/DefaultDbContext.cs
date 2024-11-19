@@ -14,6 +14,7 @@ using Microsoft.Data.SqlClient;
 using Gizmo.DAL.Mappings;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
+using System.Diagnostics.Contracts;
 
 namespace Gizmo.DAL.Contexts
 {
@@ -771,6 +772,11 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<NewsBranch> NewsBranches { get; set; }
 
+        /// <summary>
+        /// Discount branches.
+        /// </summary>
+        public DbSet<DiscountBranch> DiscountBranches { get; set; }
+
         #region DEVICES
 
         /// <summary>
@@ -846,6 +852,21 @@ namespace Gizmo.DAL.Contexts
         /// Gets stocks.
         /// </summary>
         public DbSet<Stock> Stocks { get; set; }
+
+        /// <summary>
+        /// Gets stock counts.
+        /// </summary>
+        public DbSet<StockCount> StockCounts { get; set; }
+
+        /// <summary>
+        /// Gets stock count entries.
+        /// </summary>
+        public DbSet<StockCountEntry> StockCountEntries { get; set; }
+
+        /// <summary>
+        /// Gets discounts.
+        /// </summary>
+        public DbSet<Discount> Discounts { get; set; }
 
         #endregion
 
@@ -1081,10 +1102,12 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new CompanionMap());
 
             modelBuilder.ApplyConfiguration(new DiscountMap());
-            modelBuilder.ApplyConfiguration(new DiscountPeriodicMap());
+            modelBuilder.ApplyConfiguration(new DiscountPeriodicMap());    
             modelBuilder.ApplyConfiguration(new DiscountPeriodMap());
             modelBuilder.ApplyConfiguration(new DiscountPeriodDayMap());
             modelBuilder.ApplyConfiguration(new DiscountPeriodDayTimeMap());
+            modelBuilder.ApplyConfiguration(new DiscountTargetedMap());
+            modelBuilder.ApplyConfiguration(new DiscountBonusFlatMap());
             modelBuilder.ApplyConfiguration(new DiscountBonusMap());
             modelBuilder.ApplyConfiguration(new DiscountBasicMap());
             modelBuilder.ApplyConfiguration(new DiscountBranchMap());
