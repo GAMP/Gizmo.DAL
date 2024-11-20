@@ -5,93 +5,131 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Gizmo.DAL.Mappings
 {
     /// <summary>
-    /// <see cref="Branch"/> mapping.
+    /// <see cref="Branch"/> entity mapping.
     /// </summary>
     public sealed class BranchMap : IEntityTypeConfiguration<Branch>
     {
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Branch> builder)
         {
-            builder.HasIndex(x => x.Id);
+            builder.ToTable(nameof(Branch));
 
-            builder.Property(x => x.Id)
+            builder.HasIndex(branch => branch.Id);
+
+            builder.Property(branch => branch.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("BranchId");
 
-            builder.Property(x => x.Name)
+            builder.Property(branch => branch.Name)
                 .HasColumnOrder(1)
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.City)
+            builder.Property(branch => branch.Country)
                 .HasColumnOrder(2)
+                .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.Address)
+            builder.Property(branch => branch.City)
                 .HasColumnOrder(3)
-                .HasMaxLength(SQLStringSize.TINY);
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.PostalCode)
+            builder.Property(branch => branch.Address)
                 .HasColumnOrder(4)
-                .HasMaxLength(SQLStringSize.TINY45);
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(x => x.Region)
+            builder.Property(branch => branch.PostalCode)
                 .HasColumnOrder(5)
+                .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.Latitude)
+            builder.Property(branch => branch.Region)
                 .HasColumnOrder(6)
-                .HasPrecision(9, 6);
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.Longitude)
+            builder.Property(branch => branch.Latitude)
                 .HasColumnOrder(7)
+                .IsRequired()
                 .HasPrecision(9, 6);
 
-            builder.Property(x => x.Phone)
+            builder.Property(branch => branch.Longitude)
                 .HasColumnOrder(8)
-                .HasMaxLength(SQLStringSize.TINY45);
+                .IsRequired()
+                .HasPrecision(9, 6);
 
-            builder.Property(x => x.Email)
+            builder.Property(branch => branch.Phone)
                 .HasColumnOrder(9)
-                .HasMaxLength(SQLStringSize.TINY);
-
-            builder.Property(x => x.WebSite)
-                .HasColumnOrder(10)
-                .HasMaxLength(SQLStringSize.TINY);
-
-            builder.Property(x => x.Info)
-                .HasColumnOrder(11)
-                .HasMaxLength(SQLStringSize.TINY);
-
-            builder.Property(x => x.TimeZone)
-                .HasColumnOrder(12)
+                .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.IsEnabled)
-                 .HasColumnOrder(13);
+            builder.Property(branch => branch.Email)
+                .HasColumnOrder(10)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(x => x.IsDeleted)
+            builder.Property(branch => branch.WebSite)
+                .HasColumnOrder(11)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY);
+
+            builder.Property(branch => branch.Info)
+                .HasColumnOrder(12)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY);
+
+            builder.Property(branch => branch.TimeZone)
+                .HasColumnOrder(13)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY45);
+
+            builder.Property(branch => branch.HasWorkingSchedule)
+                .IsRequired()
                 .HasColumnOrder(14);
 
-            builder.Property(x => x.Guid)
-                .HasColumnOrder(15)
+            builder.Property(branch => branch.BusinessDayStart)
+              .IsRequired(false)
+              .HasColumnOrder(15);
+
+            builder.Property(branch => branch.BusinessDayEnd)
+                .IsRequired(false)
+                .HasColumnOrder(16);
+
+            builder.Property(branch => branch.BusinessStartWeekDay)
+                .IsRequired(false)
+                .HasColumnOrder(17);
+
+            builder.Property(branch => branch.BusinessEndWeekDay)
+                .IsRequired(false)
+                .HasColumnOrder(18);
+
+            builder.Property(branch => branch.IsEnabled)
+                .IsRequired()
+                 .HasColumnOrder(19);
+
+            builder.Property(branch => branch.IsDeleted)
+                .IsRequired()
+                .HasColumnOrder(20);
+
+            builder.Property(branch => branch.Guid)
+                .HasColumnOrder(21)
                 .IsRequired();
 
-            builder.HasIndex(x => x.Name)
+            builder.HasIndex(branch => branch.Name)
                 .IsUnique();
 
-            builder.HasIndex(x => x.Guid)
+            builder.HasIndex(branch => branch.Guid)
                 .IsUnique();
 
-            builder.HasOne(x => x.CreatedBy)
+            builder.HasOne(branch => branch.CreatedBy)
                 .WithMany(x => x.CreatedBranches)
                 .HasForeignKey(x => x.CreatedById);
 
-            builder.HasOne(x => x.ModifiedBy)
-               .WithMany(x => x.ModifiedBranches)
-               .HasForeignKey(x => x.ModifiedById);
-
-            builder.ToTable(nameof(Branch));
+            builder.HasOne(branch => branch.ModifiedBy)
+               .WithMany(userOperator => userOperator.ModifiedBranches)
+               .HasForeignKey(branch => branch.ModifiedById);          
         }
     }
 }
