@@ -458,6 +458,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     BranchId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
                     City = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
                     Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     PostalCode = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
@@ -469,6 +470,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     WebSite = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Info = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     TimeZone = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
+                    HasWorkingSchedule = table.Column<bool>(type: "bit", nullable: false),
+                    BusinessDayStart = table.Column<TimeOnly>(type: "time", nullable: true),
+                    BusinessDayEnd = table.Column<TimeOnly>(type: "time", nullable: true),
+                    BusinessStartWeekDay = table.Column<int>(type: "int", nullable: true),
+                    BusinessEndWeekDay = table.Column<int>(type: "int", nullable: true),
                     IsEnabled = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -500,7 +506,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
-                name: "DiscountBonus",
+                name: "DiscountBonusFlat",
                 columns: table => new
                 {
                     DiscountId = table.Column<int>(type: "int", nullable: false),
@@ -508,9 +514,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DiscountBonus", x => x.DiscountId);
+                    table.PrimaryKey("PK_DiscountBonusFlat", x => x.DiscountId);
                     table.ForeignKey(
-                        name: "FK_DiscountBonus_Discount_DiscountId",
+                        name: "FK_DiscountBonusFlat_Discount_DiscountId",
                         column: x => x.DiscountId,
                         principalTable: "Discount",
                         principalColumn: "DiscountId",
@@ -532,42 +538,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         principalTable: "Discount",
                         principalColumn: "DiscountId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TargetGroup",
-                columns: table => new
-                {
-                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DiscountId = table.Column<int>(type: "int", nullable: false),
-                    IncludeAll = table.Column<bool>(type: "bit", nullable: false),
-                    Requirement = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TargetGroup", x => x.TargetGroupId);
-                    table.ForeignKey(
-                        name: "FK_TargetGroup_Discount_DiscountId",
-                        column: x => x.DiscountId,
-                        principalTable: "Discount",
-                        principalColumn: "DiscountId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TargetGroup_UserOperator_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "UserOperator",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_TargetGroup_UserOperator_ModifiedById",
-                        column: x => x.ModifiedById,
-                        principalTable: "UserOperator",
-                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -610,6 +580,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     DocumentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DocumentTypeId = table.Column<int>(type: "int", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -989,26 +960,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
-                name: "DiscountBasic",
-                columns: table => new
-                {
-                    DiscountId = table.Column<int>(type: "int", nullable: false),
-                    ApplyType = table.Column<int>(type: "int", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DiscountBasic", x => x.DiscountId);
-                    table.ForeignKey(
-                        name: "FK_DiscountBasic_DiscountPeriodic_DiscountId",
-                        column: x => x.DiscountId,
-                        principalTable: "DiscountPeriodic",
-                        principalColumn: "DiscountId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DiscountPeriod",
                 columns: table => new
                 {
@@ -1029,96 +980,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
-                name: "Target",
+                name: "DiscountTargeted",
                 columns: table => new
                 {
-                    TargetId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TargetGroupId = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DiscountId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Target", x => x.TargetId);
+                    table.PrimaryKey("PK_DiscountTargeted", x => x.DiscountId);
                     table.ForeignKey(
-                        name: "FK_Target_TargetGroup_TargetGroupId",
-                        column: x => x.TargetGroupId,
-                        principalTable: "TargetGroup",
-                        principalColumn: "TargetGroupId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Target_UserOperator_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "UserOperator",
-                        principalColumn: "UserId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TargetGroupBillProfile",
-                columns: table => new
-                {
-                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TargetGroupBillProfile", x => x.TargetGroupId);
-                    table.ForeignKey(
-                        name: "FK_TargetGroupBillProfile_TargetGroup_TargetGroupId",
-                        column: x => x.TargetGroupId,
-                        principalTable: "TargetGroup",
-                        principalColumn: "TargetGroupId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TargetGroupProduct",
-                columns: table => new
-                {
-                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TargetGroupProduct", x => x.TargetGroupId);
-                    table.ForeignKey(
-                        name: "FK_TargetGroupProduct_TargetGroup_TargetGroupId",
-                        column: x => x.TargetGroupId,
-                        principalTable: "TargetGroup",
-                        principalColumn: "TargetGroupId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TargetGroupProductGroup",
-                columns: table => new
-                {
-                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TargetGroupProductGroup", x => x.TargetGroupId);
-                    table.ForeignKey(
-                        name: "FK_TargetGroupProductGroup_TargetGroup_TargetGroupId",
-                        column: x => x.TargetGroupId,
-                        principalTable: "TargetGroup",
-                        principalColumn: "TargetGroupId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TargetGroupProductTime",
-                columns: table => new
-                {
-                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TargetGroupProductTime", x => x.TargetGroupId);
-                    table.ForeignKey(
-                        name: "FK_TargetGroupProductTime_TargetGroup_TargetGroupId",
-                        column: x => x.TargetGroupId,
-                        principalTable: "TargetGroup",
-                        principalColumn: "TargetGroupId",
+                        name: "FK_DiscountTargeted_DiscountPeriodic_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "DiscountPeriodic",
+                        principalColumn: "DiscountId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -1182,14 +1056,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Note = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    UnexpectedEntries = table.Column<int>(type: "int", nullable: false),
                     StockId = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ShiftId = table.Column<int>(type: "int", nullable: true),
+                    RegisterId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StockCount", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StockCount_Register_RegisterId",
+                        column: x => x.RegisterId,
+                        principalTable: "Register",
+                        principalColumn: "RegisterId");
+                    table.ForeignKey(
+                        name: "FK_StockCount_Shift_ShiftId",
+                        column: x => x.ShiftId,
+                        principalTable: "Shift",
+                        principalColumn: "ShiftId");
                     table.ForeignKey(
                         name: "FK_StockCount_Stock_StockId",
                         column: x => x.StockId,
@@ -1224,127 +1111,77 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
-                name: "TargetBillProfile",
+                name: "DiscountBasic",
                 columns: table => new
                 {
-                    TargetId = table.Column<int>(type: "int", nullable: false),
-                    BillProfileId = table.Column<int>(type: "int", nullable: false),
-                    TargetGroupBillProfileId = table.Column<int>(type: "int", nullable: false)
+                    DiscountId = table.Column<int>(type: "int", nullable: false),
+                    ApplyType = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TargetBillProfile", x => x.TargetId);
+                    table.PrimaryKey("PK_DiscountBasic", x => x.DiscountId);
                     table.ForeignKey(
-                        name: "FK_TargetBillProfile_BillProfile_BillProfileId",
-                        column: x => x.BillProfileId,
-                        principalTable: "BillProfile",
-                        principalColumn: "BillProfileId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TargetBillProfile_TargetGroupBillProfile_TargetGroupBillProfileId",
-                        column: x => x.TargetGroupBillProfileId,
-                        principalTable: "TargetGroupBillProfile",
-                        principalColumn: "TargetGroupId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TargetBillProfile_Target_TargetId",
-                        column: x => x.TargetId,
-                        principalTable: "Target",
-                        principalColumn: "TargetId",
+                        name: "FK_DiscountBasic_DiscountTargeted_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "DiscountTargeted",
+                        principalColumn: "DiscountId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TargetProduct",
+                name: "DiscountBonus",
                 columns: table => new
                 {
-                    TargetId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    TargetGroupProductId = table.Column<int>(type: "int", nullable: false)
+                    DiscountId = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TargetProduct", x => x.TargetId);
+                    table.PrimaryKey("PK_DiscountBonus", x => x.DiscountId);
                     table.ForeignKey(
-                        name: "FK_TargetProduct_ProductBaseExtended_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "ProductBaseExtended",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TargetProduct_TargetGroupProduct_TargetGroupProductId",
-                        column: x => x.TargetGroupProductId,
-                        principalTable: "TargetGroupProduct",
-                        principalColumn: "TargetGroupId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TargetProduct_Target_TargetId",
-                        column: x => x.TargetId,
-                        principalTable: "Target",
-                        principalColumn: "TargetId",
+                        name: "FK_DiscountBonus_DiscountTargeted_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "DiscountTargeted",
+                        principalColumn: "DiscountId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TargetProductGroup",
+                name: "TargetGroup",
                 columns: table => new
                 {
-                    TargetId = table.Column<int>(type: "int", nullable: false),
-                    ProductGroupId = table.Column<int>(type: "int", nullable: false),
-                    TargetGroupProductGroupId = table.Column<int>(type: "int", nullable: false)
+                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DiscountId = table.Column<int>(type: "int", nullable: false),
+                    Requirement = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
+                    IncludeAll = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TargetProductGroup", x => x.TargetId);
+                    table.PrimaryKey("PK_TargetGroup", x => x.TargetGroupId);
                     table.ForeignKey(
-                        name: "FK_TargetProductGroup_ProductGroup_ProductGroupId",
-                        column: x => x.ProductGroupId,
-                        principalTable: "ProductGroup",
-                        principalColumn: "ProductGroupId",
+                        name: "FK_TargetGroup_DiscountTargeted_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "DiscountTargeted",
+                        principalColumn: "DiscountId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TargetProductGroup_TargetGroupProductGroup_TargetGroupProductGroupId",
-                        column: x => x.TargetGroupProductGroupId,
-                        principalTable: "TargetGroupProductGroup",
-                        principalColumn: "TargetGroupId",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_TargetGroup_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_TargetProductGroup_Target_TargetId",
-                        column: x => x.TargetId,
-                        principalTable: "Target",
-                        principalColumn: "TargetId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TargetProductTime",
-                columns: table => new
-                {
-                    TargetId = table.Column<int>(type: "int", nullable: false),
-                    ProductTimeId = table.Column<int>(type: "int", nullable: false),
-                    TargetGroupProductTimeId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TargetProductTime", x => x.TargetId);
-                    table.ForeignKey(
-                        name: "FK_TargetProductTime_ProductTime_ProductTimeId",
-                        column: x => x.ProductTimeId,
-                        principalTable: "ProductTime",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TargetProductTime_TargetGroupProductTime_TargetGroupProductTimeId",
-                        column: x => x.TargetGroupProductTimeId,
-                        principalTable: "TargetGroupProductTime",
-                        principalColumn: "TargetGroupId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TargetProductTime_Target_TargetId",
-                        column: x => x.TargetId,
-                        principalTable: "Target",
-                        principalColumn: "TargetId",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_TargetGroup_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1551,9 +1388,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "DiscountPeriodDayTime",
                 columns: table => new
                 {
+                    DiscountPeriodDayId = table.Column<int>(type: "int", nullable: false),
                     StartSecond = table.Column<int>(type: "int", nullable: false),
-                    EndSecond = table.Column<int>(type: "int", nullable: false),
-                    DiscountPeriodDayId = table.Column<int>(type: "int", nullable: false)
+                    EndSecond = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1563,6 +1400,100 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         column: x => x.DiscountPeriodDayId,
                         principalTable: "DiscountPeriodDay",
                         principalColumn: "DiscountPeriodDayId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Target",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TargetGroupId = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Target", x => x.TargetId);
+                    table.ForeignKey(
+                        name: "FK_Target_TargetGroup_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Target_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroupBillProfile",
+                columns: table => new
+                {
+                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroupBillProfile", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupBillProfile_TargetGroup_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroupProduct",
+                columns: table => new
+                {
+                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroupProduct", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupProduct_TargetGroup_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroupProductGroup",
+                columns: table => new
+                {
+                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroupProductGroup", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupProductGroup_TargetGroup_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetGroupProductTime",
+                columns: table => new
+                {
+                    TargetGroupId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetGroupProductTime", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroupProductTime_TargetGroup_TargetGroupId",
+                        column: x => x.TargetGroupId,
+                        principalTable: "TargetGroup",
+                        principalColumn: "TargetGroupId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -1618,7 +1549,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 columns: table => new
                 {
                     InventoryEntryId = table.Column<int>(type: "int", nullable: false),
-                    TransferStockId = table.Column<int>(type: "int", nullable: false)
+                    TransferStockId = table.Column<int>(type: "int", nullable: false),
+                    TransferStockTransactionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1630,11 +1562,141 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         principalColumn: "InventoryEntryId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_InventoryTransferEntry_StockTransaction_TransferStockTransactionId",
+                        column: x => x.TransferStockTransactionId,
+                        principalTable: "StockTransaction",
+                        principalColumn: "StockTransactionId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_InventoryTransferEntry_Stock_TransferStockId",
                         column: x => x.TransferStockId,
                         principalTable: "Stock",
                         principalColumn: "StockId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetBillProfile",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "int", nullable: false),
+                    TargetGroupBillProfileId = table.Column<int>(type: "int", nullable: false),
+                    BillProfileId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetBillProfile", x => x.TargetId);
+                    table.ForeignKey(
+                        name: "FK_TargetBillProfile_BillProfile_BillProfileId",
+                        column: x => x.BillProfileId,
+                        principalTable: "BillProfile",
+                        principalColumn: "BillProfileId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TargetBillProfile_TargetGroupBillProfile_TargetGroupBillProfileId",
+                        column: x => x.TargetGroupBillProfileId,
+                        principalTable: "TargetGroupBillProfile",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetBillProfile_Target_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Target",
+                        principalColumn: "TargetId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetProduct",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "int", nullable: false),
+                    TargetGroupProductId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetProduct", x => x.TargetId);
+                    table.ForeignKey(
+                        name: "FK_TargetProduct_ProductBaseExtended_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "ProductBaseExtended",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TargetProduct_TargetGroupProduct_TargetGroupProductId",
+                        column: x => x.TargetGroupProductId,
+                        principalTable: "TargetGroupProduct",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetProduct_Target_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Target",
+                        principalColumn: "TargetId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetProductGroup",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "int", nullable: false),
+                    TargetGroupProductGroupId = table.Column<int>(type: "int", nullable: false),
+                    ProductGroupId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetProductGroup", x => x.TargetId);
+                    table.ForeignKey(
+                        name: "FK_TargetProductGroup_ProductGroup_ProductGroupId",
+                        column: x => x.ProductGroupId,
+                        principalTable: "ProductGroup",
+                        principalColumn: "ProductGroupId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TargetProductGroup_TargetGroupProductGroup_TargetGroupProductGroupId",
+                        column: x => x.TargetGroupProductGroupId,
+                        principalTable: "TargetGroupProductGroup",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetProductGroup_Target_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Target",
+                        principalColumn: "TargetId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetProductTime",
+                columns: table => new
+                {
+                    TargetId = table.Column<int>(type: "int", nullable: false),
+                    TargetGroupProductTimeId = table.Column<int>(type: "int", nullable: false),
+                    ProductTimeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetProductTime", x => x.TargetId);
+                    table.ForeignKey(
+                        name: "FK_TargetProductTime_ProductTime_ProductTimeId",
+                        column: x => x.ProductTimeId,
+                        principalTable: "ProductTime",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TargetProductTime_TargetGroupProductTime_TargetGroupProductTimeId",
+                        column: x => x.TargetGroupProductTimeId,
+                        principalTable: "TargetGroupProductTime",
+                        principalColumn: "TargetGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TargetProductTime_Target_TargetId",
+                        column: x => x.TargetId,
+                        principalTable: "Target",
+                        principalColumn: "TargetId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.Sql(Scripts.EF_6_BRANCH_SET);
@@ -1934,6 +1996,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "DocumentTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Document_FileName",
+                table: "Document",
+                column: "FileName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Document_Guid",
+                table: "Document",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Document_ModifiedById",
                 table: "Document",
                 column: "ModifiedById");
@@ -2050,6 +2124,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "IX_InventoryTransferEntry_TransferStockId",
                 table: "InventoryTransferEntry",
                 column: "TransferStockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferEntry_TransferStockTransactionId",
+                table: "InventoryTransferEntry",
+                column: "TransferStockTransactionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NewsBranch_BranchId",
@@ -2183,6 +2262,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "IX_StockCount_CreatedById",
                 table: "StockCount",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockCount_RegisterId",
+                table: "StockCount",
+                column: "RegisterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StockCount_ShiftId",
+                table: "StockCount",
+                column: "ShiftId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StockCount_StockId",
@@ -2611,6 +2700,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "DiscountBonus");
 
             migrationBuilder.DropTable(
+                name: "DiscountBonusFlat");
+
+            migrationBuilder.DropTable(
                 name: "DiscountBranch");
 
             migrationBuilder.DropTable(
@@ -2740,22 +2832,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "TargetGroup");
 
             migrationBuilder.DropTable(
-                name: "DiscountPeriodic");
-
-            migrationBuilder.DropTable(
                 name: "Stock");
 
             migrationBuilder.DropTable(
                 name: "Promotion");
 
             migrationBuilder.DropTable(
-                name: "Discount");
+                name: "DiscountTargeted");
 
             migrationBuilder.DropTable(
                 name: "Branch");
 
             migrationBuilder.DropTable(
+                name: "DiscountPeriodic");
+
+            migrationBuilder.DropTable(
                 name: "Companion");
+
+            migrationBuilder.DropTable(
+                name: "Discount");
 
             migrationBuilder.DropIndex(
                 name: "IX_Void_BranchId",

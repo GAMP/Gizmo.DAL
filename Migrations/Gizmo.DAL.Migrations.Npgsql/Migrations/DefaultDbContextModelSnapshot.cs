@@ -2327,11 +2327,17 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<int>("DocumentTypeId")
                         .HasColumnType("integer")
                         .HasColumnOrder(1);
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnOrder(2);
 
                     b.Property<Guid>("Guid")
                         .HasColumnType("uuid")
@@ -2352,6 +2358,12 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DocumentTypeId");
+
+                    b.HasIndex("FileName")
+                        .IsUnique();
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
 
                     b.HasIndex("ModifiedById");
 
@@ -6535,7 +6547,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("Name", "BranchId")
                         .IsUnique();
 
-                    b.ToTable("Stock");
+                    b.ToTable("Stock", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.StockCount", b =>
@@ -6740,6 +6752,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<int>("DiscountId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("DiscountTargetedId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IncludeAll")
                         .HasColumnType("boolean");
 
@@ -6761,6 +6776,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DiscountId");
+
+                    b.HasIndex("DiscountTargetedId");
 
                     b.HasIndex("ModifiedById");
 
@@ -7964,14 +7981,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.ToTable("DeviceHdmi", (string)null);
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonusFlat", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.Discount");
 
                     b.Property<int>("Value")
                         .HasColumnType("integer");
 
-                    b.ToTable("DiscountBonus", (string)null);
+                    b.ToTable("DiscountBonusFlat", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodic", b =>
@@ -8752,21 +8769,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.ToTable("VoidInvoice", (string)null);
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountTargeted", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.DiscountPeriodic");
 
-                    b.Property<int>("ApplyType")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal?>("Value")
-                        .HasPrecision(19, 4)
-                        .HasColumnType("numeric(19,4)");
-
-                    b.ToTable("DiscountBasic", (string)null);
+                    b.ToTable("DiscountTargeted", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineProduct", b =>
@@ -8926,6 +8933,33 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsUnique();
 
                     b.ToTable("UserGuest", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.DiscountTargeted");
+
+                    b.Property<int>("ApplyType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("Value")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)");
+
+                    b.ToTable("DiscountBasic", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.DiscountTargeted");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("integer");
+
+                    b.ToTable("DiscountBonus", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.App", b =>
@@ -12076,10 +12110,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Discount", "Discount")
-                        .WithMany("TargetGroups")
+                        .WithMany()
                         .HasForeignKey("DiscountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.DiscountTargeted", null)
+                        .WithMany("TargetGroups")
+                        .HasForeignKey("DiscountTargetedId");
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
@@ -12630,11 +12668,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonusFlat", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.Discount", null)
                         .WithOne()
-                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBonus", "Id")
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBonusFlat", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -13283,11 +13321,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("Invoice");
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountTargeted", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.DiscountPeriodic", null)
                         .WithOne()
-                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBasic", "Id")
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountTargeted", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -13460,6 +13498,24 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("ReservedHost");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DiscountTargeted", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBasic", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DiscountTargeted", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBonus", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.App", b =>
                 {
                     b.Navigation("AppExes");
@@ -13618,8 +13674,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
             modelBuilder.Entity("Gizmo.DAL.Entities.Discount", b =>
                 {
                     b.Navigation("Branches");
-
-                    b.Navigation("TargetGroups");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountGroup", b =>
@@ -14069,6 +14123,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("RegisterTransactions");
 
                     b.Navigation("Shifts");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountTargeted", b =>
+                {
+                    b.Navigation("TargetGroups");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineTime", b =>

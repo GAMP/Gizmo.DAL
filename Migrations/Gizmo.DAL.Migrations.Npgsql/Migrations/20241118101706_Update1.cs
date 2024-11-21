@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Update1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -1043,7 +1043,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DiscountBonus",
+                name: "DiscountBonusFlat",
                 columns: table => new
                 {
                     DiscountId = table.Column<int>(type: "integer", nullable: false),
@@ -1051,9 +1051,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DiscountBonus", x => x.DiscountId);
+                    table.PrimaryKey("PK_DiscountBonusFlat", x => x.DiscountId);
                     table.ForeignKey(
-                        name: "FK_DiscountBonus_Discount_DiscountId",
+                        name: "FK_DiscountBonusFlat_Discount_DiscountId",
                         column: x => x.DiscountId,
                         principalTable: "Discount",
                         principalColumn: "DiscountId",
@@ -1103,26 +1103,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DiscountBasic",
-                columns: table => new
-                {
-                    DiscountId = table.Column<int>(type: "integer", nullable: false),
-                    ApplyType = table.Column<int>(type: "integer", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Value = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DiscountBasic", x => x.DiscountId);
-                    table.ForeignKey(
-                        name: "FK_DiscountBasic_DiscountPeriodic_DiscountId",
-                        column: x => x.DiscountId,
-                        principalTable: "DiscountPeriodic",
-                        principalColumn: "DiscountId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DiscountPeriod",
                 columns: table => new
                 {
@@ -1136,6 +1116,23 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     table.PrimaryKey("PK_DiscountPeriod", x => x.DiscountId);
                     table.ForeignKey(
                         name: "FK_DiscountPeriod_DiscountPeriodic_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "DiscountPeriodic",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountTargeted",
+                columns: table => new
+                {
+                    DiscountId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountTargeted", x => x.DiscountId);
+                    table.ForeignKey(
+                        name: "FK_DiscountTargeted_DiscountPeriodic_DiscountId",
                         column: x => x.DiscountId,
                         principalTable: "DiscountPeriodic",
                         principalColumn: "DiscountId",
@@ -1158,6 +1155,44 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         name: "FK_DiscountPeriodDay_DiscountPeriod_DiscountPeriodId",
                         column: x => x.DiscountPeriodId,
                         principalTable: "DiscountPeriod",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountBasic",
+                columns: table => new
+                {
+                    DiscountId = table.Column<int>(type: "integer", nullable: false),
+                    ApplyType = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Value = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountBasic", x => x.DiscountId);
+                    table.ForeignKey(
+                        name: "FK_DiscountBasic_DiscountTargeted_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "DiscountTargeted",
+                        principalColumn: "DiscountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DiscountBonus",
+                columns: table => new
+                {
+                    DiscountId = table.Column<int>(type: "integer", nullable: false),
+                    Value = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DiscountBonus", x => x.DiscountId);
+                    table.ForeignKey(
+                        name: "FK_DiscountBonus_DiscountTargeted_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "DiscountTargeted",
                         principalColumn: "DiscountId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1233,6 +1268,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     DocumentId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DocumentTypeId = table.Column<int>(type: "integer", nullable: false),
+                    FileName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -3949,6 +3985,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     IncludeAll = table.Column<bool>(type: "boolean", nullable: false),
                     Requirement = table.Column<int>(type: "integer", nullable: false),
                     Value = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: true),
+                    DiscountTargetedId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -3957,6 +3994,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TargetGroup", x => x.TargetGroupId);
+                    table.ForeignKey(
+                        name: "FK_TargetGroup_DiscountTargeted_DiscountTargetedId",
+                        column: x => x.DiscountTargetedId,
+                        principalTable: "DiscountTargeted",
+                        principalColumn: "DiscountId");
                     table.ForeignKey(
                         name: "FK_TargetGroup_Discount_DiscountId",
                         column: x => x.DiscountId,
@@ -6098,6 +6140,18 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 column: "DocumentTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Document_FileName",
+                table: "Document",
+                column: "FileName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Document_Guid",
+                table: "Document",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Document_ModifiedById",
                 table: "Document",
                 column: "ModifiedById");
@@ -7911,6 +7965,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "IX_TargetGroup_DiscountId",
                 table: "TargetGroup",
                 column: "DiscountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TargetGroup_DiscountTargetedId",
+                table: "TargetGroup",
+                column: "DiscountTargetedId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TargetGroup_ModifiedById",
@@ -11310,6 +11369,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "DiscountBonus");
 
             migrationBuilder.DropTable(
+                name: "DiscountBonusFlat");
+
+            migrationBuilder.DropTable(
                 name: "DiscountBranch");
 
             migrationBuilder.DropTable(
@@ -11748,16 +11810,19 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AppEnterprise");
 
             migrationBuilder.DropTable(
-                name: "DiscountPeriodic");
+                name: "Promotion");
 
             migrationBuilder.DropTable(
-                name: "Promotion");
+                name: "DiscountTargeted");
 
             migrationBuilder.DropTable(
                 name: "ProductTime");
 
             migrationBuilder.DropTable(
                 name: "DepositTransaction");
+
+            migrationBuilder.DropTable(
+                name: "DiscountPeriodic");
 
             migrationBuilder.DropTable(
                 name: "Discount");

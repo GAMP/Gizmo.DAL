@@ -85,7 +85,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(branch => branch.HasWorkingSchedule)
+            builder.Property(branch => branch.HasBusinessSchedule)
                 .IsRequired()
                 .HasColumnOrder(14);
 

@@ -1424,15 +1424,36 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Address")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
+
+                    b.Property<TimeOnly?>("BusinessDayEnd")
+                        .HasColumnType("time")
+                        .HasColumnOrder(16);
+
+                    b.Property<TimeOnly?>("BusinessDayStart")
+                        .HasColumnType("time")
+                        .HasColumnOrder(15);
+
+                    b.Property<int?>("BusinessEndWeekDay")
+                        .HasColumnType("int")
+                        .HasColumnOrder(18);
+
+                    b.Property<int?>("BusinessStartWeekDay")
+                        .HasColumnType("int")
+                        .HasColumnOrder(17);
 
                     b.Property<string>("City")
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<int?>("CompanionId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(2);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
@@ -1443,34 +1464,38 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Email")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(10);
 
                     b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(15);
+                        .HasColumnOrder(21);
+
+                    b.Property<bool>("HasBusinessSchedule")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(14);
 
                     b.Property<string>("Info")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(11);
+                        .HasColumnOrder(12);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
-                        .HasColumnOrder(14);
+                        .HasColumnOrder(20);
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("bit")
-                        .HasColumnOrder(13);
+                        .HasColumnOrder(19);
 
                     b.Property<decimal>("Latitude")
                         .HasPrecision(9, 6)
                         .HasColumnType("decimal(9,6)")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.Property<decimal>("Longitude")
                         .HasPrecision(9, 6)
                         .HasColumnType("decimal(9,6)")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
@@ -1487,27 +1512,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<string>("Phone")
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(9);
 
                     b.Property<string>("PostalCode")
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<string>("Region")
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<string>("TimeZone")
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)")
-                        .HasColumnOrder(12);
+                        .HasColumnOrder(13);
 
                     b.Property<string>("WebSite")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(11);
 
                     b.HasKey("Id");
 
@@ -2218,7 +2243,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("DiscountGroupDiscountId");
+                        .HasColumnName("DiscountGroupDiscountId")
+                        .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -2229,10 +2255,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DiscountGroupId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.Property<int>("DiscountId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
@@ -2274,15 +2302,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("DiscountPeriodDayId");
+                        .HasColumnName("DiscountPeriodDayId")
+                        .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Day")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("DiscountPeriodId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
@@ -2295,13 +2326,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodDayTime", b =>
                 {
                     b.Property<int>("DiscountPeriodDayId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("StartSecond")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.Property<int>("EndSecond")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.HasKey("DiscountPeriodDayId", "StartSecond", "EndSecond");
 
@@ -6554,7 +6588,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("Name", "BranchId")
                         .IsUnique();
 
-                    b.ToTable("Stock");
+                    b.ToTable("Stock", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.StockCount", b =>
@@ -6577,15 +6611,29 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(1);
 
+                    b.Property<int?>("RegisterId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
                     b.Property<int>("StockId")
                         .HasColumnType("int");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
+                    b.Property<int>("UnexpectedEntries")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("RegisterId");
+
+                    b.HasIndex("ShiftId");
 
                     b.HasIndex("StockId");
 
@@ -6717,7 +6765,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("TargetId");
+                        .HasColumnName("TargetId")
+                        .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -6728,7 +6777,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TargetGroupId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
@@ -6746,7 +6796,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("TargetGroupId");
+                        .HasColumnName("TargetGroupId")
+                        .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -6757,10 +6808,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DiscountId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.Property<bool>("IncludeAll")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
@@ -6769,11 +6822,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Requirement")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<decimal?>("Value")
                         .HasPrecision(19, 4)
-                        .HasColumnType("decimal(19,4)");
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(3);
 
                     b.HasKey("Id");
 
@@ -7985,14 +8040,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.ToTable("DeviceHdmi", (string)null);
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonusFlat", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.Discount");
 
                     b.Property<int>("Value")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
-                    b.ToTable("DiscountBonus", (string)null);
+                    b.ToTable("DiscountBonusFlat", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodic", b =>
@@ -8133,7 +8189,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
+                    b.Property<int>("TransferStockTransactionId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
                     b.HasIndex("TransferStockId");
+
+                    b.HasIndex("TransferStockTransactionId");
 
                     b.ToTable("InventoryTransferEntry", (string)null);
                 });
@@ -8436,10 +8498,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("Gizmo.DAL.Entities.Target");
 
                     b.Property<int>("BillProfileId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("TargetGroupBillProfileId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasIndex("BillProfileId");
 
@@ -8454,10 +8518,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("Gizmo.DAL.Entities.Target");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("TargetGroupProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasIndex("ProductId");
 
@@ -8472,10 +8538,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("Gizmo.DAL.Entities.Target");
 
                     b.Property<int>("ProductGroupId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("TargetGroupProductGroupId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasIndex("ProductGroupId");
 
@@ -8490,10 +8558,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("Gizmo.DAL.Entities.Target");
 
                     b.Property<int>("ProductTimeId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("TargetGroupProductTimeId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasIndex("ProductTimeId");
 
@@ -8780,21 +8850,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.ToTable("VoidInvoice", (string)null);
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountTargeted", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.DiscountPeriodic");
 
-                    b.Property<int>("ApplyType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Value")
-                        .HasPrecision(19, 4)
-                        .HasColumnType("decimal(19,4)");
-
-                    b.ToTable("DiscountBasic", (string)null);
+                    b.ToTable("DiscountTargeted", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineProduct", b =>
@@ -8955,6 +9015,37 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasFilter("[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
 
                     b.ToTable("UserGuest", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.DiscountTargeted");
+
+                    b.Property<int>("ApplyType")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.Property<decimal?>("Value")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(3);
+
+                    b.ToTable("DiscountBasic", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.DiscountTargeted");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.ToTable("DiscountBonus", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.App", b =>
@@ -12008,6 +12099,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("Gizmo.DAL.Entities.Register", "Register")
+                        .WithMany()
+                        .HasForeignKey("RegisterId");
+
+                    b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
+                        .WithMany()
+                        .HasForeignKey("ShiftId");
+
                     b.HasOne("Gizmo.DAL.Entities.Stock", "Stock")
                         .WithMany("Counts")
                         .HasForeignKey("StockId")
@@ -12015,6 +12114,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("Register");
+
+                    b.Navigation("Shift");
 
                     b.Navigation("Stock");
                 });
@@ -12104,7 +12207,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Gizmo.DAL.Entities.Discount", "Discount")
+                    b.HasOne("Gizmo.DAL.Entities.DiscountTargeted", "Discount")
                         .WithMany("TargetGroups")
                         .HasForeignKey("DiscountId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -12659,11 +12762,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonusFlat", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.Discount", null)
                         .WithOne()
-                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBonus", "Id")
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBonusFlat", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -12769,7 +12872,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Gizmo.DAL.Entities.StockTransaction", "TransferStockTransaction")
+                        .WithMany()
+                        .HasForeignKey("TransferStockTransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("TransferStock");
+
+                    b.Navigation("TransferStockTransaction");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineExtended", b =>
@@ -13312,11 +13423,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("Invoice");
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountTargeted", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.DiscountPeriodic", null)
                         .WithOne()
-                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBasic", "Id")
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountTargeted", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -13489,6 +13600,24 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("ReservedHost");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DiscountTargeted", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBasic", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBonus", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DiscountTargeted", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.DiscountBonus", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.App", b =>
                 {
                     b.Navigation("AppExes");
@@ -13647,8 +13776,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.Discount", b =>
                 {
                     b.Navigation("Branches");
-
-                    b.Navigation("TargetGroups");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountGroup", b =>
@@ -14098,6 +14225,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("RegisterTransactions");
 
                     b.Navigation("Shifts");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.DiscountTargeted", b =>
+                {
+                    b.Navigation("TargetGroups");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineTime", b =>
