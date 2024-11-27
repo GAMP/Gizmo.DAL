@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// User operator mapping.
+    /// </summary>
     public class UserOperatorMap : IEntityTypeConfiguration<UserOperator>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<UserOperator> builder)
         {
             builder.Property(t => t.Username)

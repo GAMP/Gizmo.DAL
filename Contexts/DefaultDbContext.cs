@@ -15,6 +15,7 @@ using Gizmo.DAL.Mappings;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
 using System.Diagnostics.Contracts;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Gizmo.DAL.Contexts
 {
@@ -868,6 +869,21 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<Discount> Discounts { get; set; }
 
+        /// <summary>
+        /// Gets permission sets.
+        /// </summary>
+        public DbSet<UserPermissionSet> PermissionSets { get; set; }
+
+        /// <summary>
+        /// Gets permission set permissions.
+        /// </summary>
+        public DbSet<UserPermissionSetPermission> PermissionSetPermissions { get; set; }
+
+        /// <summary>
+        /// Gets api keys.
+        /// </summary>
+        public DbSet<UserApiKey> ApiKeys { get; set; }
+
         #endregion
 
         #region OVERRIDES
@@ -1152,6 +1168,10 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new DocumentMap());
             modelBuilder.ApplyConfiguration(new InventoryDocumentMap());
 
+
+            modelBuilder.ApplyConfiguration(new UserPermissionSetMap());
+            modelBuilder.ApplyConfiguration(new UserPermissionSetPermissionMap());
+            modelBuilder.ApplyConfiguration(new UserApiKeyMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
@@ -1891,6 +1911,27 @@ namespace Gizmo.DAL.Contexts
             ApplyDefaultTypesConfigurations(modelBuilder);
 
             GuardDatabaseNameExceedLimits(modelBuilder);
+
+            var utcNullableConverter = new ValueConverter<DateTime?, DateTime?>(v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v,
+                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
+            var utcConverter = new ValueConverter<DateTime, DateTime>(v => DateTime.SpecifyKind(v, DateTimeKind.Utc), 
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                //all period dates are kept as local time (unspecified) time zone
+                if (entityType.ClrType.IsSubclassOf(typeof(PeriodDate)))
+                    continue;
+
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime?))
+                        property.SetValueConverter(utcNullableConverter);                 
+
+                    if (property.ClrType == typeof(DateTime))
+                        property.SetValueConverter(utcConverter);                    
+                }
+            }
         }
 
         /// <summary>

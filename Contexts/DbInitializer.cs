@@ -70,6 +70,43 @@ namespace Gizmo.DAL.Contexts
 
                 if (!appliedMigrations.Any())
                     await _dbContext.AddSeedDataAsync(cancellationToken);
+
+                if (isMigrated)
+                {
+                    if (TimeZoneInfo.Local.BaseUtcOffset != TimeSpan.Zero)
+                    {
+                        var localTimeZone = TimeZoneInfo.Local;
+                        _logger.LogInformation("Converting database time to UTC from {currentTimeZone}.", localTimeZone);
+
+                        using (var transaction = _dbContext.Database.BeginTransaction())
+                        {
+                            //check if conversion where previously completed
+                            var hasConvertedFrom = await _dbContext.Settings.Where(setting => setting.GroupName == "UPGRADE" && setting.Name == "UTC_CONVERTED_FROM")
+                                .AnyAsync(cancellationToken: cancellationToken);
+
+                            if (hasConvertedFrom == false)
+                            {
+                                var converter = new Gizmo.DAL.DateTimeTimeZoneConverter(_dbContext, localTimeZone);
+                                await converter.ConvertToUtcAsync(cancellationToken);
+
+                                _dbContext.Settings.Add(new Setting()
+                                {
+                                    GroupName = "UPGRADE",
+                                    Name = "UTC_CONVERTED_FROM",
+                                    Value = localTimeZone.Id
+                                });
+
+                                await _dbContext.SaveChangesAsync(cancellationToken);
+                                await transaction.CommitAsync(cancellationToken);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Source time zone is already UTC.");
+                    }
+                }
+              
             }
             else
             {

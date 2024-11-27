@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// User guest entity map.
+    /// </summary>
     public class UserGuestMap : IEntityTypeConfiguration<UserGuest>
     {
         /// <summary>

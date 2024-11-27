@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizmo.DAL.Migrations.MSSQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20241120132453_Update2")]
+    [Migration("20241126164226_Update2")]
     partial class Update2
     {
         /// <inheritdoc />
@@ -7711,6 +7711,80 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.ToTable("UserPermission", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserPermissionSet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("UserPermissionSetId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("UserPermissionSet", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserPermissionSetPermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("UserPermissionSetPermissionId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PermissionSetId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PermissionSetId", "Type", "Value")
+                        .IsUnique();
+
+                    b.ToTable("UserPermissionSetPermission", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.UserPicture", b =>
                 {
                     b.Property<int>("Id")
@@ -9018,6 +9092,30 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasFilter("[ReservedHostId] IS NOT NULL AND [ReservedSlot] IS NOT NULL");
 
                     b.ToTable("UserGuest", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserApiKey", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.UserOperator");
+
+                    b.Property<string>("ApiKey")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(1);
+
+                    b.Property<DateTime?>("ExpireTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.HasIndex("ApiKey")
+                        .IsUnique();
+
+                    b.ToTable("UserApiKey", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
@@ -12594,6 +12692,32 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserPermissionSet", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserPermissionSetPermission", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserPermissionSet", "PermissionSet")
+                        .WithMany("Permissions")
+                        .HasForeignKey("PermissionSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PermissionSet");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.UserPicture", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
@@ -13603,6 +13727,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("ReservedHost");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserApiKey", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.UserApiKey", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountBasic", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.DiscountTargeted", null)
@@ -14100,6 +14233,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("ProductPrices");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserPermissionSet", b =>
+                {
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserSession", b =>
