@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// User member entity map.
+    /// </summary>
     public class UserMemberMap : IEntityTypeConfiguration<UserMember>
     {
         /// <summary>

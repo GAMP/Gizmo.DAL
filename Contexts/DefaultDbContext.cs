@@ -14,7 +14,6 @@ using Microsoft.Data.SqlClient;
 using Gizmo.DAL.Mappings;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
-using System.Diagnostics.Contracts;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Gizmo.DAL.Contexts
@@ -884,6 +883,16 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<UserApiKey> ApiKeys { get; set; }
 
+        /// <summary>
+        /// Get user age restrictions.
+        /// </summary>
+        public DbSet<AgeRestriction> AgeRestrictions { get; set; }
+
+        /// <summary>
+        /// Get user age login restrictions.
+        /// </summary>
+        public DbSet<AgeRestrictionLogin> AgeLoginRestrictions { get; set; }
+
         #endregion
 
         #region OVERRIDES
@@ -1172,6 +1181,9 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new UserPermissionSetMap());
             modelBuilder.ApplyConfiguration(new UserPermissionSetPermissionMap());
             modelBuilder.ApplyConfiguration(new UserApiKeyMap());
+
+            modelBuilder.ApplyConfiguration(new AgeRestrictionMap());
+            modelBuilder.ApplyConfiguration(new AgeRestrictionLoginMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);

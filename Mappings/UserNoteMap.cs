@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// User note entity map.
+    /// </summary>
     public class UserNoteMap : IEntityTypeConfiguration<UserNote>
     {
         /// <summary>
