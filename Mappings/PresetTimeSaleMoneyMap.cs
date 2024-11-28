@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Preset time sale money map.
+    /// </summary>
     public class PresetTimeSaleMoneyMap : IEntityTypeConfiguration<PresetTimeSaleMoney>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<PresetTimeSaleMoney> builder)
         {
             builder.HasKey(x => x.Id);

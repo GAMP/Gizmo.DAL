@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Pint transaction entity map.
+    /// </summary>
     public class PointTransactionMap : IEntityTypeConfiguration<PointTransaction>
     {
         /// <summary>
