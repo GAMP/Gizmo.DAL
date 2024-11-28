@@ -1184,6 +1184,7 @@ namespace Gizmo.DAL.Contexts
 
             modelBuilder.ApplyConfiguration(new AgeRestrictionMap());
             modelBuilder.ApplyConfiguration(new AgeRestrictionLoginMap());
+            modelBuilder.ApplyConfiguration(new PresetTopUpMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);

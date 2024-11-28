@@ -16,7 +16,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.HasKey(presetTopUp => presetTopUp.Id);
 
-            builder.Property(presetTopUp => presetTopUp.Value)
+            builder.Property(presetTopUp => presetTopUp.Id)
                 .HasColumnName("PresetTopUpId")
                 .HasColumnOrder(0)
                 .IsRequired();
