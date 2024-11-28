@@ -15,6 +15,7 @@ using Gizmo.DAL.Mappings;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Gizmo.DAL.Contexts
 {
@@ -884,14 +885,19 @@ namespace Gizmo.DAL.Contexts
         public DbSet<UserApiKey> ApiKeys { get; set; }
 
         /// <summary>
-        /// Get user age restrictions.
+        /// Gets user age restrictions.
         /// </summary>
         public DbSet<AgeRestriction> AgeRestrictions { get; set; }
 
         /// <summary>
-        /// Get user age login restrictions.
+        /// Gets user age login restrictions.
         /// </summary>
         public DbSet<AgeRestrictionLogin> AgeLoginRestrictions { get; set; }
+
+        /// <summary>
+        /// Gets topup presets.
+        /// </summary>
+        public DbSet<PresetTopUp> PresetTopUps { get; set; }
 
         #endregion
 
