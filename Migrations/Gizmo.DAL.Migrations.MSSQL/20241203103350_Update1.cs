@@ -251,6 +251,29 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 defaultValue: 0);
 
             migrationBuilder.CreateTable(
+                name: "AgeRestriction",
+                columns: table => new
+                {
+                    AgeRestrictionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AgeFrom = table.Column<int>(type: "int", nullable: false),
+                    AgeTo = table.Column<int>(type: "int", nullable: false),
+                    DayMinuteFrom = table.Column<int>(type: "int", nullable: true),
+                    DayMinuteTo = table.Column<int>(type: "int", nullable: true),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AgeRestriction", x => x.AgeRestrictionId);
+                    table.ForeignKey(
+                        name: "FK_AgeRestriction_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Companion",
                 columns: table => new
                 {
@@ -391,6 +414,34 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
+                name: "PresetTopUp",
+                columns: table => new
+                {
+                    PresetTopUpId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PresetTopUp", x => x.PresetTopUpId);
+                    table.ForeignKey(
+                        name: "FK_PresetTopUp_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_PresetTopUp_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Promotion",
                 columns: table => new
                 {
@@ -452,6 +503,70 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserApiKey",
+                columns: table => new
+                {
+                    ApiKey = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    ExpireTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserApiKey", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_UserApiKey_UserOperator_UserId",
+                        column: x => x.UserId,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPermissionSet",
+                columns: table => new
+                {
+                    UserPermissionSetId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPermissionSet", x => x.UserPermissionSetId);
+                    table.ForeignKey(
+                        name: "FK_UserPermissionSet_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserPermissionSet_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AgeRestrictionLogin",
+                columns: table => new
+                {
+                    AgeRestrictionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AgeRestrictionLogin", x => x.AgeRestrictionId);
+                    table.ForeignKey(
+                        name: "FK_AgeRestrictionLogin_AgeRestriction_AgeRestrictionId",
+                        column: x => x.AgeRestrictionId,
+                        principalTable: "AgeRestriction",
+                        principalColumn: "AgeRestrictionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Branch",
                 columns: table => new
                 {
@@ -470,15 +585,26 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     WebSite = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Info = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     TimeZone = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
-                    HasWorkingSchedule = table.Column<bool>(type: "bit", nullable: false),
+                    HasBusinessSchedule = table.Column<bool>(type: "bit", nullable: false),
                     BusinessDayStart = table.Column<TimeOnly>(type: "time", nullable: true),
                     BusinessDayEnd = table.Column<TimeOnly>(type: "time", nullable: true),
                     BusinessStartWeekDay = table.Column<int>(type: "int", nullable: true),
                     BusinessEndWeekDay = table.Column<int>(type: "int", nullable: true),
-                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsFiscalizationEnabled = table.Column<bool>(type: "bit", nullable: true),
+                    BusinessVATId = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
+                    TaxSystem = table.Column<int>(type: "int", nullable: true),
+                    GoodsTaxSystem = table.Column<int>(type: "int", nullable: true),
+                    ServicesTaxSystem = table.Column<int>(type: "int", nullable: true),
+                    TreatDepositsAsService = table.Column<bool>(type: "bit", nullable: true),
+                    DepositServiceDescription = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    TimeBasedServiceVATRate = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
+                    DepositVATRate = table.Column<int>(type: "int", nullable: true),
+                    DepositAdvancePaymentType = table.Column<int>(type: "int", nullable: true),
                     CompanionId = table.Column<int>(type: "int", nullable: true),
+                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    DisableTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedById = table.Column<int>(type: "int", nullable: true),
@@ -729,6 +855,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         column: x => x.PromotionId,
                         principalTable: "Promotion",
                         principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPermissionSetPermission",
+                columns: table => new
+                {
+                    UserPermissionSetPermissionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PermissionSetId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPermissionSetPermission", x => x.UserPermissionSetPermissionId);
+                    table.ForeignKey(
+                        name: "FK_UserPermissionSetPermission_UserPermissionSet_PermissionSetId",
+                        column: x => x.PermissionSetId,
+                        principalTable: "UserPermissionSet",
+                        principalColumn: "UserPermissionSetId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -1845,6 +1992,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "BranchId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AgeRestriction_CreatedById",
+                table: "AgeRestriction",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AppExeBranch_AppExeId_BranchId",
                 table: "AppExeBranch",
                 columns: new[] { "AppExeId", "BranchId" },
@@ -2142,6 +2294,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PresetTopUp_CreatedById",
+                table: "PresetTopUp",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PresetTopUp_ModifiedById",
+                table: "PresetTopUp",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductBranch_BranchId",
                 table: "ProductBranch",
                 column: "BranchId");
@@ -2364,6 +2526,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserApiKey_ApiKey",
+                table: "UserApiKey",
+                column: "ApiKey",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserApiKey_UserId",
+                table: "UserApiKey",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserOperatorBranch_BranchId_OperatorId",
                 table: "UserOperatorBranch",
                 columns: new[] { "BranchId", "OperatorId" },
@@ -2383,6 +2557,28 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "IX_UserOperatorBranch_OperatorId",
                 table: "UserOperatorBranch",
                 column: "OperatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPermissionSet_CreatedById",
+                table: "UserPermissionSet",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPermissionSet_ModifiedById",
+                table: "UserPermissionSet",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPermissionSet_Name",
+                table: "UserPermissionSet",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPermissionSetPermission_PermissionSetId_Type_Value",
+                table: "UserPermissionSetPermission",
+                columns: new[] { "PermissionSetId", "Type", "Value" },
+                unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AppStat_Branch_BranchId",
@@ -2691,6 +2887,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "Void");
 
             migrationBuilder.DropTable(
+                name: "AgeRestrictionLogin");
+
+            migrationBuilder.DropTable(
                 name: "AppExeBranch");
 
             migrationBuilder.DropTable(
@@ -2739,6 +2938,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "NewsBranch");
 
             migrationBuilder.DropTable(
+                name: "PresetTopUp");
+
+            migrationBuilder.DropTable(
                 name: "ProductBranch");
 
             migrationBuilder.DropTable(
@@ -2778,7 +2980,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "TargetProductTime");
 
             migrationBuilder.DropTable(
+                name: "UserApiKey");
+
+            migrationBuilder.DropTable(
                 name: "UserOperatorBranch");
+
+            migrationBuilder.DropTable(
+                name: "UserPermissionSetPermission");
+
+            migrationBuilder.DropTable(
+                name: "AgeRestriction");
 
             migrationBuilder.DropTable(
                 name: "DiscountPeriodDay");
@@ -2815,6 +3026,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             migrationBuilder.DropTable(
                 name: "Target");
+
+            migrationBuilder.DropTable(
+                name: "UserPermissionSet");
 
             migrationBuilder.DropTable(
                 name: "DiscountPeriod");

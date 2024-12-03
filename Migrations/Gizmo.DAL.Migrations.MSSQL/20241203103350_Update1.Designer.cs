@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizmo.DAL.Migrations.MSSQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20241128122913_Update3")]
-    partial class Update3
+    [Migration("20241203103350_Update1")]
+    partial class Update1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1486,13 +1486,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnOrder(17);
 
+                    b.Property<string>("BusinessVATId")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(20);
+
                     b.Property<string>("City")
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(3);
 
                     b.Property<int?>("CompanionId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(29);
 
                     b.Property<string>("Country")
                         .HasMaxLength(45)
@@ -1505,14 +1511,35 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DepositAdvancePaymentType")
+                        .HasColumnType("int")
+                        .HasColumnOrder(28);
+
+                    b.Property<string>("DepositServiceDescription")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(25);
+
+                    b.Property<int?>("DepositVATRate")
+                        .HasColumnType("int")
+                        .HasColumnOrder(27);
+
+                    b.Property<DateTime?>("DisableTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(32);
+
                     b.Property<string>("Email")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(10);
 
+                    b.Property<int?>("GoodsTaxSystem")
+                        .HasColumnType("int")
+                        .HasColumnOrder(22);
+
                     b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(21);
+                        .HasColumnOrder(30);
 
                     b.Property<bool>("HasBusinessSchedule")
                         .HasColumnType("bit")
@@ -1525,9 +1552,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
-                        .HasColumnOrder(20);
+                        .HasColumnOrder(33);
 
-                    b.Property<bool>("IsEnabled")
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(31);
+
+                    b.Property<bool?>("IsFiscalizationEnabled")
                         .HasColumnType("bit")
                         .HasColumnOrder(19);
 
@@ -1568,10 +1599,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(6);
 
+                    b.Property<int?>("ServicesTaxSystem")
+                        .HasColumnType("int")
+                        .HasColumnOrder(23);
+
+                    b.Property<int?>("TaxSystem")
+                        .HasColumnType("int")
+                        .HasColumnOrder(21);
+
+                    b.Property<decimal?>("TimeBasedServiceVATRate")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(26);
+
                     b.Property<string>("TimeZone")
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)")
                         .HasColumnOrder(13);
+
+                    b.Property<bool?>("TreatDepositsAsService")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(24);
 
                     b.Property<string>("WebSite")
                         .HasMaxLength(255)
@@ -4670,6 +4718,46 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("ModifiedById");
 
                     b.ToTable("PresetTimeSaleMoney", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PresetTopUp", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("PresetTopUpId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Value")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("PresetTopUp", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductBase", b =>
@@ -11293,6 +11381,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.PresetTimeSaleMoney", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PresetTopUp", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
