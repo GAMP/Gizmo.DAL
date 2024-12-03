@@ -115,7 +115,7 @@ namespace Gizmo.DAL.Extensions
                         {
                             Name = "Default",
                             IsDeleted = false,
-                            IsEnabled = true,
+                            IsDisabled = false,
                         };
 
                         dbContext.Branches.Add(branch);
@@ -292,31 +292,31 @@ namespace Gizmo.DAL.Extensions
 
                     var productPeriods = new ProductPeriod[]
                     {
-                    new ()
-                    {
-                        Id = productMars.Id,
-                        Options = PeriodOptionType.None
-                    },
-                    new ()
-                    {
-                        Id = productSnickers.Id,
-                        Options = PeriodOptionType.None
-                    },
-                    new ()
-                    {
-                        Id = productPizza.Id,
-                        Options = PeriodOptionType.None
-                    },
-                    new ()
-                    {
-                        Id = productCocaCola.Id,
-                        Options = PeriodOptionType.None
-                    },
-                    new ()
-                    {
-                        Id = productBundlePizzaAndCola.Id,
-                        Options = PeriodOptionType.None
-                    },
+                        new ()
+                        {
+                            Id = productMars.Id,
+                            Options = PeriodOptionType.None
+                        },
+                        new ()
+                        {
+                            Id = productSnickers.Id,
+                            Options = PeriodOptionType.None
+                        },
+                        new ()
+                        {
+                            Id = productPizza.Id,
+                            Options = PeriodOptionType.None
+                        },
+                        new ()
+                        {
+                            Id = productCocaCola.Id,
+                            Options = PeriodOptionType.None
+                        },
+                        new ()
+                        {
+                            Id = productBundlePizzaAndCola.Id,
+                            Options = PeriodOptionType.None
+                        },
                     };
 
                     var productPeriodDays = productPeriods.SelectMany(x => new ProductPeriodDay[]
@@ -351,13 +351,13 @@ namespace Gizmo.DAL.Extensions
 
                     var productTaxes = new ProductTax[]
                     {
-                 new() { ProductId = productMars.Id, TaxId = tax.Id },
-                 new() { ProductId = productSnickers.Id, TaxId = tax.Id },
-                 new() { ProductId = productPizza.Id, TaxId = tax.Id },
-                 new() { ProductId = productCocaCola.Id, TaxId = tax.Id },
-                 new() { ProductId = productBundlePizzaAndCola.Id, TaxId = tax.Id },
-                 new() { ProductId = productTimeSixHours.Id, TaxId = tax.Id },
-                 new() { ProductId = productTimeSixHoursWeekends.Id, TaxId = tax.Id },
+                        new() { ProductId = productMars.Id, TaxId = tax.Id },
+                        new() { ProductId = productSnickers.Id, TaxId = tax.Id },
+                        new() { ProductId = productPizza.Id, TaxId = tax.Id },
+                        new() { ProductId = productCocaCola.Id, TaxId = tax.Id },
+                        new() { ProductId = productBundlePizzaAndCola.Id, TaxId = tax.Id },
+                        new() { ProductId = productTimeSixHours.Id, TaxId = tax.Id },
+                        new() { ProductId = productTimeSixHoursWeekends.Id, TaxId = tax.Id },
                     };
 
                     dbContext.BundleProducts.AddRange(bundleProducts);
@@ -483,7 +483,7 @@ namespace Gizmo.DAL.Extensions
 
                     await dbContext.SaveChangesAsync(cancellationToken);
 
-                    trx.Commit();
+                    await trx.CommitAsync(cancellationToken);
                 }
             }
             catch

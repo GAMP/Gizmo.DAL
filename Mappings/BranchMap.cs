@@ -105,23 +105,73 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(18);
 
-            builder.Property(branch => branch.IsEnabled)
+            builder.Property(branch => branch.IsFiscalizationEnabled)
+                .IsRequired(false)
+                .HasColumnOrder(19);
+
+            builder.Property(branch => branch.BusinessVATId)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY45)
+                .HasColumnOrder(20);
+
+            builder.Property(branch => branch.TaxSystem)
+                .IsRequired(false)
+                .HasColumnOrder(21);
+
+            builder.Property(branch => branch.GoodsTaxSystem)
+                .IsRequired(false)
+                .HasColumnOrder(22);
+
+            builder.Property(branch => branch.ServicesTaxSystem)
+                .IsRequired(false)
+                .HasColumnOrder(23);
+
+            builder.Property(branch => branch.TreatDepositsAsService)
+                .IsRequired(false)
+                .HasColumnOrder(24);
+
+            builder.Property(branch => branch.DepositServiceDescription)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY)
+                .HasColumnOrder(25);
+
+            builder.Property(branch => branch.TimeBasedServiceVATRate)
+                .IsRequired(false)
+                .HasColumnOrder(26);
+
+            builder.Property(branch => branch.DepositVATRate)
+                .IsRequired(false)
+                .HasColumnOrder(27);
+
+            builder.Property(branch => branch.DepositAdvancePaymentType)
+                .IsRequired(false)
+                .HasColumnOrder(28);
+
+            builder.Property(branch => branch.CompanionId)
+                .IsRequired(false)
+                .HasColumnOrder(29);
+
+            builder.Property(branch => branch.Guid)
+                .HasColumnOrder(30)
+                .IsRequired();
+
+            builder.Property(branch => branch.IsDisabled)
                 .IsRequired()
-                 .HasColumnOrder(19);
+                .HasColumnOrder(31);
+
+            builder.Property(branch => branch.DisableTime)
+                .IsRequired(false)
+                .HasColumnOrder(32);
 
             builder.Property(branch => branch.IsDeleted)
                 .IsRequired()
-                .HasColumnOrder(20);
-
-            builder.Property(branch => branch.Guid)
-                .HasColumnOrder(21)
-                .IsRequired();
+                .HasColumnOrder(33);
 
             builder.HasIndex(branch => branch.Name)
                 .IsUnique();
 
             builder.HasIndex(branch => branch.Guid)
-                .IsUnique();
+                .IsUnique().HasFilter(null);
 
             builder.HasOne(branch => branch.CreatedBy)
                 .WithMany(x => x.CreatedBranches)
@@ -129,7 +179,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.HasOne(branch => branch.ModifiedBy)
                .WithMany(userOperator => userOperator.ModifiedBranches)
-               .HasForeignKey(branch => branch.ModifiedById);          
+               .HasForeignKey(branch => branch.ModifiedById);
         }
     }
 }

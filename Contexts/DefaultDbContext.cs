@@ -1970,6 +1970,13 @@ namespace Gizmo.DAL.Contexts
                         modelBuilder.Entity(entity).Property(property.Name).HasColumnType("datetime2");
                 }
 
+                //TODO: Here we change the decimals precision, in Branch entity we have latitude and longitude properties that have different precision BUT we do need to use the precision on some other
+                //properties , an better way to do this must be found otherwise we could end up with not desired precision on some properties
+
+                //make all nullable decimal properties to have 19,4 precision
+                var nullableDecimalProperties = entity.GetProperties().Where(p => p.PropertyType == typeof(decimal?) || p.PropertyType.GenericTypeArguments?.FirstOrDefault() == typeof(decimal?)).ToList();
+                foreach (var property in nullableDecimalProperties)
+                    modelBuilder.Entity(entity).Property(property.Name).HasPrecision(19, 4);
 
                 //branch has custom latitude/longitude decimal configuration, we should not alter the model
                 if (entity == typeof(Branch))
@@ -1978,7 +1985,7 @@ namespace Gizmo.DAL.Contexts
                 //make all decimal properties to have 19,4 precision
                 var decimalProperties = entity.GetProperties().Where(p => p.PropertyType == typeof(decimal) || p.PropertyType.GenericTypeArguments?.FirstOrDefault() == typeof(decimal)).ToList();
                 foreach (var property in decimalProperties)
-                    modelBuilder.Entity(entity).Property(property.Name).HasPrecision(19, 4);
+                    modelBuilder.Entity(entity).Property(property.Name).HasPrecision(19, 4);         
             }
 
             if (Database.IsNpgsql())

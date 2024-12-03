@@ -210,7 +210,7 @@ namespace Gizmo.DAL.Contexts
                         var defaultBranch = new Branch()
                         {
                             Name = "Default",
-                            IsEnabled = true,
+                            IsDisabled = false,
                             IsDeleted = false,
                         };
 
@@ -256,7 +256,7 @@ namespace Gizmo.DAL.Contexts
                     await _dbContext.SaveChangesAsync(cancellationToken);
 
                     //commit any changes made
-                    trx.Commit();
+                    await trx.CommitAsync(cancellationToken);
                 }
             }
             catch (Exception ex)
