@@ -25,147 +25,152 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(branch => branch.Country)
+            builder.Property(branch => branch.BusinessName)
                 .HasColumnOrder(2)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(branch => branch.City)
+            builder.Property(branch => branch.Country)
                 .HasColumnOrder(3)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(branch => branch.Address)
+            builder.Property(branch => branch.City)
                 .HasColumnOrder(4)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY45);
+
+            builder.Property(branch => branch.Address)
+                .HasColumnOrder(5)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
 
             builder.Property(branch => branch.PostalCode)
-                .HasColumnOrder(5)
-                .IsRequired(false)
-                .HasMaxLength(SQLStringSize.TINY45);
-
-            builder.Property(branch => branch.Region)
                 .HasColumnOrder(6)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(branch => branch.Latitude)
+            builder.Property(branch => branch.Region)
                 .HasColumnOrder(7)
-                .IsRequired()
-                .HasPrecision(9, 6);
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(branch => branch.Longitude)
+            builder.Property(branch => branch.Latitude)
                 .HasColumnOrder(8)
                 .IsRequired()
                 .HasPrecision(9, 6);
 
-            builder.Property(branch => branch.Phone)
+            builder.Property(branch => branch.Longitude)
                 .HasColumnOrder(9)
+                .IsRequired()
+                .HasPrecision(9, 6);
+
+            builder.Property(branch => branch.Phone)
+                .HasColumnOrder(10)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45);
 
             builder.Property(branch => branch.Email)
-                .HasColumnOrder(10)
-                .IsRequired(false)
-                .HasMaxLength(SQLStringSize.TINY);
-
-            builder.Property(branch => branch.WebSite)
                 .HasColumnOrder(11)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(branch => branch.Info)
+            builder.Property(branch => branch.WebSite)
                 .HasColumnOrder(12)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(branch => branch.TimeZone)
+            builder.Property(branch => branch.Info)
                 .HasColumnOrder(13)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY);
+
+            builder.Property(branch => branch.TimeZone)
+                .HasColumnOrder(14)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45);
 
             builder.Property(branch => branch.HasBusinessSchedule)
                 .IsRequired()
-                .HasColumnOrder(14);
+                .HasColumnOrder(15);
 
             builder.Property(branch => branch.BusinessDayStart)
               .IsRequired(false)
-              .HasColumnOrder(15);
+              .HasColumnOrder(16);
 
             builder.Property(branch => branch.BusinessDayEnd)
                 .IsRequired(false)
-                .HasColumnOrder(16);
+                .HasColumnOrder(17);
 
             builder.Property(branch => branch.BusinessStartWeekDay)
                 .IsRequired(false)
-                .HasColumnOrder(17);
+                .HasColumnOrder(18);
 
             builder.Property(branch => branch.BusinessEndWeekDay)
                 .IsRequired(false)
-                .HasColumnOrder(18);
+                .HasColumnOrder(19);
 
             builder.Property(branch => branch.IsFiscalizationEnabled)
                 .IsRequired(false)
-                .HasColumnOrder(19);
+                .HasColumnOrder(20);
 
             builder.Property(branch => branch.BusinessVATId)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45)
-                .HasColumnOrder(20);
+                .HasColumnOrder(21);
 
             builder.Property(branch => branch.TaxSystem)
                 .IsRequired(false)
-                .HasColumnOrder(21);
+                .HasColumnOrder(22);
 
             builder.Property(branch => branch.GoodsTaxSystem)
                 .IsRequired(false)
-                .HasColumnOrder(22);
+                .HasColumnOrder(23);
 
             builder.Property(branch => branch.ServicesTaxSystem)
                 .IsRequired(false)
-                .HasColumnOrder(23);
+                .HasColumnOrder(24);
 
             builder.Property(branch => branch.TreatDepositsAsService)
                 .IsRequired(false)
-                .HasColumnOrder(24);
+                .HasColumnOrder(25);
 
             builder.Property(branch => branch.DepositServiceDescription)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY)
-                .HasColumnOrder(25);
+                .HasColumnOrder(26);
 
             builder.Property(branch => branch.TimeBasedServiceVATRate)
                 .IsRequired(false)
-                .HasColumnOrder(26);
+                .HasColumnOrder(27);
 
             builder.Property(branch => branch.DepositVATRate)
                 .IsRequired(false)
-                .HasColumnOrder(27);
+                .HasColumnOrder(28);
 
             builder.Property(branch => branch.DepositAdvancePaymentType)
                 .IsRequired(false)
-                .HasColumnOrder(28);
+                .HasColumnOrder(29);
 
             builder.Property(branch => branch.CompanionId)
                 .IsRequired(false)
-                .HasColumnOrder(29);
+                .HasColumnOrder(30);
 
             builder.Property(branch => branch.Guid)
-                .HasColumnOrder(30)
+                .HasColumnOrder(31)
                 .IsRequired();
 
             builder.Property(branch => branch.IsDisabled)
                 .IsRequired()
-                .HasColumnOrder(31);
+                .HasColumnOrder(32);
 
             builder.Property(branch => branch.DisableTime)
                 .IsRequired(false)
-                .HasColumnOrder(32);
+                .HasColumnOrder(33);
 
             builder.Property(branch => branch.IsDeleted)
                 .IsRequired()
-                .HasColumnOrder(33);
+                .HasColumnOrder(34);
 
             builder.HasIndex(branch => branch.Name)
                 .IsUnique();
