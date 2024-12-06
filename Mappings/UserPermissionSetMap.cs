@@ -24,6 +24,16 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired();
 
             builder.HasIndex(permissionSet => permissionSet.Name).IsUnique().HasFilter(null);
+
+            builder.HasOne(permissionSet => permissionSet.CreatedBy)
+                .WithMany()
+                .HasForeignKey(permissionSet => permissionSet.CreatedById)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(permissionSet => permissionSet.ModifiedBy)
+                .WithMany()
+                .HasForeignKey(permissionSet => permissionSet.ModifiedById)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

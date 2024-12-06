@@ -15,66 +15,74 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            // Primary Key
-            builder.HasKey(t => t.Id);
+            builder.ToTable(nameof(User))
+                .UseTptMappingStrategy();
 
-            builder.Property(t => t.Id)
+            builder.HasKey(user => user.Id);
+
+            builder.Property(user => user.Id)
                 .HasColumnName("UserId");
 
-            builder.Property(t => t.FirstName)
+            builder.Property(user => user.FirstName)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(t => t.LastName)
+            builder.Property(user => user.LastName)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.BirthDate);
+            builder.Property(user => user.BirthDate);
 
-            builder.Property(t => t.Address)
+            builder.Property(user => user.Address)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(t => t.City)
+            builder.Property(user => user.City)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(t => t.Country)
+            builder.Property(user => user.Country)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(t => t.PostCode)
+            builder.Property(user => user.PostCode)
                 .HasMaxLength(20);
 
-            builder.Property(t => t.Phone)
+            builder.Property(user => user.Phone)
                 .HasMaxLength(20);
 
-            builder.Property(t => t.MobilePhone)
+            builder.Property(user => user.MobilePhone)
                 .HasMaxLength(20);
 
-            builder.Property(x => x.Sex);
+            builder.Property(user => user.Sex);
 
-            builder.Property(x => x.SmartCardUID)
+            builder.Property(user => user.SmartCardUID)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(x => x.Identification)
+            builder.Property(user => user.Identification)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            // Indexes
-            builder.HasIndex(t => t.Guid).IsUnique();
-            builder.HasIndex(t => t.SmartCardUID).IsUnique();
-            builder.HasIndex(t => t.Identification).IsUnique();
+            builder.Property(user => user.PreferredChannel)
+                .IsRequired(false);
 
-            // Relations
-            builder.HasOne(x => x.CreatedBy)
+            builder.Property(user => user.PermissionSetId)
+                .IsRequired(false);
+            
+            builder.Property(user => user.BranchId)
+                .IsRequired(false);
+
+            builder.Property(user => user.Guid);
+
+            builder.HasIndex(user => user.Guid).IsUnique();
+            builder.HasIndex(user => user.SmartCardUID).IsUnique();
+            builder.HasIndex(user => user.Identification).IsUnique();
+
+            builder.HasOne(user => user.CreatedBy)
                 .WithMany()
-                .HasForeignKey(x => x.CreatedById);
+                .HasForeignKey(user => user.CreatedById);
 
-            builder.HasOne(x => x.ModifiedBy)
+            builder.HasOne(user => user.ModifiedBy)
                 .WithMany()
-                .HasForeignKey(x => x.ModifiedById);
+                .HasForeignKey(user => user.ModifiedById);
 
-            builder.HasOne(x => x.Branch)
-                .WithMany(x => x.Users)
-                .HasForeignKey(x => x.BranchId);
-
-            // Table & Column Mappings
-            builder.ToTable("User");
+            builder.HasOne(user => user.Branch)
+                .WithMany(user => user.Users)
+                .HasForeignKey(user => user.BranchId);
         }
     }
 }
