@@ -22,8 +22,21 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0)
                 .IsRequired();
 
-            builder.Property(notification => notification.IsDisabled)
+            builder.Property(notification => notification.Type)
                 .HasColumnOrder(1)
+                .IsRequired();
+
+            builder.Property(notification => notification.FocusType)
+                .HasColumnOrder(2)
+                .IsRequired();
+
+            builder.Property(notification => notification.Message)
+                .HasColumnOrder(3)
+                .HasMaxLength(SQLStringSize.TINY)
+                .IsRequired(false);
+
+            builder.Property(notification => notification.IsDisabled)
+                .HasColumnOrder(4)
                 .IsRequired();
         }
     }

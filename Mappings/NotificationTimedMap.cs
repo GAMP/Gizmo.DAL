@@ -17,20 +17,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(notificationTimed => notificationTimed.Minute)
                 .HasColumnOrder(0)
-                .IsRequired();
-
-            builder.Property(notificationTimed => notificationTimed.Type)
-                .HasColumnOrder(1)
-                .IsRequired();
-
-            builder.Property(notificationTimed => notificationTimed.FocusType)
-                .HasColumnOrder(2)
-                .IsRequired();
-
-            builder.Property(notificationTimed => notificationTimed.Message)
-                .HasColumnOrder(3)
-                .HasMaxLength(SQLStringSize.TINY)
-                .IsRequired(false);
+                .IsRequired();      
         }
     }
 }

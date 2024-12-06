@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Gizmo.DAL.Contexts
 {
@@ -899,6 +900,11 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<PresetTopUp> PresetTopUps { get; set; }
 
+        /// <summary>
+        /// Gets notifications.
+        /// </summary>
+        public DbSet<Notification> Notifications { get; set; }
+
         #endregion
 
         #region OVERRIDES
@@ -906,6 +912,7 @@ namespace Gizmo.DAL.Contexts
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
             optionsBuilder.EnableSensitiveDataLogging(false);
         }
 
@@ -1191,6 +1198,24 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new AgeRestrictionMap());
             modelBuilder.ApplyConfiguration(new AgeRestrictionLoginMap());
             modelBuilder.ApplyConfiguration(new PresetTopUpMap());
+
+            modelBuilder.ApplyConfiguration(new ScheduleMap());
+            modelBuilder.ApplyConfiguration(new ScheduleReportMap());
+            modelBuilder.ApplyConfiguration(new ScheduleReportEntryMap());
+
+            modelBuilder.ApplyConfiguration(new RecipientMap());
+            modelBuilder.ApplyConfiguration(new RecipientChanneledMap());
+            modelBuilder.ApplyConfiguration(new RecipientChannelMap());
+            modelBuilder.ApplyConfiguration(new RecipientUserMap());
+            modelBuilder.ApplyConfiguration(new RecipientScheduleReportMap());
+
+            modelBuilder.ApplyConfiguration(new UserChannelMap());
+
+            modelBuilder.ApplyConfiguration(new NotificationMap());
+            modelBuilder.ApplyConfiguration(new NotificationTimedMap());
+            modelBuilder.ApplyConfiguration(new NotificationTimedRemainingMap());
+            modelBuilder.ApplyConfiguration(new NotificationTimedReservationMap());
+
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
