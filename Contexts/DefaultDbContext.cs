@@ -905,6 +905,21 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<Notification> Notifications { get; set; }
 
+        /// <summary>
+        /// Gets schedules.
+        /// </summary>
+        public DbSet<Schedule> Schedules { get; set; }
+
+        /// <summary>
+        /// Schedule report recipients.
+        /// </summary>
+        public DbSet<ScheduleReportRecipient> ScheduleReportRecipients { get; set; }
+
+        /// <summary>
+        /// Schedule report entries.
+        /// </summary>
+        public DbSet<ScheduleReportEntry> ScheduleReportEntries { get; set; }
+
         #endregion
 
         #region OVERRIDES
@@ -1207,7 +1222,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new RecipientChanneledMap());
             modelBuilder.ApplyConfiguration(new RecipientChannelMap());
             modelBuilder.ApplyConfiguration(new RecipientUserMap());
-            modelBuilder.ApplyConfiguration(new RecipientScheduleReportMap());
+            modelBuilder.ApplyConfiguration(new ScheduleReportRecipientMap());
 
             modelBuilder.ApplyConfiguration(new UserChannelMap());
 

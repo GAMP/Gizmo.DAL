@@ -82,6 +82,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
+                name: "PermissionSetId",
+                table: "User",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "PreferredChannel",
+                table: "User",
+                type: "uniqueidentifier",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "UsageSession",
                 type: "int",
@@ -414,6 +426,36 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notification",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    FocusType = table.Column<int>(type: "int", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notification", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_Notification_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_Notification_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PresetTopUp",
                 columns: table => new
                 {
@@ -472,6 +514,25 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
+                name: "Recipient",
+                columns: table => new
+                {
+                    RecipientId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Recipient", x => x.RecipientId);
+                    table.ForeignKey(
+                        name: "FK_Recipient_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ReportPreset",
                 columns: table => new
                 {
@@ -503,6 +564,37 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
+                name: "Schedule",
+                columns: table => new
+                {
+                    ScheduleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schedule", x => x.ScheduleId);
+                    table.ForeignKey(
+                        name: "FK_Schedule_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_Schedule_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserApiKey",
                 columns: table => new
                 {
@@ -518,6 +610,41 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_UserApiKey_UserOperator_UserId",
                         column: x => x.UserId,
                         principalTable: "UserOperator",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserChannel",
+                columns: table => new
+                {
+                    UserChannelId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Channel = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserChannel", x => x.UserChannelId);
+                    table.ForeignKey(
+                        name: "FK_UserChannel_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserChannel_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserChannel_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -573,6 +700,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     BranchId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    BusinessName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
                     Country = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
                     City = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
                     Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -737,6 +865,24 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
+                name: "NotificationTimed",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false),
+                    Minute = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationTimed", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_NotificationTimed_Notification_NotificationId",
+                        column: x => x.NotificationId,
+                        principalTable: "Notification",
+                        principalColumn: "NotificationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PromotionCode",
                 columns: table => new
                 {
@@ -855,6 +1001,40 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         column: x => x.PromotionId,
                         principalTable: "Promotion",
                         principalColumn: "PromotionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecipientChanneled",
+                columns: table => new
+                {
+                    RecipientId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipientChanneled", x => x.RecipientId);
+                    table.ForeignKey(
+                        name: "FK_RecipientChanneled_Recipient_RecipientId",
+                        column: x => x.RecipientId,
+                        principalTable: "Recipient",
+                        principalColumn: "RecipientId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ScheduleReport",
+                columns: table => new
+                {
+                    ScheduleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScheduleReport", x => x.ScheduleId);
+                    table.ForeignKey(
+                        name: "FK_ScheduleReport_Schedule_ScheduleId",
+                        column: x => x.ScheduleId,
+                        principalTable: "Schedule",
+                        principalColumn: "ScheduleId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -1144,6 +1324,40 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
+                name: "NotificationTimedRemaining",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationTimedRemaining", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_NotificationTimedRemaining_NotificationTimed_NotificationId",
+                        column: x => x.NotificationId,
+                        principalTable: "NotificationTimed",
+                        principalColumn: "NotificationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NotificationTimedReservation",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationTimedReservation", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_NotificationTimedReservation_NotificationTimed_NotificationId",
+                        column: x => x.NotificationId,
+                        principalTable: "NotificationTimed",
+                        principalColumn: "NotificationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PromotionPeriodDay",
                 columns: table => new
                 {
@@ -1161,6 +1375,127 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         principalTable: "PromotionPeriod",
                         principalColumn: "PromotionId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecipientChannel",
+                columns: table => new
+                {
+                    RecipientChannelId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RecipientChanneledId = table.Column<int>(type: "int", nullable: false),
+                    ChannelType = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipientChannel", x => x.RecipientChannelId);
+                    table.ForeignKey(
+                        name: "FK_RecipientChannel_RecipientChanneled_RecipientChanneledId",
+                        column: x => x.RecipientChanneledId,
+                        principalTable: "RecipientChanneled",
+                        principalColumn: "RecipientId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RecipientChannel_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecipientUser",
+                columns: table => new
+                {
+                    RecipientId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipientUser", x => x.RecipientId);
+                    table.ForeignKey(
+                        name: "FK_RecipientUser_RecipientChanneled_RecipientId",
+                        column: x => x.RecipientId,
+                        principalTable: "RecipientChanneled",
+                        principalColumn: "RecipientId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RecipientUser_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ScheduleReportEntry",
+                columns: table => new
+                {
+                    ScheduleReportEntryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ScheduleReportId = table.Column<int>(type: "int", nullable: false),
+                    ReportType = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReportRange = table.Column<int>(type: "int", nullable: false),
+                    ReportParameters = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReportPresetId = table.Column<int>(type: "int", nullable: true),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScheduleReportEntry", x => x.ScheduleReportEntryId);
+                    table.ForeignKey(
+                        name: "FK_ScheduleReportEntry_ReportPreset_ReportPresetId",
+                        column: x => x.ReportPresetId,
+                        principalTable: "ReportPreset",
+                        principalColumn: "ReportPresetId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_ScheduleReportEntry_ScheduleReport_ScheduleReportId",
+                        column: x => x.ScheduleReportId,
+                        principalTable: "ScheduleReport",
+                        principalColumn: "ScheduleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ScheduleReportEntry_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ScheduleReportRecipient",
+                columns: table => new
+                {
+                    RecipientScheduleReportId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ScheduleReportId = table.Column<int>(type: "int", nullable: false),
+                    RecipientId = table.Column<int>(type: "int", nullable: false),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScheduleReportRecipient", x => x.RecipientScheduleReportId);
+                    table.ForeignKey(
+                        name: "FK_ScheduleReportRecipient_Recipient_RecipientId",
+                        column: x => x.RecipientId,
+                        principalTable: "Recipient",
+                        principalColumn: "RecipientId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ScheduleReportRecipient_ScheduleReport_ScheduleReportId",
+                        column: x => x.ScheduleReportId,
+                        principalTable: "ScheduleReport",
+                        principalColumn: "ScheduleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ScheduleReportRecipient_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1869,6 +2204,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "BranchId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_User_PermissionSetId",
+                table: "User",
+                column: "PermissionSetId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UsageSession_BranchId",
                 table: "UsageSession",
                 column: "BranchId");
@@ -2294,6 +2634,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notification_CreatedById",
+                table: "Notification",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notification_ModifiedById",
+                table: "Notification",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PresetTopUp_CreatedById",
                 table: "PresetTopUp",
                 column: "CreatedById");
@@ -2384,6 +2734,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "PromotionPeriodDayId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Recipient_CreatedById",
+                table: "Recipient",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipientChannel_CreatedById",
+                table: "RecipientChannel",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipientChannel_RecipientChanneledId_ChannelType",
+                table: "RecipientChannel",
+                columns: new[] { "RecipientChanneledId", "ChannelType" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipientUser_UserId",
+                table: "RecipientUser",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ReportPreset_CreatedById",
                 table: "ReportPreset",
                 column: "CreatedById");
@@ -2398,6 +2769,52 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "ReportPreset",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedule_CreatedById",
+                table: "Schedule",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedule_ModifiedById",
+                table: "Schedule",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedule_Name",
+                table: "Schedule",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduleReportEntry_CreatedById",
+                table: "ScheduleReportEntry",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduleReportEntry_ReportPresetId",
+                table: "ScheduleReportEntry",
+                column: "ReportPresetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduleReportEntry_ScheduleReportId",
+                table: "ScheduleReportEntry",
+                column: "ScheduleReportId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduleReportRecipient_CreatedById",
+                table: "ScheduleReportRecipient",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduleReportRecipient_RecipientId",
+                table: "ScheduleReportRecipient",
+                column: "RecipientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduleReportRecipient_ScheduleReportId",
+                table: "ScheduleReportRecipient",
+                column: "ScheduleReportId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Stock_BranchId",
@@ -2536,6 +2953,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "UserApiKey",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserChannel_CreatedById",
+                table: "UserChannel",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserChannel_ModifiedById",
+                table: "UserChannel",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserChannel_UserId_Channel",
+                table: "UserChannel",
+                columns: new[] { "UserId", "Channel" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserOperatorBranch_BranchId_OperatorId",
@@ -2756,6 +3188,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 principalColumn: "BranchId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_User_UserPermissionSet_PermissionSetId",
+                table: "User",
+                column: "PermissionSetId",
+                principalTable: "UserPermissionSet",
+                principalColumn: "UserPermissionSetId");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_UserGroup_DiscountGroup_DiscountGroupId",
                 table: "UserGroup",
                 column: "DiscountGroupId",
@@ -2875,6 +3314,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "User");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_User_UserPermissionSet_PermissionSetId",
+                table: "User");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_UserGroup_DiscountGroup_DiscountGroupId",
                 table: "UserGroup");
 
@@ -2938,6 +3381,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "NewsBranch");
 
             migrationBuilder.DropTable(
+                name: "NotificationTimedRemaining");
+
+            migrationBuilder.DropTable(
+                name: "NotificationTimedReservation");
+
+            migrationBuilder.DropTable(
                 name: "PresetTopUp");
 
             migrationBuilder.DropTable(
@@ -2962,7 +3411,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "PromotionPeriodDayTime");
 
             migrationBuilder.DropTable(
-                name: "ReportPreset");
+                name: "RecipientChannel");
+
+            migrationBuilder.DropTable(
+                name: "RecipientUser");
+
+            migrationBuilder.DropTable(
+                name: "ScheduleReportEntry");
+
+            migrationBuilder.DropTable(
+                name: "ScheduleReportRecipient");
 
             migrationBuilder.DropTable(
                 name: "StockCountEntry");
@@ -2981,6 +3439,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             migrationBuilder.DropTable(
                 name: "UserApiKey");
+
+            migrationBuilder.DropTable(
+                name: "UserChannel");
 
             migrationBuilder.DropTable(
                 name: "UserOperatorBranch");
@@ -3004,10 +3465,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "InventoryEntry");
 
             migrationBuilder.DropTable(
+                name: "NotificationTimed");
+
+            migrationBuilder.DropTable(
                 name: "DiscountGroup");
 
             migrationBuilder.DropTable(
                 name: "PromotionPeriodDay");
+
+            migrationBuilder.DropTable(
+                name: "RecipientChanneled");
+
+            migrationBuilder.DropTable(
+                name: "ReportPreset");
+
+            migrationBuilder.DropTable(
+                name: "ScheduleReport");
 
             migrationBuilder.DropTable(
                 name: "StockCount");
@@ -3040,7 +3513,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "Inventory");
 
             migrationBuilder.DropTable(
+                name: "Notification");
+
+            migrationBuilder.DropTable(
                 name: "PromotionPeriod");
+
+            migrationBuilder.DropTable(
+                name: "Recipient");
+
+            migrationBuilder.DropTable(
+                name: "Schedule");
 
             migrationBuilder.DropTable(
                 name: "TargetGroup");
@@ -3080,6 +3562,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             migrationBuilder.DropIndex(
                 name: "IX_User_BranchId",
+                table: "User");
+
+            migrationBuilder.DropIndex(
+                name: "IX_User_PermissionSetId",
                 table: "User");
 
             migrationBuilder.DropIndex(
@@ -3192,6 +3678,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             migrationBuilder.DropColumn(
                 name: "BranchId",
+                table: "User");
+
+            migrationBuilder.DropColumn(
+                name: "PermissionSetId",
+                table: "User");
+
+            migrationBuilder.DropColumn(
+                name: "PreferredChannel",
                 table: "User");
 
             migrationBuilder.DropColumn(

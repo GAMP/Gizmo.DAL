@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Gizmo.DAL.Mappings
 {
     /// <summary>
-    /// Recipient schedule report map.
+    /// Schedule report recipient map.
     /// </summary>
-    public sealed class RecipientScheduleReportMap : IEntityTypeConfiguration<RecipientScheduleReport>
+    public sealed class ScheduleReportRecipientMap : IEntityTypeConfiguration<ScheduleReportRecipient>
     {
         ///<inheritdoc/>
-        public void Configure(EntityTypeBuilder<RecipientScheduleReport> builder)
+        public void Configure(EntityTypeBuilder<ScheduleReportRecipient> builder)
         {
-            builder.ToTable(nameof(RecipientScheduleReport));
+            builder.ToTable(nameof(ScheduleReportRecipient));
 
             builder.HasKey(recipientScheduleReport =>  recipientScheduleReport.Id);
 

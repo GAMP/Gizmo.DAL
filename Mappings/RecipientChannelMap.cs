@@ -27,6 +27,9 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(2);
 
+            builder.HasIndex(recipientChannel => new { recipientChannel.RecipientChanneledId, recipientChannel.ChannelType })
+                .IsUnique()
+                .HasFilter(null);
         }
     }
 }

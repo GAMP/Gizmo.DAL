@@ -21,17 +21,31 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("ScheduleId")
                 .HasColumnOrder(0);
 
+            builder.Property(schedule => schedule.Name)
+                .IsRequired()
+                .HasMaxLength(SQLStringSize.TINY45)
+                .HasColumnOrder(1);
+
+            builder.Property(schedule => schedule.Description)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY)
+                .HasColumnOrder(2);
+
             builder.Property(schedule => schedule.Type)
                 .IsRequired()
-                .HasColumnOrder(1);
+                .HasColumnOrder(3);
 
             builder.Property(schedule => schedule.StartTime)
                 .IsRequired()
-                .HasColumnOrder(2);
+                .HasColumnOrder(4);
 
             builder.Property(schedule => schedule.IsDisabled)
                 .IsRequired()
-                .HasColumnOrder(3);
+                .HasColumnOrder(5);
+
+            builder.HasIndex(schedule => schedule.Name)
+                .IsUnique()
+                .HasFilter(null);
         }
     }
 }
