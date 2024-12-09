@@ -57,7 +57,7 @@ namespace Gizmo.DAL.Mappings
 
             // Indexes
 
-            builder.HasIndex(t => new { t.Name, t.BranchId }).HasFilter(null);
+            builder.HasIndex(t => new { t.Name, t.BranchId }).IsUnique().HasFilter(null);
 
             builder.HasIndex(t => t.MacAddress).IsUnique();
 
