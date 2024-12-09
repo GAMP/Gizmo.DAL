@@ -199,12 +199,13 @@ namespace Gizmo.DAL.Contexts
                     }
 
                     //get existing default branch id
-                    int? defaultBranchId = await _dbContext.Branches.Where(branch => branch.Name.ToLower() == "default")
+                    int? usableBranchId = await _dbContext.Branches
+                        .Where(branch => !branch.IsDisabled && !branch.IsDeleted)
                         .Select(branch => (int?)branch.Id)
                         .FirstOrDefaultAsync(cancellationToken);
 
                     //check if any default branches exists
-                    if (defaultBranchId == null)
+                    if (usableBranchId == null)
                     {
                         _logger.LogTrace("Creating default branch.");
                         var defaultBranch = new Branch()
@@ -220,7 +221,7 @@ namespace Gizmo.DAL.Contexts
                         await _dbContext.SaveChangesAsync(cancellationToken);
 
                         //use id of default branch
-                        defaultBranchId = defaultBranch.Id;
+                        usableBranchId = defaultBranch.Id;
                     }
 
                     //check if any branches exists
@@ -232,7 +233,7 @@ namespace Gizmo.DAL.Contexts
                             Name = "Default",
                             StartCash = 0,
                             IdleTimeout = null,
-                            BranchId = defaultBranchId!.Value,
+                            BranchId = usableBranchId!.Value,
                         };
 
                         _dbContext.Registers.Add(defaultRegister);
@@ -246,7 +247,7 @@ namespace Gizmo.DAL.Contexts
                             _logger.LogInformation("Adding admin operator to default branch.");
                             _dbContext.UserOperatorBranches.Add(new UserOperatorBranch()
                             {
-                                BranchId = defaultBranchId!.Value,
+                                BranchId = usableBranchId!.Value,
                                 OperatorId = adminOperatorId!.Value,
                             });                           
                         }
