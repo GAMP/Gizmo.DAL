@@ -1230,6 +1230,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new NotificationTimedMap());
             modelBuilder.ApplyConfiguration(new NotificationTimedRemainingMap());
             modelBuilder.ApplyConfiguration(new NotificationTimedReservationMap());
+            modelBuilder.ApplyConfiguration(new PresetReservationTimeMap());
 
 
             #region GLOBAL CONFIGURATIONS
