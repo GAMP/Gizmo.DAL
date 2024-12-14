@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Payment entity map.
+    /// </summary>
     public class PaymentMap : IEntityTypeConfiguration<Payment>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
             // Primary Key
@@ -49,8 +50,11 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(9);
 
             // Indexes
-            builder.HasIndex(t => t.DepositTransactionId).IsUnique();
-            builder.HasIndex(t => t.PointTransactionId).IsUnique();
+            builder.HasIndex(t => t.DepositTransactionId)
+                .IsUnique();
+
+            builder.HasIndex(t => t.PointTransactionId)
+                .IsUnique();
 
             // Relationships
             builder.HasOne(x => x.User)

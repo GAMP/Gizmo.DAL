@@ -16,6 +16,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasKey(stockCount => stockCount.Id);
 
             builder.Property(stockCount => stockCount.Id)
+                .HasColumnName("StockCountId")
                 .HasColumnOrder(0)
                 .IsRequired();
 

@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Void entity map.
+    /// </summary>
     public class VoidMap : IEntityTypeConfiguration<Entities.Void>
     {
         /// <summary>

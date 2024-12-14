@@ -9,9 +9,7 @@ namespace Gizmo.DAL.Mappings
     /// </summary>
     public class PaymentIntentDepositMap : IEntityTypeConfiguration<PaymentIntentDeposit>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<PaymentIntentDeposit> builder)
         {
             builder.Property(x => x.DepositPaymentId)
@@ -19,7 +17,9 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false);
 
             // Indexes
-            builder.HasIndex(t => t.DepositPaymentId).IsUnique();
+            builder.HasIndex(t => t.DepositPaymentId)
+                .IsUnique();
+            
             builder.HasIndex(t => t.Id);
 
             builder.HasOne(x => x.DepositPayment)

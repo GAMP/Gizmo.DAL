@@ -30,7 +30,9 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(4);
 
             // Indexes
-            builder.HasIndex(x => new { x.ProductId, x.TaxId }, "UQ_TaxProduct").IsUnique();
+            builder.HasIndex(x => new { x.ProductId, x.TaxId })
+                .IsUnique()
+                .HasFilter(null);
 
             builder.ToTable("ProductTax");
 

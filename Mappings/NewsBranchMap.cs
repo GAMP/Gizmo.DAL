@@ -1,5 +1,4 @@
 ﻿using Gizmo.DAL.Entities;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,9 +9,7 @@ namespace Gizmo.DAL.Mappings
     /// </summary>
     public class NewsBranchMap : IEntityTypeConfiguration<NewsBranch>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<NewsBranch> builder)
         {
             builder.ToTable(nameof(NewsBranch));
@@ -21,16 +18,19 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(e => e.NewsId)
                 .HasColumnOrder(0);
+
             builder.Property(e => e.BranchId)
                 .HasColumnOrder(1);
+
             builder.Property(e => e.IsEnabled)
                 .HasColumnOrder(2);
 
-            builder.HasIndex(t => new { t.NewsId, t.BranchId }).IsUnique().HasFilter(null);
+            builder.HasIndex(t => new { t.NewsId, t.BranchId })
+                .IsUnique();
 
             builder.HasOne(x => x.Branch)
                 .WithMany(x => x.News)
-                .HasForeignKey(x => x.BranchId);        
+                .HasForeignKey(x => x.BranchId);
         }
     }
 }

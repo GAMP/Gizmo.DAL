@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Bundle product user price map.
+    /// </summary>
     public class BundleProductUserPriceMap : IEntityTypeConfiguration<BundleProductUserPrice>
     {
         /// <summary>
@@ -23,7 +26,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             // Indexes
-            builder.HasIndex(t => new { t.BundleProductId, t.UserGroupId }).IsUnique();
+            builder.HasIndex(t => new { t.BundleProductId, t.UserGroupId })
+                .IsUnique();
 
             builder.ToTable(nameof(BundleProductUserPrice));
 

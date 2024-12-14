@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Bill profile rate step entity map.
+    /// </summary>
     public class BillProfileRateStepMap : IEntityTypeConfiguration<BillRateStep>
     {
         /// <summary>
@@ -40,7 +43,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(6);
 
             // Indexes
-            builder.HasIndex(t => new { t.BillRateId, t.Minute }).IsUnique();
+            builder.HasIndex(t => new { t.BillRateId, t.Minute })
+                .IsUnique();
 
             builder.ToTable("BillRateStep");
 

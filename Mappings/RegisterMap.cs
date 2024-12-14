@@ -10,9 +10,7 @@ namespace Gizmo.DAL.Mappings
     /// </summary>
     public class RegisterMap : IEntityTypeConfiguration<Register>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Register> builder)
         {
             // Primary Key
@@ -57,9 +55,11 @@ namespace Gizmo.DAL.Mappings
 
             // Indexes
 
-            builder.HasIndex(t => new { t.Name, t.BranchId }).IsUnique().HasFilter(null);
+            builder.HasIndex(t => new { t.Name, t.BranchId })
+                .IsUnique();
 
-            builder.HasIndex(t => t.MacAddress).IsUnique();
+            builder.HasIndex(t => t.MacAddress)
+                .IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(Register));

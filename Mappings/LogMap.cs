@@ -48,10 +48,10 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.NORMAL);
 
            // Indexes
-            builder.HasIndex(t => t.Time, "IX_Time");
-            builder.HasIndex(t => t.HostNumber, "IX_HostNumber");
-            builder.HasIndex(t => t.Category, "IX_Category");
-            builder.HasIndex(t => t.MessageType, "IX_MessageType");
+            builder.HasIndex(t => t.Time);
+            builder.HasIndex(t => t.HostNumber);
+            builder.HasIndex(t => t.Category);
+            builder.HasIndex(t => t.MessageType);
 
             // Table & Column Mappings
             builder.ToTable("Log");

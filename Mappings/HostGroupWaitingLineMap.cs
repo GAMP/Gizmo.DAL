@@ -4,18 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Host group waiting line map.
+    /// </summary>
     public class HostGroupWaitingLineMap : IEntityTypeConfiguration<HostGroupWaitingLine>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<HostGroupWaitingLine> builder)
         {
             builder.HasKey(entity => entity.Id);
 
             builder.Property(entity => entity.Id)
                 .ValueGeneratedNever()
-                .HasColumnName("HosGroupId")
+                .HasColumnName("HostGroupId")
                 .HasColumnOrder(0);
 
             builder.Property(entity => entity.TimeOutOptions)

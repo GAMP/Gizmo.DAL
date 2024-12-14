@@ -838,7 +838,7 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Get documents.
         /// </summary>
-        public DbSet<Document> Documents { get; set; }
+        public DbSet<FileDocument> Documents { get; set; }
 
         /// <summary>
         /// Gets inventories.
@@ -1200,11 +1200,11 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new InventoryAdjustmentEntryMap());
             modelBuilder.ApplyConfiguration(new InventoryTransferEntryMap());
             modelBuilder.ApplyConfiguration(new InventoryAdjustmentReasonMap());
-
+                       
+            modelBuilder.ApplyConfiguration(new FileMap());
+            modelBuilder.ApplyConfiguration(new FileDocumentMap());
             modelBuilder.ApplyConfiguration(new DocumentTypeMap());
-            modelBuilder.ApplyConfiguration(new DocumentMap());
             modelBuilder.ApplyConfiguration(new InventoryDocumentMap());
-
 
             modelBuilder.ApplyConfiguration(new UserPermissionSetMap());
             modelBuilder.ApplyConfiguration(new UserPermissionSetPermissionMap());
@@ -1230,8 +1230,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new NotificationTimedMap());
             modelBuilder.ApplyConfiguration(new NotificationTimedRemainingMap());
             modelBuilder.ApplyConfiguration(new NotificationTimedReservationMap());
-            modelBuilder.ApplyConfiguration(new PresetReservationTimeMap());
-
+            modelBuilder.ApplyConfiguration(new PresetReservationTimeMap());        
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
@@ -1972,9 +1971,10 @@ namespace Gizmo.DAL.Contexts
 
             GuardDatabaseNameExceedLimits(modelBuilder);
 
-            var utcNullableConverter = new ValueConverter<DateTime?, DateTime?>(v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v,
+            var utcNullableConverter = new ValueConverter<DateTime?, DateTime?>(v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Unspecified) : v,
                 v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
-            var utcConverter = new ValueConverter<DateTime, DateTime>(v => DateTime.SpecifyKind(v, DateTimeKind.Utc), 
+
+            var utcConverter = new ValueConverter<DateTime, DateTime>(v => DateTime.SpecifyKind(v, DateTimeKind.Unspecified), 
                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

@@ -164,6 +164,7 @@ namespace Gizmo.DAL.Contexts
                         if (pendingMigrations.Count() == 1)
                         {
                             await migrationDbContext.Database.MigrateAsync(cancellationToken);
+                            await MigrateEFValidateDataAsync(cancellationToken);
 
                             return true;
                         }
@@ -174,6 +175,47 @@ namespace Gizmo.DAL.Contexts
             }
 
             return false;
+        }
+
+        private async Task MigrateEFValidateDataAsync(CancellationToken cancellationToken)
+        {
+            //there is an potential of same register names being used in EF6 database
+            //we will need to generate new unique names for each register
+
+            //get all registers grouped by name
+            var registerNameGroup = await _dbContext.Registers
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Name
+                }).GroupBy(x => x.Name).ToListAsync(cancellationToken);
+
+            if (registerNameGroup.Count > 0)
+            {
+                foreach (var nameGroup in registerNameGroup)
+                {
+                    //each name group will start from 1
+                    int currentNumber = 1;
+                    foreach (var register in nameGroup)
+                    {
+                        //take up to 40 characters from existing name and append an register number to it
+                        var existingNameTruncated = register.Name[..Math.Min(register.Name.Length, 40)];
+                        var newName = $"{existingNameTruncated} ({currentNumber})";
+
+                        var registerEntity = new DAL.Entities.Register()
+                        {
+                            Id = register.Id,
+                            Name = newName,
+                        };
+
+                        _dbContext.Entry(registerEntity).Property(register => register.Name).IsModified = true;
+
+                        currentNumber++;
+                    }
+                }
+
+                await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            }
         }
 
         /// <summary>

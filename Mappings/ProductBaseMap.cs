@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Product base entity map.
+    /// </summary>
     public class ProductBaseMap : IEntityTypeConfiguration<ProductBase>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<ProductBase> builder)
         {
             // Key
@@ -50,8 +51,11 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY);
 
             // Indexes
-            builder.HasIndex(t => t.Name).IsUnique();
-            builder.HasIndex(t => t.Barcode).IsUnique();
+            builder.HasIndex(t => t.Name)
+                .IsUnique();
+
+            builder.HasIndex(t => t.Barcode)
+                .IsUnique();
 
             // Relations
             builder.ToTable("ProductBase");

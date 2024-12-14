@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Invoice line entity map.
+    /// </summary>
     public class InvoiceLineMap : IEntityTypeConfiguration<InvoiceLine>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<InvoiceLine> builder)
         {
             builder.HasKey(x => x.Id);
@@ -84,7 +85,6 @@ namespace Gizmo.DAL.Mappings
 
             // Indexes
             builder.HasIndex(t => t.PointsTransactionId)
-
                 .IsUnique();
 
             builder.HasOne(x => x.Invoice)

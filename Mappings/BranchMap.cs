@@ -176,7 +176,7 @@ namespace Gizmo.DAL.Mappings
                 .IsUnique();
 
             builder.HasIndex(branch => branch.Guid)
-                .IsUnique().HasFilter(null);
+                .IsUnique();
 
             builder.HasOne(branch => branch.CreatedBy)
                 .WithMany(x => x.CreatedBranches)

@@ -4,29 +4,28 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Void deposit payment map.
+    /// </summary>
     public class VoidDepositPaymentMap : IEntityTypeConfiguration<VoidDepositPayment>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<VoidDepositPayment> builder)
         {
-            //// Primary Key
-            //builder.HasKey(t => t.Id);
+            builder.ToTable(nameof(VoidDepositPayment));
 
-            builder.Property(t => t.DepositPaymentId)
+            builder.HasIndex(voidDepositPayment => voidDepositPayment.Id);
+
+            builder.Property(voidDepositPayment => voidDepositPayment.DepositPaymentId)
                 .HasColumnOrder(1);
 
-            // Indexes
-            builder.HasIndex(t => t.DepositPaymentId).IsUnique().HasFilter(null);
-            builder.HasIndex(t => t.Id);
+            builder.HasIndex(voidDepositPayment => voidDepositPayment.DepositPaymentId)
+                .IsUnique()
+                .HasFilter(null);
 
-            builder.HasOne(t => t.DepositPayment)
-                .WithMany(t=>t.Voids)
-                .HasForeignKey(t => t.DepositPaymentId);
-
-            // Table & Column Mappings
-            builder.ToTable(nameof(VoidDepositPayment));
+            builder.HasOne(voidDepositPayment => voidDepositPayment.DepositPayment)
+                .WithMany(voidDepositPayment => voidDepositPayment.Voids)
+                .HasForeignKey(voidDepositPayment => voidDepositPayment.DepositPaymentId);
         }
     }
 }

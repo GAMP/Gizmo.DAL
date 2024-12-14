@@ -29,7 +29,9 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             // Indexes
-            builder.HasIndex(x => new { x.AppExeId, x.Mode }, "UQ_AppExeAppExeMode").IsUnique();
+            builder.HasIndex(x => new { x.AppExeId, x.Mode })
+                .IsUnique()
+                .HasFilter(null);
 
             // Table & Column Mappings
             builder.ToTable("AppExeMaxUser");

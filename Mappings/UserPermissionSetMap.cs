@@ -14,6 +14,7 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(UserPermissionSet));
 
             builder.HasKey(permissionSet => permissionSet.Id);
+
             builder.Property(permissionSet => permissionSet.Id)
                 .HasColumnName("UserPermissionSetId")
                 .HasColumnOrder(0);
@@ -23,7 +24,8 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY45)
                 .IsRequired();
 
-            builder.HasIndex(permissionSet => permissionSet.Name).IsUnique().HasFilter(null);
+            builder.HasIndex(permissionSet => permissionSet.Name)
+                .IsUnique();
 
             builder.HasOne(permissionSet => permissionSet.CreatedBy)
                 .WithMany()

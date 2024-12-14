@@ -9,9 +9,7 @@ namespace Gizmo.DAL.Mappings
     /// </summary>
     public class HostLayoutGroupMap : IEntityTypeConfiguration<HostLayoutGroup>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<HostLayoutGroup> builder)
         {
             // Primary Key
@@ -30,7 +28,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2);
 
             // Indexes
-            builder.HasIndex(t => new { t.Name, t.BranchId }).IsUnique().HasFilter(null);
+            builder.HasIndex(t => new { t.Name, t.BranchId })
+                .IsUnique();
 
             // Table & Column Mappings
             builder.ToTable("HostLayoutGroup");

@@ -43,7 +43,8 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired();
 
             // Indexes
-            builder.HasIndex(t => t.Pin, "UQ_Pin").IsUnique();
+            builder.HasIndex(t => t.Pin)
+                .IsUnique();
 
             builder.HasOne(e => e.User)
                 .WithMany(e => e.Reservations)

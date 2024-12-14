@@ -29,7 +29,9 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2)
                 .IsRequired();
 
-            builder.HasIndex(stock => new { stock.Name, stock.BranchId }).IsUnique().HasFilter(null);
+            builder.HasIndex(stock => new { stock.Name, stock.BranchId })
+                .IsUnique()
+                .HasFilter(null);
 
             builder.HasOne(stock => stock.Branch)
                 .WithMany(branch => branch.Stocks)

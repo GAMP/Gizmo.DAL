@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Invoice line product entity map.
+    /// </summary>
     public class InvoiceLineProductMap : IEntityTypeConfiguration<InvoiceLineProduct>
     {
         /// <summary>
@@ -16,7 +19,6 @@ namespace Gizmo.DAL.Mappings
             // Indexes
             builder.HasIndex(t => t.Id);
             builder.HasIndex(t => t.OrderLineId)
-                
                 .IsUnique()
                 .HasFilter(null);
 

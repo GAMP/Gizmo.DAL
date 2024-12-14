@@ -1,15 +1,15 @@
 ﻿using Gizmo.DAL.Entities;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Host group entity map.
+    /// </summary>
     public class HostGroupMap : IEntityTypeConfiguration<HostGroup>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<HostGroup> builder)
         {
             // Primary Key
@@ -48,7 +48,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("HostGroupId");
 
             // Indexes
-            builder.HasIndex(t => new { t.Name, t.BranchId }).IsUnique().HasFilter(null);
+            builder.HasIndex(t => new { t.Name, t.BranchId })
+                .IsUnique();
 
             // Relationships
             builder.HasOne(t => t.AppGroup)

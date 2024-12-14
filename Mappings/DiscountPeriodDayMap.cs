@@ -5,35 +5,35 @@ using Microsoft.EntityFrameworkCore;
 namespace Gizmo.DAL.Mappings
 {
     /// <summary>
-    /// Promotion period day entity map.
+    /// Discount period day entity map.
     /// </summary>
-    public sealed class PromotionPeriodDayMap : IEntityTypeConfiguration<PromotionPeriodDay>
+    public sealed class DiscountPeriodDayMap : IEntityTypeConfiguration<DiscountPeriodDay>
     {
         /// <inheritdoc/>
-        public void Configure(EntityTypeBuilder<PromotionPeriodDay> builder)
+        public void Configure(EntityTypeBuilder<DiscountPeriodDay> builder)
         {
-            builder.ToTable(nameof(PromotionPeriodDay));
+            builder.ToTable(nameof(DiscountPeriodDay));
 
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id)
-                .HasColumnName("PromotionPeriodDayId")
+                .HasColumnName("DiscountPeriodDayId")
                 .HasColumnOrder(0);
 
-            builder.Property(x => x.PromotionPeriodId)
+            builder.Property(x => x.DiscountPeriodId)
                 .IsRequired()
                 .HasColumnOrder(1);
 
             builder.Property(x => x.Day)
-                .HasColumnOrder(2)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnOrder(2);
 
-            builder.HasIndex(t => new { t.PromotionPeriodId, t.Day })
+            builder.HasIndex(t => new { t.DiscountPeriodId, t.Day })
                 .IsUnique();
 
             builder.HasOne(x => x.Period)
                 .WithMany(x => x.Days)
-                .HasForeignKey(x => x.PromotionPeriodId)
+                .HasForeignKey(x => x.DiscountPeriodId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Bill rate period entity map.
+    /// </summary>
     public class BillRatePeriodDayMap : IEntityTypeConfiguration<BillRatePeriodDay>
     {
         /// <summary>
@@ -25,7 +28,8 @@ namespace Gizmo.DAL.Mappings
             builder.Property(x => x.Day);
 
             // Indexes
-            builder.HasIndex(t => new { t.BillRateId, t.Day }).IsUnique();
+            builder.HasIndex(t => new { t.BillRateId, t.Day })
+                .IsUnique();
 
             builder.HasOne(x => x.BillRate)
                 .WithMany(x => x.Days)

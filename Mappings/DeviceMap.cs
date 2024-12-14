@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Device entity map.
+    /// </summary>
     public class DeviceMap : IEntityTypeConfiguration<Device>
     {
         /// <summary>
@@ -28,7 +31,9 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY45);
 
             // Indexes
-            builder.HasIndex(t => new { t.Name, t.BranchId }).IsUnique().HasFilter(null);
+            builder.HasIndex(t => new { t.Name, t.BranchId })
+                .IsUnique()
+                .HasFilter(null);
 
             //is enabled property
             builder.Property(e => e.IsEnabled)

@@ -10,9 +10,7 @@ namespace Gizmo.DAL.Mappings
     /// </summary>
     public class PromotionBranchMap : IEntityTypeConfiguration<PromotionBranch>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<PromotionBranch> builder)
         {
             builder.ToTable(nameof(PromotionBranch));
@@ -21,12 +19,15 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(e => e.PromotionId)
                 .HasColumnOrder(0);
+
             builder.Property(e => e.BranchId)
                 .HasColumnOrder(1);
+
             builder.Property(e => e.IsEnabled)
                 .HasColumnOrder(2);
 
-            builder.HasIndex(t => new { t.PromotionId, t.BranchId }).IsUnique().HasFilter(null);
+            builder.HasIndex(t => new { t.PromotionId, t.BranchId })
+                .IsUnique();
 
             builder.HasOne(x => x.Branch)
                 .WithMany(x => x.Promotions)

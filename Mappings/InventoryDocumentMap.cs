@@ -21,7 +21,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0)
                 .IsRequired();
 
-            builder.HasIndex(inventoryDocument => new { inventoryDocument.InventoryId, inventoryDocument.DocumentId })
+            builder.HasIndex(inventoryDocument => new { inventoryDocument.InventoryId, inventoryDocument.FileDocumentId })
                 .IsUnique()
                 .HasFilter(null);
 
@@ -32,7 +32,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.HasOne(inventoryDocument => inventoryDocument.Document)
                 .WithMany(inventory => inventory.InventoryDocuments)
-                .HasForeignKey(inventoryDocument => inventoryDocument.DocumentId)
+                .HasForeignKey(inventoryDocument => inventoryDocument.FileDocumentId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

@@ -17,15 +17,20 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(stockCountEntry => stockCountEntry.Id)
                 .HasColumnOrder(0)
+                .HasColumnName("StockCountEntryId")
                 .IsRequired();
+
             builder.Property(stockCountEntry => stockCountEntry.Expected)
                 .HasColumnOrder(1)
-                .IsRequired();            
+                .IsRequired();
+
             builder.Property(stockCountEntry => stockCountEntry.Actual)
                 .HasColumnOrder(2)
                 .IsRequired();
 
-            builder.HasIndex(stockCountEntry => new { stockCountEntry.ProductId, stockCountEntry.StockCountId }).IsUnique().HasFilter(null);
+            builder.HasIndex(stockCountEntry => new { stockCountEntry.ProductId, stockCountEntry.StockCountId })
+                .IsUnique()
+                .HasFilter(null);
 
             builder.HasOne(stockCountEntry => stockCountEntry.StockCount)
                 .WithMany(stockCount => stockCount.Entries)

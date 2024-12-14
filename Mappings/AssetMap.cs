@@ -1,15 +1,15 @@
 ﻿using Gizmo.DAL.Entities;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Asset enity map.
+    /// </summary>
     public class AssetMap : IEntityTypeConfiguration<Asset>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Asset> builder)
         {
             // Primary Key
@@ -47,9 +47,11 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(7);
 
             // Indexes
-            builder.HasIndex(t => t.SmartCardUID).IsUnique();
+            builder.HasIndex(t => t.SmartCardUID)
+                .IsUnique();
 
-            builder.HasIndex(t => t.Barcode).IsUnique();
+            builder.HasIndex(t => t.Barcode)
+                .IsUnique();
 
             // Table & Column Mappings
             builder.ToTable(nameof(Asset));

@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Device host entity map.
+    /// </summary>
     public class DeviceHostMap : IEntityTypeConfiguration<DeviceHost>
     {
         /// <summary>
@@ -42,7 +45,9 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(e => e.DeviceId);
 
             // Indexes 
-            builder.HasIndex(t => new { t.DeviceId, t.HostId }, "UQ_HostDevice").IsUnique();
+            builder.HasIndex(t => new { t.DeviceId, t.HostId })
+                .IsUnique()
+                .HasFilter(null);
 
             //table configuration
             builder.ToTable(nameof(DeviceHost));

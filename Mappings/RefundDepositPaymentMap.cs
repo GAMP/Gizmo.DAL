@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Refund deposit payment map.
+    /// </summary>
     public class RefundDepositPaymentMap : IEntityTypeConfiguration<RefundDepositPayment>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<RefundDepositPayment> builder)
         {
             builder.Property(t => t.DepositPaymentId)
@@ -21,7 +22,9 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3);
 
             // Indexes
-            builder.HasIndex(t => t.DepositPaymentId).IsUnique();
+            builder.HasIndex(t => t.DepositPaymentId)
+                .IsUnique();
+
             builder.HasIndex(t => t.Id);
 
             builder.HasOne(t => t.DepositPayment)

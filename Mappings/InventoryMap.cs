@@ -21,6 +21,19 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("InventoryId")
                 .HasColumnOrder(0)
                 .IsRequired();
+
+            builder.Property(inventory => inventory.StockId)
+                .IsRequired()
+                .HasColumnOrder(1);
+
+            builder.Property(inventory => inventory.ShiftId)
+                .IsRequired(false)
+                .HasColumnOrder(2);
+
+            builder.Property(inventory => inventory.Note)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY)
+                .HasColumnOrder(3);
         }
     }
 }

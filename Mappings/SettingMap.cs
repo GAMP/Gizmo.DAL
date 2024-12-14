@@ -10,13 +10,14 @@ namespace Gizmo.DAL.Mappings
     /// </summary>
     public class SettingMap : IEntityTypeConfiguration<Setting>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Setting> builder)
         {
             // Primary Key
             builder.HasKey(t => t.Id);
+
+            builder.Property(x => x.Id)
+                .HasColumnName("SettingId");
 
             // Properties
             builder.Property(x => x.Id)
@@ -31,16 +32,15 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.HasIndex(t => new { t.Name, t.GroupName }).IsUnique().HasFilter(null);
-
             builder.Property(t => t.Value)
                 .HasColumnOrder(3);
 
             // Table & Column Mappings
-            builder.ToTable("Setting");
+            builder.ToTable("Setting");   
 
-            builder.Property(x => x.Id)
-                .HasColumnName("SettingId");
+            builder.HasIndex(t => new { t.Name, t.GroupName })
+                .IsUnique()
+                .HasFilter(null);
         }
     }
 }

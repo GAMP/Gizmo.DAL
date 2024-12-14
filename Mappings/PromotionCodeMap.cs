@@ -22,7 +22,8 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasMaxLength(SQLStringSize.TINY); // use 255 chars for now, should be enough to store barcodes etc
 
-            builder.HasIndex(promotionCode => promotionCode.Value).IsUnique();
+            builder.HasIndex(promotionCode => promotionCode.Value)
+                .IsUnique();
 
             builder.HasOne(promotionCode => promotionCode.Promotion)
                 .WithMany(promotion => promotion.Codes)
