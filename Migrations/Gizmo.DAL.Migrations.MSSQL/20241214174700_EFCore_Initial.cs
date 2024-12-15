@@ -6,11 +6,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Gizmo.DAL.Migrations.MSSQL
 {
     /// <inheritdoc />
-    public partial class Update1 : Migration
+    public partial class EFCore_Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_HostGroupWaitingLine_HostGroup_HosGroupId",
+                table: "HostGroupWaitingLine");
+
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductOrder_PaymentMethod_PreferedPaymentMethodId",
                 table: "ProductOrder");
@@ -41,6 +45,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "ReservationHost",
                 newName: "IX_ReservationHost_PreferredUserId");
 
+            migrationBuilder.RenameIndex(
+                name: "UQ_Pin",
+                table: "Reservation",
+                newName: "IX_Reservation_Pin");
+
+            migrationBuilder.RenameIndex(
+                name: "UQ_ProductTimePeriodDay",
+                table: "ProductTimePeriodDay",
+                newName: "IX_ProductTimePeriodDay_ProductTimePeriodId_Day");
+
+            migrationBuilder.RenameIndex(
+                name: "UQ_TaxProduct",
+                table: "ProductTax",
+                newName: "IX_ProductTax_ProductId_TaxId");
+
             migrationBuilder.RenameColumn(
                 name: "PreferedPaymentMethodId",
                 table: "ProductOrder",
@@ -51,10 +70,55 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "ProductOrder",
                 newName: "IX_ProductOrder_PreferredPaymentMethodId");
 
+            migrationBuilder.RenameIndex(
+                name: "IX_Time",
+                table: "Log",
+                newName: "IX_Log_Time");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_MessageType",
+                table: "Log",
+                newName: "IX_Log_MessageType");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_HostNumber",
+                table: "Log",
+                newName: "IX_Log_HostNumber");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_Category",
+                table: "Log",
+                newName: "IX_Log_Category");
+
             migrationBuilder.RenameColumn(
                 name: "OutstandngPoints",
                 table: "Invoice",
                 newName: "OutstandingPoints");
+
+            migrationBuilder.RenameColumn(
+                name: "Id",
+                table: "HostGroupWaitingLineEntry",
+                newName: "HostGroupWaitingLineEntryId");
+
+            migrationBuilder.RenameColumn(
+                name: "HosGroupId",
+                table: "HostGroupWaitingLine",
+                newName: "HostGroupId");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_HostGroupWaitingLine_HosGroupId",
+                table: "HostGroupWaitingLine",
+                newName: "IX_HostGroupWaitingLine_HostGroupId");
+
+            migrationBuilder.RenameIndex(
+                name: "UQ_HostDevice",
+                table: "DeviceHost",
+                newName: "IX_DeviceHost_DeviceId_HostId");
+
+            migrationBuilder.RenameIndex(
+                name: "UQ_AppExeAppExeMode",
+                table: "AppExeMaxUser",
+                newName: "IX_AppExeMaxUser_AppExeId_Mode");
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
@@ -397,6 +461,38 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
+                name: "File",
+                columns: table => new
+                {
+                    FileId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Size = table.Column<long>(type: "bigint", nullable: false),
+                    MimeType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Hash = table.Column<byte[]>(type: "varbinary(32)", maxLength: 32, nullable: true),
+                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_File", x => x.FileId);
+                    table.ForeignKey(
+                        name: "FK_File_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_File_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "InventoryAdjustmentReason",
                 columns: table => new
                 {
@@ -450,6 +546,34 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Notification_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PresetReservationTime",
+                columns: table => new
+                {
+                    PresetReservationTimeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PresetReservationTime", x => x.PresetReservationTimeId);
+                    table.ForeignKey(
+                        name: "FK_PresetReservationTime_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_PresetReservationTime_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
@@ -828,40 +952,28 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
-                name: "Document",
+                name: "FileDocument",
                 columns: table => new
                 {
-                    DocumentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FileId = table.Column<int>(type: "int", nullable: false),
                     DocumentTypeId = table.Column<int>(type: "int", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedById = table.Column<int>(type: "int", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Document", x => x.DocumentId);
+                    table.PrimaryKey("PK_FileDocument", x => x.FileId);
                     table.ForeignKey(
-                        name: "FK_Document_DocumentType_DocumentTypeId",
+                        name: "FK_FileDocument_DocumentType_DocumentTypeId",
                         column: x => x.DocumentTypeId,
                         principalTable: "DocumentType",
                         principalColumn: "DocumentTypeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Document_UserOperator_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "UserOperator",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Document_UserOperator_ModifiedById",
-                        column: x => x.ModifiedById,
-                        principalTable: "UserOperator",
-                        principalColumn: "UserId");
+                        name: "FK_FileDocument_File_FileId",
+                        column: x => x.FileId,
+                        principalTable: "File",
+                        principalColumn: "FileId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1506,7 +1618,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StockId = table.Column<int>(type: "int", nullable: false),
                     ShiftId = table.Column<int>(type: "int", nullable: true),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -1535,7 +1647,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "StockCount",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    StockCountId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Note = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     UnexpectedEntries = table.Column<int>(type: "int", nullable: false),
@@ -1548,7 +1660,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockCount", x => x.Id);
+                    table.PrimaryKey("PK_StockCount", x => x.StockCountId);
                     table.ForeignKey(
                         name: "FK_StockCount_Register_RegisterId",
                         column: x => x.RegisterId,
@@ -1711,7 +1823,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     InventoryDocumentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InventoryId = table.Column<int>(type: "int", nullable: false),
-                    DocumentId = table.Column<int>(type: "int", nullable: false),
+                    FileDocumentId = table.Column<int>(type: "int", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -1719,10 +1831,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 {
                     table.PrimaryKey("PK_InventoryDocument", x => x.InventoryDocumentId);
                     table.ForeignKey(
-                        name: "FK_InventoryDocument_Document_DocumentId",
-                        column: x => x.DocumentId,
-                        principalTable: "Document",
-                        principalColumn: "DocumentId");
+                        name: "FK_InventoryDocument_FileDocument_FileDocumentId",
+                        column: x => x.FileDocumentId,
+                        principalTable: "FileDocument",
+                        principalColumn: "FileId");
                     table.ForeignKey(
                         name: "FK_InventoryDocument_Inventory_InventoryId",
                         column: x => x.InventoryId,
@@ -1834,7 +1946,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "StockCountEntry",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    StockCountEntryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Expected = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
                     Actual = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
@@ -1846,7 +1958,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockCountEntry", x => x.Id);
+                    table.PrimaryKey("PK_StockCountEntry", x => x.StockCountEntryId);
                     table.ForeignKey(
                         name: "FK_StockCountEntry_ProductBase_ProductId",
                         column: x => x.ProductId,
@@ -1857,7 +1969,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         name: "FK_StockCountEntry_StockCount_StockCountId",
                         column: x => x.StockCountId,
                         principalTable: "StockCount",
-                        principalColumn: "Id",
+                        principalColumn: "StockCountId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StockCountEntry_UserOperator_CreatedById",
@@ -2241,7 +2353,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
             migrationBuilder.CreateIndex(
                 name: "IX_Register_Name_BranchId",
                 table: "Register",
-                columns: new[] { "Name", "BranchId" });
+                columns: new[] { "Name", "BranchId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Register_StockId",
@@ -2478,33 +2591,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "DiscountPeriodDayId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Document_CreatedById",
-                table: "Document",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Document_DocumentTypeId",
-                table: "Document",
-                column: "DocumentTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Document_FileName",
-                table: "Document",
-                column: "FileName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Document_Guid",
-                table: "Document",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Document_ModifiedById",
-                table: "Document",
-                column: "ModifiedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DocumentType_CreatedById",
                 table: "DocumentType",
                 column: "CreatedById");
@@ -2530,6 +2616,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "FeedBranch",
                 columns: new[] { "FeedId", "BranchId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_File_CreatedById",
+                table: "File",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_File_Guid",
+                table: "File",
+                column: "Guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_File_ModifiedById",
+                table: "File",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FileDocument_DocumentTypeId",
+                table: "FileDocument",
+                column: "DocumentTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inventory_CreatedById",
@@ -2567,14 +2674,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InventoryDocument_DocumentId",
+                name: "IX_InventoryDocument_FileDocumentId",
                 table: "InventoryDocument",
-                column: "DocumentId");
+                column: "FileDocumentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InventoryDocument_InventoryId_DocumentId",
+                name: "IX_InventoryDocument_InventoryId_FileDocumentId",
                 table: "InventoryDocument",
-                columns: new[] { "InventoryId", "DocumentId" },
+                columns: new[] { "InventoryId", "FileDocumentId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -2641,6 +2748,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
             migrationBuilder.CreateIndex(
                 name: "IX_Notification_ModifiedById",
                 table: "Notification",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PresetReservationTime_CreatedById",
+                table: "PresetReservationTime",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PresetReservationTime_ModifiedById",
+                table: "PresetReservationTime",
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
@@ -3068,6 +3185,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_HostGroupWaitingLine_HostGroup_HostGroupId",
+                table: "HostGroupWaitingLine",
+                column: "HostGroupId",
+                principalTable: "HostGroup",
+                principalColumn: "HostGroupId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_HostLayoutGroup_Branch_BranchId",
                 table: "HostLayoutGroup",
                 column: "BranchId",
@@ -3250,6 +3375,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "HostGroup");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_HostGroupWaitingLine_HostGroup_HostGroupId",
+                table: "HostGroupWaitingLine");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_HostLayoutGroup_Branch_BranchId",
                 table: "HostLayoutGroup");
 
@@ -3387,6 +3516,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "NotificationTimedReservation");
 
             migrationBuilder.DropTable(
+                name: "PresetReservationTime");
+
+            migrationBuilder.DropTable(
                 name: "PresetTopUp");
 
             migrationBuilder.DropTable(
@@ -3459,7 +3591,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "InventoryAdjustmentReason");
 
             migrationBuilder.DropTable(
-                name: "Document");
+                name: "FileDocument");
 
             migrationBuilder.DropTable(
                 name: "InventoryEntry");
@@ -3508,6 +3640,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             migrationBuilder.DropTable(
                 name: "DocumentType");
+
+            migrationBuilder.DropTable(
+                name: "File");
 
             migrationBuilder.DropTable(
                 name: "Inventory");
@@ -3798,6 +3933,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "ReservationHost",
                 newName: "IX_ReservationHost_PreferedUserId");
 
+            migrationBuilder.RenameIndex(
+                name: "IX_Reservation_Pin",
+                table: "Reservation",
+                newName: "UQ_Pin");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_ProductTimePeriodDay_ProductTimePeriodId_Day",
+                table: "ProductTimePeriodDay",
+                newName: "UQ_ProductTimePeriodDay");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_ProductTax_ProductId_TaxId",
+                table: "ProductTax",
+                newName: "UQ_TaxProduct");
+
             migrationBuilder.RenameColumn(
                 name: "PreferredPaymentMethodId",
                 table: "ProductOrder",
@@ -3808,10 +3958,55 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "ProductOrder",
                 newName: "IX_ProductOrder_PreferedPaymentMethodId");
 
+            migrationBuilder.RenameIndex(
+                name: "IX_Log_Time",
+                table: "Log",
+                newName: "IX_Time");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_Log_MessageType",
+                table: "Log",
+                newName: "IX_MessageType");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_Log_HostNumber",
+                table: "Log",
+                newName: "IX_HostNumber");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_Log_Category",
+                table: "Log",
+                newName: "IX_Category");
+
             migrationBuilder.RenameColumn(
                 name: "OutstandingPoints",
                 table: "Invoice",
                 newName: "OutstandngPoints");
+
+            migrationBuilder.RenameColumn(
+                name: "HostGroupWaitingLineEntryId",
+                table: "HostGroupWaitingLineEntry",
+                newName: "Id");
+
+            migrationBuilder.RenameColumn(
+                name: "HostGroupId",
+                table: "HostGroupWaitingLine",
+                newName: "HosGroupId");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_HostGroupWaitingLine_HostGroupId",
+                table: "HostGroupWaitingLine",
+                newName: "IX_HostGroupWaitingLine_HosGroupId");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_DeviceHost_DeviceId_HostId",
+                table: "DeviceHost",
+                newName: "UQ_HostDevice");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_AppExeMaxUser_AppExeId_Mode",
+                table: "AppExeMaxUser",
+                newName: "UQ_AppExeAppExeMode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HostLayoutGroup_Name",
@@ -3831,6 +4026,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "Name",
                 unique: true,
                 filter: "[Name] IS NOT NULL");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_HostGroupWaitingLine_HostGroup_HosGroupId",
+                table: "HostGroupWaitingLine",
+                column: "HosGroupId",
+                principalTable: "HostGroup",
+                principalColumn: "HostGroupId",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductOrder_PaymentMethod_PreferedPaymentMethodId",

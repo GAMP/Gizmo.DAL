@@ -579,7 +579,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("ModifiedById");
 
-                    b.HasIndex(new[] { "AppExeId", "Mode" }, "UQ_AppExeAppExeMode")
+                    b.HasIndex("AppExeId", "Mode")
                         .IsUnique();
 
                     b.ToTable("AppExeMaxUser", (string)null);
@@ -2215,7 +2215,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("ModifiedById");
 
-                    b.HasIndex(new[] { "DeviceId", "HostId" }, "UQ_HostDevice")
+                    b.HasIndex("DeviceId", "HostId")
                         .IsUnique();
 
                     b.ToTable("DeviceHost", (string)null);
@@ -2438,68 +2438,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.ToTable("DiscountPeriodDayTime", (string)null);
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.Document", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("DocumentId")
-                        .HasColumnOrder(0);
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(3);
-
-                    b.Property<int>("DocumentTypeId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(2);
-
-                    b.Property<Guid>("Guid")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(4);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(5);
-
-                    b.Property<int?>("ModifiedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DocumentTypeId");
-
-                    b.HasIndex("FileName")
-                        .IsUnique();
-
-                    b.HasIndex("Guid")
-                        .IsUnique();
-
-                    b.HasIndex("ModifiedById");
-
-                    b.ToTable("Document", (string)null);
-                });
-
             modelBuilder.Entity("Gizmo.DAL.Entities.DocumentType", b =>
                 {
                     b.Property<int>("Id")
@@ -2613,6 +2551,71 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .IsUnique();
 
                     b.ToTable("FeedBranch", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.File", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("FileId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(1);
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(5);
+
+                    b.Property<byte[]>("Hash")
+                        .HasMaxLength(32)
+                        .HasColumnType("varbinary(32)")
+                        .HasColumnOrder(4);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(6);
+
+                    b.Property<string>("MimeType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(3);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("File", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.FiscalReceipt", b =>
@@ -2848,7 +2851,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int")
-                        .HasColumnName("HosGroupId")
+                        .HasColumnName("HostGroupId")
                         .HasColumnOrder(0);
 
                     b.Property<int?>("CreatedById")
@@ -2888,6 +2891,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
+                        .HasColumnName("HostGroupWaitingLineEntryId")
                         .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -3161,13 +3165,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(3);
 
                     b.Property<int?>("ShiftId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("StockId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
@@ -3244,7 +3252,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DocumentId")
+                    b.Property<int>("FileDocumentId")
                         .HasColumnType("int");
 
                     b.Property<int>("InventoryId")
@@ -3254,9 +3262,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("DocumentId");
+                    b.HasIndex("FileDocumentId");
 
-                    b.HasIndex("InventoryId", "DocumentId")
+                    b.HasIndex("InventoryId", "FileDocumentId")
                         .IsUnique();
 
                     b.ToTable("InventoryDocument", (string)null);
@@ -3870,13 +3878,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Category" }, "IX_Category");
+                    b.HasIndex("Category");
 
-                    b.HasIndex(new[] { "HostNumber" }, "IX_HostNumber");
+                    b.HasIndex("HostNumber");
 
-                    b.HasIndex(new[] { "MessageType" }, "IX_MessageType");
+                    b.HasIndex("MessageType");
 
-                    b.HasIndex(new[] { "Time" }, "IX_Time");
+                    b.HasIndex("Time");
 
                     b.ToTable("Log", (string)null);
                 });
@@ -4693,6 +4701,45 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.ToTable("PointTransaction", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.PresetReservationTime", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("PresetReservationTimeId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("PresetReservationTime", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.PresetTimeSale", b =>
                 {
                     b.Property<int>("Id")
@@ -5507,7 +5554,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("TaxId");
 
-                    b.HasIndex(new[] { "ProductId", "TaxId" }, "UQ_TaxProduct")
+                    b.HasIndex("ProductId", "TaxId")
                         .IsUnique();
 
                     b.ToTable("ProductTax", (string)null);
@@ -5604,7 +5651,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("Id");
 
-                    b.HasIndex(new[] { "ProductTimePeriodId", "Day" }, "UQ_ProductTimePeriodDay")
+                    b.HasIndex("ProductTimePeriodId", "Day")
                         .IsUnique();
 
                     b.ToTable("ProductTimePeriodDay", (string)null);
@@ -5897,15 +5944,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("PromotionPeriodDayId");
+                        .HasColumnName("PromotionPeriodDayId")
+                        .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Day")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("PromotionPeriodId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id");
 
@@ -6326,10 +6376,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("ModifiedById");
 
-                    b.HasIndex("UserId");
-
-                    b.HasIndex(new[] { "Pin" }, "UQ_Pin")
+                    b.HasIndex("Pin")
                         .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reservation", (string)null);
                 });
@@ -6985,6 +7035,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
+                        .HasColumnName("StockCountId")
                         .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -7034,6 +7085,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
+                        .HasColumnName("StockCountEntryId")
                         .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
@@ -8581,6 +8633,24 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("Gizmo.DAL.Entities.Discount");
 
                     b.ToTable("DiscountPeriodic", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.FileDocument", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.File");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("DocumentTypeId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.HasIndex("DocumentTypeId");
+
+                    b.ToTable("FileDocument", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.HostComputer", b =>
@@ -10772,29 +10842,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("Day");
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.Document", b =>
-                {
-                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("Gizmo.DAL.Entities.DocumentType", "DocumentType")
-                        .WithMany("Documents")
-                        .HasForeignKey("DocumentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
-                        .WithMany()
-                        .HasForeignKey("ModifiedById");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DocumentType");
-
-                    b.Navigation("ModifiedBy");
-                });
-
             modelBuilder.Entity("Gizmo.DAL.Entities.DocumentType", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
@@ -10842,6 +10889,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("Branch");
 
                     b.Navigation("Feed");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.File", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.FiscalReceipt", b =>
@@ -11158,9 +11220,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Gizmo.DAL.Entities.Document", "Document")
+                    b.HasOne("Gizmo.DAL.Entities.FileDocument", "Document")
                         .WithMany("InventoryDocuments")
-                        .HasForeignKey("DocumentId")
+                        .HasForeignKey("FileDocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -11742,6 +11804,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("Shift");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PresetReservationTime", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.PresetTimeSale", b =>
@@ -13578,6 +13655,23 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.FileDocument", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.DocumentType", "DocumentType")
+                        .WithMany("Documents")
+                        .HasForeignKey("DocumentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.File", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.FileDocument", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DocumentType");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.HostComputer", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.Host", null)
@@ -14664,11 +14758,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("Times");
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.Document", b =>
-                {
-                    b.Navigation("InventoryDocuments");
-                });
-
             modelBuilder.Entity("Gizmo.DAL.Entities.DocumentType", b =>
                 {
                     b.Navigation("Documents");
@@ -14985,6 +15074,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriodic", b =>
                 {
                     b.Navigation("Period");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.FileDocument", b =>
+                {
+                    b.Navigation("InventoryDocuments");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.HostComputer", b =>
