@@ -1971,11 +1971,16 @@ namespace Gizmo.DAL.Contexts
 
             GuardDatabaseNameExceedLimits(modelBuilder);
 
-            var utcNullableConverter = new ValueConverter<DateTime?, DateTime?>(v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Unspecified) : v,
-                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
+            //in our implementation the date time is stored without an timezone
+            //the following conversion applies an conversion rule that will store the date time as unspecified and read as UTC
 
-            var utcConverter = new ValueConverter<DateTime, DateTime>(v => DateTime.SpecifyKind(v, DateTimeKind.Unspecified), 
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            // two converters are needed since we have nullable and non-nullable date-times
+
+            var utcNullableConverter = new ValueConverter<DateTime?, DateTime?>(storeDate => storeDate.HasValue ? DateTime.SpecifyKind(storeDate.Value, DateTimeKind.Unspecified) : storeDate,
+                readDate => readDate.HasValue ? DateTime.SpecifyKind(readDate.Value, DateTimeKind.Utc) : readDate);
+
+            var utcConverter = new ValueConverter<DateTime, DateTime>(storeDate => DateTime.SpecifyKind(storeDate, DateTimeKind.Unspecified),
+                readDate => DateTime.SpecifyKind(readDate, DateTimeKind.Utc));
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
