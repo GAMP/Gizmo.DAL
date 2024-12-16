@@ -36,6 +36,10 @@ namespace Gizmo.DAL.Mappings
                 .WithMany()
                 .HasForeignKey(permissionSet => permissionSet.ModifiedById)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasMany(permissionSet => permissionSet.Users)
+                .WithOne(user => user.PermissionSet)
+                .HasForeignKey(user => user.PermissionSetId);
         }
     }
 }
