@@ -16,6 +16,8 @@ using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Reflection;
+using Gizmo.Server.Security;
+using Gizmo.Server;
 
 namespace Gizmo.DAL.Extensions
 {
@@ -100,11 +102,14 @@ namespace Gizmo.DAL.Extensions
         /// <param name="dbContext">
         /// Database context.
         /// </param>
+        /// <param name="serviceProvider">Service provider.</param>
         /// <param name="cancellationToken">
         /// Cancellation token.
         /// </param>
-        public static async Task AddSeedDataAsync(this DefaultDbContext dbContext, CancellationToken cancellationToken = default)
+        public static async Task AddSeedDataAsync(this DefaultDbContext dbContext, IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
         {
+            var localizationService = serviceProvider.GetRequiredService<IAssemblyResourcesLocalizationService>();
+
             try
             {
                 using (var trx = dbContext.Database.BeginTransaction())
@@ -119,7 +124,7 @@ namespace Gizmo.DAL.Extensions
                         };
 
                         dbContext.Branches.Add(branch);
-                    }
+                    }                    
 
                     #region AddPaymentMethods
 

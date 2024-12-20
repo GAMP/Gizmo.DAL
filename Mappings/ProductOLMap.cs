@@ -4,103 +4,110 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Product order line map.
+    /// </summary>
     public class ProductOLBaseMap : IEntityTypeConfiguration<ProductOL>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<ProductOL> builder)
         {
             builder.ToTable(nameof(ProductOL));
 
-            // Primary Key
-            builder.HasKey(t => t.Id);
+            builder.HasKey(productOrderLine => productOrderLine.Id);
 
-            // Properties
-            builder.Property(x => x.Id)
+            builder.Property(productOrderLine => productOrderLine.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("ProductOLId");
 
-            builder.Property(x => x.ProductOrderId)
+            builder.Property(productOrderLine => productOrderLine.ProductOrderId)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.UserId)
+            builder.Property(productOrderLine => productOrderLine.UserId)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.ProductName)
+            builder.Property(productOrderLine => productOrderLine.ProductName)
                 .HasColumnOrder(3);
 
-            builder.Property(x => x.Quantity)
+            builder.Property(productOrderLine => productOrderLine.Quantity)
                 .HasColumnOrder(4);
 
-            builder.Property(x => x.UnitPrice)
+            builder.Property(productOrderLine => productOrderLine.UnitPrice)
                 .HasColumnOrder(5);
 
-            builder.Property(x => x.UnitListPrice)
+            builder.Property(productOrderLine => productOrderLine.UnitListPrice)
                 .HasColumnOrder(6);
 
-            builder.Property(x => x.UnitPointsPrice)
+            builder.Property(productOrderLine => productOrderLine.UnitPointsPrice)
                 .HasColumnOrder(7);
 
-            builder.Property(x => x.UnitPointsListPrice)
+            builder.Property(productOrderLine => productOrderLine.UnitPointsListPrice)
                 .HasColumnOrder(8);
 
-            builder.Property(x => x.UnitCost)
+            builder.Property(productOrderLine => productOrderLine.UnitCost)
                 .HasColumnOrder(9);
 
-            builder.Property(x => x.Cost)
+            builder.Property(productOrderLine => productOrderLine.Cost)
                 .HasColumnOrder(10);
 
-            builder.Property(x => x.TaxRate)
+            builder.Property(productOrderLine => productOrderLine.TaxRate)
                 .HasColumnOrder(11);
 
-            builder.Property(x => x.PreTaxTotal)
+            builder.Property(productOrderLine => productOrderLine.PreTaxTotal)
                 .HasColumnOrder(12);
 
-            builder.Property(x => x.Total)
+            builder.Property(productOrderLine => productOrderLine.Total)
                 .HasColumnOrder(13);
 
-            builder.Property(x => x.PointsTotal)
+            builder.Property(productOrderLine => productOrderLine.PointsTotal)
                 .HasColumnOrder(14);
 
-            builder.Property(x => x.Points)
+            builder.Property(productOrderLine => productOrderLine.Points)
                 .HasColumnOrder(15);
 
-            builder.Property(x => x.PointsAward)
+            builder.Property(productOrderLine => productOrderLine.PointsAward)
                 .HasColumnOrder(16);
 
-            builder.Property(x => x.TaxTotal)
+            builder.Property(productOrderLine => productOrderLine.TaxTotal)
                 .HasColumnOrder(17);
 
-            builder.Property(x => x.PayType)
+            builder.Property(productOrderLine => productOrderLine.PayType)
                .HasColumnOrder(18);
 
-            builder.Property(x => x.IsDeleted)
+            builder.Property(productOrderLine => productOrderLine.IsDeleted)
                 .HasColumnOrder(19);
 
-            builder.Property(x => x.IsVoided)
+            builder.Property(productOrderLine => productOrderLine.IsVoided)
                 .HasColumnOrder(20);
 
-            // Indexes
-            builder.HasIndex(t => t.Id);
+            builder.Property(productOrderLine => productOrderLine.IsPrepared)
+                .IsRequired(false);
 
-            builder.HasOne(x => x.ProductOrder)
-                .WithMany(x => x.OrderLines)
+            builder.Property(productOrderLine => productOrderLine.PreparedQuantity)
+                .IsRequired();
+
+            builder.Property(productOrderLine => productOrderLine.PrepareTime)
+                .IsRequired(false);
+
+            builder.HasIndex(productOrderLine => productOrderLine.Id);
+
+            builder.HasOne(productOrderLine => productOrderLine.ProductOrder)
+                .WithMany(productOrderLine => productOrderLine.OrderLines)
                 .HasForeignKey(x => x.ProductOrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.User)
-                .WithMany(x => x.ProductOrdersLines)
-                .HasForeignKey(x => x.UserId)
+            builder.HasOne(productOrderLine => productOrderLine.User)
+                .WithMany(productOrderLine => productOrderLine.ProductOrdersLines)
+                .HasForeignKey(productOrderLine => productOrderLine.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(x => x.CreatedBy)
+            builder.HasOne(productOrderLine => productOrderLine.CreatedBy)
                 .WithMany()
-                .HasForeignKey(x => x.CreatedById);
+                .HasForeignKey(productOrderLine => productOrderLine.CreatedById);
 
-            builder.HasOne(x => x.ModifiedBy)
+            builder.HasOne(productOrderLine => productOrderLine.ModifiedBy)
                 .WithMany()
-                .HasForeignKey(x => x.ModifiedById);
+                .HasForeignKey(productOrderLine => productOrderLine.ModifiedById);
         }
     }
 }

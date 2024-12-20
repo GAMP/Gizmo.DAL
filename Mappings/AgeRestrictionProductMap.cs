@@ -19,10 +19,6 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(0);
 
-            builder.HasIndex(ageRestrictionProduct => ageRestrictionProduct.ProductId)
-                .IsUnique()
-                .HasFilter(null);
-
             builder.HasOne(ageRestrictionProduct => ageRestrictionProduct.Product)
                 .WithMany(product => product.AgeRestrictions)
                 .HasForeignKey(ageRestrictionProduct => ageRestrictionProduct.ProductId)

@@ -1,6 +1,8 @@
 ﻿using Gizmo.DAL.Entities;
 using Gizmo.DAL.Extensions;
 using Gizmo.DAL.Scripts;
+using Gizmo.Server.Security;
+using Gizmo.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Logging;
@@ -19,6 +21,8 @@ namespace Gizmo.DAL.Contexts
     {
         private readonly DefaultDbContext _dbContext;
         private readonly ILogger<DefaultDbContext> _logger;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IAssemblyResourcesLocalizationService _assemblyResourcesLocalizationService;
 
         /// <summary>
         /// Creates new instance.
@@ -27,10 +31,14 @@ namespace Gizmo.DAL.Contexts
         /// Database context.
         /// </param>
         /// <param name="logger">Logger.</param>
-        public DbInitializer(DefaultDbContext dbContext, ILogger<DefaultDbContext> logger)
+        /// <param name="assemblyResourcesLocalizationService">Localization service.</param>
+        /// <param name="serviceProvider">Service provider.</param>
+        public DbInitializer(DefaultDbContext dbContext, ILogger<DefaultDbContext> logger, IAssemblyResourcesLocalizationService assemblyResourcesLocalizationService, IServiceProvider serviceProvider)
         {
             _dbContext = dbContext;
             _logger = logger;
+            _serviceProvider = serviceProvider;
+            _assemblyResourcesLocalizationService = assemblyResourcesLocalizationService;
         }
 
         /// <summary>
@@ -45,6 +53,8 @@ namespace Gizmo.DAL.Contexts
         public async Task InitializeAsync(CancellationToken cancellationToken = default)
         {
             _logger.LogTrace("Initializing database.");
+
+            bool seedData = false;
 
             if (await _dbContext.Database.CanConnectAsync(cancellationToken))
             {
@@ -68,8 +78,8 @@ namespace Gizmo.DAL.Contexts
                 if (pendingMigrations.Any())
                     await _dbContext.Database.MigrateAsync(cancellationToken);
 
-                if (!appliedMigrations.Any())
-                    await _dbContext.AddSeedDataAsync(cancellationToken);
+                //if there are no applied migrations then this is a new database so we need to seed data
+                seedData = !appliedMigrations.Any();
 
                 if (isMigrated)
                 {
@@ -106,7 +116,6 @@ namespace Gizmo.DAL.Contexts
                         _logger.LogInformation("Source time zone is already UTC.");
                     }
                 }
-              
             }
             else
             {
@@ -116,14 +125,14 @@ namespace Gizmo.DAL.Contexts
 
                 if (pendingMigrations.Any())
                     await _dbContext.Database.MigrateAsync(cancellationToken);
-                else
-                {
-                    //working only with migrations
-                    return;
-                }
 
-                await _dbContext.AddSeedDataAsync(cancellationToken);
+                //since a new database created we should seed data
+                seedData = true;
             }
+
+            //check if data seeding is required
+            if (seedData)
+                await _dbContext.AddSeedDataAsync(_serviceProvider, cancellationToken);
 
             //create default data
             await CreateDefaultDataAsync(cancellationToken);
@@ -230,6 +239,70 @@ namespace Gizmo.DAL.Contexts
 
                 using (var trx = _dbContext.Database.BeginTransaction())
                 {
+                    #region PermissionSets
+
+                    //this could be done in seeding BUT since we have two potential database states ef6 and new ef core we might already have seeded the initial data in the ef6
+                    //making it harder to distinguish what data should be seeded
+
+                    //get permission set setting reflecting previous seeding state
+                    var currentSettingEntity = await _dbContext.Settings.Where(setting => setting.GroupName == "SEEDING" && setting.Name == "PERMISSION_SET")
+                        .Select(setting => new { setting.Value, setting.Id })
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    if (currentSettingEntity == null || bool.TryParse(currentSettingEntity.Value, out bool hasSeeded) && !hasSeeded)
+                    {
+                        //add or update seeding state
+                        var settingEntity = new Setting()
+                        {
+                            Id = currentSettingEntity?.Id ?? 0,
+                            GroupName = "SEEDING",
+                            Name = "PERMISSION_SET",
+                            Value = true.ToString(),
+                        };
+
+                        _dbContext.Entry(settingEntity).State = settingEntity.Id == 0 ? EntityState.Added : EntityState.Modified;
+
+                        //gets all system policy sets
+                        var policySets = Enum.GetValues<GizmoPolicySet>();
+
+                        //get all system policies
+                        var attributes = Enum.GetValues<GizmoPolicies>().Cast<GizmoPolicies>()
+                            .Select(policy => new
+                            {
+                                Description = policy.GetAttribute<PolicyDescriptionAttribute>()
+                            })
+                            .Where(policy => policy.Description != null && policy.Description.IsAssignable)
+                            .ToList();
+
+                        foreach (var policySet in policySets)
+                        {
+                            //localize policy name
+                            var localizedName = _assemblyResourcesLocalizationService.GetLocalizedStringValue(policySet);
+                            if (!string.IsNullOrEmpty(localizedName))
+                            {
+                                if (await _dbContext.PermissionSets.Where(permissionSet => permissionSet.Name.ToLower() == localizedName.ToLower()).AnyAsync(cancellationToken) == false)
+                                {
+                                    var setPermissions = attributes.Where(a => a.Description.DefaultSets.Contains(policySet))
+                                        .ToArray();
+
+                                    var permissionSet = new DAL.Entities.UserPermissionSet()
+                                    {
+                                        Name = localizedName,
+                                        Permissions = setPermissions.Select(s => new UserPermissionSetPermission()
+                                        {
+                                            Type = s.Description.Resource,
+                                            Value = s.Description.Operation
+                                        }).ToHashSet()
+                                    };
+
+                                    _dbContext.PermissionSets.Add(permissionSet);
+                                }
+                            }
+                        }
+                    }
+
+                    #endregion
+
                     //check if admin account exists
                     var adminOperatorId = await _dbContext.UsersOperator.Where(userOperator => userOperator.Username.ToLower() == "admin")
                         .Select(userOperator => (int?)userOperator.Id)
@@ -291,7 +364,7 @@ namespace Gizmo.DAL.Contexts
                             {
                                 BranchId = usableBranchId!.Value,
                                 OperatorId = adminOperatorId!.Value,
-                            });                           
+                            });
                         }
                     }
 

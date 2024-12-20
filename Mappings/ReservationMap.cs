@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Reservation entity map.
+    /// </summary>
     public class ReservationMap : IEntityTypeConfiguration<Reservation>
     {
         /// <summary>
@@ -13,53 +16,71 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(Reservation));
 
-            builder.HasKey(e => e.Id);
+            builder.HasKey(reservation => reservation.Id);
 
-            builder.Property(e => e.Id)
+            builder.Property(reservation => reservation.Id)
                 .HasColumnName("ReservationId");
 
-            builder.Property(e => e.Pin)
+            builder.Property(reservation => reservation.Pin)
                 .HasMaxLength(6)
                 .IsRequired();
 
-            builder.Property(e => e.Date)
+            builder.Property(reservation => reservation.Date)
                 .IsRequired();
 
-            builder.Property(e => e.Duration)
+            builder.Property(reservation => reservation.Duration)
                 .IsRequired();
 
-            builder.Property(e => e.ContactPhone)
+            builder.Property(reservation => reservation.ContactPhone)
                 .HasMaxLength(20)
                 .IsRequired(false);
 
-            builder.Property(e => e.ContactEmail)
+            builder.Property(reservation => reservation.ContactEmail)
                 .HasMaxLength(254)
                 .IsRequired(false);
 
-            builder.Property(e => e.Note)
+            builder.Property(reservation => reservation.Note)
                 .IsRequired(false);
 
-            builder.Property(e => e.Status)
+            builder.Property(reservation => reservation.Status)
                 .IsRequired();
 
             // Indexes
             builder.HasIndex(t => t.Pin)
                 .IsUnique();
 
-            builder.HasOne(e => e.User)
-                .WithMany(e => e.Reservations)
-                .HasForeignKey(e => e.UserId);
+            builder.Property(reservation => reservation.ExpireAfter)
+                .IsRequired(false);
 
-            builder.HasOne(e => e.CreatedBy)
+            builder.Property(reservation => reservation.CancellationGracePeriod)
+                .IsRequired(false);
+
+            builder.Property(reservation => reservation.CancellationRefundPercentage)
+                .IsRequired();
+
+            builder.Property(reservation => reservation.FinalizedById)
+                .IsRequired(false);
+
+            builder.HasIndex(reservation => reservation.Status);
+
+            builder.HasOne(reservation => reservation.User)
+                .WithMany(reservation => reservation.Reservations)
+                .HasForeignKey(reservation => reservation.UserId);
+
+            builder.HasOne(reservation => reservation.CreatedBy)
                 .WithMany()
-                .HasForeignKey(e => e.CreatedById)
+                .HasForeignKey(reservation => reservation.CreatedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(e => e.ModifiedBy)
+            builder.HasOne(reservation => reservation.ModifiedBy)
                 .WithMany()
-                .HasForeignKey(e => e.ModifiedById)
+                .HasForeignKey(reservation => reservation.ModifiedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(reservation => reservation.FinalizedBy)
+                .WithMany()
+                .HasForeignKey(reservation => reservation.FinalizedById)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

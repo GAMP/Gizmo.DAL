@@ -4,62 +4,69 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Product entity map.
+    /// </summary>
     public class ProductOrderMap : IEntityTypeConfiguration<ProductOrder>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<ProductOrder> builder)
         {
-            // Primary Key
-            builder.HasKey(t => t.Id);
+            builder.ToTable(nameof(ProductOrder));
 
-            // Properties
-            builder.Property(x => x.Id)
+            builder.HasKey(productOrder => productOrder.Id);
+
+            builder.Property(productOrder => productOrder.Id)
                 .HasColumnName("ProductOrderId")
                 .HasColumnOrder(0);
 
-            builder.Property(x => x.UserId)
+            builder.Property(productOrder => productOrder.UserId)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.Status)
+            builder.Property(productOrder => productOrder.Status)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.SubTotal)
+            builder.Property(productOrder => productOrder.SubTotal)
                 .HasColumnOrder(3);
 
-            builder.Property(x => x.Total)
+            builder.Property(productOrder => productOrder.Total)
                 .HasColumnOrder(4);
 
-            builder.Property(x => x.PointsTotal)
+            builder.Property(productOrder => productOrder.PointsTotal)
                 .HasColumnOrder(5);
 
-            builder.Property(x => x.Tax)
+            builder.Property(productOrder => productOrder.Tax)
                 .HasColumnOrder(6);
 
-            builder.Property(x => x.HostId)
+            builder.Property(productOrder => productOrder.HostId)
                 .HasColumnOrder(7)
                 .IsRequired(false);
 
-            // Table & Column Mappings
-            builder.ToTable(nameof(ProductOrder));
+            builder.Property(productOrder => productOrder.IsPrepared)
+                .IsRequired(false);
 
-            builder.HasOne(x => x.User)
-                .WithMany(x => x.ProductOrders)
-                .HasForeignKey(x => x.UserId)
+            builder.Property(productOrder => productOrder.PreparedQuantity)
+                .IsRequired();
+
+            builder.Property(productOrder => productOrder.PrepareTime)
+                .IsRequired(false);
+
+            builder.HasOne(productOrder => productOrder.User)
+                .WithMany(productOrder => productOrder.ProductOrders)
+                .HasForeignKey(productOrder => productOrder.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(x => x.Host)
-                .WithMany(x => x.ProductOrders)
-                .HasForeignKey(x => x.HostId);
+            builder.HasOne(productOrder => productOrder.Host)
+                .WithMany(productOrder => productOrder.ProductOrders)
+                .HasForeignKey(productOrder => productOrder.HostId);
 
-            builder.HasOne(x => x.CreatedBy)
-                .WithMany(x => x.CreatedOrders)
-                .HasForeignKey(x => x.CreatedById);
+            builder.HasOne(productOrder => productOrder.CreatedBy)
+                .WithMany(productOrder => productOrder.CreatedOrders)
+                .HasForeignKey(productOrder => productOrder.CreatedById);
 
-            builder.HasOne(x => x.ModifiedBy)
-                .WithMany(x => x.ModifiedOrders)
-                .HasForeignKey(x => x.ModifiedById);
+            builder.HasOne(productOrder => productOrder.ModifiedBy)
+                .WithMany(productOrder => productOrder.ModifiedOrders)
+                .HasForeignKey(productOrder => productOrder.ModifiedById);
         }
     }
 }

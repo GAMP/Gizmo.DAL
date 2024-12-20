@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Reservation host entity map.
+    /// </summary>
     public class ReservationHostMap : IEntityTypeConfiguration<ReservationHost>
     {
         /// <summary>
@@ -13,36 +16,50 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(ReservationHost));
 
-            builder.HasKey(e => e.Id);
+            builder.HasKey(reservationHost => reservationHost.Id);
 
-            builder.Property(e => e.Id)
+            builder.Property(reservationHost => reservationHost.Id)
                 .HasColumnName("ReservationHostId");
 
-            builder.Property(e => e.ReservationId)
+            builder.Property(reservationHost => reservationHost.ReservationId)
                 .IsRequired();
 
-            builder.Property(e => e.HostId)
+            builder.Property(reservationHost => reservationHost.HostId)
                 .IsRequired();
 
-            builder.Property(e => e.PreferredUserId)
+            builder.Property(reservationHost => reservationHost.PreferredUserId)
                 .IsRequired(false);
 
-            // Indexes
+            builder.Property(reservationHost => reservationHost.Status)
+                .IsRequired();
+            
+            builder.Property(reservationHost => reservationHost.ActivationTime)
+                .IsRequired(false);
+
+            builder.Property(reservationHost => reservationHost.FinalizedById)
+                .IsRequired(false);
+
+            builder.HasIndex(reservationHost => reservationHost.Status);
             builder.HasIndex(x => new { x.ReservationId, x.HostId }).IsUnique();
 
-            builder.HasOne(e => e.Reservation)
-                .WithMany(e => e.Hosts)
-                .HasForeignKey(e => e.ReservationId);
+            builder.HasOne(reservationHost => reservationHost.Reservation)
+                .WithMany(reservationHost => reservationHost.Hosts)
+                .HasForeignKey(reservationHost => reservationHost.ReservationId);
 
-            builder.HasOne(e => e.Host)
+            builder.HasOne(reservationHost => reservationHost.Host)
                 .WithMany()
-                .HasForeignKey(e => e.HostId)
+                .HasForeignKey(reservationHost => reservationHost.HostId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(e => e.PreferredUser)
+            builder.HasOne(reservationHost => reservationHost.PreferredUser)
                 .WithMany()
-                .HasForeignKey(e => e.PreferredUserId)
+                .HasForeignKey(reservationHost => reservationHost.PreferredUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(reservationHost => reservationHost.FinalizedBy)
+               .WithMany()
+               .HasForeignKey(reservation => reservation.FinalizedById)
+               .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -27,14 +27,168 @@ namespace Gizmo.DAL.Contexts
     /// </summary>
     public class DefaultDbContext : DbContext, IGizmoDBContext
     {
-        #region CONSTRUCTOR
-
         /// <summary>
         /// Default constructor for dependency injection
         /// </summary>
         /// <param name="options">Default database options</param>
         public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)
         {
+        }
+
+        /// <summary>
+        /// Occurs on entity event.
+        /// <remarks>
+        /// A type must be registered or RaiseAllEntityEvents set to true in order to notification be raised.
+        /// </remarks>
+        /// </summary>
+        public static event EventHandler<IEntityEventArgs> EntityEvent;
+        private HashSet<IEntityEventArgs> _eventCache = new HashSet<IEntityEventArgs>();
+        private bool _isEventsCached = false;
+        private static bool raiseAllEntityEvents;
+        private static HashSet<Type> notifyTypes;
+
+        #region PROPERTIES
+
+        private static HashSet<Type> NotifyTypes
+        {
+            get
+            {
+                if (notifyTypes == null)
+                    notifyTypes = new HashSet<Type>();
+                return notifyTypes;
+            }
+        }
+
+        private HashSet<IEntityEventArgs> EventCache
+        {
+            get
+            {
+                if (_eventCache == null)
+                    _eventCache = new HashSet<IEntityEventArgs>();
+                return _eventCache;
+            }
+            set
+            {
+                _eventCache = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets if event caching enabled.
+        /// </summary>
+        public bool IsEventsCached
+        {
+            get { return _isEventsCached; }
+            set
+            {
+                _isEventsCached = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets if all events should raised ignoring the notification types.
+        /// </summary>
+        public static bool RaiseAllEntityEvents
+        {
+            get { return raiseAllEntityEvents; }
+            set { raiseAllEntityEvents = value; }
+        }
+
+        #endregion
+
+        #region FUNCTIONS
+
+        /// <summary>
+        /// Registers a type for notification.
+        /// </summary>
+        /// <param name="type">Type.</param>
+        public static void RegisterNotification(Type type)
+        {
+            if (!NotifyTypes.Contains(type))
+                NotifyTypes.Add(type);
+        }
+
+        /// <summary>
+        /// Registers a type for notification.
+        /// </summary>
+        /// <typeparam name="T">Type.</typeparam>
+        public static void RegisterNotification<T>()
+        {
+            RegisterNotification(typeof(T));
+        }
+
+        /// <summary>
+        /// Check if specified type is registered for notification.
+        /// </summary>
+        /// <param name="type">Type.</param>
+        /// <returns>True or false.</returns>
+        public static bool IsNotificationRegistered(Type type)
+        {
+            if (RaiseAllEntityEvents)
+                return true;
+
+            return NotifyTypes.Contains(type);
+        }
+
+        /// <summary>
+        /// Raises cached events.
+        /// </summary>
+        public void RaiseEventCache()
+        {
+            try
+            {
+                var handler = EntityEvent;
+                if (handler != null)
+                {
+                    //generate new event list
+                    var events = EventCache.ToList();
+
+                    //process events
+                    foreach (var eventArgs in events)
+                    {
+                        //raise event
+                        handler(this, eventArgs);
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                //clear all events
+                EventCache.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Clears all cached events.
+        /// </summary>
+        public void ClearEventCache()
+        {
+            EventCache.Clear();
+        }
+
+        /// <summary>
+        /// Gets event cache.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IEntityEventArgs> GetEventCache()
+        {
+            return EventCache.ToList();
+        }
+
+        /// <summary>
+        /// Sets event cache from existing enumerable.
+        /// </summary>
+        /// <param name="cache">Cache source.</param>
+        public void SetEventCache(IEnumerable<IEntityEventArgs> cache)
+        {
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
+
+            EventCache = new HashSet<IEntityEventArgs>(cache);
         }
 
         #endregion
@@ -1212,6 +1366,7 @@ namespace Gizmo.DAL.Contexts
 
             modelBuilder.ApplyConfiguration(new AgeRestrictionMap());
             modelBuilder.ApplyConfiguration(new AgeRestrictionLoginMap());
+            modelBuilder.ApplyConfiguration(new AgeRestrictionProductMap());
             modelBuilder.ApplyConfiguration(new PresetTopUpMap());
 
             modelBuilder.ApplyConfiguration(new ScheduleMap());
@@ -1230,7 +1385,11 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new NotificationTimedMap());
             modelBuilder.ApplyConfiguration(new NotificationTimedRemainingMap());
             modelBuilder.ApplyConfiguration(new NotificationTimedReservationMap());
-            modelBuilder.ApplyConfiguration(new PresetReservationTimeMap());        
+            modelBuilder.ApplyConfiguration(new PresetReservationTimeMap());
+
+            modelBuilder.ApplyConfiguration(new ProductOLReservationFeeMap());
+            modelBuilder.ApplyConfiguration(new InvoiceLineReservationFeeMap());
+            modelBuilder.ApplyConfiguration(new ReservationProductOrderMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
@@ -1346,7 +1505,7 @@ namespace Gizmo.DAL.Contexts
 
             #region EVENT GENERATION
 
-            IList<IEntityEventArgs> events = new List<IEntityEventArgs>();
+            List<IEntityEventArgs> events = new List<IEntityEventArgs>();
             var handler = EntityEvent;
             if (handler != null)
             {
@@ -1541,7 +1700,7 @@ namespace Gizmo.DAL.Contexts
 
             #region EVENT GENERATION
 
-            IList<IEntityEventArgs> events = new List<IEntityEventArgs>();
+            List<IEntityEventArgs> events = new List<IEntityEventArgs>();
             var handler = EntityEvent;
             if (handler != null)
             {
@@ -2086,173 +2245,6 @@ namespace Gizmo.DAL.Contexts
                 }
             }
         }
-
-        #endregion
-
-        #region NOTIFICATIONS
-
-        #region EVENTS
-        /// <summary>
-        /// Occurs on entity event.
-        /// <remarks>
-        /// A type must be registered or RaiseAllEntityEvents set to true in order to notification be raised.
-        /// </remarks>
-        /// </summary>
-        public static event EventHandler<IEntityEventArgs> EntityEvent;
-        #endregion
-
-        #region FIELDS
-        private static HashSet<Type> notifyTypes;
-        private HashSet<IEntityEventArgs> eventCache = new HashSet<IEntityEventArgs>();
-        private bool isEventsCached = false;
-        private static bool raiseAllEntityEvents;
-        #endregion
-
-        #region PROPERTIES
-
-        private static HashSet<Type> NotifyTypes
-        {
-            get
-            {
-                if (notifyTypes == null)
-                    notifyTypes = new HashSet<Type>();
-                return notifyTypes;
-            }
-        }
-
-        private HashSet<IEntityEventArgs> EventCache
-        {
-            get
-            {
-                if (eventCache == null)
-                    eventCache = new HashSet<IEntityEventArgs>();
-                return eventCache;
-            }
-            set
-            {
-                eventCache = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets if event caching enabled.
-        /// </summary>
-        public bool IsEventsCached
-        {
-            get { return isEventsCached; }
-            set
-            {
-                isEventsCached = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets if all events should raised ignoring the notification types.
-        /// </summary>
-        public static bool RaiseAllEntityEvents
-        {
-            get { return raiseAllEntityEvents; }
-            set { raiseAllEntityEvents = value; }
-        }
-
-        #endregion
-
-        #region FUNCTIONS
-
-        /// <summary>
-        /// Registers a type for notification.
-        /// </summary>
-        /// <param name="type">Type.</param>
-        public static void RegisterNotification(Type type)
-        {
-            if (!NotifyTypes.Contains(type))
-                NotifyTypes.Add(type);
-        }
-
-        /// <summary>
-        /// Registers a type for notification.
-        /// </summary>
-        /// <typeparam name="T">Type.</typeparam>
-        public static void RegisterNotification<T>()
-        {
-            RegisterNotification(typeof(T));
-        }
-
-        /// <summary>
-        /// Check if specified type is registered for notification.
-        /// </summary>
-        /// <param name="type">Type.</param>
-        /// <returns>True or false.</returns>
-        public static bool IsNotificationRegistered(Type type)
-        {
-            if (RaiseAllEntityEvents)
-                return true;
-
-            return NotifyTypes.Contains(type);
-        }
-
-        /// <summary>
-        /// Raises cached events.
-        /// </summary>
-        public void RaiseEventCache()
-        {
-            try
-            {
-                var handler = EntityEvent;
-                if (handler != null)
-                {
-                    //generate new event list
-                    var events = EventCache.ToList();
-
-                    //process events
-                    foreach (var eventArgs in events)
-                    {
-                        //raise event
-                        handler(this, eventArgs);
-                    }
-                }
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                //clear all events
-                EventCache.Clear();
-            }
-        }
-
-        /// <summary>
-        /// Clears all cached events.
-        /// </summary>
-        public void ClearEventCache()
-        {
-            EventCache.Clear();
-        }
-
-        /// <summary>
-        /// Gets event cache.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<IEntityEventArgs> GetEventCache()
-        {
-            return EventCache.ToList();
-        }
-
-        /// <summary>
-        /// Sets event cache from existing enumerable.
-        /// </summary>
-        /// <param name="cache">Cache source.</param>
-        public void SetEventCache(IEnumerable<IEntityEventArgs> cache)
-        {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            EventCache = new HashSet<IEntityEventArgs>(cache);
-        }
-
-        #endregion
 
         #endregion
 
