@@ -80,8 +80,8 @@ namespace Gizmo.DAL.Mappings
             builder.Property(productOrderLine => productOrderLine.IsVoided)
                 .HasColumnOrder(20);
 
-            builder.Property(productOrderLine => productOrderLine.IsPrepared)
-                .IsRequired(false);
+            builder.Property(productOrderLine => productOrderLine.PrepareStatus)
+                .IsRequired();
 
             builder.Property(productOrderLine => productOrderLine.PreparedQuantity)
                 .IsRequired();
