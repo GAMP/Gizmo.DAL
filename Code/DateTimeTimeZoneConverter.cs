@@ -48,7 +48,7 @@ namespace Gizmo.DAL
                     .Where(p => p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?))
                     .ToList();
 
-                if (!dateTimeProperties.Any())
+                if (dateTimeProperties.Count == 0)
                     continue;
 
                 foreach (var property in dateTimeProperties)

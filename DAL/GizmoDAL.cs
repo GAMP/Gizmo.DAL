@@ -814,7 +814,7 @@ namespace Gizmo.DAL
                     defaultOperator.UserCredential = new Entities.UserCredential();
                     defaultOperator.Username = "Admin";
 
-                    defaultOperator.CreatedTime = DateTime.Now;
+                    defaultOperator.CreatedTime = DateTime.UtcNow;
                     defaultOperator.UserCredential.Salt = salt;
                     defaultOperator.UserCredential.Password = password;
 
@@ -983,7 +983,7 @@ namespace Gizmo.DAL
                             UserGroupId = userGroupId,
 
                             //if the registration date is not provided use current date time
-                            CreatedTime = user.RegistrationDate ?? DateTime.Now,
+                            CreatedTime = user.RegistrationDate ?? DateTime.UtcNow,
 
                             //disable automatic create time update
                             IgnoreCreatedUpdate = true,
@@ -1023,7 +1023,7 @@ namespace Gizmo.DAL
                             {
                                 User = userMember,
                                 IsDelivered = true,
-                                DeliveredTime = DateTime.Now,
+                                DeliveredTime = DateTime.UtcNow,
                                 Status = SharedLib.OrderStatus.Completed,
                             };
 
@@ -1035,7 +1035,7 @@ namespace Gizmo.DAL
                                 Quantity = (decimal)Math.Round(time.TotalMinutes, 0, MidpointRounding.AwayFromZero),
                                 User = userMember,
                                 IsDelivered = true,
-                                DeliveredTime = DateTime.Now,
+                                DeliveredTime = DateTime.UtcNow,
                             };
 
                             //add order line to order
