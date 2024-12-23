@@ -17,6 +17,7 @@ using Npgsql;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Gizmo.DAL.Contexts
 {
@@ -2143,12 +2144,11 @@ namespace Gizmo.DAL.Contexts
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                //all period dates are kept as local time (unspecified) time zone
-                if (entityType.ClrType.IsSubclassOf(typeof(PeriodDate)))
-                    continue;
-
                 foreach (var property in entityType.GetProperties())
                 {
+                    if(IsUnspecifiedDateTimeProperty(property))
+                        continue;
+
                     if (property.ClrType == typeof(DateTime?))
                         property.SetValueConverter(utcNullableConverter);                 
 
@@ -2157,6 +2157,37 @@ namespace Gizmo.DAL.Contexts
                 }
             }
         }
+
+        private static bool IsUnspecifiedDateTimeProperty(IMutableProperty mutableProperty)
+        {
+            //all period dates are kept as local time (unspecified) time zone
+            if (mutableProperty.DeclaringType.ClrType.IsSubclassOf(typeof(PeriodDate)))
+               return true;
+
+            //check news excluded properties
+            if(mutableProperty.DeclaringType.ClrType == typeof(Entities.News))
+            {
+                //start and end date are (unspecified)
+                if(mutableProperty.Name == nameof(DAL.Entities.News.StartDate) || mutableProperty.Name == nameof(DAL.Entities.News.EndDate))
+                    return true;
+            }
+
+            if (mutableProperty.DeclaringType.ClrType == typeof(Entities.User))
+            {
+                //birthdate date are (unspecified)
+                if (mutableProperty.Name == nameof(DAL.Entities.User.BirthDate))
+                    return true;
+            }
+
+            if (mutableProperty.DeclaringType.ClrType == typeof(Entities.App))
+            {
+                //release date is (unspecified)
+                if (mutableProperty.Name == nameof(DAL.Entities.App.ReleaseDate))
+                    return true;
+            }
+
+            return false;
+        }   
 
         /// <summary>
         /// Apply default types configurations

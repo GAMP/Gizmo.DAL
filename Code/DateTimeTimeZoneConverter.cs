@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Gizmo.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -33,7 +34,6 @@ namespace Gizmo.DAL
         /// Converts all DateTime properties in the database to UTC.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns></returns>
         public async Task ConvertToUtcAsync(CancellationToken cancellationToken = default)
         {
             var entityTypes = _context.Model.GetEntityTypes();
@@ -53,6 +53,9 @@ namespace Gizmo.DAL
 
                 foreach (var property in dateTimeProperties)
                 {
+                    if (IsUnspecifiedDateTimeProperty(property))
+                        continue;
+
                     var columnName = property.GetColumnName(StoreObjectIdentifier.Table(tableName, null));
 
                     if (columnName == null)
@@ -67,6 +70,32 @@ namespace Gizmo.DAL
                     await _context.Database.ExecuteSqlRawAsync(sql, cancellationToken);
                 }
             }
+        }
+
+        private static bool IsUnspecifiedDateTimeProperty(IProperty mutableProperty)
+        {
+            if (mutableProperty.DeclaringType.ClrType.IsSubclassOf(typeof(PeriodDate)))
+                return true;
+
+            if (mutableProperty.DeclaringType.ClrType == typeof(News))
+            {
+                if (mutableProperty.Name == nameof(News.StartDate) || mutableProperty.Name == nameof(News.EndDate))
+                    return true;
+            }
+
+            if (mutableProperty.DeclaringType.ClrType == typeof(User))
+            {
+                if (mutableProperty.Name == nameof(User.BirthDate))
+                    return true;
+            }
+                
+            if (mutableProperty.DeclaringType.ClrType == typeof(App))
+            {
+                if (mutableProperty.Name == nameof(App.ReleaseDate))
+                    return true;
+            }
+
+            return false;
         }
     }
 }

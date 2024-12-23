@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore;
-
 using System;
 using System.Linq;
 using System.Threading;
@@ -16,8 +15,6 @@ using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Reflection;
-using Gizmo.Server.Security;
-using Gizmo.Server;
 
 namespace Gizmo.DAL.Extensions
 {
