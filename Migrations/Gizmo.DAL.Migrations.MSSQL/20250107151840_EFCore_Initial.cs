@@ -293,29 +293,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 defaultValue: 0m);
 
             migrationBuilder.AddColumn<int>(
-                name: "ReservationHostId",
-                table: "ProductOLExtended",
-                type: "int",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "ReservationId",
-                table: "ProductOLExtended",
-                type: "int",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
                 name: "PrepareStatus",
                 table: "ProductOL",
                 type: "int",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0)
+                .Annotation("Relational:ColumnOrder", 23);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "PrepareTime",
                 table: "ProductOL",
                 type: "datetime2",
-                nullable: true);
+                nullable: true)
+                .Annotation("Relational:ColumnOrder", 25);
 
             migrationBuilder.AddColumn<decimal>(
                 name: "PreparedQuantity",
@@ -324,7 +314,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 precision: 19,
                 scale: 4,
                 nullable: false,
-                defaultValue: 0m);
+                defaultValue: 0m)
+                .Annotation("Relational:ColumnOrder", 24);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ReservationHostId",
+                table: "ProductOL",
+                type: "int",
+                nullable: true)
+                .Annotation("Relational:ColumnOrder", 22);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ReservationId",
+                table: "ProductOL",
+                type: "int",
+                nullable: true)
+                .Annotation("Relational:ColumnOrder", 21);
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
@@ -343,6 +348,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "InvoicePayment",
                 type: "int",
                 nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ReservationHostId",
+                table: "InvoiceLine",
+                type: "int",
+                nullable: true)
+                .Annotation("Relational:ColumnOrder", 23);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ReservationId",
+                table: "InvoiceLine",
+                type: "int",
+                nullable: true)
+                .Annotation("Relational:ColumnOrder", 22);
 
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
@@ -714,7 +733,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 columns: table => new
                 {
                     ProductOLId = table.Column<int>(type: "int", nullable: false),
-                    ReservationId = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Fee = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false)
                 },
@@ -726,12 +744,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         column: x => x.ProductOLId,
                         principalTable: "ProductOL",
                         principalColumn: "ProductOLId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductOLReservationFee_Reservation_ReservationId",
-                        column: x => x.ReservationId,
-                        principalTable: "Reservation",
-                        principalColumn: "ReservationId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -829,6 +841,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ReservationProductOrder", x => x.ReservationProductOrderId);
+                    table.ForeignKey(
+                        name: "FK_ReservationProductOrder_ProductOrder_ProductOrderId",
+                        column: x => x.ProductOrderId,
+                        principalTable: "ProductOrder",
+                        principalColumn: "ProductOrderId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ReservationProductOrder_Reservation_ReservationId",
+                        column: x => x.ReservationId,
+                        principalTable: "Reservation",
+                        principalColumn: "ReservationId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ReservationProductOrder_UserOperator_CreatedById",
                         column: x => x.CreatedById,
@@ -1173,7 +1197,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 {
                     InvoiceLineId = table.Column<int>(type: "int", nullable: false),
                     OrderLineId = table.Column<int>(type: "int", nullable: false),
-                    ReservationId = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Fee = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false)
                 },
@@ -1191,12 +1214,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         column: x => x.OrderLineId,
                         principalTable: "ProductOLReservationFee",
                         principalColumn: "ProductOLId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_InvoiceLineReservationFee_Reservation_ReservationId",
-                        column: x => x.ReservationId,
-                        principalTable: "Reservation",
-                        principalColumn: "ReservationId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -2593,13 +2610,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "BranchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLExtended_ReservationHostId",
-                table: "ProductOLExtended",
+                name: "IX_ProductOL_ReservationHostId",
+                table: "ProductOL",
                 column: "ReservationHostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductOLExtended_ReservationId",
-                table: "ProductOLExtended",
+                name: "IX_ProductOL_ReservationId",
+                table: "ProductOL",
                 column: "ReservationId");
 
             migrationBuilder.CreateIndex(
@@ -2616,6 +2633,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "IX_InvoicePayment_BranchId",
                 table: "InvoicePayment",
                 column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceLine_ReservationHostId",
+                table: "InvoiceLine",
+                column: "ReservationHostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceLine_ReservationId",
+                table: "InvoiceLine",
+                column: "ReservationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoice_BranchId",
@@ -2977,11 +3004,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceLineReservationFee_ReservationId",
-                table: "InvoiceLineReservationFee",
-                column: "ReservationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_NewsBranch_BranchId",
                 table: "NewsBranch",
                 column: "BranchId");
@@ -3038,11 +3060,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "ProductOLReservationFee",
                 column: "ProductOLId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductOLReservationFee_ReservationId",
-                table: "ProductOLReservationFee",
-                column: "ReservationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Promotion_CreatedById",
@@ -3162,9 +3179,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReservationProductOrder_ReservationId",
+                name: "IX_ReservationProductOrder_ReservationId_ProductOrderId",
                 table: "ReservationProductOrder",
-                column: "ReservationId",
+                columns: new[] { "ReservationId", "ProductOrderId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -3488,6 +3505,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 principalColumn: "BranchId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_InvoiceLine_ReservationHost_ReservationHostId",
+                table: "InvoiceLine",
+                column: "ReservationHostId",
+                principalTable: "ReservationHost",
+                principalColumn: "ReservationHostId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InvoiceLine_Reservation_ReservationId",
+                table: "InvoiceLine",
+                column: "ReservationId",
+                principalTable: "Reservation",
+                principalColumn: "ReservationId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_InvoicePayment_Branch_BranchId",
                 table: "InvoicePayment",
                 column: "BranchId",
@@ -3509,16 +3542,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 principalColumn: "BranchId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ProductOLExtended_ReservationHost_ReservationHostId",
-                table: "ProductOLExtended",
+                name: "FK_ProductOL_ReservationHost_ReservationHostId",
+                table: "ProductOL",
                 column: "ReservationHostId",
                 principalTable: "ReservationHost",
                 principalColumn: "ReservationHostId",
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ProductOLExtended_Reservation_ReservationId",
-                table: "ProductOLExtended",
+                name: "FK_ProductOL_Reservation_ReservationId",
+                table: "ProductOL",
                 column: "ReservationId",
                 principalTable: "Reservation",
                 principalColumn: "ReservationId",
@@ -3699,6 +3732,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "Invoice");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_InvoiceLine_ReservationHost_ReservationHostId",
+                table: "InvoiceLine");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_InvoiceLine_Reservation_ReservationId",
+                table: "InvoiceLine");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_InvoicePayment_Branch_BranchId",
                 table: "InvoicePayment");
 
@@ -3711,12 +3752,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "PaymentIntent");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_ProductOLExtended_ReservationHost_ReservationHostId",
-                table: "ProductOLExtended");
+                name: "FK_ProductOL_ReservationHost_ReservationHostId",
+                table: "ProductOL");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_ProductOLExtended_Reservation_ReservationId",
-                table: "ProductOLExtended");
+                name: "FK_ProductOL_Reservation_ReservationId",
+                table: "ProductOL");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductOrder_PaymentMethod_PreferredPaymentMethodId",
@@ -4096,12 +4137,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "Refund");
 
             migrationBuilder.DropIndex(
-                name: "IX_ProductOLExtended_ReservationHostId",
-                table: "ProductOLExtended");
+                name: "IX_ProductOL_ReservationHostId",
+                table: "ProductOL");
 
             migrationBuilder.DropIndex(
-                name: "IX_ProductOLExtended_ReservationId",
-                table: "ProductOLExtended");
+                name: "IX_ProductOL_ReservationId",
+                table: "ProductOL");
 
             migrationBuilder.DropIndex(
                 name: "IX_PaymentIntent_BranchId",
@@ -4114,6 +4155,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
             migrationBuilder.DropIndex(
                 name: "IX_InvoicePayment_BranchId",
                 table: "InvoicePayment");
+
+            migrationBuilder.DropIndex(
+                name: "IX_InvoiceLine_ReservationHostId",
+                table: "InvoiceLine");
+
+            migrationBuilder.DropIndex(
+                name: "IX_InvoiceLine_ReservationId",
+                table: "InvoiceLine");
 
             migrationBuilder.DropIndex(
                 name: "IX_Invoice_BranchId",
@@ -4268,14 +4317,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "ProductOrder");
 
             migrationBuilder.DropColumn(
-                name: "ReservationHostId",
-                table: "ProductOLExtended");
-
-            migrationBuilder.DropColumn(
-                name: "ReservationId",
-                table: "ProductOLExtended");
-
-            migrationBuilder.DropColumn(
                 name: "PrepareStatus",
                 table: "ProductOL");
 
@@ -4285,6 +4326,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             migrationBuilder.DropColumn(
                 name: "PreparedQuantity",
+                table: "ProductOL");
+
+            migrationBuilder.DropColumn(
+                name: "ReservationHostId",
+                table: "ProductOL");
+
+            migrationBuilder.DropColumn(
+                name: "ReservationId",
                 table: "ProductOL");
 
             migrationBuilder.DropColumn(
@@ -4298,6 +4347,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
             migrationBuilder.DropColumn(
                 name: "BranchId",
                 table: "InvoicePayment");
+
+            migrationBuilder.DropColumn(
+                name: "ReservationHostId",
+                table: "InvoiceLine");
+
+            migrationBuilder.DropColumn(
+                name: "ReservationId",
+                table: "InvoiceLine");
 
             migrationBuilder.DropColumn(
                 name: "BranchId",

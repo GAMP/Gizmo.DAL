@@ -29,16 +29,6 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(x => x.BundleLine)
                 .WithMany()
                 .HasForeignKey(x => x.BundleLineId);
-
-            builder.HasOne(productOlExtended => productOlExtended.Reservation)
-                .WithMany()
-                .HasForeignKey(productOlExtended => productOlExtended.ReservationId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(productOlExtended => productOlExtended.ReservationHost)
-                .WithMany()
-                .HasForeignKey(productOlExtended => productOlExtended.ReservationHostId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

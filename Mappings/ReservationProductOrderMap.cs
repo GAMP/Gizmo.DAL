@@ -33,9 +33,14 @@ namespace Gizmo.DAL.Mappings
                 .IsUnique()
                 .HasFilter(null);
 
-            builder.HasIndex(reservationOrder => reservationOrder.ReservationId)
+            builder.HasIndex(reservationOrder => new { reservationOrder.ReservationId, reservationOrder.ProductOrderId })
                 .IsUnique()
                 .HasFilter(null);
+
+            builder.HasOne(reservationOrder => reservationOrder.Reservation)
+                .WithMany(reservation => reservation.Orders)
+                .HasForeignKey(reservationOrder => reservationOrder.ReservationId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

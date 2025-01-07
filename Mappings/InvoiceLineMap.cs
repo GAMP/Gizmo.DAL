@@ -12,93 +12,111 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<InvoiceLine> builder)
         {
-            builder.HasKey(x => x.Id);
+            builder.HasKey(invoiceLine => invoiceLine.Id);
 
             builder.ToTable(nameof(InvoiceLine));
 
-            builder.Property(x => x.Id)
+            builder.Property(invoiceLine => invoiceLine.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("InvoiceLineId");
 
-            builder.Property(x => x.InvoiceId)
+            builder.Property(invoiceLine => invoiceLine.InvoiceId)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.UserId)
+            builder.Property(invoiceLine => invoiceLine.UserId)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.ProductName)
+            builder.Property(invoiceLine => invoiceLine.ProductName)
                 .HasColumnOrder(3);
 
-            builder.Property(x => x.Quantity)
+            builder.Property(invoiceLine => invoiceLine.Quantity)
                 .HasColumnOrder(4);
 
-            builder.Property(x => x.UnitPrice)
+            builder.Property(invoiceLine => invoiceLine.UnitPrice)
                 .HasColumnOrder(5);
 
-            builder.Property(x => x.UnitListPrice)
+            builder.Property(invoiceLine => invoiceLine.UnitListPrice)
                 .HasColumnOrder(6);
 
-            builder.Property(x => x.UnitPointsPrice)
+            builder.Property(invoiceLine => invoiceLine.UnitPointsPrice)
                 .HasColumnOrder(7);
 
-            builder.Property(x => x.UnitPointsListPrice)
+            builder.Property(invoiceLine => invoiceLine.UnitPointsListPrice)
                 .HasColumnOrder(8);
 
-            builder.Property(x => x.UnitCost)
+            builder.Property(invoiceLine => invoiceLine.UnitCost)
                 .HasColumnOrder(9);
 
-            builder.Property(x => x.Cost)
+            builder.Property(invoiceLine => invoiceLine.Cost)
                 .HasColumnOrder(10);
 
-            builder.Property(x => x.TaxRate)
+            builder.Property(invoiceLine => invoiceLine.TaxRate)
                 .HasColumnOrder(11);
 
-            builder.Property(x => x.PreTaxTotal)
+            builder.Property(invoiceLine => invoiceLine.PreTaxTotal)
                 .HasColumnOrder(12);
 
-            builder.Property(x => x.Total)
+            builder.Property(invoiceLine => invoiceLine.Total)
                 .HasColumnOrder(13);
 
-            builder.Property(x => x.PointsTotal)
+            builder.Property(invoiceLine => invoiceLine.PointsTotal)
                 .HasColumnOrder(14);
 
-            builder.Property(x => x.Points)
+            builder.Property(invoiceLine => invoiceLine.Points)
                 .HasColumnOrder(15);
 
-            builder.Property(x => x.PointsAward)
+            builder.Property(invoiceLine => invoiceLine.PointsAward)
                 .HasColumnOrder(16);
 
-            builder.Property(x => x.TaxTotal)
+            builder.Property(invoiceLine => invoiceLine.TaxTotal)
                 .HasColumnOrder(17);
 
-            builder.Property(x => x.PayType)
+            builder.Property(invoiceLine => invoiceLine.PayType)
                 .HasColumnOrder(18);
 
-            builder.Property(x => x.PointsTransactionId)
+            builder.Property(invoiceLine => invoiceLine.PointsTransactionId)
                 .HasColumnOrder(19);
 
-            builder.Property(x => x.IsDeleted)
+            builder.Property(invoiceLine => invoiceLine.IsDeleted)
                 .HasColumnOrder(20);
 
-            builder.Property(x => x.IsVoided)
+            builder.Property(invoiceLine => invoiceLine.IsVoided)
                 .HasColumnOrder(21);
 
+            builder.Property(invoiceLine => invoiceLine.ReservationId)
+                .IsRequired(false)
+                .HasColumnOrder(22);
+
+            builder.Property(invoiceLine => invoiceLine.ReservationHostId)
+                .IsRequired(false)
+                .HasColumnOrder(23);
+
             // Indexes
-            builder.HasIndex(t => t.PointsTransactionId)
+            builder.HasIndex(invoiceLine => invoiceLine.PointsTransactionId)
                 .IsUnique();
 
-            builder.HasOne(x => x.Invoice)
-                .WithMany(x => x.InvoiceLines)
-                .HasForeignKey(x => x.InvoiceId);
+            builder.HasOne(invoiceLine => invoiceLine.Invoice)
+                .WithMany(invoiceLine => invoiceLine.InvoiceLines)
+                .HasForeignKey(invoiceLine => invoiceLine.InvoiceId);
 
-            builder.HasOne(x => x.User)
-                .WithMany(x => x.InvoiceLines)
-                .HasForeignKey(x => x.UserId)
+            builder.HasOne(invoiceLine => invoiceLine.User)
+                .WithMany(invoiceLine => invoiceLine.InvoiceLines)
+                .HasForeignKey(invoiceLine => invoiceLine.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.PointsTransaction)
+            builder.HasOne(invoiceLine => invoiceLine.PointsTransaction)
                 .WithMany()
-                .HasForeignKey(x => x.PointsTransactionId)
+                .HasForeignKey(invoiceLine => invoiceLine.PointsTransactionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(invoiceLine => invoiceLine.Reservation)
+                .WithMany(reservation => reservation.InvoiceLines)
+                .HasForeignKey(invoiceLine => invoiceLine.ReservationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(invoiceLine => invoiceLine.ReservationHost)
+                .WithMany(reservationHost => reservationHost.InvoiceLines)
+                .HasForeignKey(invoiceLine => invoiceLine.ReservationHostId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

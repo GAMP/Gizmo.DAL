@@ -15,9 +15,10 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(ProductOLReservationFee))
                 .HasBaseType<ProductOL>();
 
-            builder.Property(productOrderLineReservationFee => productOrderLineReservationFee.ReservationId)
+            builder.Property(productOrderLineReservationFee => productOrderLineReservationFee.Id)
                 .IsRequired()
-                .HasColumnOrder(0);
+                .HasColumnOrder(0)
+                .HasColumnName("ProductOLId");
 
             builder.Property(productOrderLineReservationFee => productOrderLineReservationFee.Type)
                 .IsRequired()
@@ -26,11 +27,6 @@ namespace Gizmo.DAL.Mappings
             builder.Property(productOrderLineReservationFee => productOrderLineReservationFee.Fee)
                 .IsRequired()
                 .HasColumnOrder(2);
-
-            builder.HasOne(productOrderLineReservationFee => productOrderLineReservationFee.Reservation)
-                .WithMany()
-                .HasForeignKey(productOrderLineReservationFee => productOrderLineReservationFee.ReservationId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -15,11 +15,12 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(InvoiceLineReservationFee))
                 .HasBaseType<InvoiceLine>();
 
-            builder.Property(invoiceLineReservationFee => invoiceLineReservationFee.OrderLineId)
+            builder.Property(productOrderLine => productOrderLine.Id)
                 .IsRequired()
-                .HasColumnOrder(0);
+                .HasColumnOrder(0)
+                .HasColumnName("InvoiceLineId");
 
-            builder.Property(invoiceLineReservationFee => invoiceLineReservationFee.ReservationId)
+            builder.Property(invoiceLineReservationFee => invoiceLineReservationFee.OrderLineId)
                 .IsRequired()
                 .HasColumnOrder(1);
 
@@ -38,11 +39,6 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(invoiceLineReservationFee => invoiceLineReservationFee.OrderLine)
                 .WithOne()
                 .HasForeignKey<InvoiceLineReservationFee>(invoiceLineReservationFee => invoiceLineReservationFee.OrderLineId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(invoiceLineReservationFee => invoiceLineReservationFee.Reservation)
-                .WithMany(reservation => reservation.ReservationFees)
-                .HasForeignKey(invoiceLineReservationFee => invoiceLineReservationFee.ReservationId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

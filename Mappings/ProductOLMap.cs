@@ -80,14 +80,25 @@ namespace Gizmo.DAL.Mappings
             builder.Property(productOrderLine => productOrderLine.IsVoided)
                 .HasColumnOrder(20);
 
+            builder.Property(productOrderLine => productOrderLine.ReservationId)
+                .IsRequired(false)
+                .HasColumnOrder(21);
+
+            builder.Property(productOrderLine => productOrderLine.ReservationHostId)
+                .IsRequired(false)
+                .HasColumnOrder(22);
+
             builder.Property(productOrderLine => productOrderLine.PrepareStatus)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnOrder(23);
 
             builder.Property(productOrderLine => productOrderLine.PreparedQuantity)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnOrder(24);
 
             builder.Property(productOrderLine => productOrderLine.PrepareTime)
-                .IsRequired(false);
+                .IsRequired(false)
+                .HasColumnOrder(25);
 
             builder.HasIndex(productOrderLine => productOrderLine.Id);
 
@@ -108,6 +119,16 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(productOrderLine => productOrderLine.ModifiedBy)
                 .WithMany()
                 .HasForeignKey(productOrderLine => productOrderLine.ModifiedById);
+
+            builder.HasOne(productOrderLine => productOrderLine.Reservation)
+                .WithMany()
+                .HasForeignKey(productOrderLine => productOrderLine.ReservationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(productOrderLine => productOrderLine.ReservationHost)
+                .WithMany()
+                .HasForeignKey(productOrderLine => productOrderLine.ReservationHostId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
