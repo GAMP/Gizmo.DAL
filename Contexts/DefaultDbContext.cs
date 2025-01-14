@@ -453,6 +453,11 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<PresetTimeSaleMoney> PresetTimeSaleMoney { get; set; }
 
+        /// <summary>
+        /// Get or sets preset reservation time.
+        /// </summary>
+        public DbSet<PresetReservationTime> PresetReservationTime   { get; set; }
+
         #region TASKS
 
         /// <summary>
