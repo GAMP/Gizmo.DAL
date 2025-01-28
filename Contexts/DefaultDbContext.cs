@@ -1368,6 +1368,7 @@ namespace Gizmo.DAL.Contexts
                        
             modelBuilder.ApplyConfiguration(new FileMap());
             modelBuilder.ApplyConfiguration(new FileDocumentMap());
+            modelBuilder.ApplyConfiguration(new FileImageMap());
             modelBuilder.ApplyConfiguration(new DocumentTypeMap());
             modelBuilder.ApplyConfiguration(new InventoryDocumentMap());
 

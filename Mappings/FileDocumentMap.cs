@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Gizmo.DAL.Mappings
 {
     /// <summary>
-    /// Document entity map.
+    /// File document entity map.
     /// </summary>
     public sealed class FileDocumentMap : IEntityTypeConfiguration<FileDocument>
     {

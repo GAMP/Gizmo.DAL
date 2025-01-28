@@ -23,9 +23,18 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(0)
                 .IsRequired();
 
+            builder.Property(transfer => transfer.InventoryInboundId)
+                .HasColumnOrder(1)
+                .IsRequired(false);
+
             builder.HasOne(transfer => transfer.TransferStock)
                 .WithMany()
                 .HasForeignKey(transfer => transfer.TransferStockId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(transfer => transfer.InventoryInbound)
+                .WithMany()
+                .HasForeignKey(transfer => transfer.InventoryInboundId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
