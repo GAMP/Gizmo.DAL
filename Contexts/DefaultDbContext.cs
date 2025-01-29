@@ -999,6 +999,11 @@ namespace Gizmo.DAL.Contexts
         /// Get documents.
         /// </summary>
         public DbSet<FileDocument> Documents { get; set; }
+        
+        /// <summary>
+        /// File Images.
+        /// </summary>
+        public DbSet<FileImage> FileImages { get; set; }
 
         /// <summary>
         /// Gets files.
