@@ -2430,8 +2430,7 @@ namespace Gizmo.DAL.Contexts
         /// <exception cref="ArgumentException"></exception>
         public static async Task<TResult> RetryBeforeThrowAsync<TResult>(Func<Task<TResult>> action, int retries = 10, int minWaitTime = 100, int maxWaitTime = 1000)
         {
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
+            ArgumentNullException.ThrowIfNull(action);
 
             for (int tries = 1; tries <= retries; tries++)
             {
@@ -2453,7 +2452,7 @@ namespace Gizmo.DAL.Contexts
                             throw;
                         }
 
-                        Thread.Sleep(new Random().Next(minWaitTime, maxWaitTime));
+                        await Task.Delay(new Random().Next(minWaitTime, maxWaitTime));
                     }
                     else
                     {
