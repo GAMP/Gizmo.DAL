@@ -1408,6 +1408,8 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new InvoiceLineReservationFeeMap());
             modelBuilder.ApplyConfiguration(new ReservationProductOrderMap());
 
+            modelBuilder.ApplyConfiguration(new PaymentReceiptMap());
+
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
             #endregion

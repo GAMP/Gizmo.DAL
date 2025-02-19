@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <inheritdoc/>
     public class InvoiceFiscalReceiptMap : IEntityTypeConfiguration<InvoiceFiscalReceipt>
     {
         /// <summary>

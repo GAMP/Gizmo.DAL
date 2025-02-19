@@ -91,6 +91,10 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(23);
 
+            builder.Property(invoiceLine => invoiceLine.ReservationSlot)
+                .IsRequired(false)
+                .HasColumnOrder(24);
+
             // Indexes
             builder.HasIndex(invoiceLine => invoiceLine.PointsTransactionId)
                 .IsUnique();

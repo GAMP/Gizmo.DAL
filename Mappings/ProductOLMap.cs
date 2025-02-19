@@ -88,17 +88,21 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(22);
 
-            builder.Property(productOrderLine => productOrderLine.PrepareStatus)
-                .IsRequired()
+            builder.Property(productOrderLine => productOrderLine.ReservationSlot)
+                .IsRequired(false)
                 .HasColumnOrder(23);
 
-            builder.Property(productOrderLine => productOrderLine.PreparedQuantity)
+            builder.Property(productOrderLine => productOrderLine.PrepareStatus)
                 .IsRequired()
                 .HasColumnOrder(24);
 
+            builder.Property(productOrderLine => productOrderLine.PreparedQuantity)
+                .IsRequired()
+                .HasColumnOrder(25);
+
             builder.Property(productOrderLine => productOrderLine.PrepareTime)
                 .IsRequired(false)
-                .HasColumnOrder(25);
+                .HasColumnOrder(26);
 
             builder.HasIndex(productOrderLine => productOrderLine.Id);
 
