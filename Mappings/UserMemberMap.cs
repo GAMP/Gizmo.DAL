@@ -15,27 +15,33 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<UserMember> builder)
         {
-            builder.Property(t => t.Username)
+            builder.Property(userMember => userMember.Id)
+                  .HasColumnOrder(0);
+
+            builder.Property(userMember => userMember.Username)
+                .HasColumnOrder(1)
                 .IsRequired()
                 .HasMaxLength(30);
 
-            builder.Property(t => t.Email)
+            builder.Property(userMember => userMember.Email)
                 .HasMaxLength(254);
 
             // Indexes
-            builder.HasIndex(t => t.Username).IsUnique().HasFilter(null);
+            builder.HasIndex(userMember => userMember.Username)
+                .IsUnique()
+                .HasFilter(null);
 
-            builder.HasIndex(t => t.Email).IsUnique();
+            builder.HasIndex(userMember => userMember.Email).IsUnique();
             
-            builder.HasIndex(t => t.Id);
+            builder.HasIndex(userMember => userMember.Id);
 
             // Table & Column Mappings
             builder.ToTable(nameof(UserMember));
 
             // Relationships
-            builder.HasOne(t => t.UserGroup)
-                .WithMany(t => t.Users)
-                .HasForeignKey(d => d.UserGroupId)
+            builder.HasOne(userMember => userMember.UserGroup)
+                .WithMany(userGroup => userGroup.Users)
+                .HasForeignKey(userMember => userMember.UserGroupId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

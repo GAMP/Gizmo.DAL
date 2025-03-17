@@ -14,6 +14,9 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(UserApiKey));
 
+            builder.Property(userApiKey => userApiKey.Id)
+                .HasColumnOrder(0);
+
             builder.Property(userApiKey => userApiKey.ApiKey)
                 .HasColumnOrder(1)
                 .IsRequired()

@@ -21,6 +21,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasKey(user => user.Id);
 
             builder.Property(user => user.Id)
+                .HasColumnOrder(0)
                 .HasColumnName("UserId");
 
             builder.Property(user => user.FirstName)

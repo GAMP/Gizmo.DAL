@@ -12,53 +12,66 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<HostGroup> builder)
         {
-            // Primary Key
-            builder.HasKey(t => t.Id);
+            builder.HasKey(hostGroup => hostGroup.Id);
 
-            // Properties
-            builder.Property(x => x.Id)
+            builder.Property(hostGroup => hostGroup.Id)
                 .HasColumnOrder(0);
 
-            builder.Property(t => t.Name)
+            builder.Property(hostGroup => hostGroup.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.AppGroupId)
+            builder.Property(hostGroup => hostGroup.AppGroupId)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.SecurityProfileId)
+            builder.Property(hostGroup => hostGroup.SecurityProfileId)
                 .HasColumnOrder(3);
 
-            builder.Property(t => t.SkinName)
+            builder.Property(hostGroup => hostGroup.SkinName)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(x => x.Options)
+            builder.Property(hostGroup => hostGroup.Options)
                 .HasColumnOrder(5);
 
-            builder.Property(x => x.DefaultGuestGroupId)
+            builder.Property(hostGroup => hostGroup.DefaultGuestGroupId)
                 .HasColumnOrder(6)
                 .IsRequired(false);
 
-            // Table & Column Mappings
+            builder.Property(hostGroup => hostGroup.BillProfileId)
+                .HasColumnOrder(7)
+                .IsRequired(false);
+
+            builder.Property(hostGroup => hostGroup.ClientOptionsId)
+                .HasColumnOrder(8)
+                .IsRequired(false);
+
             builder.ToTable(nameof(HostGroup));
 
-            builder.Property(t => t.Id)
+            builder.Property(hostGroup => hostGroup.Id)
                 .HasColumnName("HostGroupId");
 
-            // Indexes
             builder.HasIndex(t => new { t.Name, t.BranchId })
                 .IsUnique();
 
-            // Relationships
-            builder.HasOne(t => t.AppGroup)
-                .WithMany(t => t.HostGroups)
+            builder.HasOne(hostGroup => hostGroup.AppGroup)
+                .WithMany(appGroup => appGroup.HostGroups)
                 .HasForeignKey(d => d.AppGroupId);
 
-            builder.HasOne(t => t.SecurityProfile)
-                .WithMany(t => t.HostGroups)
+            builder.HasOne(hostGroup => hostGroup.SecurityProfile)
+                .WithMany(securityProfile => securityProfile.HostGroups)
                 .HasForeignKey(d => d.SecurityProfileId);
+
+            builder.HasOne(hostGroup => hostGroup.BillProfile)
+                .WithMany(billProfile => billProfile.HostGroups)
+                .HasForeignKey(hostGroup => hostGroup.BillProfileId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(hostGroup => hostGroup.ClientOptions)
+                .WithMany(clientOptions => clientOptions.HostGroups)
+                .HasForeignKey(hostGroup => hostGroup.ClientOptionsId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

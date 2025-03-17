@@ -10,6 +10,8 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<PaymentReceipt> builder)
         {
+            builder.ToTable(nameof(PaymentReceipt));
+
             builder.HasKey(paymentReceipt => paymentReceipt.Id);
 
             builder.Property(paymentReceipt => paymentReceipt.Id)

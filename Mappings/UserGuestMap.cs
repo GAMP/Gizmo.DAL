@@ -17,26 +17,29 @@ namespace Gizmo.DAL.Mappings
             // Table & Column Mappings
             builder.ToTable("UserGuest");
 
-            builder.Property(x => x.IsJoined)
+            builder.Property(userGuest => userGuest.Id)
+                  .HasColumnOrder(0);
+
+            builder.Property(userGuest => userGuest.IsJoined)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.IsReserved)
+            builder.Property(userGuest => userGuest.IsReserved)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.ReservedHostId)
+            builder.Property(userGuest => userGuest.ReservedHostId)
                 .HasColumnOrder(3);
 
-            builder.Property(x => x.ReservedSlot)
+            builder.Property(userGuest => userGuest.ReservedSlot)
                 .HasColumnOrder(4);
 
             // Indexes
-            builder.HasIndex(x => new { x.ReservedHostId, x.ReservedSlot }).IsUnique();
-            
-            builder.HasIndex(t => t.Id);
+            builder.HasIndex(userGuest => new { userGuest.ReservedHostId, userGuest.ReservedSlot }).IsUnique();
 
-            builder.HasOne(x => x.ReservedHost)
-                .WithMany(x => x.ReservedGuests)
-                .HasForeignKey(x => x.ReservedHostId);
+            builder.HasIndex(userGuest => userGuest.Id);
+
+            builder.HasOne(userGuest => userGuest.ReservedHost)
+                .WithMany(host => host.ReservedGuests)
+                .HasForeignKey(userGuest => userGuest.ReservedHostId);
         }
     }
 }

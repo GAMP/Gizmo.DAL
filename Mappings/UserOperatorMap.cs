@@ -1,5 +1,4 @@
 ﻿using Gizmo.DAL.Entities;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,17 +12,26 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<UserOperator> builder)
         {
-            builder.Property(t => t.Username)
+            builder.Property(userOperator => userOperator.Id)
+                .HasColumnOrder(0);
+
+            builder.Property(userOperator => userOperator.Username)
+                .HasColumnOrder(1)
                 .IsRequired()
                 .HasMaxLength(30);
 
-            builder.Property(t => t.Email)
+            builder.Property(userOperator => userOperator.Email)
                 .HasMaxLength(254);
 
             // Indexes
-            builder.HasIndex(t => t.Username).IsUnique().HasFilter(null);
-            builder.HasIndex(t => t.Email).IsUnique();
-            builder.HasIndex(t => t.Id);
+            builder.HasIndex(userOperator => userOperator.Username)
+                .IsUnique()
+                .HasFilter(null);
+
+            builder.HasIndex(userOperator => userOperator.Email)
+                .IsUnique();
+
+            builder.HasIndex(userOperator => userOperator.Id);
 
             // Table & Column Mappings
             builder.ToTable("UserOperator");

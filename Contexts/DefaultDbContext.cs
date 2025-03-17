@@ -1090,6 +1090,21 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<ScheduleReportEntry> ScheduleReportEntries { get; set; }
 
+        /// <summary>
+        /// Payment receipts.
+        /// </summary>
+        public DbSet<PaymentReceipt> PaymentReceipts { get; set; }
+
+        /// <summary>
+        /// Refund receipts.
+        /// </summary>
+        public DbSet<RefundReceipt> RefundReceipts { get; set; }
+
+        /// <summary>
+        /// Client options.
+        /// </summary>
+        public DbSet<ClientOptions> ClientOptions { get; set; }
+
         #endregion
 
         #region OVERRIDES
@@ -1409,6 +1424,8 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new ReservationProductOrderMap());
 
             modelBuilder.ApplyConfiguration(new PaymentReceiptMap());
+            modelBuilder.ApplyConfiguration(new RefundReceiptMap());
+            modelBuilder.ApplyConfiguration(new ClientOptionsMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
