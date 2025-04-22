@@ -4,38 +4,44 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Stock transaction map.
+    /// </summary>
     public class StockTransactionMap : IEntityTypeConfiguration<StockTransaction>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        ///<inheritdoc/>
         public void Configure(EntityTypeBuilder<StockTransaction> builder)
         {
             // Primary Key
-            builder.HasKey(t => t.Id);
+            builder.HasKey(stockTransaction => stockTransaction.Id);
 
             // Properties
             builder.ToTable(nameof(StockTransaction));
 
-            builder.Property(x => x.Id)
+            builder.Property(stockTransaction => stockTransaction.Id)
                 .HasColumnName("StockTransactionId");
 
             // Relationships        
-            builder.HasOne(x => x.Product)
-                .WithMany(x => x.StockTransactions)
-                .HasForeignKey(x => x.ProductId);
+            builder.HasOne(stockTransaction => stockTransaction.Product)
+                .WithMany(stockTransaction => stockTransaction.StockTransactions)
+                .HasForeignKey(stockTransaction => stockTransaction.ProductId);
 
-            builder.HasOne(x => x.SourceProduct)
-                .WithMany(x => x.StockTransactionsSource)
-                .HasForeignKey(x => x.SourceProductId);
+            builder.HasOne(stockTransaction => stockTransaction.SourceProduct)
+                .WithMany(stockTransaction => stockTransaction.StockTransactionsSource)
+                .HasForeignKey(stockTransaction => stockTransaction.SourceProductId);
 
-            builder.HasOne(x => x.CreatedBy)
+            builder.HasOne(stockTransaction => stockTransaction.CreatedBy)
                 .WithMany()
-                .HasForeignKey(x => x.CreatedById);
+                .HasForeignKey(stockTransaction => stockTransaction.CreatedById);
 
-            builder.HasOne(x => x.ModifiedBy)
+            builder.HasOne(stockTransaction => stockTransaction.ModifiedBy)
                 .WithMany()
-                .HasForeignKey(x => x.ModifiedById);
+                .HasForeignKey(stockTransaction => stockTransaction.ModifiedById);
+
+            builder.HasOne(stockTransaction => stockTransaction.Stock)
+                .WithMany(stock => stock.Transactions)
+                .HasForeignKey(stockTransaction => stockTransaction.StockId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

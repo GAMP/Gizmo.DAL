@@ -32,6 +32,17 @@ namespace Gizmo.DAL.Mappings
             builder.Property(inventoryEntry => inventoryEntry.StockTransactionId)
                 .HasColumnOrder(4);
 
+            builder.Property(inventoryEntry => inventoryEntry.Quantity)
+                .HasColumnOrder(5);
+
+            builder.Property(inventoryEntry => inventoryEntry.Note)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY)
+                .HasColumnOrder(6);
+
+            builder.Property(inventoryEntry => inventoryEntry.ShiftId)
+                .HasColumnOrder(7);
+
             builder.HasOne(inventoryEntry => inventoryEntry.Inventory)
                 .WithMany(inventory => inventory.Entries)
                 .HasForeignKey(inventoryEntry => inventoryEntry.InventoryId)

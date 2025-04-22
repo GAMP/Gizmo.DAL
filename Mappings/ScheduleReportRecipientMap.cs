@@ -31,7 +31,6 @@ namespace Gizmo.DAL.Mappings
             builder.Property(recipientScheduleReport => recipientScheduleReport.IsDisabled)
                 .IsRequired()
                 .HasColumnOrder(3);
-
         }
     }
 }

@@ -1016,6 +1016,11 @@ namespace Gizmo.DAL.Contexts
         public DbSet<Inventory> Inventories { get; set; }
 
         /// <summary>
+        /// Gets inventory documents.
+        /// </summary>
+        public DbSet<InventoryDocument> InventoryDocuments { get; set; }
+
+        /// <summary>
         /// Gets inventory entries.
         /// </summary>
         public DbSet<InventoryEntry> InventoryEntries { get; set; }
@@ -1104,6 +1109,11 @@ namespace Gizmo.DAL.Contexts
         /// Client options.
         /// </summary>
         public DbSet<ClientOptions> ClientOptions { get; set; }
+
+        /// <summary>
+        /// Inventory adjustment reasons.
+        /// </summary>
+        public DbSet<InventoryAdjustmentReason> InventoryAdjustmentReasons { get; set; }
 
         #endregion
 
