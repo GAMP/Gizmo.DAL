@@ -18,19 +18,6 @@ namespace Gizmo.DAL.Mappings
             builder.Property(transferEntry => transferEntry.Id)
                 .HasColumnOrder(0)
                 .IsRequired();
-
-            builder.Property(transferEntry => transferEntry.TransferStockId)
-                .HasColumnOrder(1)
-                .IsRequired();
-
-            builder.Property(transferEntry => transferEntry.TransferStockTransactionId)
-                .HasColumnOrder(2)
-                .IsRequired();
-
-            builder.HasOne(transferEntry => transferEntry.TransferStock)
-                .WithMany()
-                .HasForeignKey(transferEntry => transferEntry.TransferStockId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

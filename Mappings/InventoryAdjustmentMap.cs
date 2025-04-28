@@ -15,12 +15,16 @@ namespace Gizmo.DAL.Mappings
             builder.ToTable(nameof(InventoryAdjustment))
                 .HasBaseType<Inventory>();
 
-            builder.Property(adjustment => adjustment.AdjustmentType)
+            builder.Property(adjustment => adjustment.Cost)
                 .HasColumnOrder(0)
                 .IsRequired();
 
-            builder.Property(adjustment => adjustment.InvoiceId)
+            builder.Property(adjustment => adjustment.AdjustmentType)
                 .HasColumnOrder(1)
+                .IsRequired();
+
+            builder.Property(adjustment => adjustment.InvoiceId)
+                .HasColumnOrder(2)
                 .IsRequired(false);
         }
     }

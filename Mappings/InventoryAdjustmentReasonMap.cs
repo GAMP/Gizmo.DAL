@@ -34,6 +34,8 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3)
                 .IsRequired();
 
+            builder.HasIndex(inventoryAdjustmentReason => inventoryAdjustmentReason.Name).IsUnique();
+
             builder.HasMany(inventoryAdjustmentReason => inventoryAdjustmentReason.AdjustmentEntries)
                 .WithOne(inventoryAdjustmentEntry => inventoryAdjustmentEntry.AdjustmentReason)
                 .HasForeignKey(inventoryAdjustmentEntry => inventoryAdjustmentEntry.AdjustmentReasonId)

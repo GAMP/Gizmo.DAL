@@ -13,22 +13,30 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(InventoryAdjustmentEntry))
                 .HasBaseType<InventoryEntry>();
+            
+            builder.Property(adjustmentEntry => adjustmentEntry.Id)
+                .HasColumnOrder(0)
+                .IsRequired();
 
-            builder.Property(InventoryAdjustmentEntry => InventoryAdjustmentEntry.UnitCost)
-                .IsRequired()
-                .HasColumnOrder(0);
-
-            builder.Property(InventoryAdjustmentEntry => InventoryAdjustmentEntry.TotalCost)
+            builder.Property(adjustmentEntry => adjustmentEntry.UnitCost)
                 .IsRequired()
                 .HasColumnOrder(1);
-            
-            builder.Property(InventoryAdjustmentEntry => InventoryAdjustmentEntry.UnitPrice)
+
+            builder.Property(adjustmentEntry => adjustmentEntry.TotalCost)
                 .IsRequired()
                 .HasColumnOrder(2);
-
-            builder.Property(InventoryAdjustmentEntry => InventoryAdjustmentEntry.TotalPrice)
+            
+            builder.Property(adjustmentEntry => adjustmentEntry.UnitPrice)
                 .IsRequired()
                 .HasColumnOrder(3);
+
+            builder.Property(adjustmentEntry => adjustmentEntry.TotalPrice)
+                .IsRequired()
+                .HasColumnOrder(4);
+
+            builder.Property(adjustmentEntry => adjustmentEntry.TotalPrice)
+                .IsRequired()
+                .HasColumnOrder(5);
         }
     }
 }

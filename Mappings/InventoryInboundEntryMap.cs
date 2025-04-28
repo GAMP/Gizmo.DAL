@@ -14,6 +14,28 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(InventoryInboundEntry))
                 .HasBaseType<InventoryEntry>();
+
+            builder.Property(inboundEntry => inboundEntry.Id)
+                .HasColumnOrder(0)
+                .IsRequired();
+
+            builder.Property(inboundEntry => inboundEntry.UnitCost)
+                .HasColumnOrder(1)
+                .IsRequired();
+
+            builder.Property(inboundEntry => inboundEntry.TotalCost)
+                .HasColumnOrder(2)
+                .IsRequired();
+
+            builder.Property(inboundEntry => inboundEntry.InventoryTransferEntryId)
+                .HasColumnOrder(3)
+                .IsRequired(false);
+
+            builder.HasOne(inboundEntry => inboundEntry.InventoryTransferEntry)
+                .WithOne()
+                .HasForeignKey<InventoryInboundEntry>(inboundEntry => inboundEntry.InventoryTransferEntryId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

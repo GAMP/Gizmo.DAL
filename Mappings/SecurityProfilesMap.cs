@@ -5,36 +5,31 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Security profile entity map.
+    /// </summary>
     public class SecurityProfileMap : IEntityTypeConfiguration<SecurityProfile>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<SecurityProfile> builder)
         {
-            // Primary Key
-            builder.HasKey(t => t.Id);
+            builder.ToTable(nameof(SecurityProfile));
 
-            // Properties
-            builder.Property(x => x.Id)
+            builder.HasKey(securityProfile => securityProfile.Id);
+
+            builder.Property(securityProfile => securityProfile.Id)
+                .HasColumnName("SecurityProfileId")
                 .HasColumnOrder(0);
 
-            builder.Property(t => t.Name)
+            builder.Property(securityProfile => securityProfile.Name)
                 .IsRequired()
                 .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.DisabledDrives)
+            builder.Property(securityProfile => securityProfile.DisabledDrives)
                 .HasColumnOrder(2);
 
-            // Indexes
-            builder.HasIndex(t => t.Name).IsUnique();
-
-            // Table & Column Mappings
-            builder.ToTable("SecurityProfile");
-
-            builder.Property(t => t.Id)
-                .HasColumnName("SecurityProfileId");
+            builder.HasIndex(securityProfile => securityProfile.Name).IsUnique();           
         }
     }
 }

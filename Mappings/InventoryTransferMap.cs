@@ -20,11 +20,11 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired();
 
             builder.Property(transfer => transfer.TransferStockId)
-                .HasColumnOrder(0)
+                .HasColumnOrder(1)
                 .IsRequired();
 
             builder.Property(transfer => transfer.InventoryInboundId)
-                .HasColumnOrder(1)
+                .HasColumnOrder(2)
                 .IsRequired(false);
 
             builder.HasOne(transfer => transfer.TransferStock)
@@ -33,8 +33,9 @@ namespace Gizmo.DAL.Mappings
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(transfer => transfer.InventoryInbound)
-                .WithMany()
-                .HasForeignKey(transfer => transfer.InventoryInboundId)
+                .WithOne()
+                .HasForeignKey<InventoryTransfer>(transfer => transfer.InventoryInboundId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
