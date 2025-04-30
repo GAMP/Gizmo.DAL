@@ -45,10 +45,6 @@ namespace Gizmo.DAL.Mappings
             builder.Property(reservation => reservation.Status)
                 .IsRequired();
 
-            // Indexes
-            builder.HasIndex(t => t.Pin)
-                .IsUnique();
-
             builder.Property(reservation => reservation.ExpireAfter)
                 .IsRequired(false);
 
@@ -58,8 +54,18 @@ namespace Gizmo.DAL.Mappings
             builder.Property(reservation => reservation.CancellationRefundPercentage)
                 .IsRequired();
 
+            builder.Property(reservation => reservation.LoginBlockBeforeTime)
+                .IsRequired(false);
+
+            builder.Property(reservation => reservation.LoginBlockAfterTime)
+                .IsRequired(false);
+
             builder.Property(reservation => reservation.FinalizedById)
                 .IsRequired(false);
+
+            // Indexes
+            builder.HasIndex(reservation => reservation.Pin)
+                .IsUnique();
 
             builder.HasIndex(reservation => reservation.Status);
 
