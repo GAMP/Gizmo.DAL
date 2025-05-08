@@ -27,6 +27,10 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(2)
                 .IsRequired();
 
+            builder.Property(inboundEntry => inboundEntry.ExpirationDate)
+                .HasColumnOrder(4)
+                .IsRequired(false);
+
             builder.Property(inboundEntry => inboundEntry.InventoryTransferEntryId)
                 .HasColumnOrder(3)
                 .IsRequired(false);
