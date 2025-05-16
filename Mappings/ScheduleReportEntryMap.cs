@@ -30,7 +30,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(3);
 
-            builder.Property(scheduleReportEntry => scheduleReportEntry.ReportParameters)
+            builder.Property(scheduleReportEntry => scheduleReportEntry.Filters)
                 .IsRequired(false)
                 .HasColumnOrder(4);
 

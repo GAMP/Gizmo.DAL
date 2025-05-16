@@ -15,7 +15,6 @@ using Gizmo.DAL.Mappings;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -1421,9 +1420,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new ScheduleReportEntryMap());
 
             modelBuilder.ApplyConfiguration(new RecipientMap());
-            modelBuilder.ApplyConfiguration(new RecipientChanneledMap());
             modelBuilder.ApplyConfiguration(new RecipientChannelMap());
-            modelBuilder.ApplyConfiguration(new RecipientUserMap());
             modelBuilder.ApplyConfiguration(new ScheduleReportRecipientMap());
 
             modelBuilder.ApplyConfiguration(new UserChannelMap());
@@ -1441,6 +1438,8 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new PaymentReceiptMap());
             modelBuilder.ApplyConfiguration(new RefundReceiptMap());
             modelBuilder.ApplyConfiguration(new ClientOptionsMap());
+
+            modelBuilder.ApplyConfiguration(new ProductOrderDiscountMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);

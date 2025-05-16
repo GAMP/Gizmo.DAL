@@ -18,17 +18,9 @@ namespace Gizmo.DAL.Mappings
             builder.Property(discountBasic => discountBasic.Id)
                 .HasColumnOrder(0);
 
-            builder.Property(discountBasic => discountBasic.ApplyType)
+            builder.Property(discountBasic => discountBasic.Value)
                 .IsRequired()
                 .HasColumnOrder(1);
-
-            builder.Property(discountBasic => discountBasic.Type)
-                .IsRequired()
-                .HasColumnOrder(2);
-
-            builder.Property(discountBasic => discountBasic.Value)
-                .IsRequired(false)
-                .HasColumnOrder(3);
         }
     }
 }

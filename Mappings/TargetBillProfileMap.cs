@@ -33,7 +33,7 @@ namespace Gizmo.DAL.Mappings
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(target => target.TargetGroupBillProfile)
-                .WithMany(targetGroup => targetGroup.BilliProfiles)
+                .WithMany(targetGroup => targetGroup.BillProfiles)
                 .HasForeignKey(target => target.TargetGroupBillProfileId)
                 .OnDelete(DeleteBehavior.Restrict);
 

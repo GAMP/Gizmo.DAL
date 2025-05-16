@@ -16,18 +16,23 @@ namespace Gizmo.DAL.Mappings
                 .UseTptMappingStrategy();
 
             builder.HasKey(promotion => promotion.Id);
+
             builder.Property(promotion => promotion.Id)
+                .HasColumnOrder(0)
                 .HasColumnName("PromotionId");
 
-            builder.Property(x => x.Name)
+            builder.Property(promotion => promotion.Name)
+                .HasColumnOrder(1)
                 .HasMaxLength(SQLStringSize.TINY45);
 
-            builder.Property(x => x.Description)
+            builder.Property(promotion => promotion.Description)
+                .HasColumnOrder(2)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired(false);
 
-            builder.Property(x => x.Template)
-                .IsRequired(false);                
+            builder.Property(promotion => promotion.CodeType)
+                .HasColumnOrder(3)
+                .IsRequired();
         }
     }
 }

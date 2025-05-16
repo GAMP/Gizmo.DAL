@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Usage session entity map.
+    /// </summary>
     public class UsageSessionMap : IEntityTypeConfiguration<UsageSession>
     {
         /// <summary>
@@ -11,37 +14,52 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<UsageSession> builder)
         {
-            builder.HasKey(x => x.Id);
+            builder.HasKey(usageSession => usageSession.Id);
 
-            builder.Property(x => x.Id)
+            builder.Property(usageSession => usageSession.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("UsageSessionId");
 
-            builder.Property(x => x.UserId)
+            builder.Property(usageSession => usageSession.UserId)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.CurrentUsageId)
+            builder.Property(usageSession => usageSession.CurrentUsageId)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.CurrentSecond)
+            builder.Property(usageSession => usageSession.CurrentSecond)
                 .HasColumnOrder(3);
 
-            builder.Property(x => x.IsActive)
+            builder.Property(usageSession => usageSession.NegativeSeconds)
                 .HasColumnOrder(4);
 
+            builder.Property(usageSession => usageSession.StartFee)
+                .HasColumnOrder(5);
+
+            builder.Property(usageSession => usageSession.MinimumFee)
+                .HasColumnOrder(6);
+
+            builder.Property(usageSession => usageSession.RatesTotal)
+                .HasColumnOrder(7);
+
+            builder.Property(usageSession => usageSession.DiscountAmount)
+                .HasColumnOrder(8);
+
+            builder.Property(usageSession => usageSession.IsActive)
+                .HasColumnOrder(9);
+
             // Indexes
-            builder.HasIndex(t => t.Id);
+            builder.HasIndex(usageSession => usageSession.Id);
 
             builder.ToTable(nameof(UsageSession));
 
-            builder.HasOne(x => x.User)
-                .WithMany(x => x.UsageSessions)
-                .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(usageSession => usageSession.User)
+                .WithMany(usageSession => usageSession.UsageSessions)
+                .HasForeignKey(usageSession => usageSession.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.CurrentUsage)
+            builder.HasOne(usageSession => usageSession.CurrentUsage)
                 .WithMany()
-                .HasForeignKey(x => x.CurrentUsageId)
+                .HasForeignKey(usageSession => usageSession.CurrentUsageId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

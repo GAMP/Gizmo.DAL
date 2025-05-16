@@ -12,6 +12,8 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<DiscountGroup> builder)
         {
+            builder.ToTable(nameof(DiscountGroup));
+
             builder.HasKey(discountGroup => discountGroup.Id);
 
             builder.Property(discountGroup => discountGroup.Id)

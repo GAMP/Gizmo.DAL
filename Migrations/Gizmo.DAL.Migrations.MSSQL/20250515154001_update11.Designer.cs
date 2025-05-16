@@ -4,6 +4,7 @@ using Gizmo.DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizmo.DAL.Migrations.MSSQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    partial class DefaultDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250515154001_update11")]
+    partial class update11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -9481,26 +9484,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.ToTable("PromotionDiscountGroup", (string)null);
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.ScheduleReportRecipient", b =>
-                {
-                    b.HasBaseType("Gizmo.DAL.Entities.Recipient");
-
-                    b.Property<int>("ScheduleReportId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(2);
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("ScheduleReportId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("ScheduleReportRecipient", (string)null);
-                });
-
             modelBuilder.Entity("Gizmo.DAL.Entities.RefundDepositPayment", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.Refund");
@@ -14715,31 +14698,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("DiscountGroup");
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.ScheduleReportRecipient", b =>
-                {
-                    b.HasOne("Gizmo.DAL.Entities.Recipient", null)
-                        .WithOne()
-                        .HasForeignKey("Gizmo.DAL.Entities.ScheduleReportRecipient", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gizmo.DAL.Entities.ScheduleReport", "ScheduleReport")
-                        .WithMany("Recipients")
-                        .HasForeignKey("ScheduleReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ScheduleReport");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Gizmo.DAL.Entities.RefundDepositPayment", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.DepositPayment", "DepositPayment")
@@ -15856,8 +15814,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.ScheduleReport", b =>
                 {
                     b.Navigation("Entries");
-
-                    b.Navigation("Recipients");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.TargetGroupBillProfile", b =>

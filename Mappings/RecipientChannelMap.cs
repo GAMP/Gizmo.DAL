@@ -19,7 +19,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("RecipientChannelId")
                 .HasColumnOrder(0);
 
-            builder.Property(recipientChannel => recipientChannel.RecipientChanneledId)
+            builder.Property(recipientChannel => recipientChannel.RecipientId)
                 .IsRequired()
                 .HasColumnOrder(1);
 
@@ -27,7 +27,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(2);
 
-            builder.HasIndex(recipientChannel => new { recipientChannel.RecipientChanneledId, recipientChannel.ChannelType })
+            builder.HasIndex(recipientChannel => new { recipientChannel.RecipientId, recipientChannel.ChannelType })
                 .IsUnique()
                 .HasFilter(null);
         }

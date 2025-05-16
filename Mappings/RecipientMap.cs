@@ -19,6 +19,14 @@ namespace Gizmo.DAL.Mappings
             builder.Property(recipient => recipient.Id)
                 .HasColumnName("RecipientId")
                 .HasColumnOrder(0);
+
+            builder.Property(recipient => recipient.IsDisabled)
+                .HasColumnOrder(1);
+
+            builder.HasMany(recipient => recipient.Channels)
+                .WithOne(recipientChannel => recipientChannel.Recipient)
+                .HasForeignKey(recipientChannel => recipientChannel.RecipientId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

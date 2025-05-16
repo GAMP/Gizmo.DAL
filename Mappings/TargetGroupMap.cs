@@ -38,9 +38,6 @@ namespace Gizmo.DAL.Mappings
             builder.Property(targetGroup => targetGroup.IncludeAll)
                 .IsRequired()
                 .HasColumnOrder(4);
-
-            builder.HasMany(targetGroup => targetGroup.Targets)
-                .WithOne(target => target.TargetGroup);
         }
     }
 }

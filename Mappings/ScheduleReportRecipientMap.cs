@@ -12,25 +12,34 @@ namespace Gizmo.DAL.Mappings
         ///<inheritdoc/>
         public void Configure(EntityTypeBuilder<ScheduleReportRecipient> builder)
         {
-            builder.ToTable(nameof(ScheduleReportRecipient));
+            builder.ToTable(nameof(ScheduleReportRecipient))
+                  .HasBaseType<Recipient>();
 
-            builder.HasKey(recipientScheduleReport =>  recipientScheduleReport.Id);
-
-            builder.Property(recipientScheduleReport => recipientScheduleReport.Id)
-                .HasColumnName("RecipientScheduleReportId")
+            builder.Property(scheduleReportRecipient => scheduleReportRecipient.Id)
+                .IsRequired()
                 .HasColumnOrder(0);
 
-            builder.Property(recipientScheduleReport => recipientScheduleReport.ScheduleReportId)
+            builder.Property(scheduleReportRecipient => scheduleReportRecipient.ScheduleReportId)
                 .IsRequired()
                 .HasColumnOrder(1);
 
-            builder.Property(recipientScheduleReport => recipientScheduleReport.RecipientId)
+            builder.Property(scheduleReportRecipient => scheduleReportRecipient.UserId)      
                 .IsRequired()
                 .HasColumnOrder(2);
 
-            builder.Property(recipientScheduleReport => recipientScheduleReport.IsDisabled)
-                .IsRequired()
-                .HasColumnOrder(3);
+            builder.HasIndex(scheduleReportRecipient => new { scheduleReportRecipient.ScheduleReportId, scheduleReportRecipient.UserId })
+                .IsUnique()
+                .HasFilter(null);
+
+            builder.HasOne(scheduleReportRecipient => scheduleReportRecipient.ScheduleReport)
+                .WithMany(scheduleReport => scheduleReport.Recipients)
+                .HasForeignKey(scheduleReportRecipient => scheduleReportRecipient.ScheduleReportId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(scheduleReportRecipient => scheduleReportRecipient.User)
+                .WithMany()
+                .HasForeignKey(scheduleReportRecipient => scheduleReportRecipient.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -23,15 +23,6 @@ namespace Gizmo.DAL.Mappings
             builder.Property(target => target.Id)
                 .IsRequired()
                 .HasColumnOrder(0);
-
-            builder.Property(target => target.TargetGroupId)
-                .IsRequired()
-                .HasColumnOrder(1);
-
-            builder.HasOne(target => target.TargetGroup)
-                .WithMany(targetGroup => targetGroup.Targets)
-                .HasForeignKey(target => target.TargetGroupId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Usage rate map.
+    /// </summary>
     public class UsageRateMap : IEntityTypeConfiguration<UsageRate>
     {
         /// <summary>
@@ -13,24 +16,47 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(UsageRate));
 
-            builder.Property(x => x.Id)
+            builder.Property(usageRate => usageRate.Id)
                 .HasColumnOrder(0);
 
-            builder.Property(x => x.BillRateId)
+            builder.Property(usageRate => usageRate.BillRateId)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.Total)
+            builder.Property(usageRate => usageRate.Total)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.Rate)
+            builder.Property(usageRate => usageRate.Rate)
                 .HasColumnOrder(3);
 
-            // Indexes
-            builder.HasIndex(t => t.Id);
+            builder.Property(usageRate => usageRate.BillProfileStamp)
+                .HasColumnOrder(4);
 
-            builder.HasOne(x => x.BillRate)
-                .WithMany(x=>x.Usage)
-                .HasForeignKey(x => x.BillRateId);
+            builder.Property(usageRate => usageRate.DiscountId)
+                .IsRequired(false)
+                .HasColumnOrder(5);
+
+            builder.Property(usageRate => usageRate.DiscountCalculationType)
+                .IsRequired(false)
+                .HasColumnOrder(6);
+
+            builder.Property(usageRate => usageRate.DiscountValue)
+                .IsRequired(false)
+                .HasColumnOrder(7);
+
+            builder.Property(usageRate => usageRate.DiscountAmount)
+                .IsRequired()
+                .HasColumnOrder(8);
+
+            builder.HasIndex(usageRate => usageRate.Id);
+
+            builder.HasOne(usageRate => usageRate.BillRate)
+                .WithMany(usageRate => usageRate.Usage)
+                .HasForeignKey(usageRate => usageRate.BillRateId);
+
+            builder.HasOne(billRate => billRate.Discount)
+                .WithMany()
+                .HasForeignKey(billRate => billRate.DiscountId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -14,17 +14,17 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(PromotionPeriod));
 
-            builder.HasKey(period => period.Id);
+            builder.HasKey(promotionPeriod => promotionPeriod.Id);
 
-            builder.Property(period => period.Id)
+            builder.Property(promotionPeriod => promotionPeriod.Id)
                 .HasColumnName("PromotionId")
                 .ValueGeneratedNever();
 
             builder.HasIndex(t => t.Id);
 
-            builder.HasOne(period => period.Promotion)
+            builder.HasOne(promotionPeriod => promotionPeriod.Promotion)
                 .WithOne(promotion => promotion.Period)
-                .HasForeignKey<PromotionPeriod>(period => period.Id)
+                .HasForeignKey<PromotionPeriod>(promotionPeriod => promotionPeriod.Id)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
