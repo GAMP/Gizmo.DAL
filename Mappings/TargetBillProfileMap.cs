@@ -27,6 +27,10 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(2);
 
+            builder.HasIndex(target => new { target.TargetGroupBillProfileId, target.BillProfileId })
+                .IsUnique()
+                .HasFilter(null);
+
             builder.HasOne(target => target.BillProfile)
                 .WithMany()
                 .HasForeignKey(target => target.BillProfileId)
@@ -35,11 +39,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(target => target.TargetGroupBillProfile)
                 .WithMany(targetGroup => targetGroup.BillProfiles)
                 .HasForeignKey(target => target.TargetGroupBillProfileId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasIndex(target => new { target.TargetGroupBillProfileId, target.BillProfileId })
-                .IsUnique()
-                .HasFilter(null);
+                .OnDelete(DeleteBehavior.Restrict);  
         }
     }
 }

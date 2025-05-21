@@ -27,19 +27,19 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(2);
 
-            builder.HasOne(target => target.Product)
-                .WithMany()
-                .HasForeignKey(target => target.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasIndex(target => new { target.TargetGroupProductId, target.ProductId })
+                .IsUnique()
+                .HasFilter(null);
 
             builder.HasOne(target => target.TargetGroupProduct)
                 .WithMany(targetGroup => targetGroup.Products)
                 .HasForeignKey(target => target.TargetGroupProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(target => new { target.TargetGroupProductId, target.ProductId })
-                .IsUnique()
-                .HasFilter(null);
+            builder.HasOne(target => target.Product)
+                .WithMany()
+                .HasForeignKey(target => target.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);            
         }
     }
 }

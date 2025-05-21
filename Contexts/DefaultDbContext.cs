@@ -1371,10 +1371,12 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new TargetGroupProductTimeMap());
             modelBuilder.ApplyConfiguration(new TargetGroupProductGroupMap());
             modelBuilder.ApplyConfiguration(new TargetGroupBillProfileMap());
+            modelBuilder.ApplyConfiguration(new TargetGroupPaymentMethodMap());
             modelBuilder.ApplyConfiguration(new TargetProductMap());
             modelBuilder.ApplyConfiguration(new TargetProductTimeMap());
             modelBuilder.ApplyConfiguration(new TargetProductGroupMap());
-            modelBuilder.ApplyConfiguration(new TargetBillProfileMap());
+            modelBuilder.ApplyConfiguration(new TargetBillProfileMap());           
+            modelBuilder.ApplyConfiguration(new TargetPaymentMethodMap());
 
             modelBuilder.ApplyConfiguration(new PromotionMap());
             modelBuilder.ApplyConfiguration(new PromotionLimitMap());

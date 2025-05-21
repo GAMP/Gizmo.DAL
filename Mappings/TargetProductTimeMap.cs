@@ -29,17 +29,17 @@ namespace Gizmo.DAL.Mappings
 
             builder.HasIndex(target => new { target.TargetGroupProductTimeId, target.ProductTimeId })
                 .IsUnique()
-                .HasFilter(null);
-
-            builder.HasOne(target => target.ProductTime)
-                .WithMany()
-                .HasForeignKey(target => target.ProductTimeId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasFilter(null);   
 
             builder.HasOne(target => target.TargetGroupProductTime)
                 .WithMany(targetGroup => targetGroup.ProductTimes)
                 .HasForeignKey(target => target.TargetGroupProductTimeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(target => target.ProductTime)
+                .WithMany()
+                .HasForeignKey(target => target.ProductTimeId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
