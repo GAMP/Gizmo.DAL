@@ -1354,14 +1354,9 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new CompanionMap());
 
             modelBuilder.ApplyConfiguration(new DiscountMap());
-            modelBuilder.ApplyConfiguration(new DiscountPeriodicMap());    
             modelBuilder.ApplyConfiguration(new DiscountPeriodMap());
             modelBuilder.ApplyConfiguration(new DiscountPeriodDayMap());
             modelBuilder.ApplyConfiguration(new DiscountPeriodDayTimeMap());
-            modelBuilder.ApplyConfiguration(new DiscountTargetedMap());
-            modelBuilder.ApplyConfiguration(new DiscountBonusFlatMap());
-            modelBuilder.ApplyConfiguration(new DiscountBonusMap());
-            modelBuilder.ApplyConfiguration(new DiscountBasicMap());
             modelBuilder.ApplyConfiguration(new DiscountBranchMap());
             modelBuilder.ApplyConfiguration(new DiscountGroupMap());
             modelBuilder.ApplyConfiguration(new DiscountGroupDiscountMap());

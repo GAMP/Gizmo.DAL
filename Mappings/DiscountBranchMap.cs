@@ -17,23 +17,23 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(DiscountBranch));
 
-            builder.HasKey(t => new { t.DiscountId, t.BranchId });
+            builder.HasKey(discountBranch => new { discountBranch.DiscountId, discountBranch.BranchId });
 
-            builder.Property(e => e.DiscountId)
+            builder.Property(discountBranch => discountBranch.DiscountId)
                 .HasColumnOrder(0);
 
-            builder.Property(e => e.BranchId)
+            builder.Property(discountBranch => discountBranch.BranchId)
                 .HasColumnOrder(1);
 
-            builder.Property(e => e.IsEnabled)
+            builder.Property(discountBranch => discountBranch.IsEnabled)
                 .HasColumnOrder(2);
 
-            builder.HasIndex(t => new { t.DiscountId, t.BranchId })
+            builder.HasIndex(discountBranch => new { discountBranch.DiscountId, discountBranch.BranchId })
                 .IsUnique();
 
-            builder.HasOne(x => x.Branch)
-                .WithMany(x => x.Discounts)
-                .HasForeignKey(x => x.BranchId);
+            builder.HasOne(discountBranch => discountBranch.Branch)
+                .WithMany(branch => branch.Discounts)
+                .HasForeignKey(discountBranch => discountBranch.BranchId);
         }
     }
 }

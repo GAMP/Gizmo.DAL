@@ -14,24 +14,24 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(DiscountPeriodDayTime));
 
-            builder.HasKey(x => new { x.DiscountPeriodDayId, x.StartSecond, x.EndSecond });
-            builder.HasIndex(t => t.DiscountPeriodDayId);
+            builder.HasKey(periodDayTime => new { periodDayTime.DiscountPeriodDayId, periodDayTime.StartSecond, periodDayTime.EndSecond });
+            builder.HasIndex(periodDayTime => periodDayTime.DiscountPeriodDayId);
 
-            builder.Property(x => x.DiscountPeriodDayId)
+            builder.Property(periodDayTime => periodDayTime.DiscountPeriodDayId)
                 .IsRequired()
                 .HasColumnOrder(0);
 
-            builder.Property(x => x.StartSecond)
+            builder.Property(periodDayTime => periodDayTime.StartSecond)
                 .IsRequired()
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.EndSecond)
+            builder.Property(periodDayTime => periodDayTime.EndSecond)
                 .IsRequired()
                 .HasColumnOrder(2);
 
-            builder.HasOne(x => x.Day)
-                .WithMany(x => x.Times)
-                .HasForeignKey(x => x.DiscountPeriodDayId)
+            builder.HasOne(periodDayTime => periodDayTime.Day)
+                .WithMany(periodDay => periodDay.Times)
+                .HasForeignKey(periodDayTime => periodDayTime.DiscountPeriodDayId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
