@@ -20,13 +20,26 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("StockCountEntryId")
                 .IsRequired();
 
-            builder.Property(stockCountEntry => stockCountEntry.Expected)
+            builder.Property(stockCountEntry => stockCountEntry.StockCountId)
                 .HasColumnOrder(1)
                 .IsRequired();
 
-            builder.Property(stockCountEntry => stockCountEntry.Actual)
+            builder.Property(stockCountEntry => stockCountEntry.Expected)
                 .HasColumnOrder(2)
                 .IsRequired();
+
+            builder.Property(stockCountEntry => stockCountEntry.Actual)
+                .HasColumnOrder(3)
+                .IsRequired();
+
+            builder.Property(stockCountEntry => stockCountEntry.Difference)
+                .HasColumnOrder(4)
+                .IsRequired();
+
+            builder.Property(stockCountEntry => stockCountEntry.Note)
+                .HasMaxLength(SQLStringSize.TINY)
+                .HasColumnOrder(5)
+                .IsRequired(false);
 
             builder.HasIndex(stockCountEntry => new { stockCountEntry.ProductId, stockCountEntry.StockCountId })
                 .IsUnique()

@@ -1386,6 +1386,8 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new StockMap());
             modelBuilder.ApplyConfiguration(new StockCountMap());
             modelBuilder.ApplyConfiguration(new StockCountEntryMap());
+            modelBuilder.ApplyConfiguration(new StockCountInboundMap());
+            modelBuilder.ApplyConfiguration(new StockCountAdjustementMap());
 
             modelBuilder.ApplyConfiguration(new InventoryMap());
             modelBuilder.ApplyConfiguration(new InventoryInboundMap());
@@ -1437,6 +1439,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new ClientOptionsMap());
 
             modelBuilder.ApplyConfiguration(new ProductOrderDiscountMap());
+           
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
