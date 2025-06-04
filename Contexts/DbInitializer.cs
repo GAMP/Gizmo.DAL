@@ -83,6 +83,7 @@ namespace Gizmo.DAL.Contexts
 
                 if (isMigrated)
                 {
+                    // check if local time zone is not UTC
                     if (TimeZoneInfo.Local.BaseUtcOffset != TimeSpan.Zero)
                     {
                         var localTimeZone = TimeZoneInfo.Local;
