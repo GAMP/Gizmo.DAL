@@ -1,8 +1,6 @@
-﻿using Gizmo.DAL.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -10,13 +8,16 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
+using Gizmo.DAL.Entities;
 using Gizmo.DAL.Mappings;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Npgsql;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Gizmo.Server;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql;
 
 namespace Gizmo.DAL.Contexts
 {
@@ -2138,9 +2139,7 @@ namespace Gizmo.DAL.Contexts
         {
             if (userQuery == null)
                 throw new ArgumentNullException(nameof(userQuery));
-
             RestorePermissions(userQuery, this);
-            SaveChanges();
         }
 
         /// <summary>
@@ -2153,21 +2152,40 @@ namespace Gizmo.DAL.Contexts
         {
             if (userQuery == null)
                 throw new ArgumentNullException(nameof(userQuery));
-
-            foreach (var @operator in userQuery.ToList())
+            
+            using(var dbTransaction = Database.BeginTransaction())
             {
-                cx.UserPermissions.RemoveRange(@operator.Permissions);
-                var allPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes()
-                    .Select(claim =>
-                    {
-                        return new UserPermission()
+                // reset all user permission sets, this will allow the normal policies attached to the user to be used
+                userQuery.ExecuteUpdate(userOperator => userOperator.SetProperty(entity => entity.PermissionSetId,entity => null));
+
+                foreach (int userId in userQuery.Select(user => user.Id).ToList())
+                {
+                    cx.UserPermissions.Where(user => user.UserId == userId).ExecuteDelete();
+
+                    var policyAttributes = Enum.GetValues<GizmoPolicies>()
+                        .Select(policy => new
                         {
-                            Type = claim.Resource,
-                            Value = claim.Operation,
-                        };
-                    }).ToList();
-                @operator.Permissions.UnionWith(allPermissions);
-            }
+                            Policy = policy,
+                            Description = policy.GetAttribute<PolicyDescriptionAttribute>()
+                        })
+                        .Where(policy => policy.Description != null)
+                        .ToList();
+
+                    var allPermissions = policyAttributes
+                        .Select(claim =>
+                        {
+                            return new UserPermission()
+                            {
+                                UserId = userId,
+                                Type = claim.Description.Resource,
+                                Value = claim.Description.Operation,
+                            };
+                        });
+                    cx.UserPermissions.AddRange(allPermissions);
+                }
+                SaveChanges();
+                dbTransaction.Commit();
+            }           
         }
 
         /// <summary>
