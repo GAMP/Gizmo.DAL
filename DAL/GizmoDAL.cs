@@ -51,11 +51,15 @@ namespace Gizmo.DAL
         {
             switch (type)
             {
+                // fix the connection string for MSSQL databases
+                // we need to allow trusting the server certificate
                 case DatabaseType.MSSQL:
                 case DatabaseType.MSSQLEXPRESS:
-                case DatabaseType.LOCALDB:              
-                    var connectionStringBuilder = new SqlConnectionStringBuilder(cn);
-                    connectionStringBuilder.TrustServerCertificate = true;
+                case DatabaseType.LOCALDB:
+                    var connectionStringBuilder = new SqlConnectionStringBuilder(cn)
+                    {
+                        TrustServerCertificate = true
+                    };
                     cn = connectionStringBuilder.ToString();    
                     break;
                 default:
@@ -105,7 +109,7 @@ namespace Gizmo.DAL
         /// <summary>
         /// Gets current principal.
         /// </summary>
-        public IDispatcherPrincipal CurrentPrincipal
+        public static IDispatcherPrincipal CurrentPrincipal
         {
             get { return Thread.CurrentPrincipal as IDispatcherPrincipal; }
         }
@@ -131,8 +135,6 @@ namespace Gizmo.DAL
                 return pendingChanges.Any() == false;
             }
         }
-
-        #region CONTEXT
 
         /// <summary>
         /// Initiate Database Context
@@ -222,90 +224,9 @@ namespace Gizmo.DAL
             }
         }
 
-        #endregion
-
-        #region DATABASE
-
-        /// <summary>
-        /// Creates a new database on the database server for the model defined in the
-        /// backing context, but only if a database with the same name does not already exist on the server.
-        /// </summary>
-        /// <returns>
-        /// True if the database did not exist and was created; false otherwise.
-        /// </returns>
-
-        [Obsolete()]
-        public bool CreateIfNotExists()
-        {
-            using var cx = GetDbContext();
-            return cx.Database.EnsureCreated();
-        }
-
-        /// <summary>
-        /// Drops existing database and creates a new one.
-        /// </summary>
-
-        [Obsolete()]
-        public void DropCreate()
-        {
-            using var cx = GetDbContext();
-
-            if (cx.Database.GetService<IRelationalDatabaseCreator>().Exists())
-                cx.Database.EnsureDeleted();
-
-            cx.Database.EnsureCreated();
-        }
-
-        [Obsolete()]
-        public void Backup(string fileName)
-        {
-            Backup(DatabaseName, fileName);
-        }
-
-        [Obsolete()]
-        public void Backup(string databaseName, string fileName)
-        {
-            if (string.IsNullOrWhiteSpace(databaseName))
-                throw new ArgumentNullException(nameof(databaseName));
-
-            if (string.IsNullOrWhiteSpace(fileName))
-                throw new ArgumentNullException(nameof(fileName));
-
-            if (!Path.IsPathRooted(fileName))
-                throw new ArgumentException("Only full paths allowed.", nameof(fileName));
-
-            switch (DatabaseType)
-            {
-                case DatabaseType.LOCALDB:
-                case DatabaseType.MSSQL:
-                case DatabaseType.MSSQLEXPRESS:
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-
-            if (!Path.IsPathRooted(fileName))
-                throw new ArgumentException("Only full paths allowed.", nameof(fileName));
-
-            string SQL_COMMAND_STRING = $"BACKUP DATABASE [{databaseName}] TO DISK = '{fileName}' WITH FORMAT,CHECKSUM,COPY_ONLY";
-
-            var sb = new SqlConnectionStringBuilder(ConnectionString)
-            {
-                //InitialCatalog = string.Empty
-            };
-            using (var cx = GetDbContext(sb.ToString()))
-            {
-                // ************ NOT APPLICABLE FOR EF CORE MIGRATION ************ //
-                //cx.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, SQL_COMMAND_STRING);
-
-                cx.Database.ExecuteSqlRaw(SQL_COMMAND_STRING);
-            }
-        }
-
         /// <summary>
         /// Drops database if exists.
         /// </summary>
-        [Obsolete]
         public void DropIfExists()
         {
             using var cx = GetDbContext();
@@ -316,11 +237,110 @@ namespace Gizmo.DAL
         /// Check if database exists.
         /// </summary>
         /// <returns></returns>
-        [Obsolete()]
         public bool Exists()
         {
             using var cx = GetDbContext();
             return cx.Database.GetService<IRelationalDatabaseCreator>().Exists();
+        }
+
+        /// <summary>
+        /// Generic insert or update method.
+        /// </summary>
+        /// <typeparam name="T">Item type.</typeparam>
+        /// <param name="item">Item.</param>
+        public void InsertOrUpdate<T>(T item) where T : Entities.EntityBase
+        {
+            using (var cx = GetDbNonProxyContext())
+            {
+                cx.Entry(item).State = item.Id == 0 ?
+                              EntityState.Added :
+                              EntityState.Modified;
+
+                cx.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Gets setting by name.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <returns>Found setting, null in case no setting found.</returns>
+        public Entities.Setting SettingGet(string name)
+        {
+            using (var cx = GetDbContext())
+            {
+                return cx.Settings.AsNoTracking()
+                    .Where(x => string.Compare(x.Name, name, true) == 0)
+                    .SingleOrDefault();
+            }
+        }
+
+        /// <summary>
+        /// Gets settings value.
+        /// </summary>
+        /// <typeparam name="T">Value type.</typeparam>
+        /// <param name="name">Setting name.</param>
+        /// <returns>Value.</returns>
+
+        public T SettingGetValue<T>(string name)
+        {
+            var dbSetting = SettingGet(name);
+
+            if (dbSetting != null)
+            {
+                var value = dbSetting.Value;
+                if (value != null)
+                {
+                    var converter = TypeDescriptor.GetConverter(typeof(T));
+                    return converter.CanConvertFrom(value.GetType()) ?
+                        (T)converter.ConvertFrom(value) :
+                        default(T);
+                }
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
+        /// Adds or updates specified setting.
+        /// </summary>
+        /// <param name="setting">Settng instance.</param>
+        public void SettingSet(Entities.Setting setting)
+        {
+            if (setting == null)
+                throw new ArgumentNullException(nameof(setting));
+
+            InsertOrUpdate(setting);
+        }
+
+        /// <summary>
+        /// Sets specified setting value.
+        /// </summary>
+        /// <param name="name">Setting name.</param>
+        /// <param name="value">Setting value.</param>
+        /// <param name="group">Setting group.</param>
+        public void SettingSet(string name, string value, string group = null)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+
+            using (var cx = GetDbNonProxyContext())
+            {
+                var entity = cx.Settings.Where(x => x.Name == name).FirstOrDefault();
+                if (entity == null)
+                {
+                    entity = new Entities.Setting() { Name = name, Value = value, GroupName = group };
+                    cx.Entry(entity).State = EntityState.Added;
+                }
+                else
+                {
+                    entity.GroupName = group;
+                    entity.Value = value;
+                    entity.Name = name;
+                    cx.Entry(entity).State = EntityState.Modified;
+                }
+                cx.SaveChanges();
+            }
         }
 
         /// <summary>
@@ -1203,144 +1223,6 @@ namespace Gizmo.DAL
                     //commit any outstanding changes
                     trx.Commit();
                 }
-            }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Generic insert or update method.
-        /// </summary>
-        /// <typeparam name="T">Item type.</typeparam>
-        /// <param name="item">Item.</param>
-        [Obsolete()]
-        public void InsertOrUpdate<T>(T item) where T : Entities.EntityBase
-        {
-            using (var cx = GetDbNonProxyContext())
-            {
-                cx.Entry(item).State = item.Id == 0 ?
-                              EntityState.Added :
-                              EntityState.Modified;
-
-                cx.SaveChanges();
-            }
-        }
-
-        /// <summary>
-        /// Generic remove method.
-        /// </summary>
-        /// <typeparam name="T">Item type.</typeparam>
-        /// <param name="item">Item.</param>
-        [Obsolete()]
-        public void Remove<T>(T item) where T : Entities.EntityBase
-        {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            using (var cx = GetDbNonProxyContext())
-            {
-                cx.Entry(item).State = EntityState.Deleted;
-                cx.SaveChanges();
-            }
-        }
-
-        [Obsolete()]
-        /// <summary>
-        /// Gets all current settings.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<Entities.Setting> SettingGet()
-        {
-            using (var cx = GetDbContext())
-            {
-                return cx.Settings.ToList();
-            }
-        }
-
-        /// <summary>
-        /// Gets setting by name.
-        /// </summary>
-        /// <param name="name">Setting name.</param>
-        /// <returns>Found setting, null in case no setting found.</returns>
-
-        [Obsolete()]
-        public Entities.Setting SettingGet(string name)
-        {
-            using (var cx = GetDbContext())
-            {
-                return cx.Settings.AsNoTracking()
-                    .Where(x => string.Compare(x.Name, name, true) == 0)
-                    .SingleOrDefault();
-            }
-        }
-
-        /// <summary>
-        /// Gets settings value.
-        /// </summary>
-        /// <typeparam name="T">Value type.</typeparam>
-        /// <param name="name">Setting name.</param>
-        /// <returns>Value.</returns>
-
-        public T SettingGetValue<T>(string name)
-        {
-            var dbSetting = SettingGet(name);
-
-            if (dbSetting != null)
-            {
-                var value = dbSetting.Value;
-                if (value != null)
-                {
-                    var converter = TypeDescriptor.GetConverter(typeof(T));
-                    return converter.CanConvertFrom(value.GetType()) ?
-                        (T)converter.ConvertFrom(value) :
-                        default(T);
-                }
-            }
-
-            return default(T);
-        }
-
-        /// <summary>
-        /// Adds or updates specified setting.
-        /// </summary>
-        /// <param name="setting">Settng instance.</param>
-
-        public void SettingSet(Entities.Setting setting)
-        {
-            if (setting == null)
-                throw new ArgumentNullException(nameof(setting));
-
-            InsertOrUpdate(setting);
-        }
-
-        /// <summary>
-        /// Sets specified setting value.
-        /// </summary>
-        /// <param name="name">Setting name.</param>
-        /// <param name="value">Setting value.</param>
-        /// <param name="group">Setting group.</param>
-        [Obsolete()]
-        public void SettingSet(string name, string value, string group = null)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name));
-
-            using (var cx = GetDbNonProxyContext())
-            {
-                var entity = cx.Settings.Where(x => x.Name == name).FirstOrDefault();
-                if (entity == null)
-                {
-                    entity = new Entities.Setting() { Name = name, Value = value, GroupName = group };
-                    cx.Entry(entity).State = EntityState.Added;
-                }
-                else
-                {
-                    entity.GroupName = group;
-                    entity.Value = value;
-                    entity.Name = name;
-                    cx.Entry(entity).State = EntityState.Modified;
-                }
-                cx.SaveChanges();
             }
         }
     }
