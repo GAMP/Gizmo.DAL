@@ -30,22 +30,37 @@ using Gizmo.DAL.Scripts;
 
 namespace Gizmo.DAL
 {
-    #region GIZMODATABASE
     /// <summary>
     /// Gizmo database class.
     /// </summary>
     public partial class GizmoDatabase
     {
-        private readonly IGizmoDbContextProviderConcrete _dbContextProvider;
-
-        #region CONSTRUCTOR
+        private readonly GizmoDbContextProviderConcrete _dbContextProvider;
 
         /// <summary>
         /// New database instance.
         /// </summary>
-        public GizmoDatabase(DatabaseType type, string cn, int? commandTimeout) : this(type, cn)
+        public GizmoDatabase(DatabaseType type, string cn) : this(type, cn, null)
         {
-            CommandTimeout = commandTimeout;
+        }
+
+        /// <summary>
+        /// New database instance.
+        /// </summary>
+        public GizmoDatabase(DatabaseType type, string cn, int? commandTimeout)
+        {
+            switch (type)
+            {
+                case DatabaseType.MSSQL:
+                case DatabaseType.MSSQLEXPRESS:
+                case DatabaseType.LOCALDB:              
+                    var connectionStringBuilder = new SqlConnectionStringBuilder(cn);
+                    connectionStringBuilder.TrustServerCertificate = true;
+                    cn = connectionStringBuilder.ToString();    
+                    break;
+                default:
+                    break;
+            }
 
             var dbConfig = new ServiceDatabaseConfig
             {
@@ -54,32 +69,12 @@ namespace Gizmo.DAL
                 CommandTimeout = commandTimeout
             };
 
-            _dbContextProvider = new GizmoDbContextProviderConcrete(dbConfig);
-        }
-
-        /// <summary>
-        /// New database instance.
-        /// </summary>
-        public GizmoDatabase(DatabaseType type, string cn)
-        {
-            if (string.IsNullOrWhiteSpace(cn))
-                throw new ArgumentNullException(nameof(cn));
-
+            CommandTimeout = commandTimeout;
             DatabaseType = type;
             ConnectionString = cn;
 
-            var dbConfig = new ServiceDatabaseConfig
-            {
-                DbConnectionString = cn,
-                DbType = type
-            };
-
             _dbContextProvider = new GizmoDbContextProviderConcrete(dbConfig);
         }
-
-        #endregion
-
-        #region PROPERTIES
 
         /// <summary>
         /// Gets database type.
@@ -136,8 +131,6 @@ namespace Gizmo.DAL
                 return pendingChanges.Any() == false;
             }
         }
-
-        #endregion
 
         #region CONTEXT
 
@@ -240,6 +233,8 @@ namespace Gizmo.DAL
         /// <returns>
         /// True if the database did not exist and was created; false otherwise.
         /// </returns>
+
+        [Obsolete()]
         public bool CreateIfNotExists()
         {
             using var cx = GetDbContext();
@@ -249,6 +244,8 @@ namespace Gizmo.DAL
         /// <summary>
         /// Drops existing database and creates a new one.
         /// </summary>
+
+        [Obsolete()]
         public void DropCreate()
         {
             using var cx = GetDbContext();
@@ -259,59 +256,13 @@ namespace Gizmo.DAL
             cx.Database.EnsureCreated();
         }
 
-        /// <summary>
-        /// Drops database if exists.
-        /// </summary>
-        public void DropIfExists()
-        {
-            using var cx = GetDbContext();
-            cx.Database.EnsureDeleted();
-        }
-
-        /// <summary>
-        /// Check if database exists.
-        /// </summary>
-        /// <returns></returns>
-        public bool Exists()
-        {
-            using var cx = GetDbContext();
-            return cx.Database.GetService<IRelationalDatabaseCreator>().Exists();
-        }
-
-        // ************ NOT APPLICABLE FOR EF CORE MIGRATION ************ //
-        ///// <summary>
-        ///// Gets migrator for current database.
-        ///// </summary>
-        ///// <returns>New migrator instance.</returns>
-        //public DbMigrator GetMigrator()
-        //{
-        //    switch (DatabaseType)
-        //    {
-        //        case DatabaseType.LOCALDB:
-        //        case DatabaseType.MSSQL:
-        //        case DatabaseType.MSSQLEXPRESS:
-        //            return new DbMigrator(new Migrations.MSSQLConfiguration());
-        //        default:
-        //            throw new ArgumentException("Invalid database type", nameof(DatabaseType));
-        //    }
-        //}
-
-        /// <summary>
-        /// Backups the associated database.
-        /// </summary>
-        /// <param name="fileName">Backup file name.</param>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>Associated task.</returns>
-        public Task BackupAsync(string fileName, CancellationToken ct)
-        {
-            return BackupAsync(DatabaseName, fileName, ct);
-        }
-
+        [Obsolete()]
         public void Backup(string fileName)
         {
             Backup(DatabaseName, fileName);
         }
 
+        [Obsolete()]
         public void Backup(string databaseName, string fileName)
         {
             if (string.IsNullOrWhiteSpace(databaseName))
@@ -349,6 +300,38 @@ namespace Gizmo.DAL
 
                 cx.Database.ExecuteSqlRaw(SQL_COMMAND_STRING);
             }
+        }
+
+        /// <summary>
+        /// Drops database if exists.
+        /// </summary>
+        [Obsolete]
+        public void DropIfExists()
+        {
+            using var cx = GetDbContext();
+            cx.Database.EnsureDeleted();
+        }
+
+        /// <summary>
+        /// Check if database exists.
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete()]
+        public bool Exists()
+        {
+            using var cx = GetDbContext();
+            return cx.Database.GetService<IRelationalDatabaseCreator>().Exists();
+        }
+
+        /// <summary>
+        /// Backups the associated database.
+        /// </summary>
+        /// <param name="fileName">Backup file name.</param>
+        /// <param name="ct">Cancellation token.</param>
+        /// <returns>Associated task.</returns>
+        public Task BackupAsync(string fileName, CancellationToken ct)
+        {
+            return BackupAsync(DatabaseName, fileName, ct);
         }
 
         /// <summary>
@@ -514,6 +497,14 @@ namespace Gizmo.DAL
             }
         }
 
+        /// <summary>
+        /// Cleans up the database by removing all data from it.
+        /// </summary>
+        /// <param name="deleteUsers">Delete users.</param>
+        /// <param name="deleteHosts">Delete hosts.</param>
+        /// <param name="deleteOperators">Delete operators.</param>
+        /// <param name="deleteProducts">Delete products.</param>
+        /// <param name="ct">Cancellation token.</param>
         public Task CleanupAsync(bool deleteUsers,
             bool deleteHosts,
             bool deleteOperators,
@@ -530,6 +521,15 @@ namespace Gizmo.DAL
             }
         }
 
+        /// <summary>
+        /// Cleans up the database by removing all data from it.
+        /// </summary>
+        /// <param name="cx">Database context.</param>
+        /// <param name="deleteUsers">Delete users.</param>
+        /// <param name="deleteHosts">Delete hosts.</param>
+        /// <param name="deleteOperators">Delete operators.</param>
+        /// <param name="deleteProducts">Delete products.</param>
+        /// <param name="ct">Cancellation token.</param>
         public async Task CleanupAsync(DefaultDbContext cx,
             bool deleteUsers,
             bool deleteHosts,
@@ -842,6 +842,99 @@ namespace Gizmo.DAL
         }
 
         /// <summary>
+        /// Removes all users that are marked as deleted from the database.
+        /// </summary>
+        /// <param name="dbContext">Database context.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public async Task CleanupUsersAsync(DefaultDbContext dbContext, CancellationToken cancellationToken)
+        {
+            if (dbContext == null)
+                throw new ArgumentNullException(nameof(dbContext));
+
+            using (var trx = dbContext.Database.BeginTransaction(IsolationLevel.Serializable))
+            {
+                dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
+                dbContext.Database.SetCommandTimeout(int.MaxValue);
+
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[AssetTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[AppStat] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[AppRating] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[AssistanceRequest] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[ReservationUser] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[Reservation] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UsageTime] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UsageTimeFixed] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UsageRate] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UsageUserSession] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UsageSession] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UserSessionChange] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UserSessionChange] WHERE CreatedById IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UserSession] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[RefundInvoicePayment] WHERE InvoicePaymentId IN (SELECT InvoicePaymentId FROM [dbo].[InvoicePayment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[RefundDepositPayment] WHERE DepositPaymentId IN (SELECT DepositPaymentId FROM [dbo].[DepositPayment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[Refund] WHERE PaymentId IN (SELECT PaymentId FROM [dbo].[Payment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[RefundDepositPayment] WHERE RefundId IN (SELECT RefundId FROM [dbo].[Refund] WHERE DepositTransactionId IN (SELECT DepositTransactionId FROM [dbo].[DepositTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL)))", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[Refund] WHERE DepositTransactionId IN (SELECT DepositTransactionId FROM [dbo].[DepositTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[InvoicePayment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[PaymentIntentDeposit] WHERE PaymentIntentId IN (SELECT PaymentIntentId FROM [dbo].[PaymentIntent] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[PaymentIntent] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[DepositPayment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[Payment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"UPDATE InvoiceLineExtended SET BundleLineId=NULL WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[InvoiceLineProduct] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[InvoiceLineSession] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[InvoiceLineTime] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[InvoiceLineTimeFixed] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[InvoiceLineExtended] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[Invoice] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"UPDATE ProductOLExtended SET BundleLineId=NULL WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[ProductOLTimeFixed] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[ProductOLTime] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[ProductOLSession] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[ProductOLProduct] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[ProductOLExtended] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[ProductOrder] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[DepositTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[PointTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[HostGroupWaitingLineEntry] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UserCreditLimit] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UserAttribute] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                //await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Note] WHERE NoteId IN (SELECT NoteId FROM [dbo].[UserNote] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", ct);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[UserNote] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[Verification] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [dbo].[Token] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+                //await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [UserGuest] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", ct);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [UserMember] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"DELETE FROM [User] WHERE IsDeleted=1 AND UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", cancellationToken);
+
+
+                //detect any changes made
+                dbContext.ChangeTracker.DetectChanges();
+
+                //save any changes made
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                //commit changes
+                await trx.CommitAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
         /// Truncates log and dependent tables.
         /// </summary>
         /// <param name="ct">Cancellation token.</param>
@@ -860,10 +953,9 @@ namespace Gizmo.DAL
         /// <param name="cx">Database context.</param>
         /// <param name="ct">Cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the result returned by the database after executing the command.</returns>
-        public Task<int> TruncateLogAsync(DefaultDbContext cx, CancellationToken ct)
+        public static Task<int> TruncateLogAsync(DefaultDbContext cx, CancellationToken ct)
         {
-            if (cx == null)
-                throw new ArgumentNullException(nameof(cx));
+            ArgumentNullException.ThrowIfNull(cx);
 
             return cx.Database.ExecuteSqlScriptAsync(SQLScripts.TRUNCATE_LOGS, cToken: ct);
         }
@@ -1116,13 +1208,12 @@ namespace Gizmo.DAL
 
         #endregion
 
-        #region GENERIC METHODS
-
         /// <summary>
         /// Generic insert or update method.
         /// </summary>
         /// <typeparam name="T">Item type.</typeparam>
         /// <param name="item">Item.</param>
+        [Obsolete()]
         public void InsertOrUpdate<T>(T item) where T : Entities.EntityBase
         {
             using (var cx = GetDbNonProxyContext())
@@ -1140,6 +1231,7 @@ namespace Gizmo.DAL
         /// </summary>
         /// <typeparam name="T">Item type.</typeparam>
         /// <param name="item">Item.</param>
+        [Obsolete()]
         public void Remove<T>(T item) where T : Entities.EntityBase
         {
             if (item == null)
@@ -1152,10 +1244,7 @@ namespace Gizmo.DAL
             }
         }
 
-        #endregion
-
-        #region SETTINGS
-
+        [Obsolete()]
         /// <summary>
         /// Gets all current settings.
         /// </summary>
@@ -1173,6 +1262,8 @@ namespace Gizmo.DAL
         /// </summary>
         /// <param name="name">Setting name.</param>
         /// <returns>Found setting, null in case no setting found.</returns>
+
+        [Obsolete()]
         public Entities.Setting SettingGet(string name)
         {
             using (var cx = GetDbContext())
@@ -1189,6 +1280,7 @@ namespace Gizmo.DAL
         /// <typeparam name="T">Value type.</typeparam>
         /// <param name="name">Setting name.</param>
         /// <returns>Value.</returns>
+
         public T SettingGetValue<T>(string name)
         {
             var dbSetting = SettingGet(name);
@@ -1212,6 +1304,7 @@ namespace Gizmo.DAL
         /// Adds or updates specified setting.
         /// </summary>
         /// <param name="setting">Settng instance.</param>
+
         public void SettingSet(Entities.Setting setting)
         {
             if (setting == null)
@@ -1226,6 +1319,7 @@ namespace Gizmo.DAL
         /// <param name="name">Setting name.</param>
         /// <param name="value">Setting value.</param>
         /// <param name="group">Setting group.</param>
+        [Obsolete()]
         public void SettingSet(string name, string value, string group = null)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -1249,8 +1343,5 @@ namespace Gizmo.DAL
                 cx.SaveChanges();
             }
         }
-
-        #endregion
     }
-    #endregion
 }
