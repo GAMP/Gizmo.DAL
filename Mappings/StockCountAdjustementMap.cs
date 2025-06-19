@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Gizmo.DAL.Mappings
 {
     /// <summary>
-    /// <see cref="StockCountAdjustement"/> mapping.
+    /// <see cref="StockCountAdjustment"/> mapping.
     /// </summary>
-    public sealed class StockCountAdjustementMap : IEntityTypeConfiguration<StockCountAdjustement>
+    public sealed class StockCountAdjustmentMap : IEntityTypeConfiguration<StockCountAdjustment>
     {
         /// <inheritdoc/>
-        public void Configure(EntityTypeBuilder<StockCountAdjustement> builder)
+        public void Configure(EntityTypeBuilder<StockCountAdjustment> builder)
         {
-            builder.ToTable(nameof(StockCountAdjustement));
+            builder.ToTable(nameof(StockCountAdjustment));
 
             builder.HasKey(stockCountAdjustment => stockCountAdjustment.StockCountId);
             builder.Property(stockCountAdjustment => stockCountAdjustment.StockCountId)
@@ -29,13 +29,13 @@ namespace Gizmo.DAL.Mappings
                 .HasFilter(null);
 
             builder.HasOne(x => x.StockCount)
-                .WithOne()
-                .HasForeignKey<StockCountAdjustement>(x => x.StockCountId)
+                .WithOne(x => x.Adjustment)
+                .HasForeignKey<StockCountAdjustment>(x => x.StockCountId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(stockCountAdjustment => stockCountAdjustment.InventoryAdjustment)
                 .WithOne()
-                .HasForeignKey<StockCountAdjustement>(stockCountAdjustment => stockCountAdjustment.AdjustmentId)
+                .HasForeignKey<StockCountAdjustment>(stockCountAdjustment => stockCountAdjustment.AdjustmentId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
