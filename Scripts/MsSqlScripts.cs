@@ -196,7 +196,7 @@ namespace Gizmo.DAL.Scripts
                 SELECT
                     1 AS Type, --'DepositPayment'
                     dp.UserId,
-                    p.Amount,
+                    dp.Amount,
                     dp.CreatedTime AS Date,
                     dp.CreatedById AS OperatorId,
                     dp.ShiftId,
