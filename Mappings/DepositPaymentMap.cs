@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Deposit payment entity map.
+    /// </summary>
     public class DepositPaymentMap : IEntityTypeConfiguration<DepositPayment>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<DepositPayment> builder)
         {
             builder.HasKey(x => x.Id);
@@ -23,26 +24,30 @@ namespace Gizmo.DAL.Mappings
             builder.Property(x => x.PaymentId)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.ShiftId)
-                .HasColumnOrder(3);
+            builder.Property(x => x.Amount)
+                .HasColumnOrder(3)
+                .HasPrecision(19, 4);
 
-            builder.Property(x => x.RegisterId)
+            builder.Property(x => x.ShiftId)
                 .HasColumnOrder(4);
 
-            builder.Property(x => x.RefundedAmount)
+            builder.Property(x => x.RegisterId)
                 .HasColumnOrder(5);
 
-            builder.Property(x => x.RefundStatus)
+            builder.Property(x => x.RefundedAmount)
                 .HasColumnOrder(6);
 
+            builder.Property(x => x.RefundStatus)
+                .HasColumnOrder(7);
+
             builder.Property(x => x.FiscalReceiptStatus)
-              .HasColumnOrder(7);
+              .HasColumnOrder(8);
 
             builder.Property(x => x.FiscalReceiptId)
-                .HasColumnOrder(8);
+                .HasColumnOrder(9);
 
             builder.Property(x => x.IsVoided)
-                .HasColumnOrder(9);
+                .HasColumnOrder(10);
 
             builder.HasOne(x => x.Payment)
                 .WithMany()

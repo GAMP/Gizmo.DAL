@@ -1388,7 +1388,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new StockCountMap());
             modelBuilder.ApplyConfiguration(new StockCountEntryMap());
             modelBuilder.ApplyConfiguration(new StockCountInboundMap());
-            modelBuilder.ApplyConfiguration(new StockCountAdjustementMap());
+            modelBuilder.ApplyConfiguration(new StockCountAdjustmentMap());
 
             modelBuilder.ApplyConfiguration(new InventoryMap());
             modelBuilder.ApplyConfiguration(new InventoryInboundMap());

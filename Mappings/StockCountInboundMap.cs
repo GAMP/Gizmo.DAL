@@ -29,7 +29,7 @@ namespace Gizmo.DAL.Mappings
                 .HasFilter(null);
 
             builder.HasOne(x => x.StockCount)
-                .WithOne()
+                .WithOne(x => x.Inbound)                
                 .HasForeignKey<StockCountInbound>(x => x.StockCountId)
                 .OnDelete(DeleteBehavior.Cascade);
 
