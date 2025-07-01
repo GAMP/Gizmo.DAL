@@ -18,6 +18,10 @@ namespace Gizmo.DAL.Mappings
             builder.Property(transferEntry => transferEntry.Id)
                 .HasColumnOrder(0)
                 .IsRequired();
+
+            builder.Property(transferEntry => transferEntry.TransferReasonId)
+                .HasColumnOrder(1)
+                .IsRequired(false);
         }
     }
 }

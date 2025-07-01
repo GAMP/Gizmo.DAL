@@ -17,6 +17,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasKey(inventoryAdjustmentReason => inventoryAdjustmentReason.Id);
 
             builder.Property(inventoryAdjustmentReason => inventoryAdjustmentReason.Id)
+                .ValueGeneratedNever()
                 .HasColumnName("InventoryAdjustmentReasonId")
                 .HasColumnOrder(0);
 

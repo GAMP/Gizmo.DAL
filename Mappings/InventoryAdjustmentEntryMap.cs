@@ -37,6 +37,10 @@ namespace Gizmo.DAL.Mappings
             builder.Property(adjustmentEntry => adjustmentEntry.TotalPrice)
                 .IsRequired()
                 .HasColumnOrder(5);
+
+            builder.Property(adjustmentEntry => adjustmentEntry.AdjustmentReasonId)
+                .IsRequired(false)
+                .HasColumnOrder(6);
         }
     }
 }

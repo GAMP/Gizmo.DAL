@@ -1391,15 +1391,19 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new StockCountAdjustmentMap());
 
             modelBuilder.ApplyConfiguration(new InventoryMap());
+            
             modelBuilder.ApplyConfiguration(new InventoryInboundMap());
             modelBuilder.ApplyConfiguration(new InventoryAdjustmentMap());
             modelBuilder.ApplyConfiguration(new InventoryTransferMap());
+            
             modelBuilder.ApplyConfiguration(new InventoryEntryMap());
             modelBuilder.ApplyConfiguration(new InventoryInboundEntryMap());
             modelBuilder.ApplyConfiguration(new InventoryAdjustmentEntryMap());
             modelBuilder.ApplyConfiguration(new InventoryTransferEntryMap());
+
             modelBuilder.ApplyConfiguration(new InventoryAdjustmentReasonMap());
-                       
+            modelBuilder.ApplyConfiguration(new InventoryTransferReasonMap());
+
             modelBuilder.ApplyConfiguration(new FileMap());
             modelBuilder.ApplyConfiguration(new FileDocumentMap());
             modelBuilder.ApplyConfiguration(new FileImageMap());

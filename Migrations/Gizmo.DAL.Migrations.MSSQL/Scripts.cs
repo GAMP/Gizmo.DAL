@@ -39,6 +39,11 @@
 
         UPDATE [dbo].[StockTransaction] Set StockId=(SELECT min(StockId) FROM [dbo].[Stock]);
 
+        UPDATE dp
+        SET dp.Amount = p.Amount
+        FROM DepositPayment dp
+        INNER JOIN Payment p ON dp.PaymentId = p.PaymentId;
+
         END
         """;
     }

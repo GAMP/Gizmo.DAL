@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizmo.DAL.Migrations.MSSQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20250619070328_Update1")]
-    partial class Update1
+    [Migration("20250701085351_EFCore_Initial")]
+    partial class EFCore_Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2509,12 +2509,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.DocumentType", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("DocumentTypeId")
                         .HasColumnOrder(0);
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
@@ -3273,12 +3270,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustmentReason", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("InventoryAdjustmentReasonId")
                         .HasColumnOrder(0);
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
@@ -3416,6 +3410,52 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.ToTable("InventoryEntry", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnName("InventoryTransferReasonId")
+                        .HasColumnOrder(0);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(2);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(3);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("InventoryTransferReason", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Invoice", b =>
@@ -9171,7 +9211,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("Gizmo.DAL.Entities.InventoryEntry");
 
                     b.Property<int?>("AdjustmentReasonId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(6);
 
                     b.Property<decimal>("TotalCost")
                         .HasPrecision(19, 4)
@@ -9230,6 +9271,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferEntry", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.InventoryEntry");
+
+                    b.Property<int?>("TransferReasonId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("TransferReasonId");
 
                     b.ToTable("InventoryTransferEntry", (string)null);
                 });
@@ -11800,6 +11847,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("Stock");
 
                     b.Navigation("StockTransaction");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferReason", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Invoice", b =>
@@ -14501,6 +14563,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasForeignKey("Gizmo.DAL.Entities.InventoryTransferEntry", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.InventoryTransferReason", "TransferReason")
+                        .WithMany("TransferEntries")
+                        .HasForeignKey("TransferReasonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("TransferReason");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineExtended", b =>
@@ -15598,6 +15667,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustmentReason", b =>
                 {
                     b.Navigation("AdjustmentEntries");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferReason", b =>
+                {
+                    b.Navigation("TransferEntries");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Invoice", b =>
