@@ -369,6 +369,48 @@ namespace Gizmo.DAL.Contexts
                         }
                     }
 
+                    foreach(var documentType in  Enum.GetValues<DocumentTypes>().Cast<DocumentTypes>())
+                    {
+                        if(!_dbContext.DocumentTypes.Any(dt => dt.Id == (int)documentType))
+                        {
+                            _logger.LogTrace("Creating default document type {DocumentType}.", documentType);
+                            var documentTypeEntity = new DocumentType()
+                            {
+                                Id = (int)documentType,
+                                Name = documentType.ToString(),                   
+                            };
+                            _dbContext.DocumentTypes.Add(documentTypeEntity);
+                        }
+                    }
+
+                    foreach (var transferReason in Enum.GetValues<InventoryTransferReasons>().Cast<InventoryTransferReasons>())
+                    {
+                        if (!_dbContext.Set<InventoryTransferReason>().Any(dt => dt.Id == (int)transferReason))
+                        {
+                            _logger.LogTrace("Creating default transfer reason {TransferReason}.", transferReason);
+                            var transferReasonEntity = new InventoryTransferReason()
+                            {
+                                Id = (int)transferReason,
+                                Name = transferReason.ToString(),
+                            };
+                            _dbContext.Set<InventoryTransferReason>().Add(transferReasonEntity);
+                        }
+                    }
+
+                    foreach (var adjustmentReason in Enum.GetValues<InventoryAdjustmentReasons>().Cast<InventoryAdjustmentReasons>())
+                    {
+                        if (!_dbContext.Set<InventoryAdjustmentReason>().Any(dt => dt.Id == (int)adjustmentReason))
+                        {
+                            _logger.LogTrace("Creating default adjustment reason {AdjustmentReason}.", adjustmentReason);
+                            var adjustmentReasonEntity = new InventoryAdjustmentReason()
+                            {
+                                Id = (int)adjustmentReason,
+                                Name = adjustmentReason.ToString(),
+                            };
+                            _dbContext.Set<InventoryAdjustmentReason>().Add(adjustmentReasonEntity);
+                        }
+                    }
+
                     //save any changes made
                     await _dbContext.SaveChangesAsync(cancellationToken);
 

@@ -16,6 +16,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasKey(documentType => documentType.Id);
 
             builder.Property(documentType => documentType.Id)
+                .ValueGeneratedNever()
                 .HasColumnName("DocumentTypeId")
                 .HasColumnOrder(0);
 

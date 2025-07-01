@@ -667,6 +667,93 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 nullable: false,
                 defaultValue: 0);
 
+            migrationBuilder.AlterColumn<int>(
+                name: "ShiftId",
+                table: "DepositPayment",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true)
+                .Annotation("Relational:ColumnOrder", 4)
+                .OldAnnotation("Relational:ColumnOrder", 3);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "RegisterId",
+                table: "DepositPayment",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true)
+                .Annotation("Relational:ColumnOrder", 5)
+                .OldAnnotation("Relational:ColumnOrder", 4);
+
+            migrationBuilder.AlterColumn<decimal>(
+                name: "RefundedAmount",
+                table: "DepositPayment",
+                type: "decimal(19,4)",
+                precision: 19,
+                scale: 4,
+                nullable: false,
+                oldClrType: typeof(decimal),
+                oldType: "decimal(19,4)",
+                oldPrecision: 19,
+                oldScale: 4)
+                .Annotation("Relational:ColumnOrder", 6)
+                .OldAnnotation("Relational:ColumnOrder", 5);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "RefundStatus",
+                table: "DepositPayment",
+                type: "int",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int")
+                .Annotation("Relational:ColumnOrder", 7)
+                .OldAnnotation("Relational:ColumnOrder", 6);
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "IsVoided",
+                table: "DepositPayment",
+                type: "bit",
+                nullable: false,
+                oldClrType: typeof(bool),
+                oldType: "bit")
+                .Annotation("Relational:ColumnOrder", 10)
+                .OldAnnotation("Relational:ColumnOrder", 9);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "FiscalReceiptStatus",
+                table: "DepositPayment",
+                type: "int",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int")
+                .Annotation("Relational:ColumnOrder", 8)
+                .OldAnnotation("Relational:ColumnOrder", 7);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "FiscalReceiptId",
+                table: "DepositPayment",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true)
+                .Annotation("Relational:ColumnOrder", 9)
+                .OldAnnotation("Relational:ColumnOrder", 8);
+
+            migrationBuilder.AddColumn<decimal>(
+                name: "Amount",
+                table: "DepositPayment",
+                type: "decimal(19,4)",
+                precision: 19,
+                scale: 4,
+                nullable: false,
+                defaultValue: 0m)
+                .Annotation("Relational:ColumnOrder", 3);
+
             migrationBuilder.AddColumn<int>(
                 name: "BranchId",
                 table: "DepositPayment",
@@ -855,8 +942,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "DocumentType",
                 columns: table => new
                 {
-                    DocumentTypeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DocumentTypeId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
@@ -915,8 +1001,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "InventoryAdjustmentReason",
                 columns: table => new
                 {
-                    InventoryAdjustmentReasonId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InventoryAdjustmentReasonId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -935,6 +1020,34 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_InventoryAdjustmentReason_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryTransferReason",
+                columns: table => new
+                {
+                    InventoryTransferReasonId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryTransferReason", x => x.InventoryTransferReasonId);
+                    table.ForeignKey(
+                        name: "FK_InventoryTransferReason_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_InventoryTransferReason_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
@@ -2761,7 +2874,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
-                name: "StockCountAdjustement",
+                name: "StockCountAdjustment",
                 columns: table => new
                 {
                     StockCountId = table.Column<int>(type: "int", nullable: false),
@@ -2769,15 +2882,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockCountAdjustement", x => x.StockCountId);
+                    table.PrimaryKey("PK_StockCountAdjustment", x => x.StockCountId);
                     table.ForeignKey(
-                        name: "FK_StockCountAdjustement_InventoryAdjustment_AdjustmentId",
+                        name: "FK_StockCountAdjustment_InventoryAdjustment_AdjustmentId",
                         column: x => x.AdjustmentId,
                         principalTable: "InventoryAdjustment",
                         principalColumn: "InventoryId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_StockCountAdjustement_StockCount_StockCountId",
+                        name: "FK_StockCountAdjustment_StockCount_StockCountId",
                         column: x => x.StockCountId,
                         principalTable: "StockCount",
                         principalColumn: "StockCountId",
@@ -2816,7 +2929,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "InventoryTransferEntry",
                 columns: table => new
                 {
-                    InventoryEntryId = table.Column<int>(type: "int", nullable: false)
+                    InventoryEntryId = table.Column<int>(type: "int", nullable: false),
+                    TransferReasonId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2827,6 +2941,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         principalTable: "InventoryEntry",
                         principalColumn: "InventoryEntryId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryTransferEntry_InventoryTransferReason_TransferReasonId",
+                        column: x => x.TransferReasonId,
+                        principalTable: "InventoryTransferReason",
+                        principalColumn: "InventoryTransferReasonId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3448,6 +3568,27 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "TransferStockId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferEntry_TransferReasonId",
+                table: "InventoryTransferEntry",
+                column: "TransferReasonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferReason_CreatedById",
+                table: "InventoryTransferReason",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferReason_ModifiedById",
+                table: "InventoryTransferReason",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferReason_Name",
+                table: "InventoryTransferReason",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLineReservationFee_OrderLineId",
                 table: "InvoiceLineReservationFee",
                 column: "OrderLineId",
@@ -3788,8 +3929,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "StockId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockCountAdjustement_AdjustmentId",
-                table: "StockCountAdjustement",
+                name: "IX_StockCountAdjustment_AdjustmentId",
+                table: "StockCountAdjustment",
                 column: "AdjustmentId",
                 unique: true);
 
@@ -4546,7 +4687,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "ScheduleReportRecipient");
 
             migrationBuilder.DropTable(
-                name: "StockCountAdjustement");
+                name: "StockCountAdjustment");
 
             migrationBuilder.DropTable(
                 name: "StockCountEntry");
@@ -4658,6 +4799,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             migrationBuilder.DropTable(
                 name: "InventoryEntry");
+
+            migrationBuilder.DropTable(
+                name: "InventoryTransferReason");
 
             migrationBuilder.DropTable(
                 name: "Notification");
@@ -5100,6 +5244,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "Device");
 
             migrationBuilder.DropColumn(
+                name: "Amount",
+                table: "DepositPayment");
+
+            migrationBuilder.DropColumn(
                 name: "BranchId",
                 table: "DepositPayment");
 
@@ -5334,6 +5482,83 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2")
                 .OldAnnotation("Relational:ColumnOrder", 4);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "ShiftId",
+                table: "DepositPayment",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true)
+                .Annotation("Relational:ColumnOrder", 3)
+                .OldAnnotation("Relational:ColumnOrder", 4);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "RegisterId",
+                table: "DepositPayment",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true)
+                .Annotation("Relational:ColumnOrder", 4)
+                .OldAnnotation("Relational:ColumnOrder", 5);
+
+            migrationBuilder.AlterColumn<decimal>(
+                name: "RefundedAmount",
+                table: "DepositPayment",
+                type: "decimal(19,4)",
+                precision: 19,
+                scale: 4,
+                nullable: false,
+                oldClrType: typeof(decimal),
+                oldType: "decimal(19,4)",
+                oldPrecision: 19,
+                oldScale: 4)
+                .Annotation("Relational:ColumnOrder", 5)
+                .OldAnnotation("Relational:ColumnOrder", 6);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "RefundStatus",
+                table: "DepositPayment",
+                type: "int",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int")
+                .Annotation("Relational:ColumnOrder", 6)
+                .OldAnnotation("Relational:ColumnOrder", 7);
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "IsVoided",
+                table: "DepositPayment",
+                type: "bit",
+                nullable: false,
+                oldClrType: typeof(bool),
+                oldType: "bit")
+                .Annotation("Relational:ColumnOrder", 9)
+                .OldAnnotation("Relational:ColumnOrder", 10);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "FiscalReceiptStatus",
+                table: "DepositPayment",
+                type: "int",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int")
+                .Annotation("Relational:ColumnOrder", 7)
+                .OldAnnotation("Relational:ColumnOrder", 8);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "FiscalReceiptId",
+                table: "DepositPayment",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true)
+                .Annotation("Relational:ColumnOrder", 8)
+                .OldAnnotation("Relational:ColumnOrder", 9);
 
             migrationBuilder.CreateIndex(
                 name: "IX_HostLayoutGroup_Name",
