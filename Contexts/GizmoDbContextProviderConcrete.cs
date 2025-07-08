@@ -79,7 +79,7 @@ namespace Gizmo.DAL.Contexts
                 CreateNpgsqlOptionsBuilder(dbConfig.DbConnectionString, dbConfig.CommandTimeout),
             _ => throw new NotImplementedException(nameof(GetDbContext))
         };
-        private static DbContextOptionsBuilder<DefaultDbContext> CreateMssqlOptionsBuilder(string connectionString, int? commandTimeout = 180)
+        private static DbContextOptionsBuilder<DefaultDbContext> CreateMssqlOptionsBuilder(string connectionString, int? commandTimeout)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentNullException(nameof(connectionString));
@@ -88,13 +88,13 @@ namespace Gizmo.DAL.Contexts
             
             optionsBuilder.UseSqlServer(connectionString, options =>
             {
-                options.CommandTimeout(commandTimeout);
+                options.CommandTimeout(commandTimeout ?? 180);
                 options.MigrationsAssembly("Gizmo.DAL.Migrations.MSSQL");
             });
             
             return optionsBuilder;
         }
-        private static DbContextOptionsBuilder<DefaultDbContext> CreateNpgsqlOptionsBuilder(string connectionString, int? commandTimeout = 180)
+        private static DbContextOptionsBuilder<DefaultDbContext> CreateNpgsqlOptionsBuilder(string connectionString, int? commandTimeout)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentNullException(nameof(connectionString));
@@ -103,7 +103,7 @@ namespace Gizmo.DAL.Contexts
             
             optionsBuilder.UseNpgsql(connectionString, options =>
             {
-                options.CommandTimeout(commandTimeout);
+                options.CommandTimeout(commandTimeout ?? 180);
                 options.MigrationsAssembly("Gizmo.DAL.Migrations.Npgsql");
             });
             
