@@ -1051,6 +1051,11 @@ namespace Gizmo.DAL.Contexts
         public DbSet<DiscountGroup> DiscountGroups { get; set; }
 
         /// <summary>
+        /// Discount target groups.
+        /// </summary>
+        public DbSet<TargetGroup> TargetGroups { get; set; }
+
+        /// <summary>
         /// Gets permission sets.
         /// </summary>
         public DbSet<UserPermissionSet> PermissionSets { get; set; }
