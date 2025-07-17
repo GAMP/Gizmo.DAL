@@ -2031,6 +2031,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)")
+                        .HasColumnOrder(3);
+
                     b.Property<int?>("BranchId")
                         .HasColumnType("integer");
 
@@ -2046,15 +2051,15 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Property<int?>("FiscalReceiptId")
                         .HasColumnType("integer")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(9);
 
                     b.Property<int>("FiscalReceiptStatus")
                         .HasColumnType("integer")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
 
                     b.Property<bool>("IsVoided")
                         .HasColumnType("boolean")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(10);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("integer");
@@ -2068,20 +2073,20 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Property<int>("RefundStatus")
                         .HasColumnType("integer")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.Property<decimal>("RefundedAmount")
                         .HasPrecision(19, 4)
                         .HasColumnType("numeric(19,4)")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<int?>("RegisterId")
                         .HasColumnType("integer")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<int?>("ShiftId")
                         .HasColumnType("integer")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -2499,12 +2504,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
             modelBuilder.Entity("Gizmo.DAL.Entities.DocumentType", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("DocumentTypeId")
                         .HasColumnOrder(0);
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("integer");
@@ -3263,12 +3265,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
             modelBuilder.Entity("Gizmo.DAL.Entities.InventoryAdjustmentReason", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("InventoryAdjustmentReasonId")
                         .HasColumnOrder(0);
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("integer");
@@ -3406,6 +3405,52 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.ToTable("InventoryEntry", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("InventoryTransferReasonId")
+                        .HasColumnOrder(0);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnOrder(2);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(3);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("InventoryTransferReason", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Invoice", b =>
@@ -7429,7 +7474,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.ToTable("StockCount", (string)null);
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.StockCountAdjustement", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.StockCountAdjustment", b =>
                 {
                     b.Property<int>("StockCountId")
                         .HasColumnType("integer")
@@ -7445,7 +7490,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("AdjustmentId")
                         .IsUnique();
 
-                    b.ToTable("StockCountAdjustement", (string)null);
+                    b.ToTable("StockCountAdjustment", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.StockCountEntry", b =>
@@ -9152,7 +9197,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasBaseType("Gizmo.DAL.Entities.InventoryEntry");
 
                     b.Property<int?>("AdjustmentReasonId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnOrder(6);
 
                     b.Property<decimal>("TotalCost")
                         .HasPrecision(19, 4)
@@ -9210,6 +9256,12 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
             modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferEntry", b =>
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.InventoryEntry");
+
+                    b.Property<int?>("TransferReasonId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("TransferReasonId");
 
                     b.ToTable("InventoryTransferEntry", (string)null);
                 });
@@ -11774,6 +11826,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("StockTransaction");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferReason", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Invoice", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
@@ -13586,17 +13653,17 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("Stock");
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.StockCountAdjustement", b =>
+            modelBuilder.Entity("Gizmo.DAL.Entities.StockCountAdjustment", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.InventoryAdjustment", "InventoryAdjustment")
                         .WithOne()
-                        .HasForeignKey("Gizmo.DAL.Entities.StockCountAdjustement", "AdjustmentId")
+                        .HasForeignKey("Gizmo.DAL.Entities.StockCountAdjustment", "AdjustmentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.StockCount", "StockCount")
-                        .WithOne()
-                        .HasForeignKey("Gizmo.DAL.Entities.StockCountAdjustement", "StockCountId")
+                        .WithOne("Adjustment")
+                        .HasForeignKey("Gizmo.DAL.Entities.StockCountAdjustment", "StockCountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -13639,7 +13706,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.StockCount", "StockCount")
-                        .WithOne()
+                        .WithOne("Inbound")
                         .HasForeignKey("Gizmo.DAL.Entities.StockCountInbound", "StockCountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -14473,6 +14540,13 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasForeignKey("Gizmo.DAL.Entities.InventoryTransferEntry", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.InventoryTransferReason", "TransferReason")
+                        .WithMany("TransferEntries")
+                        .HasForeignKey("TransferReasonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("TransferReason");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineExtended", b =>
@@ -15572,6 +15646,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("AdjustmentEntries");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.InventoryTransferReason", b =>
+                {
+                    b.Navigation("TransferEntries");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Invoice", b =>
                 {
                     b.Navigation("FiscalReceipts");
@@ -15767,7 +15846,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             modelBuilder.Entity("Gizmo.DAL.Entities.StockCount", b =>
                 {
+                    b.Navigation("Adjustment");
+
                     b.Navigation("Entries");
+
+                    b.Navigation("Inbound");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.StockTransaction", b =>

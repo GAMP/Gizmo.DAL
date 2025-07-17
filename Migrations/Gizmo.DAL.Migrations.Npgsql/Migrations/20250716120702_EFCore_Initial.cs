@@ -1001,6 +1001,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DepositTransactionId = table.Column<int>(type: "integer", nullable: false),
                     PaymentId = table.Column<int>(type: "integer", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     ShiftId = table.Column<int>(type: "integer", nullable: true),
                     RegisterId = table.Column<int>(type: "integer", nullable: true),
                     RefundedAmount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
@@ -1269,8 +1270,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "DocumentType",
                 columns: table => new
                 {
-                    DocumentTypeId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DocumentTypeId = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
@@ -1764,8 +1764,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "InventoryAdjustmentReason",
                 columns: table => new
                 {
-                    InventoryAdjustmentReasonId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    InventoryAdjustmentReasonId = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
                     Description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -1834,19 +1833,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InventoryTransferEntry",
+                name: "InventoryInbound",
                 columns: table => new
                 {
-                    InventoryEntryId = table.Column<int>(type: "integer", nullable: false)
+                    InventoryId = table.Column<int>(type: "integer", nullable: false),
+                    Cost = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    InventoryTransferId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InventoryTransferEntry", x => x.InventoryEntryId);
+                    table.PrimaryKey("PK_InventoryInbound", x => x.InventoryId);
                     table.ForeignKey(
-                        name: "FK_InventoryTransferEntry_InventoryEntry_InventoryEntryId",
-                        column: x => x.InventoryEntryId,
-                        principalTable: "InventoryEntry",
-                        principalColumn: "InventoryEntryId",
+                        name: "FK_InventoryInbound_Inventory_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventory",
+                        principalColumn: "InventoryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -1868,31 +1869,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         column: x => x.InventoryEntryId,
                         principalTable: "InventoryEntry",
                         principalColumn: "InventoryEntryId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_InventoryInboundEntry_InventoryTransferEntry_InventoryTrans~",
-                        column: x => x.InventoryTransferEntryId,
-                        principalTable: "InventoryTransferEntry",
-                        principalColumn: "InventoryEntryId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "InventoryInbound",
-                columns: table => new
-                {
-                    InventoryId = table.Column<int>(type: "integer", nullable: false),
-                    Cost = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
-                    InventoryTransferId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InventoryInbound", x => x.InventoryId);
-                    table.ForeignKey(
-                        name: "FK_InventoryInbound_Inventory_InventoryId",
-                        column: x => x.InventoryId,
-                        principalTable: "Inventory",
-                        principalColumn: "InventoryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -1919,6 +1895,42 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         principalTable: "Inventory",
                         principalColumn: "InventoryId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryTransferEntry",
+                columns: table => new
+                {
+                    InventoryEntryId = table.Column<int>(type: "integer", nullable: false),
+                    TransferReasonId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryTransferEntry", x => x.InventoryEntryId);
+                    table.ForeignKey(
+                        name: "FK_InventoryTransferEntry_InventoryEntry_InventoryEntryId",
+                        column: x => x.InventoryEntryId,
+                        principalTable: "InventoryEntry",
+                        principalColumn: "InventoryEntryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryTransferReason",
+                columns: table => new
+                {
+                    InventoryTransferReasonId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<int>(type: "integer", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryTransferReason", x => x.InventoryTransferReasonId);
                 });
 
             migrationBuilder.CreateTable(
@@ -4377,7 +4389,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StockCountAdjustement",
+                name: "StockCountAdjustment",
                 columns: table => new
                 {
                     StockCountId = table.Column<int>(type: "integer", nullable: false),
@@ -4385,15 +4397,15 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StockCountAdjustement", x => x.StockCountId);
+                    table.PrimaryKey("PK_StockCountAdjustment", x => x.StockCountId);
                     table.ForeignKey(
-                        name: "FK_StockCountAdjustement_InventoryAdjustment_AdjustmentId",
+                        name: "FK_StockCountAdjustment_InventoryAdjustment_AdjustmentId",
                         column: x => x.AdjustmentId,
                         principalTable: "InventoryAdjustment",
                         principalColumn: "InventoryId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_StockCountAdjustement_StockCount_StockCountId",
+                        name: "FK_StockCountAdjustment_StockCount_StockCountId",
                         column: x => x.StockCountId,
                         principalTable: "StockCount",
                         principalColumn: "StockCountId",
@@ -7263,6 +7275,27 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 column: "TransferStockId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferEntry_TransferReasonId",
+                table: "InventoryTransferEntry",
+                column: "TransferReasonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferReason_CreatedById",
+                table: "InventoryTransferReason",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferReason_ModifiedById",
+                table: "InventoryTransferReason",
+                column: "ModifiedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryTransferReason_Name",
+                table: "InventoryTransferReason",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Invoice_BranchId",
                 table: "Invoice",
                 column: "BranchId");
@@ -8938,8 +8971,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 column: "StockId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StockCountAdjustement_AdjustmentId",
-                table: "StockCountAdjustement",
+                name: "IX_StockCountAdjustment_AdjustmentId",
+                table: "StockCountAdjustment",
                 column: "AdjustmentId",
                 unique: true);
 
@@ -10846,12 +10879,42 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_InventoryInboundEntry_InventoryTransferEntry_InventoryTrans~",
+                table: "InventoryInboundEntry",
+                column: "InventoryTransferEntryId",
+                principalTable: "InventoryTransferEntry",
+                principalColumn: "InventoryEntryId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_InventoryTransfer_Stock_TransferStockId",
                 table: "InventoryTransfer",
                 column: "TransferStockId",
                 principalTable: "Stock",
                 principalColumn: "StockId",
                 onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryTransferEntry_InventoryTransferReason_TransferReas~",
+                table: "InventoryTransferEntry",
+                column: "TransferReasonId",
+                principalTable: "InventoryTransferReason",
+                principalColumn: "InventoryTransferReasonId",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryTransferReason_UserOperator_CreatedById",
+                table: "InventoryTransferReason",
+                column: "CreatedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_InventoryTransferReason_UserOperator_ModifiedById",
+                table: "InventoryTransferReason",
+                column: "ModifiedById",
+                principalTable: "UserOperator",
+                principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Invoice_ProductOrder_ProductOrderId",
@@ -13038,7 +13101,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "ShiftCount");
 
             migrationBuilder.DropTable(
-                name: "StockCountAdjustement");
+                name: "StockCountAdjustment");
 
             migrationBuilder.DropTable(
                 name: "StockCountEntry");
@@ -13318,6 +13381,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             migrationBuilder.DropTable(
                 name: "InventoryEntry");
+
+            migrationBuilder.DropTable(
+                name: "InventoryTransferReason");
 
             migrationBuilder.DropTable(
                 name: "Notification");
