@@ -4499,6 +4499,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PaymentLinkUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(9);
+
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
