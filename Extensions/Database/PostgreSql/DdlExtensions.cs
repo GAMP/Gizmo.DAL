@@ -146,6 +146,24 @@ internal static class PostgreSql
     {
         try
         {
+            // Ensure we're not connected to the database we're trying to restore
+            using var tempConnection = facade.GetDbConnection() as NpgsqlConnection;
+            string targetDatabaseName = tempConnection.Database;
+            tempConnection.ChangeDatabase("postgres");
+            await tempConnection.OpenAsync(ct);
+            
+            // Terminate any existing connections to the target database
+            using var terminateCommand = tempConnection.CreateCommand();
+            terminateCommand.CommandText =
+                $"""
+                    SELECT pg_terminate_backend(pg_stat_activity.pid)
+                    FROM pg_stat_activity
+                    WHERE pg_stat_activity.datname = @databaseName
+                    AND pid <> pg_backend_pid()
+                """;
+            terminateCommand.Parameters.AddWithValue("@databaseName", targetDatabaseName);
+            await terminateCommand.ExecuteNonQueryAsync(ct);
+            
             var connection = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
             var pgHome = Environment.GetEnvironmentVariable("POSTGRESQL_HOME");
             string commandFile = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
@@ -200,6 +218,10 @@ internal static class PostgreSql
         try
         {
             using var connection = facade.GetDbConnection() as NpgsqlConnection;
+            string databaseName = connection.Database; // Store the database name before changing
+            
+            // We need to connect to postgres database to drop the current database
+            connection.ChangeDatabase("postgres");
             await connection.OpenAsync(ct);
 
             // Disconnect all users
@@ -212,11 +234,11 @@ internal static class PostgreSql
                     AND pid <> pg_backend_pid()
                 """;
 
-            command.Parameters.AddWithValue("@databaseName", connection.Database);
+            command.Parameters.AddWithValue("@databaseName", databaseName);
             await command.ExecuteNonQueryAsync(ct);
 
             command.Parameters.Clear();
-            command.CommandText = $"DROP DATABASE IF EXISTS \"{connection.Database}\"";
+            command.CommandText = $"DROP DATABASE IF EXISTS \"{databaseName}\"";
             await command.ExecuteNonQueryAsync(ct);
         }
         catch (Exception ex)

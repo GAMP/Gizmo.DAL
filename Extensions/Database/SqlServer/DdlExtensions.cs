@@ -157,9 +157,13 @@ internal static class SqlServer
         try
         {
             using var connection = facade.GetDbConnection() as SqlConnection;
+            string databaseName = connection.Database; // Store the database name before changing
+            
+            // We need to connect to master database to restore the current database
+            connection.ChangeDatabase("master");
             await connection.OpenAsync(ct);
 
-            var backupFiles = await GetBackupFiles(connection, connection.Database, backupFile, ct);
+            var backupFiles = await GetBackupFiles(connection, databaseName, backupFile, ct);
 
             var moveSql = new StringBuilder(backupFiles.Count);
 
@@ -172,7 +176,7 @@ internal static class SqlServer
 
             string restoreSql =
                 $"""
-                    RESTORE DATABASE [{connection.Database}]
+                    RESTORE DATABASE [{databaseName}]
                     FROM DISK = N'{safeBackupFile}'
                     WITH FILE = 1, {moveSql} NOUNLOAD, STATS = 5
                 """;
@@ -193,15 +197,19 @@ internal static class SqlServer
         try
         {
             using var connection = facade.GetDbConnection() as SqlConnection;
+            string databaseName = connection.Database; // Store the database name before changing
+            
+            // We need to connect to master database to drop the current database
+            connection.ChangeDatabase("master");
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
 
             // Force disconnect all users by setting the database to single user mode before dropping it
-            command.CommandText = $"ALTER DATABASE [{connection.Database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
+            command.CommandText = $"ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
             await command.ExecuteNonQueryAsync(ct);
 
-            command.CommandText = $"DROP DATABASE [{connection.Database}]";
+            command.CommandText = $"DROP DATABASE [{databaseName}]";
             await command.ExecuteNonQueryAsync(ct);
         }
         catch (Exception ex)
