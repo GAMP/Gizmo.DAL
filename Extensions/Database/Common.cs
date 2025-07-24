@@ -102,25 +102,5 @@ public interface IConnectionMetadata
     /// <remarks>
     /// The format of the returned connection string depends on the specific database provider implementation.
     /// </remarks>
-    string BuildConnectionString();
-
-    /// <summary>
-    /// Creates a new instance of the connection with a different database name.
-    /// </summary>
-    /// <param name="databaseName">The new database name to use in the connection.</param>
-    /// <returns>A new <see cref="IConnectionMetadata"/> instance with the specified database name and all other parameters preserved.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="databaseName"/> is null, empty, or contains invalid characters.</exception>
-    /// <remarks>
-    /// This method is useful for switching between databases on the same server while maintaining the same authentication and connection parameters.
-    /// </remarks>
-    IConnectionMetadata ReplaceDatabaseName(string databaseName);
-
-    /// <summary>
-    /// Creates a new instance of the connection without a specific database name.
-    /// </summary>
-    /// <returns>A new <see cref="IConnectionMetadata"/> instance with an empty database name and all other parameters preserved.</returns>
-    /// <remarks>
-    /// This method is useful for connecting to the default database on a server or for operations that don't require a specific database context.
-    /// </remarks>
-    IConnectionMetadata RemoveDatabaseName();
+    string ToConnectionString();
 }

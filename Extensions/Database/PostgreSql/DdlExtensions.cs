@@ -17,7 +17,8 @@ internal static class PostgreSql
     {
         try
         {
-            using var connection = facade.GetDbConnection() as NpgsqlConnection;
+            //This connection should not be disposed if it was created by Entity Framework.
+            var connection = facade.GetDbConnection() as NpgsqlConnection;
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
@@ -43,7 +44,8 @@ internal static class PostgreSql
     {
         try
         {
-            using var connection = facade.GetDbConnection() as NpgsqlConnection;
+            //This connection should not be disposed if it was created by Entity Framework.
+            var connection = facade.GetDbConnection() as NpgsqlConnection;
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
@@ -69,7 +71,8 @@ internal static class PostgreSql
     {
         try
         {
-            using var connection = facade.GetDbConnection() as NpgsqlConnection;
+            //This connection should not be disposed if it was created by Entity Framework.
+            var connection = facade.GetDbConnection() as NpgsqlConnection;
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
@@ -96,7 +99,7 @@ internal static class PostgreSql
     {
         try
         {
-            var connection = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
+            var metadata = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
             var pgHome = Environment.GetEnvironmentVariable("POSTGRESQL_HOME");
             string commandFile = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                 ? pgHome is not null
@@ -107,21 +110,21 @@ internal static class PostgreSql
             var processInfo = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = commandFile,
-                Arguments = $"--dbname=\"{connection.DatabaseName}\" --file=\"{backupFile}\" --no-owner",
+                Arguments = $"--dbname=\"{metadata.DatabaseName}\" --file=\"{backupFile}\" --no-owner",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
 
-            if (!string.IsNullOrEmpty(connection.Password))
-                processInfo.Environment["PGPASSWORD"] = connection.Password;
-            if (!string.IsNullOrEmpty(connection.Username))
-                processInfo.Environment["PGUSER"] = connection.Username;
-            if (!string.IsNullOrEmpty(connection.Host))
-                processInfo.Environment["PGHOST"] = connection.Host;
-            if (connection.Port > 0)
-                processInfo.Environment["PGPORT"] = connection.Port.ToString();
+            if (!string.IsNullOrEmpty(metadata.Password))
+                processInfo.Environment["PGPASSWORD"] = metadata.Password;
+            if (!string.IsNullOrEmpty(metadata.Username))
+                processInfo.Environment["PGUSER"] = metadata.Username;
+            if (!string.IsNullOrEmpty(metadata.Host))
+                processInfo.Environment["PGHOST"] = metadata.Host;
+            if (metadata.Port > 0)
+                processInfo.Environment["PGPORT"] = metadata.Port.ToString();
 
             using var process = System.Diagnostics.Process.Start(processInfo);
             string output = await process.StandardOutput.ReadToEndAsync(ct);
@@ -146,14 +149,16 @@ internal static class PostgreSql
     {
         try
         {
+            //This connection should not be disposed if it was created by Entity Framework.
             // Ensure we're not connected to the database we're trying to restore
-            using var tempConnection = facade.GetDbConnection() as NpgsqlConnection;
-            string targetDatabaseName = tempConnection.Database;
-            tempConnection.ChangeDatabase("postgres");
-            await tempConnection.OpenAsync(ct);
+            var connection = facade.GetDbConnection() as NpgsqlConnection;
+            string targetDatabaseName = connection.Database;
+
+            await connection.ChangeDatabaseAsync("postgres", ct);
+            await connection.OpenAsync(ct);
             
             // Terminate any existing connections to the target database
-            using var terminateCommand = tempConnection.CreateCommand();
+            using var terminateCommand = connection.CreateCommand();
             terminateCommand.CommandText =
                 $"""
                     SELECT pg_terminate_backend(pg_stat_activity.pid)
@@ -164,7 +169,8 @@ internal static class PostgreSql
             terminateCommand.Parameters.AddWithValue("@databaseName", targetDatabaseName);
             await terminateCommand.ExecuteNonQueryAsync(ct);
             
-            var connection = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
+            var metadata = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
+
             var pgHome = Environment.GetEnvironmentVariable("POSTGRESQL_HOME");
             string commandFile = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                 ? pgHome is not null
@@ -175,21 +181,21 @@ internal static class PostgreSql
             var processInfo = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = commandFile,
-                Arguments = $"--dbname=\"{connection.DatabaseName}\" --no-owner \"{backupFile}\"",
+                Arguments = $"--dbname=\"{metadata.DatabaseName}\" --no-owner \"{backupFile}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
 
-            if (!string.IsNullOrEmpty(connection.Password))
-                processInfo.Environment["PGPASSWORD"] = connection.Password;
-            if (!string.IsNullOrEmpty(connection.Username))
-                processInfo.Environment["PGUSER"] = connection.Username;
-            if (!string.IsNullOrEmpty(connection.Host))
-                processInfo.Environment["PGHOST"] = connection.Host;
-            if (connection.Port > 0)
-                processInfo.Environment["PGPORT"] = connection.Port.ToString();
+            if (!string.IsNullOrEmpty(metadata.Password))
+                processInfo.Environment["PGPASSWORD"] = metadata.Password;
+            if (!string.IsNullOrEmpty(metadata.Username))
+                processInfo.Environment["PGUSER"] = metadata.Username;
+            if (!string.IsNullOrEmpty(metadata.Host))
+                processInfo.Environment["PGHOST"] = metadata.Host;
+            if (metadata.Port > 0)
+                processInfo.Environment["PGPORT"] = metadata.Port.ToString();
 
             using var process = System.Diagnostics.Process.Start(processInfo);
 
@@ -217,11 +223,12 @@ internal static class PostgreSql
     {
         try
         {
-            using var connection = facade.GetDbConnection() as NpgsqlConnection;
-            string databaseName = connection.Database; // Store the database name before changing
+            //This connection should not be disposed if it was created by Entity Framework.
+            var connection = facade.GetDbConnection() as NpgsqlConnection;
+            string targetDatabaseName = connection.Database; // Store the database name before changing
             
             // We need to connect to postgres database to drop the current database
-            connection.ChangeDatabase("postgres");
+            await connection.ChangeDatabaseAsync("postgres", ct);
             await connection.OpenAsync(ct);
 
             // Disconnect all users
@@ -234,11 +241,11 @@ internal static class PostgreSql
                     AND pid <> pg_backend_pid()
                 """;
 
-            command.Parameters.AddWithValue("@databaseName", databaseName);
+            command.Parameters.AddWithValue("@databaseName", targetDatabaseName);
             await command.ExecuteNonQueryAsync(ct);
 
             command.Parameters.Clear();
-            command.CommandText = $"DROP DATABASE IF EXISTS \"{databaseName}\"";
+            command.CommandText = $"DROP DATABASE IF EXISTS \"{targetDatabaseName}\"";
             await command.ExecuteNonQueryAsync(ct);
         }
         catch (Exception ex)

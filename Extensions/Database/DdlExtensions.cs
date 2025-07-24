@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Gizmo.DAL.Extensions.DdlExtensions;
 using Gizmo.DAL.Scripts;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gizmo.DAL.Extensions;
 
@@ -23,6 +24,31 @@ namespace Gizmo.DAL.Extensions;
 /// </remarks>
 public static class DdlOperations
 {
+    /// <summary>
+    /// Changes the current database context to the specified database name asynchronously.
+    /// </summary>
+    /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
+    /// <param name="databaseName">The name of the database to change to.</param>
+    /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the database change operation fails.</exception>
+    /// <remarks>
+    /// This method switches the current database connection to the specified database. The database must exist on the server
+    /// for the operation to succeed.
+    /// </remarks>
+    public static async Task Change(this DatabaseFacade facade, string databaseName, CancellationToken ct = default)
+    {
+        try
+        {
+            var connection = facade.GetDbConnection();
+            await connection.ChangeDatabaseAsync(databaseName, ct);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to change database to '{databaseName}'.", ex);
+        }
+    }
+
     /// <summary>
     /// Checks if the database exists asynchronously.
     /// </summary>

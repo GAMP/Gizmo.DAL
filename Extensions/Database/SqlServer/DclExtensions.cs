@@ -17,29 +17,7 @@ internal static class SqlServer
         public DatabaseType DatabaseType { get; init; } = DatabaseType.MSSQL;
         public SQLServerAuthentication AuthenticationType { get; init; } = SQLServerAuthentication.Integrated;
 
-        public IConnectionMetadata ReplaceDatabaseName(string databaseName) => new ConnectionMetadata
-        {
-            Host = Host,
-            Port = Port,
-            AuthenticationType = AuthenticationType,
-            Username = Username,
-            Password = Password,
-            DatabaseName = databaseName,
-            DatabaseType = DatabaseType
-        };
-
-        public IConnectionMetadata RemoveDatabaseName() => new ConnectionMetadata
-        {
-            Host = Host,
-            Port = Port,
-            AuthenticationType = AuthenticationType,
-            Username = Username,
-            Password = Password,
-            DatabaseName = string.Empty,
-            DatabaseType = DatabaseType
-        };
-
-        public string BuildConnectionString()
+        public string ToConnectionString()
         {
             try
             {

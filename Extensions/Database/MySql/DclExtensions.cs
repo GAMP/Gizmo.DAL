@@ -15,39 +15,8 @@ internal static class MySql
         public DatabaseType DatabaseType => DatabaseType.MYSQL;
         public SQLServerAuthentication AuthenticationType => SQLServerAuthentication.Unspecified;
 
-        public string BuildConnectionString() => $"Server={Host};Port={Port};User ID={Username};Password={Password};Database={DatabaseName};";
+        public string ToConnectionString() => $"Server={Host};Port={Port};User ID={Username};Password={Password};Database={DatabaseName};";
 
-        public IConnectionMetadata ReplaceDatabaseName(string databaseName) => new ConnectionMetadata
-        {
-            Host = Host,
-            Port = Port,
-            Username = Username,
-            Password = Password,
-            DatabaseName = databaseName
-        };
-
-        public IConnectionMetadata RemoveDatabaseName() => new ConnectionMetadata
-        {
-            Host = Host,
-            Port = Port,
-            Username = Username,
-            Password = Password,
-            DatabaseName = string.Empty
-        };
-
-        /// <summary>
-        /// Creates a new <see cref="ConnectionMetadata"/> instance from a MySQL connection string.
-        /// </summary>
-        /// <param name="connectionString">The MySQL connection string to parse.</param>
-        /// <returns>A new <see cref="IConnectionMetadata"/> instance with connection parameters extracted from the connection string.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="connectionString"/> is null.</exception>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="connectionString"/> is empty or whitespace.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the connection string cannot be parsed or is malformed.</exception>
-        /// <remarks>
-        /// This method parses MySQL connection strings by splitting key-value pairs separated by semicolons.
-        /// It recognizes the following connection string parameters: Server, Port, User ID, Password, and Database.
-        /// The parsed metadata is cached to improve performance on subsequent calls with the same connection string.
-        /// </remarks>
         public static IConnectionMetadata FromConnectionString(string connectionString)
         {
 

@@ -16,25 +16,7 @@ internal static class PostgreSql
         public DatabaseType DatabaseType => DatabaseType.POSTGRE;
         public SQLServerAuthentication AuthenticationType { get; init; } = SQLServerAuthentication.Unspecified;
 
-        public IConnectionMetadata ReplaceDatabaseName(string databaseName) => new ConnectionMetadata
-        {
-            Host = Host,
-            Port = Port,
-            Username = Username,
-            Password = Password,
-            DatabaseName = databaseName
-        };
-
-        public IConnectionMetadata RemoveDatabaseName() => new ConnectionMetadata
-        {
-            Host = Host,
-            Port = Port,
-            Username = Username,
-            Password = Password,
-            DatabaseName = string.Empty
-        };
-
-        public string BuildConnectionString()
+        public string ToConnectionString()
         {
             try
             {
@@ -55,19 +37,6 @@ internal static class PostgreSql
             }
         }
 
-        /// <summary>
-        /// Creates a new <see cref="ConnectionMetadata"/> instance from a PostgreSQL connection string.
-        /// </summary>
-        /// <param name="connectionString">The PostgreSQL connection string to parse.</param>
-        /// <returns>A new <see cref="IConnectionMetadata"/> instance with connection parameters extracted from the connection string.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="connectionString"/> is null.</exception>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="connectionString"/> is empty or whitespace.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the connection string cannot be parsed using the Npgsql connection string builder.</exception>
-        /// <remarks>
-        /// This method uses the Npgsql connection string builder to parse PostgreSQL connection strings.
-        /// It automatically handles standard PostgreSQL connection parameters and SSL mode detection.
-        /// The parsed metadata is cached to improve performance on subsequent calls with the same connection string.
-        /// </remarks>
         public static IConnectionMetadata FromConnectionString(string connectionString)
         {
             if (!Provider.Metadata.TryGetValue(connectionString, out var connection))
