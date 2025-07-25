@@ -158,7 +158,8 @@ public static class DdlOperations
         };
 
     /// <summary>
-    /// Drops the database asynchronously.
+    /// This operation will permanently delete the entire database and all its contents.
+    /// After this operation, the database context will be switched to the system database.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
     /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>

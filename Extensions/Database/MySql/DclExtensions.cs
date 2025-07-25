@@ -19,7 +19,6 @@ internal static class MySql
 
         public static IConnectionMetadata FromConnectionString(string connectionString)
         {
-
             if (!Provider.Metadata.TryGetValue(connectionString, out var connection))
             {
                 try
