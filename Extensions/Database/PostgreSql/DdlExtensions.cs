@@ -13,30 +13,40 @@ namespace Gizmo.DAL.Extensions.DdlExtensions;
 
 internal static class PostgreSql
 {
-    public static async Task EnsureLoginExists(DatabaseFacade facade, string name, CancellationToken ct)
+    public static async Task EnsureLoginExists(DatabaseFacade facade, string login, CancellationToken ct)
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(login))
+                throw new ArgumentException("Login name cannot be null or empty.", nameof(login));
+
             //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as NpgsqlConnection;
+            var originalConnection = facade.GetDbConnection();
+
+            using var connection = new NpgsqlConnection(originalConnection.ConnectionString);
+            await connection.ChangeDatabaseAsync("postgres", ct);
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
-
-            command.CommandText = $"SELECT 1 FROM pg_roles WHERE rolname = @loginName";
-            command.Parameters.AddWithValue("@loginName", name);
+            command.CommandText = "SELECT 1 FROM pg_roles WHERE rolname = @loginName";
+            command.Parameters.AddWithValue("@loginName", login);
 
             var exists = await command.ExecuteScalarAsync(ct) != null;
 
             if (!exists)
             {
-                command.CommandText = $"CREATE ROLE \"{name}\" LOGIN SUPERUSER";
+                command.Parameters.Clear();
+                command.CommandText = $"CREATE ROLE \"{login}\" LOGIN SUPERUSER";
                 await command.ExecuteNonQueryAsync(ct);
             }
         }
+        catch (NpgsqlException ex)
+        {
+            throw new InvalidOperationException($"Failed to create PostgreSQL login '{login}'. PostgreSQL Error: {ex.Message}", ex);
+        }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("Failed to create PostgreSQL login.", ex);
+            throw new InvalidOperationException($"Failed to create PostgreSQL login '{login}'.", ex);
         }
     }
 
@@ -45,21 +55,34 @@ internal static class PostgreSql
         try
         {
             //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as NpgsqlConnection;
+            var connection = facade.GetDbConnection();
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT datname FROM pg_database WHERE datistemplate = false";
+            command.CommandText = 
+                """
+                    SELECT datname 
+                    FROM pg_database 
+                    WHERE datistemplate = false 
+                    AND datname NOT IN ('postgres')
+                    ORDER BY datname
+                """;
 
             var dbNames = new List<string>();
 
-            using var reader = await command.ExecuteReaderAsync(ct);
-            while (await reader.ReadAsync(ct))
+            using (var reader = await command.ExecuteReaderAsync(ct))
             {
-                dbNames.Add(reader.GetString(0));
+                while (await reader.ReadAsync(ct))
+                {
+                    dbNames.Add(reader.GetString(0));
+                }
             }
 
             return dbNames;
+        }
+        catch (NpgsqlException ex)
+        {
+            throw new InvalidOperationException($"Failed to retrieve PostgreSQL database names. PostgreSQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
@@ -73,21 +96,35 @@ internal static class PostgreSql
         {
             //This connection should not be disposed if it was created by Entity Framework.
             var connection = facade.GetDbConnection() as NpgsqlConnection;
+
+            if (connection.Database.Equals("postgres", StringComparison.OrdinalIgnoreCase) ||
+                connection.Database.Equals("template0", StringComparison.OrdinalIgnoreCase) ||
+                connection.Database.Equals("template1", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
             command.CommandText = "SELECT COUNT(*) FROM pg_database WHERE datname = @databaseName";
             command.Parameters.AddWithValue("@databaseName", connection.Database);
 
-            using var reader = await command.ExecuteReaderAsync(ct);
-
             var found = false;
-            if (await reader.ReadAsync(ct))
+
+            using (var reader = await command.ExecuteReaderAsync(ct))
             {
-                found = Convert.ToInt32(reader[0]) > 0;
+                if (await reader.ReadAsync(ct))
+                {
+                    found = Convert.ToInt32(reader[0]) > 0;
+                }
             }
 
             return found;
+        }
+        catch (NpgsqlException ex)
+        {
+            throw new InvalidOperationException($"Failed to check if PostgreSQL database exists. PostgreSQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
@@ -99,7 +136,11 @@ internal static class PostgreSql
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(backupFile))
+                throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
+
             var metadata = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
+
             var pgHome = Environment.GetEnvironmentVariable("POSTGRESQL_HOME");
             string commandFile = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                 ? pgHome is not null
@@ -127,13 +168,18 @@ internal static class PostgreSql
                 processInfo.Environment["PGPORT"] = metadata.Port.ToString();
 
             using var process = System.Diagnostics.Process.Start(processInfo);
-            string output = await process.StandardOutput.ReadToEndAsync(ct);
-            string error = await process.StandardError.ReadToEndAsync(ct);
+            var output = await process.StandardOutput.ReadToEndAsync(ct);
+            var error = await process.StandardError.ReadToEndAsync(ct);
+
             await process.WaitForExitAsync(ct);
             if (process.ExitCode != 0)
             {
                 throw new InvalidOperationException($"pg_dump failed: {error}");
             }
+        }
+        catch (NpgsqlException ex)
+        {
+            throw new InvalidOperationException($"Failed to backup PostgreSQL database to '{backupFile}'. PostgreSQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
@@ -141,7 +187,7 @@ internal static class PostgreSql
                 ? @" Ensure that the PostgreSQL home directory is set correctly in the environment variable 'POSTGRESQL_HOME' overwise the default path 'C:\Program Files\PostgreSQL\17\' will be used."
                 : string.Empty;
 
-            throw new InvalidOperationException($"Failed to backup PostgreSQL database.{error}", ex);
+            throw new InvalidOperationException($"Failed to backup PostgreSQL database to '{backupFile}'.{error}", ex);
         }
     }
 
@@ -149,26 +195,9 @@ internal static class PostgreSql
     {
         try
         {
-            //This connection should not be disposed if it was created by Entity Framework.
-            // Ensure we're not connected to the database we're trying to restore
-            var connection = facade.GetDbConnection() as NpgsqlConnection;
-            string targetDatabaseName = connection.Database;
+            if (string.IsNullOrWhiteSpace(backupFile))
+                throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
 
-            await connection.ChangeDatabaseAsync("postgres", ct);
-            await connection.OpenAsync(ct);
-            
-            // Terminate any existing connections to the target database
-            using var terminateCommand = connection.CreateCommand();
-            terminateCommand.CommandText =
-                $"""
-                    SELECT pg_terminate_backend(pg_stat_activity.pid)
-                    FROM pg_stat_activity
-                    WHERE pg_stat_activity.datname = @databaseName
-                    AND pid <> pg_backend_pid()
-                """;
-            terminateCommand.Parameters.AddWithValue("@databaseName", targetDatabaseName);
-            await terminateCommand.ExecuteNonQueryAsync(ct);
-            
             var metadata = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
 
             var pgHome = Environment.GetEnvironmentVariable("POSTGRESQL_HOME");
@@ -209,13 +238,17 @@ internal static class PostgreSql
                 throw new InvalidOperationException($"pg_restore failed: {error}");
             }
         }
+        catch (NpgsqlException ex)
+        {
+            throw new InvalidOperationException($"Failed to restore PostgreSQL database from '{backupFile}'. PostgreSQL Error: {ex.Message}", ex);
+        }
         catch (Exception ex)
         {
             var error = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                 ? @" Ensure that the PostgreSQL home directory is set correctly in the environment variable 'POSTGRESQL_HOME' overwise the default path 'C:\Program Files\PostgreSQL\17\' will be used."
                 : string.Empty;
 
-            throw new InvalidOperationException($"Failed to restore PostgreSQL database.{error}", ex);
+            throw new InvalidOperationException($"Failed to restore PostgreSQL database from '{backupFile}'.{error}", ex);
         }
     }
 
@@ -224,29 +257,40 @@ internal static class PostgreSql
         try
         {
             //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as NpgsqlConnection;
-            string targetDatabaseName = connection.Database; // Store the database name before changing
-            
-            // We need to connect to postgres database to drop the current database
+            var originalConnection = facade.GetDbConnection();
+
+            if (string.IsNullOrWhiteSpace(originalConnection.Database) ||
+                originalConnection.Database.Equals("postgres", StringComparison.OrdinalIgnoreCase) ||
+                originalConnection.Database.Equals("template0", StringComparison.OrdinalIgnoreCase) ||
+                originalConnection.Database.Equals("template1", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException($"Cannot drop system database '{originalConnection.Database}'.");
+            }
+
+            using var connection = new NpgsqlConnection(originalConnection.ConnectionString);
             await connection.ChangeDatabaseAsync("postgres", ct);
             await connection.OpenAsync(ct);
 
             // Disconnect all users
             using var command = connection.CreateCommand();
             command.CommandText =
-                $"""
+                """
                     SELECT pg_terminate_backend(pg_stat_activity.pid)
                     FROM pg_stat_activity
                     WHERE pg_stat_activity.datname = @databaseName
                     AND pid <> pg_backend_pid()
                 """;
 
-            command.Parameters.AddWithValue("@databaseName", targetDatabaseName);
+            command.Parameters.AddWithValue("@databaseName", originalConnection.Database);
             await command.ExecuteNonQueryAsync(ct);
 
             command.Parameters.Clear();
-            command.CommandText = $"DROP DATABASE IF EXISTS \"{targetDatabaseName}\"";
+            command.CommandText = $"DROP DATABASE IF EXISTS \"{originalConnection.Database}\"";
             await command.ExecuteNonQueryAsync(ct);
+        }
+        catch (NpgsqlException ex)
+        {
+            throw new InvalidOperationException($"Failed to drop PostgreSQL database. PostgreSQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {

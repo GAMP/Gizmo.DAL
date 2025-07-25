@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
@@ -11,14 +12,17 @@ namespace Gizmo.DAL.Extensions.DdlExtensions;
 
 internal static class SqlServer
 {
-    public static async Task EnsureLoginExists(DatabaseFacade facade, string name, CancellationToken ct)
+    public static async Task EnsureLoginExists(DatabaseFacade facade, string login, CancellationToken ct)
     {
         try
         {
-            //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as SqlConnection;
-            var originalDbName = connection.Database;
+            if (string.IsNullOrWhiteSpace(login))
+                throw new ArgumentException("Login name cannot be null or empty.", nameof(login));
 
+            //This connection should not be disposed if it was created by Entity Framework.
+            var originalConnection = facade.GetDbConnection();
+
+            using var connection = new SqlConnection(originalConnection.ConnectionString);
             await connection.ChangeDatabaseAsync("master", ct);
             await connection.OpenAsync(ct);
 
@@ -29,51 +33,48 @@ internal static class SqlServer
                     FROM sys.server_principals AS sp
                     WHERE sp.type = 'U' AND sp.name LIKE @loginName
                 """;
-            command.Parameters.AddWithValue("@loginName", $"%{Environment.MachineName}\\{name}");
+            command.Parameters.AddWithValue("@loginName", $"%{Environment.MachineName}\\{login}");
 
-            string login = null;
+            string existingLogin = null;
             bool loginDisabled = false;
 
             using (var reader = await command.ExecuteReaderAsync(ct))
             {
                 if (await reader.ReadAsync(ct))
                 {
-                    login = reader.GetString(0);
+                    existingLogin = reader.GetString(0);
                     loginDisabled = reader.GetBoolean(1);
                 }
             }
 
             command.Parameters.Clear();
 
-            if (!string.IsNullOrEmpty(login))
+            if (string.IsNullOrEmpty(existingLogin))
             {
-                if (loginDisabled)
-                {
-                    command.CommandText = $"ALTER LOGIN [{login}] ENABLE";
-                    await command.ExecuteNonQueryAsync(ct);
-                }
-            }
-            else
-            {
+                var loginName = $"{Environment.MachineName}\\{login}";
+
                 command.CommandText =
                     $"""
-                        USE [master];
-                        CREATE LOGIN [{Environment.MachineName}\{name}] FROM WINDOWS WITH DEFAULT_DATABASE = [master];
-                        ALTER SERVER ROLE [sysadmin] ADD MEMBER [{Environment.MachineName}\{name}];
+                        CREATE LOGIN [{loginName}] FROM WINDOWS WITH DEFAULT_DATABASE = [master];
+                        ALTER SERVER ROLE [sysadmin] ADD MEMBER [{loginName}];
                     """;
+
                 await command.ExecuteNonQueryAsync(ct);
             }
 
-            // Restore the original database context
-            await connection.ChangeDatabaseAsync(originalDbName, ct);
+            if (loginDisabled)
+            {
+                command.CommandText = $"ALTER LOGIN [{existingLogin}] ENABLE";
+                await command.ExecuteNonQueryAsync(ct);
+            }
         }
         catch (SqlException ex)
         {
-            throw new InvalidOperationException($"Failed to create SQL Server login '{name}'. SQL Error: {ex.Message}", ex);
+            throw new InvalidOperationException($"Failed to create SQL Server login '{login}'. SQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Failed to create SQL Server login '{name}'.", ex);
+            throw new InvalidOperationException($"Failed to create SQL Server login '{login}'.", ex);
         }
     }
 
@@ -82,32 +83,27 @@ internal static class SqlServer
         try
         {
             //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as SqlConnection;
-            var originalDbName = connection.Database;
-            
-            // Ensure we're in master database context
-            await connection.ChangeDatabaseAsync("master", ct);
+            var connection = facade.GetDbConnection();
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
             command.CommandText =
                 """
                     SELECT name 
-                    FROM sys.databases 
+                    FROM master.sys.databases 
                     WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb')
                     ORDER BY name
                 """;
 
             var dbNames = new List<string>();
 
-            using var reader = await command.ExecuteReaderAsync(ct);
-            while (await reader.ReadAsync(ct))
+            using (var reader = await command.ExecuteReaderAsync(ct))
             {
-                dbNames.Add(reader.GetString(0));
+                while (await reader.ReadAsync(ct))
+                {
+                    dbNames.Add(reader.GetString(0));
+                }
             }
-
-            // Restore original database context
-            await connection.ChangeDatabaseAsync(originalDbName, ct);
 
             return dbNames;
         }
@@ -127,15 +123,20 @@ internal static class SqlServer
         {
             //This connection should not be disposed if it was created by Entity Framework.
             var connection = facade.GetDbConnection() as SqlConnection;
-            var originalDbName = connection.Database;
-            
-            // Ensure we're in master database context to check if target database exists
-            await connection.ChangeDatabaseAsync("master", ct);
+
+            if (connection.Database.Equals("master", StringComparison.OrdinalIgnoreCase) ||
+                connection.Database.Equals("tempdb", StringComparison.OrdinalIgnoreCase) ||
+                connection.Database.Equals("model", StringComparison.OrdinalIgnoreCase) ||
+                connection.Database.Equals("msdb", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT COUNT(*) FROM sys.databases WHERE [name] = @databaseName";
-            command.Parameters.AddWithValue("@databaseName", originalDbName);
+            command.CommandText = "SELECT COUNT(*) FROM master.sys.databases WHERE [name] = @databaseName";
+            command.Parameters.AddWithValue("@databaseName", connection.Database);
 
             using var reader = await command.ExecuteReaderAsync(ct);
 
@@ -145,9 +146,6 @@ internal static class SqlServer
             {
                 found = Convert.ToInt32(reader[0]) > 0;
             }
-
-            // Restore original database context
-            await connection.ChangeDatabaseAsync(originalDbName, ct);
 
             return found;
         }
@@ -163,25 +161,26 @@ internal static class SqlServer
 
     public static async Task Backup(DatabaseFacade facade, string backupFile, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(backupFile))
-            throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
-
         try
         {
-            //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as SqlConnection;
-            await connection.OpenAsync(ct);
+            if (string.IsNullOrWhiteSpace(backupFile))
+                throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
 
-            var dbName = connection.Database.Replace("]", "]]");
+            //This connection should not be disposed if it was created by Entity Framework.
+            var originalConnection = facade.GetDbConnection();
+
+            using var connection = new SqlConnection(originalConnection.ConnectionString);
+            await connection.ChangeDatabaseAsync("master", ct);
+            await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
             command.CommandText =
                 $"""
-                    BACKUP DATABASE [{dbName}]
+                    BACKUP DATABASE [{originalConnection.Database}]
                     TO DISK = @backupFile
                     WITH FORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 5
                 """;
-            
+
             command.Parameters.AddWithValue("@backupFile", backupFile);
             command.CommandTimeout = 1000;
             await command.ExecuteNonQueryAsync(ct);
@@ -198,34 +197,32 @@ internal static class SqlServer
 
     public static async Task Restore(DatabaseFacade facade, string backupFile, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(backupFile))
-            throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
-
         try
         {
+            if (string.IsNullOrWhiteSpace(backupFile))
+                throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
+
             //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as SqlConnection;
+            var originalConnection = facade.GetDbConnection();
+
+            using var connection = new SqlConnection(originalConnection.ConnectionString);
+            await connection.ChangeDatabaseAsync("master", ct);
             await connection.OpenAsync(ct);
 
-            var backupFiles = await GetBackupFiles(connection, backupFile, ct);
+            var backupFiles = await GetBackupFiles(connection, originalConnection.Database, backupFile, ct);
 
-            if (backupFiles.Count == 0)
-                throw new InvalidOperationException("No files found in the backup to restore.");
-
-            var moveStatements = new List<string>(backupFiles.Count);
+            var moveStatement = new StringBuilder();
 
             foreach (var file in backupFiles)
             {
-                moveStatements.Add($"MOVE N'{file.LogicalName.Replace("'", "''")}' TO N'{file.TargetPath.Replace("'", "''")}'");
+                moveStatement.Append($"MOVE N'{file.LogicalName}' TO N'{file.TargetPath}',");
             }
-
-            var dbName = connection.Database.Replace("]", "]]");
 
             string restoreSql =
                 $"""
-                    RESTORE DATABASE [{dbName}]
+                    RESTORE DATABASE [{originalConnection.Database}]
                     FROM DISK = @backupFile
-                    WITH FILE = 1, {string.Join(", ", moveStatements)}, NOUNLOAD, STATS = 5, REPLACE
+                    WITH FILE = 1, {moveStatement} NOUNLOAD, STATS = 5, REPLACE
                 """;
 
             using var command = connection.CreateCommand();
@@ -249,31 +246,28 @@ internal static class SqlServer
         try
         {
             //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as SqlConnection;
-            string targetDbName = connection.Database;
-            
-            if (string.IsNullOrWhiteSpace(targetDbName) || 
-                targetDbName.Equals("master", StringComparison.OrdinalIgnoreCase) ||
-                targetDbName.Equals("tempdb", StringComparison.OrdinalIgnoreCase) ||
-                targetDbName.Equals("model", StringComparison.OrdinalIgnoreCase) ||
-                targetDbName.Equals("msdb", StringComparison.OrdinalIgnoreCase))
+            var originalConnection = facade.GetDbConnection();
+
+            if (string.IsNullOrWhiteSpace(originalConnection.Database) ||
+                originalConnection.Database.Equals("master", StringComparison.OrdinalIgnoreCase) ||
+                originalConnection.Database.Equals("tempdb", StringComparison.OrdinalIgnoreCase) ||
+                originalConnection.Database.Equals("model", StringComparison.OrdinalIgnoreCase) ||
+                originalConnection.Database.Equals("msdb", StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidOperationException($"Cannot drop system database '{targetDbName}'.");
+                throw new InvalidOperationException($"Cannot drop system database '{originalConnection.Database}'.");
             }
 
-            targetDbName = targetDbName.Replace("]", "]]");
-            
-            // We need to connect to master database to drop the current database
+            using var connection = new SqlConnection(originalConnection.ConnectionString);
             await connection.ChangeDatabaseAsync("master", ct);
             await connection.OpenAsync(ct);
 
             using var command = connection.CreateCommand();
 
             // Force disconnect all users by setting the database to single user mode before dropping it
-            command.CommandText = $"ALTER DATABASE [{targetDbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
+            command.CommandText = $"ALTER DATABASE [{originalConnection.Database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
             await command.ExecuteNonQueryAsync(ct);
 
-            command.CommandText = $"DROP DATABASE [{targetDbName}]";
+            command.CommandText = $"DROP DATABASE [{originalConnection.Database}]";
             await command.ExecuteNonQueryAsync(ct);
         }
         catch (SqlException ex)
@@ -337,10 +331,8 @@ internal static class SqlServer
         return (dataDirectory, logDirectory);
     }
 
-    private static async Task<List<BackupFile>> GetBackupFiles(SqlConnection connection, string backupFile, CancellationToken ct)
+    private static async Task<List<BackupFile>> GetBackupFiles(SqlConnection connection, string dbName, string backupFile, CancellationToken ct)
     {
-        var files = new List<BackupFile>();
-
         try
         {
             var (dataDirectory, logDirectory) = await GetDirectories(connection, ct);
@@ -349,18 +341,20 @@ internal static class SqlServer
             command.CommandText = "RESTORE FILELISTONLY FROM DISK = @backupFile";
             command.Parameters.AddWithValue("@backupFile", backupFile);
 
+            var files = new List<BackupFile>();
             using var reader = await command.ExecuteReaderAsync(ct);
+
             while (await reader.ReadAsync(ct))
             {
                 var logicalName = reader["LogicalName"]?.ToString();
                 var type = reader["Type"]?.ToString();
-                
+
                 if (string.IsNullOrWhiteSpace(logicalName))
                     continue;
 
-                var targetPath = type == "L" 
-                    ? Path.Combine(logDirectory, $"{connection.Database}_log.ldf")
-                    : Path.Combine(dataDirectory, $"{connection.Database}.mdf");
+                var targetPath = type == "L"
+                    ? Path.Combine(logDirectory, $"{dbName}_log.ldf")
+                    : Path.Combine(dataDirectory, $"{dbName}.mdf");
 
                 files.Add(new BackupFile
                 {
@@ -368,6 +362,8 @@ internal static class SqlServer
                     TargetPath = targetPath
                 });
             }
+
+            return files;
         }
         catch (SqlException ex)
         {
@@ -377,8 +373,6 @@ internal static class SqlServer
         {
             throw new InvalidOperationException($"Failed to get SQL Server backup files from '{backupFile}'.", ex);
         }
-
-        return files;
     }
 
     private record BackupFile
