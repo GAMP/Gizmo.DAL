@@ -12,8 +12,8 @@ internal static class SqlServer
         public string Host { get; init; } = "localhost";
         public int Port { get; init; } = 1433;
         public string DatabaseName { get; init; } = string.Empty;
-        public string Username { get; init; } = null;
-        public string Password { get; init; } = null;
+        public string Username { get; init; }
+        public string Password { get; init; }
         public DatabaseType DatabaseType { get; init; } = DatabaseType.MSSQL;
         public SQLServerAuthentication AuthenticationType { get; init; } = SQLServerAuthentication.Integrated;
 
@@ -32,6 +32,7 @@ internal static class SqlServer
                 {
                     if (Username is not null)
                         builder.UserID = Username;
+
                     if (Password is not null)
                         builder.Password = Password;
                 }
@@ -63,16 +64,17 @@ internal static class SqlServer
                     {
                         dbType = DatabaseType.LOCALDB;
                         host = dataSource; // Keep full identifier for LocalDB
-                        port = 0; // LocalDB doesn't use TCP/IP ports
+                        port = 0;          // LocalDB doesn't use TCP/IP ports
                     }
                     else if (dataSourceLower.Contains("sqlexpress") || dataSource.Contains("\\SQLEXPRESS"))
                     {
                         dbType = DatabaseType.MSSQLEXPRESS;
-                        
+
                         // Parse host from named instance (ServerName\SQLEXPRESS)
                         if (dataSource.Contains('\\'))
                         {
                             host = dataSource.Split('\\')[0];
+
                             if (string.IsNullOrEmpty(host))
                                 host = "localhost";
                         }

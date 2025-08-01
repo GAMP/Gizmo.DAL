@@ -22,23 +22,25 @@ internal static class SqlServer
             //This connection should not be disposed if it was created by Entity Framework.
             var originalConnection = facade.GetDbConnection();
 
-            using var connection = new SqlConnection(originalConnection.ConnectionString);
+            await using var connection = new SqlConnection(originalConnection.ConnectionString);
             await connection.ChangeDatabaseAsync("master", ct);
             await connection.OpenAsync(ct);
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
+
             command.CommandText =
-                $"""
+                """
                     SELECT sp.name, sp.is_disabled
                     FROM sys.server_principals AS sp
                     WHERE sp.type = 'U' AND sp.name LIKE @loginName
                 """;
+
             command.Parameters.AddWithValue("@loginName", $"%{Environment.MachineName}\\{login}");
 
             string existingLogin = null;
             bool loginDisabled = false;
 
-            using (var reader = await command.ExecuteReaderAsync(ct))
+            await using (var reader = await command.ExecuteReaderAsync(ct))
             {
                 if (await reader.ReadAsync(ct))
                 {
@@ -55,9 +57,9 @@ internal static class SqlServer
 
                 command.CommandText =
                     $"""
-                        CREATE LOGIN [{loginName}] FROM WINDOWS WITH DEFAULT_DATABASE = [master];
-                        ALTER SERVER ROLE [sysadmin] ADD MEMBER [{loginName}];
-                    """;
+                         CREATE LOGIN [{loginName}] FROM WINDOWS WITH DEFAULT_DATABASE = [master];
+                         ALTER SERVER ROLE [sysadmin] ADD MEMBER [{loginName}];
+                     """;
 
                 await command.ExecuteNonQueryAsync(ct);
             }
@@ -86,7 +88,8 @@ internal static class SqlServer
             var connection = facade.GetDbConnection();
             await connection.OpenAsync(ct);
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
+
             command.CommandText =
                 """
                     SELECT name 
@@ -97,7 +100,7 @@ internal static class SqlServer
 
             var dbNames = new List<string>();
 
-            using (var reader = await command.ExecuteReaderAsync(ct))
+            await using (var reader = await command.ExecuteReaderAsync(ct))
             {
                 while (await reader.ReadAsync(ct))
                 {
@@ -122,23 +125,24 @@ internal static class SqlServer
         try
         {
             //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as SqlConnection;
+            if (facade.GetDbConnection() is not SqlConnection connection)
+                throw new InvalidOperationException("The database connection is not a valid SQL Server connection.");
 
-            if (connection.Database.Equals("master", StringComparison.OrdinalIgnoreCase) ||
-                connection.Database.Equals("tempdb", StringComparison.OrdinalIgnoreCase) ||
-                connection.Database.Equals("model", StringComparison.OrdinalIgnoreCase) ||
-                connection.Database.Equals("msdb", StringComparison.OrdinalIgnoreCase))
+            if (connection.Database.Equals("master", StringComparison.OrdinalIgnoreCase)
+                || connection.Database.Equals("tempdb", StringComparison.OrdinalIgnoreCase)
+                || connection.Database.Equals("model", StringComparison.OrdinalIgnoreCase)
+                || connection.Database.Equals("msdb", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
             await connection.OpenAsync(ct);
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = "SELECT COUNT(*) FROM master.sys.databases WHERE [name] = @databaseName";
             command.Parameters.AddWithValue("@databaseName", connection.Database);
 
-            using var reader = await command.ExecuteReaderAsync(ct);
+            await using var reader = await command.ExecuteReaderAsync(ct);
 
             var found = false;
 
@@ -169,17 +173,18 @@ internal static class SqlServer
             //This connection should not be disposed if it was created by Entity Framework.
             var originalConnection = facade.GetDbConnection();
 
-            using var connection = new SqlConnection(originalConnection.ConnectionString);
+            await using var connection = new SqlConnection(originalConnection.ConnectionString);
             await connection.ChangeDatabaseAsync("master", ct);
             await connection.OpenAsync(ct);
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
+
             command.CommandText =
                 $"""
-                    BACKUP DATABASE [{originalConnection.Database}]
-                    TO DISK = @backupFile
-                    WITH FORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 5
-                """;
+                     BACKUP DATABASE [{originalConnection.Database}]
+                     TO DISK = @backupFile
+                     WITH FORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 5
+                 """;
 
             command.Parameters.AddWithValue("@backupFile", backupFile);
             command.CommandTimeout = 1000;
@@ -205,7 +210,7 @@ internal static class SqlServer
             //This connection should not be disposed if it was created by Entity Framework.
             var originalConnection = facade.GetDbConnection();
 
-            using var connection = new SqlConnection(originalConnection.ConnectionString);
+            await using var connection = new SqlConnection(originalConnection.ConnectionString);
             await connection.ChangeDatabaseAsync("master", ct);
             await connection.OpenAsync(ct);
 
@@ -220,12 +225,12 @@ internal static class SqlServer
 
             string restoreSql =
                 $"""
-                    RESTORE DATABASE [{originalConnection.Database}]
-                    FROM DISK = @backupFile
-                    WITH FILE = 1, {moveStatement} NOUNLOAD, STATS = 5, REPLACE
-                """;
+                     RESTORE DATABASE [{originalConnection.Database}]
+                     FROM DISK = @backupFile
+                     WITH FILE = 1, {moveStatement} NOUNLOAD, STATS = 5, REPLACE
+                 """;
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = restoreSql;
             command.Parameters.AddWithValue("@backupFile", backupFile);
             command.CommandTimeout = 600;
@@ -248,20 +253,20 @@ internal static class SqlServer
             //This connection should not be disposed if it was created by Entity Framework.
             var originalConnection = facade.GetDbConnection();
 
-            if (string.IsNullOrWhiteSpace(originalConnection.Database) ||
-                originalConnection.Database.Equals("master", StringComparison.OrdinalIgnoreCase) ||
-                originalConnection.Database.Equals("tempdb", StringComparison.OrdinalIgnoreCase) ||
-                originalConnection.Database.Equals("model", StringComparison.OrdinalIgnoreCase) ||
-                originalConnection.Database.Equals("msdb", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(originalConnection.Database)
+                || originalConnection.Database.Equals("master", StringComparison.OrdinalIgnoreCase)
+                || originalConnection.Database.Equals("tempdb", StringComparison.OrdinalIgnoreCase)
+                || originalConnection.Database.Equals("model", StringComparison.OrdinalIgnoreCase)
+                || originalConnection.Database.Equals("msdb", StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException($"Cannot drop system database '{originalConnection.Database}'.");
             }
 
-            using var connection = new SqlConnection(originalConnection.ConnectionString);
+            await using var connection = new SqlConnection(originalConnection.ConnectionString);
             await connection.ChangeDatabaseAsync("master", ct);
             await connection.OpenAsync(ct);
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
 
             // Force disconnect all users by setting the database to single user mode before dropping it
             command.CommandText = $"ALTER DATABASE [{originalConnection.Database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
@@ -285,7 +290,7 @@ internal static class SqlServer
         var dataDirectory = string.Empty;
         var logDirectory = string.Empty;
 
-        var sql =
+        const string Sql =
             """
                 declare @DefaultData nvarchar(512)
                 exec master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'DefaultData', @DefaultData output
@@ -304,10 +309,11 @@ internal static class SqlServer
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.CommandText = sql;
+            await using var command = connection.CreateCommand();
+            command.CommandText = Sql;
 
-            using var reader = await command.ExecuteReaderAsync(ct);
+            await using var reader = await command.ExecuteReaderAsync(ct);
+
             while (await reader.ReadAsync(ct))
             {
                 dataDirectory = reader["DefaultData"].ToString();
@@ -337,12 +343,12 @@ internal static class SqlServer
         {
             var (dataDirectory, logDirectory) = await GetDirectories(connection, ct);
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = "RESTORE FILELISTONLY FROM DISK = @backupFile";
             command.Parameters.AddWithValue("@backupFile", backupFile);
 
             var files = new List<BackupFile>();
-            using var reader = await command.ExecuteReaderAsync(ct);
+            await using var reader = await command.ExecuteReaderAsync(ct);
 
             while (await reader.ReadAsync(ct))
             {
@@ -356,11 +362,7 @@ internal static class SqlServer
                     ? Path.Combine(logDirectory, $"{dbName}_log.ldf")
                     : Path.Combine(dataDirectory, $"{dbName}.mdf");
 
-                files.Add(new BackupFile
-                {
-                    LogicalName = logicalName,
-                    TargetPath = targetPath
-                });
+                files.Add(new BackupFile { LogicalName = logicalName, TargetPath = targetPath });
             }
 
             return files;

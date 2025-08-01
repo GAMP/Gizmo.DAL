@@ -23,11 +23,11 @@ internal static class PostgreSql
             //This connection should not be disposed if it was created by Entity Framework.
             var originalConnection = facade.GetDbConnection();
 
-            using var connection = new NpgsqlConnection(originalConnection.ConnectionString);
+            await using var connection = new NpgsqlConnection(originalConnection.ConnectionString);
             await connection.ChangeDatabaseAsync("postgres", ct);
             await connection.OpenAsync(ct);
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = "SELECT 1 FROM pg_roles WHERE rolname = @loginName";
             command.Parameters.AddWithValue("@loginName", login);
 
@@ -58,8 +58,9 @@ internal static class PostgreSql
             var connection = facade.GetDbConnection();
             await connection.OpenAsync(ct);
 
-            using var command = connection.CreateCommand();
-            command.CommandText = 
+            await using var command = connection.CreateCommand();
+
+            command.CommandText =
                 """
                     SELECT datname 
                     FROM pg_database 
@@ -70,7 +71,7 @@ internal static class PostgreSql
 
             var dbNames = new List<string>();
 
-            using (var reader = await command.ExecuteReaderAsync(ct))
+            await using (var reader = await command.ExecuteReaderAsync(ct))
             {
                 while (await reader.ReadAsync(ct))
                 {
@@ -95,24 +96,25 @@ internal static class PostgreSql
         try
         {
             //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection() as NpgsqlConnection;
+            if (facade.GetDbConnection() is not NpgsqlConnection connection)
+                throw new InvalidOperationException("The database connection is not a valid NpgsqlConnection.");
 
-            if (connection.Database.Equals("postgres", StringComparison.OrdinalIgnoreCase) ||
-                connection.Database.Equals("template0", StringComparison.OrdinalIgnoreCase) ||
-                connection.Database.Equals("template1", StringComparison.OrdinalIgnoreCase))
+            if (connection.Database.Equals("postgres", StringComparison.OrdinalIgnoreCase)
+                || connection.Database.Equals("template0", StringComparison.OrdinalIgnoreCase)
+                || connection.Database.Equals("template1", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
             await connection.OpenAsync(ct);
 
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
             command.CommandText = "SELECT COUNT(*) FROM pg_database WHERE datname = @databaseName";
             command.Parameters.AddWithValue("@databaseName", connection.Database);
 
             var found = false;
 
-            using (var reader = await command.ExecuteReaderAsync(ct))
+            await using (var reader = await command.ExecuteReaderAsync(ct))
             {
                 if (await reader.ReadAsync(ct))
                 {
@@ -142,6 +144,7 @@ internal static class PostgreSql
             var metadata = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
 
             var pgHome = Environment.GetEnvironmentVariable("POSTGRESQL_HOME");
+
             string commandFile = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                 ? pgHome is not null
                     ? Path.Combine(pgHome, "bin", "pg_dump.exe")
@@ -160,18 +163,26 @@ internal static class PostgreSql
 
             if (!string.IsNullOrEmpty(metadata.Password))
                 processInfo.Environment["PGPASSWORD"] = metadata.Password;
+
             if (!string.IsNullOrEmpty(metadata.Username))
                 processInfo.Environment["PGUSER"] = metadata.Username;
+
             if (!string.IsNullOrEmpty(metadata.Host))
                 processInfo.Environment["PGHOST"] = metadata.Host;
+
             if (metadata.Port > 0)
                 processInfo.Environment["PGPORT"] = metadata.Port.ToString();
 
             using var process = System.Diagnostics.Process.Start(processInfo);
-            var output = await process.StandardOutput.ReadToEndAsync(ct);
+
+            if (process is null)
+                throw new InvalidOperationException($"Failed to start pg_dump process. Command: {commandFile} {processInfo.Arguments}");
+
+            _ = await process.StandardOutput.ReadToEndAsync(ct);
             var error = await process.StandardError.ReadToEndAsync(ct);
 
             await process.WaitForExitAsync(ct);
+
             if (process.ExitCode != 0)
             {
                 throw new InvalidOperationException($"pg_dump failed: {error}");
@@ -201,6 +212,7 @@ internal static class PostgreSql
             var metadata = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
 
             var pgHome = Environment.GetEnvironmentVariable("POSTGRESQL_HOME");
+
             string commandFile = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                 ? pgHome is not null
                     ? Path.Combine(pgHome, "bin", "pg_restore.exe")
@@ -219,24 +231,28 @@ internal static class PostgreSql
 
             if (!string.IsNullOrEmpty(metadata.Password))
                 processInfo.Environment["PGPASSWORD"] = metadata.Password;
+
             if (!string.IsNullOrEmpty(metadata.Username))
                 processInfo.Environment["PGUSER"] = metadata.Username;
+
             if (!string.IsNullOrEmpty(metadata.Host))
                 processInfo.Environment["PGHOST"] = metadata.Host;
+
             if (metadata.Port > 0)
                 processInfo.Environment["PGPORT"] = metadata.Port.ToString();
 
             using var process = System.Diagnostics.Process.Start(processInfo);
 
-            string output = await process.StandardOutput.ReadToEndAsync(ct);
-            string error = await process.StandardError.ReadToEndAsync(ct);
+            if (process is null)
+                throw new InvalidOperationException($"Failed to start pg_restore process. Command: {commandFile} {processInfo.Arguments}");
+
+            _ = await process.StandardOutput.ReadToEndAsync(ct);
+            var error = await process.StandardError.ReadToEndAsync(ct);
 
             await process.WaitForExitAsync(ct);
 
             if (process.ExitCode != 0)
-            {
                 throw new InvalidOperationException($"pg_restore failed: {error}");
-            }
         }
         catch (NpgsqlException ex)
         {
@@ -259,20 +275,21 @@ internal static class PostgreSql
             //This connection should not be disposed if it was created by Entity Framework.
             var originalConnection = facade.GetDbConnection();
 
-            if (string.IsNullOrWhiteSpace(originalConnection.Database) ||
-                originalConnection.Database.Equals("postgres", StringComparison.OrdinalIgnoreCase) ||
-                originalConnection.Database.Equals("template0", StringComparison.OrdinalIgnoreCase) ||
-                originalConnection.Database.Equals("template1", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(originalConnection.Database)
+                || originalConnection.Database.Equals("postgres", StringComparison.OrdinalIgnoreCase)
+                || originalConnection.Database.Equals("template0", StringComparison.OrdinalIgnoreCase)
+                || originalConnection.Database.Equals("template1", StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException($"Cannot drop system database '{originalConnection.Database}'.");
             }
 
-            using var connection = new NpgsqlConnection(originalConnection.ConnectionString);
+            await using var connection = new NpgsqlConnection(originalConnection.ConnectionString);
             await connection.ChangeDatabaseAsync("postgres", ct);
             await connection.OpenAsync(ct);
 
             // Disconnect all users
-            using var command = connection.CreateCommand();
+            await using var command = connection.CreateCommand();
+
             command.CommandText =
                 """
                     SELECT pg_terminate_backend(pg_stat_activity.pid)

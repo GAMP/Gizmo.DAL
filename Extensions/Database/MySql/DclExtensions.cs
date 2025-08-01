@@ -33,6 +33,7 @@ internal static class MySql
                     foreach (var token in tokens)
                     {
                         var keyValue = token.Split('=', 2);
+
                         if (keyValue.Length == 2)
                         {
                             var key = keyValue[0].Trim();
@@ -42,18 +43,23 @@ internal static class MySql
                             {
                                 case "server":
                                     host = value;
+
                                     break;
                                 case "port":
                                     port = int.Parse(value);
+
                                     break;
                                 case "user id":
                                     username = value;
+
                                     break;
                                 case "password":
                                     password = value;
+
                                     break;
                                 case "database":
                                     databaseName = value;
+
                                     break;
                             }
                         }

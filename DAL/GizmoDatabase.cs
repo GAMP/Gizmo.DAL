@@ -269,9 +269,10 @@ namespace Gizmo.DAL
         {
             using (var cx = GetDbContext())
             {
-                return cx.Settings.AsNoTracking()
-                    .Where(x => string.Compare(x.Name, name, true) == 0)
-                    .SingleOrDefault();
+                return cx
+                    .Settings
+                    .AsNoTracking()
+                    .SingleOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             }
         }
 
