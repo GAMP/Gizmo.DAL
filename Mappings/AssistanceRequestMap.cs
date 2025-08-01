@@ -1,50 +1,51 @@
-using Gizmo.DAL.Entities;
+﻿using Gizmo.DAL.Entities;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Assistance request entity mapping.
+    /// </summary>
     public class AssistanceRequestMap : IEntityTypeConfiguration<AssistanceRequest>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<AssistanceRequest> builder)
         {
-            builder.HasKey(t => t.Id);
+            builder.HasKey(assistanceRequest => assistanceRequest.Id);
 
-            builder.Property(x => x.Id)
+            builder.Property(assistanceRequest => assistanceRequest.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("AssistanceRequestId");
 
-            builder.Property(x => x.UserId)
+            builder.Property(assistanceRequest => assistanceRequest.UserId)
                 .IsRequired(false)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.HostId)
+            builder.Property(assistanceRequest => assistanceRequest.HostId)
                 .IsRequired()
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.AssistanceRequestTypeId)
+            builder.Property(assistanceRequest => assistanceRequest.AssistanceRequestTypeId)
                 .IsRequired()
                 .HasColumnOrder(3);
 
-            builder.Property(x => x.Note)
+            builder.Property(assistanceRequest => assistanceRequest.Note)
                 .HasColumnOrder(4)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired(false);
 
-            builder.Property(x => x.Status)
+            builder.Property(assistanceRequest => assistanceRequest.Status)
                 .HasColumnOrder(5);
 
-            builder.HasOne(x => x.AssistanceRequestType)
+            builder.HasOne(assistanceRequest => assistanceRequest.AssistanceRequestType)
                 .WithMany(x => x.AssistanceRequests)
                 .HasForeignKey(x => x.AssistanceRequestTypeId);
 
-            builder.HasOne(x => x.Host)
-                .WithMany(x => x.AssitanceRequests)
-                .HasForeignKey(x => x.HostId);
+            builder.HasOne(assistanceRequest => assistanceRequest.Host)
+                .WithMany(host => host.AssistanceRequests)
+                .HasForeignKey(assistanceRequest => assistanceRequest.HostId);
 
             builder.ToTable(nameof(AssistanceRequest));
         }

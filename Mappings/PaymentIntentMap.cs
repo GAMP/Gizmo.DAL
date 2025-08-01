@@ -10,63 +10,65 @@ namespace Gizmo.DAL.Mappings
     /// </summary>
     public class PaymentIntentMap : IEntityTypeConfiguration<PaymentIntent>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc></inheritdoc>/>
         public void Configure(EntityTypeBuilder<PaymentIntent> builder)
         {
-            builder.HasKey(x => x.Id);
+            builder.ToTable(nameof(PaymentIntent));
 
-            builder.Property(x => x.Id)
+            builder.HasKey(paymentIntent => paymentIntent.Id);
+
+            builder.Property(paymentIntent => paymentIntent.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("PaymentIntentId");
 
-            builder.Property(x => x.UserId)
+            builder.Property(paymentIntent => paymentIntent.UserId)
                 .IsRequired()
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.PaymentMethodId)
+            builder.Property(paymentIntent => paymentIntent.PaymentMethodId)
                 .HasColumnOrder(2)
                 .IsRequired();
 
-            builder.Property(x => x.Amount)
+            builder.Property(paymentIntent => paymentIntent.Amount)
                 .HasColumnOrder(3)
                 .IsRequired();
 
-            builder.Property(x => x.State)
+            builder.Property(paymentIntent => paymentIntent.State)
                 .HasColumnOrder(4)
                 .IsRequired();
 
-            builder.Property(x => x.TransactionId)
+            builder.Property(paymentIntent => paymentIntent.TransactionId)
                 .HasColumnOrder(5)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
 
-            builder.Property(x => x.TransactionTime)
+            builder.Property(paymentIntent => paymentIntent.TransactionTime)
                 .HasColumnOrder(6)
                 .IsRequired(false);
 
-            builder.Property(x => x.Provider)
+            builder.Property(paymentIntent => paymentIntent.Provider)
                 .HasColumnOrder(7)
                 .IsRequired();
 
-            builder.Property(x => x.Guid)
+            builder.Property(paymentIntent => paymentIntent.Guid)
                 .HasColumnOrder(8)
-                .IsRequired(); ;
+                .IsRequired();
 
-            builder.HasOne(x => x.User)
-                .WithMany(x => x.PaymentIntents)
-                .HasForeignKey(x => x.UserId)
+            builder.Property(paymentIntent => paymentIntent.PaymentLinkUrl)
+                .HasColumnOrder(9)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY);
+
+            builder.HasOne(paymentIntent => paymentIntent.User)
+                .WithMany(userMember => userMember.PaymentIntents)
+                .HasForeignKey(paymentIntent => paymentIntent.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(x => x.PaymentMethod)
-                .WithMany(x => x.PaymentIntents)
-                .HasForeignKey(x => x.PaymentMethodId);
+            builder.HasOne(paymentIntent => paymentIntent.PaymentMethod)
+                .WithMany(paymentMethod => paymentMethod.PaymentIntents)
+                .HasForeignKey(paymentIntent => paymentIntent.PaymentMethodId);
 
-            // Indexes
-            builder.HasIndex(t => t.Guid).IsUnique();
-
-            builder.ToTable(nameof(PaymentIntent));
+            builder.HasIndex(paymentIntent => paymentIntent.Guid).IsUnique();         
         }
     }
 }

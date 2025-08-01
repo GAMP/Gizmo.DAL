@@ -40,14 +40,14 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false);
 
             builder.HasIndex(reservationHost => reservationHost.Status);
-            builder.HasIndex(x => new { x.ReservationId, x.HostId }).IsUnique();
+            builder.HasIndex(reservationHost => new { reservationHost.ReservationId, reservationHost.HostId }).IsUnique();
 
             builder.HasOne(reservationHost => reservationHost.Reservation)
                 .WithMany(reservationHost => reservationHost.Hosts)
                 .HasForeignKey(reservationHost => reservationHost.ReservationId);
 
             builder.HasOne(reservationHost => reservationHost.Host)
-                .WithMany()
+                .WithMany(reservationHost => reservationHost.Reservations)
                 .HasForeignKey(reservationHost => reservationHost.HostId)
                 .OnDelete(DeleteBehavior.Restrict);
 
