@@ -14,7 +14,7 @@ namespace Gizmo.DAL.Extensions.DmlExtensions;
 internal static class SqlServer
 {
     public static async Task Cleanup(
-        this DefaultDbContext cx,
+        DefaultDbContext cx,
         bool deleteUsers,
         bool deleteHosts,
         bool deleteOperators,
@@ -545,227 +545,185 @@ internal static class SqlServer
         }
     }
 
-    public static async Task CleanupUsers(this DefaultDbContext cx, CancellationToken ct)
+    public static async Task CleanupUsers(DefaultDbContext cx, CancellationToken ct)
     {
+        const string DeletedUsersSubquery =
+            """
+               SELECT A.UserId 
+               FROM [User] AS A 
+               LEFT OUTER JOIN [UserGuest] AS B ON A.UserId = B.UserId 
+               LEFT OUTER JOIN [UserOperator] AS C ON A.UserId = C.UserId 
+               WHERE A.IsDeleted = 1 
+               AND B.UserId IS NULL 
+               AND C.UserId IS NULL
+            """;
+
         await using (var trx = await cx.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct))
         {
             cx.ChangeTracker.AutoDetectChangesEnabled = false;
             cx.Database.SetCommandTimeout(int.MaxValue);
 
+            // Basic DELETE operations (direct user ID reference)
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("AssetTransaction"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("AppStat"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("AppRating"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("AssistanceRequest"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("ReservationUser"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Reservation"), ct);
+
+            // Nested DELETE operations (joined tables)
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("UsageTime", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("UsageTimeFixed", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("UsageRate", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("UsageUserSession", "Usage", "UsageId"), ct);
+
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UsageSession"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Usage"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserSessionChange"), ct);
+
+            // Delete based on CreatedById
             await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[AssetTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
+                $"""
+                      DELETE FROM [UserSessionChange] 
+                      WHERE CreatedById IN (
+                          {DeletedUsersSubquery}
+                      )
+                 """, ct);
+
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserSession"), ct);
+
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("RefundInvoicePayment", "InvoicePayment", "InvoicePaymentId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("RefundDepositPayment", "DepositPayment", "DepositPaymentId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("Refund", "Payment", "PaymentId"), ct);
+
+            // Complex join with multiple levels
+            await cx.Database.ExecuteSqlAsync(
+                $"""
+                     DELETE FROM [RefundDepositPayment] 
+                     WHERE RefundId IN (
+                         SELECT RefundId 
+                         FROM [Refund] 
+                         WHERE DepositTransactionId IN (
+                             SELECT DepositTransactionId 
+                             FROM [DepositTransaction] 
+                             WHERE UserId IN (
+                                 {DeletedUsersSubquery}
+                             )
+                         )
+                     )
+                 """, ct);
+
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("Refund", "DepositTransaction", "DepositTransactionId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("InvoicePayment"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("PaymentIntentDeposit", "PaymentIntent", "PaymentIntentId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("PaymentIntent"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("DepositPayment"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Payment"), ct);
+
+            // Update operations setting NULL values
+            await cx.Database.ExecuteSqlAsync(
+                UpdateTableSetNull(
+                    "InvoiceLineExtended",
+                    "BundleLineId",
+                    "InvoiceLine",
+                    "InvoiceLineId"),
                 ct);
 
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[AppStat] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineProduct", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineSession", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineTime", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineTimeFixed", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineExtended", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("InvoiceLine"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Invoice"), ct);
 
             await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[AppRating] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
+                UpdateTableSetNull(
+                    "ProductOLExtended",
+                    "BundleLineId",
+                    "ProductOL",
+                    "ProductOLId"),
                 ct);
 
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLTimeFixed", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLTime", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLSession", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLProduct", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLExtended", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("ProductOL"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("ProductOrder"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("DepositTransaction"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("PointTransaction"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("HostGroupWaitingLineEntry"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserCreditLimit"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserAttribute"), ct);
+
+            // Commented in original code
+            //await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("Note", "UserNote", "NoteId"), ct);
+
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserNote"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Verification"), ct);
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Token"), ct);
+
+            // Commented in original code
+            //await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserGuest"), ct);
+
+            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserMember"), ct);
+
+            // Final user deletion
             await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[AssistanceRequest] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
+                $"""
+                    DELETE FROM [User] 
+                    WHERE IsDeleted = 1 
+                    AND UserId IN (
+                        {DeletedUsersSubquery}
+                    )
+                 """, ct);
 
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[ReservationUser] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[Reservation] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UsageTime] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UsageTimeFixed] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UsageRate] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UsageUserSession] WHERE UsageId IN (SELECT UsageId FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UsageSession] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[Usage] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UserSessionChange] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UserSessionChange] WHERE CreatedById IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UserSession] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[RefundInvoicePayment] WHERE InvoicePaymentId IN (SELECT InvoicePaymentId FROM [dbo].[InvoicePayment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[RefundDepositPayment] WHERE DepositPaymentId IN (SELECT DepositPaymentId FROM [dbo].[DepositPayment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[Refund] WHERE PaymentId IN (SELECT PaymentId FROM [dbo].[Payment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[RefundDepositPayment] WHERE RefundId IN (SELECT RefundId FROM [dbo].[Refund] WHERE DepositTransactionId IN (SELECT DepositTransactionId FROM [dbo].[DepositTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL)))",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[Refund] WHERE DepositTransactionId IN (SELECT DepositTransactionId FROM [dbo].[DepositTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[InvoicePayment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[PaymentIntentDeposit] WHERE PaymentIntentId IN (SELECT PaymentIntentId FROM [dbo].[PaymentIntent] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[PaymentIntent] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[DepositPayment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[Payment] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"UPDATE InvoiceLineExtended SET BundleLineId=NULL WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[InvoiceLineProduct] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[InvoiceLineSession] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[InvoiceLineTime] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[InvoiceLineTimeFixed] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[InvoiceLineExtended] WHERE InvoiceLineId IN (SELECT InvoiceLineId FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[InvoiceLine] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[Invoice] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"UPDATE ProductOLExtended SET BundleLineId=NULL WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[ProductOLTimeFixed] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[ProductOLTime] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[ProductOLSession] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[ProductOLProduct] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[ProductOLExtended] WHERE ProductOLId IN (SELECT ProductOLId FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[ProductOL] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[ProductOrder] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[DepositTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[PointTransaction] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[HostGroupWaitingLineEntry] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UserCreditLimit] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UserAttribute] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            //await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [dbo].[Note] WHERE NoteId IN (SELECT NoteId FROM [dbo].[UserNote] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL));", ct);
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[UserNote] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[Verification] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [dbo].[Token] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            //await cx.Database.ExecuteSqlCommandAsync("DELETE FROM [UserGuest] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);", ct);
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [UserMember] WHERE UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            await cx.Database.ExecuteSqlAsync(
-                $"DELETE FROM [User] WHERE IsDeleted=1 AND UserId IN (SELECT A.UserId FROM [User] AS A LEFT OUTER JOIN [UserGuest] AS B ON A.UserId=B.UserId LEFT OUTER JOIN [UserOperator] AS C ON A.UserId=C.UserId WHERE A.IsDeleted=1 AND B.UserId IS NULL AND C.UserId IS NULL);",
-                ct);
-
-            //detect any changes made
             cx.ChangeTracker.DetectChanges();
-
-            //save any changes made
             await cx.SaveChangesAsync(ct);
-
-            //commit changes
             await trx.CommitAsync(ct);
         }
+
+        return;
+
+        static FormattableString UpdateTableSetNull(
+            string tableName,
+            string columnToSetNull,
+            string joinTableName,
+            string joinColumnName,
+            string whereColumnName = "UserId") =>
+            $"""
+                UPDATE [{tableName}] 
+                SET {columnToSetNull} = NULL 
+                WHERE {joinColumnName} IN (
+                    SELECT {joinColumnName} 
+                    FROM [{joinTableName}] 
+                    WHERE {whereColumnName} IN (
+                        {DeletedUsersSubquery}
+                    )
+                )
+            """;
+
+        static FormattableString DeleteFromTableWithJoin(string tableName, string joinTableName, string joinColumnName, string whereColumnName = "UserId") =>
+            $"""
+                 DELETE FROM [{tableName}] 
+                 WHERE {joinColumnName} IN (
+                     SELECT {joinColumnName} 
+                     FROM [{joinTableName}] 
+                     WHERE {whereColumnName} IN (
+                         {DeletedUsersSubquery}
+                     )
+                 )
+             """;
+
+        static FormattableString DeleteFromTable(string tableName, string columnName = "UserId") =>
+            $"""
+                DELETE FROM [{tableName}] 
+                WHERE {columnName} IN (
+                    {DeletedUsersSubquery}
+                )
+            """;
     }
 }
+ 
