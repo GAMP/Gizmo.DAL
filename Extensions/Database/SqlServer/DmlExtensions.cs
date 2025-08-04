@@ -564,25 +564,25 @@ internal static class SqlServer
             cx.Database.SetCommandTimeout(int.MaxValue);
 
             // Basic DELETE operations (direct user ID reference)
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("AssetTransaction"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("AppStat"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("AppRating"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("AssistanceRequest"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("ReservationUser"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Reservation"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AssetTransaction"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AppStat"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AppRating"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AssistanceRequest"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("ReservationUser"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Reservation"), ct);
 
             // Nested DELETE operations (joined tables)
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("UsageTime", "Usage", "UsageId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("UsageTimeFixed", "Usage", "UsageId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("UsageRate", "Usage", "UsageId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("UsageUserSession", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageTime", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageTimeFixed", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageRate", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageUserSession", "Usage", "UsageId"), ct);
 
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UsageSession"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Usage"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserSessionChange"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UsageSession"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Usage"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserSessionChange"), ct);
 
             // Delete based on CreatedById
-            await cx.Database.ExecuteSqlAsync(
+            await cx.Database.ExecuteSqlRawAsync(
                 $"""
                       DELETE FROM [UserSessionChange] 
                       WHERE CreatedById IN (
@@ -590,14 +590,14 @@ internal static class SqlServer
                       )
                  """, ct);
 
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserSession"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserSession"), ct);
 
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("RefundInvoicePayment", "InvoicePayment", "InvoicePaymentId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("RefundDepositPayment", "DepositPayment", "DepositPaymentId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("Refund", "Payment", "PaymentId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("RefundInvoicePayment", "InvoicePayment", "InvoicePaymentId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("RefundDepositPayment", "DepositPayment", "DepositPaymentId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("Refund", "Payment", "PaymentId"), ct);
 
             // Complex join with multiple levels
-            await cx.Database.ExecuteSqlAsync(
+            await cx.Database.ExecuteSqlRawAsync(
                 $"""
                      DELETE FROM [RefundDepositPayment] 
                      WHERE RefundId IN (
@@ -613,15 +613,15 @@ internal static class SqlServer
                      )
                  """, ct);
 
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("Refund", "DepositTransaction", "DepositTransactionId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("InvoicePayment"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("PaymentIntentDeposit", "PaymentIntent", "PaymentIntentId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("PaymentIntent"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("DepositPayment"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Payment"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("Refund", "DepositTransaction", "DepositTransactionId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("InvoicePayment"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("PaymentIntentDeposit", "PaymentIntent", "PaymentIntentId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("PaymentIntent"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("DepositPayment"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Payment"), ct);
 
             // Update operations setting NULL values
-            await cx.Database.ExecuteSqlAsync(
+            await cx.Database.ExecuteSqlRawAsync(
                 UpdateTableSetNull(
                     "InvoiceLineExtended",
                     "BundleLineId",
@@ -629,15 +629,15 @@ internal static class SqlServer
                     "InvoiceLineId"),
                 ct);
 
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineProduct", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineSession", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineTime", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineTimeFixed", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("InvoiceLineExtended", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("InvoiceLine"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Invoice"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineProduct", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineSession", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineTime", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineTimeFixed", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineExtended", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("InvoiceLine"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Invoice"), ct);
 
-            await cx.Database.ExecuteSqlAsync(
+            await cx.Database.ExecuteSqlRawAsync(
                 UpdateTableSetNull(
                     "ProductOLExtended",
                     "BundleLineId",
@@ -645,33 +645,33 @@ internal static class SqlServer
                     "ProductOLId"),
                 ct);
 
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLTimeFixed", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLTime", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLSession", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLProduct", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("ProductOLExtended", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("ProductOL"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("ProductOrder"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("DepositTransaction"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("PointTransaction"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("HostGroupWaitingLineEntry"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserCreditLimit"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserAttribute"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLTimeFixed", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLTime", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLSession", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLProduct", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLExtended", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("ProductOL"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("ProductOrder"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("DepositTransaction"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("PointTransaction"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("HostGroupWaitingLineEntry"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserCreditLimit"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserAttribute"), ct);
 
             // Commented in original code
             //await cx.Database.ExecuteSqlAsync(DeleteFromTableWithJoin("Note", "UserNote", "NoteId"), ct);
 
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserNote"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Verification"), ct);
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("Token"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserNote"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Verification"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Token"), ct);
 
             // Commented in original code
             //await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserGuest"), ct);
 
-            await cx.Database.ExecuteSqlAsync(DeleteFromTable("UserMember"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserMember"), ct);
 
             // Final user deletion
-            await cx.Database.ExecuteSqlAsync(
+            await cx.Database.ExecuteSqlRawAsync(
                 $"""
                     DELETE FROM [User] 
                     WHERE IsDeleted = 1 
@@ -687,7 +687,7 @@ internal static class SqlServer
 
         return;
 
-        static FormattableString UpdateTableSetNull(
+        static string UpdateTableSetNull(
             string tableName,
             string columnToSetNull,
             string joinTableName,
@@ -705,7 +705,7 @@ internal static class SqlServer
                 )
             """;
 
-        static FormattableString DeleteFromTableWithJoin(string tableName, string joinTableName, string joinColumnName, string whereColumnName = "UserId") =>
+        static string DeleteFromTableWithJoin(string tableName, string joinTableName, string joinColumnName, string whereColumnName = "UserId") =>
             $"""
                  DELETE FROM [{tableName}] 
                  WHERE {joinColumnName} IN (
@@ -717,7 +717,7 @@ internal static class SqlServer
                  )
              """;
 
-        static FormattableString DeleteFromTable(string tableName, string columnName = "UserId") =>
+        static string DeleteFromTable(string tableName, string columnName = "UserId") =>
             $"""
                 DELETE FROM [{tableName}] 
                 WHERE {columnName} IN (

@@ -7,6 +7,9 @@ namespace Gizmo.DAL.Extensions.DclExtensions;
 
 internal static class SqlServer
 {
+    private static readonly string[] LocalDbKeys = ["127.0.0.1", "localhost", "localdb"];
+    private static readonly string[] ExpressKeys = ["sqlexpress", @"\SQLEXPRESS"];
+
     public sealed class ConnectionMetadata : IConnectionMetadata
     {
         public string Host { get; init; } = "localhost";
@@ -37,6 +40,9 @@ internal static class SqlServer
                         builder.Password = Password;
                 }
 
+                if (DatabaseType == DatabaseType.LOCALDB)
+                    builder.TrustServerCertificate = true;
+
                 return builder.ConnectionString;
             }
             catch (Exception ex)
@@ -53,49 +59,23 @@ internal static class SqlServer
 
                 try
                 {
+                    var dataSource = builder.DataSource ?? string.Empty;
+                    var split = dataSource.Split(',');
+
+                    var host = split[0];
+                    var port = split.Length > 1 && int.TryParse(split[1], out int parsedPort)
+                        ? parsedPort
+                        : 1433; // Default SQL Server port
+
                     var dbType = DatabaseType.MSSQL;
-                    var host = "localhost";
-                    var port = 1433;
 
-                    var dataSource = builder.DataSource ?? "";
-                    var dataSourceLower = dataSource.ToLowerInvariant();
-
-                    if (dataSourceLower.Contains("(localdb)"))
+                    if (LocalDbKeys.Any(key => dataSource.Contains(key, StringComparison.OrdinalIgnoreCase)))
                     {
                         dbType = DatabaseType.LOCALDB;
-                        host = dataSource; // Keep full identifier for LocalDB
-                        port = 0;          // LocalDB doesn't use TCP/IP ports
                     }
-                    else if (dataSourceLower.Contains("sqlexpress") || dataSource.Contains("\\SQLEXPRESS"))
+                    else if (ExpressKeys.Any(key => dataSource.Contains(key, StringComparison.OrdinalIgnoreCase)))
                     {
                         dbType = DatabaseType.MSSQLEXPRESS;
-
-                        // Parse host from named instance (ServerName\SQLEXPRESS)
-                        if (dataSource.Contains('\\'))
-                        {
-                            host = dataSource.Split('\\')[0];
-
-                            if (string.IsNullOrEmpty(host))
-                                host = "localhost";
-                        }
-                        else if (dataSource.Contains(','))
-                        {
-                            host = dataSource.Split(',')[0];
-                            port = int.TryParse(dataSource.Split(',').LastOrDefault(), out int p) ? p : 1433;
-                        }
-                        else
-                        {
-                            host = dataSource;
-                        }
-                    }
-                    else if (dataSource.Contains(','))
-                    {
-                        host = dataSource.Split(',')[0];
-                        port = int.TryParse(dataSource.Split(',').LastOrDefault(), out int p) ? p : 1433;
-                    }
-                    else if (!string.IsNullOrEmpty(dataSource))
-                    {
-                        host = dataSource;
                     }
 
                     connection = new ConnectionMetadata
@@ -118,6 +98,25 @@ internal static class SqlServer
             }
 
             return connection;
+        }
+
+        public IConnectionMetadata ChangeDatabaseTo(string databaseName)
+        {
+            if (string.IsNullOrEmpty(databaseName))
+            {
+                throw new ArgumentException("Database name cannot be null or empty.", nameof(databaseName));
+            }
+
+            return new ConnectionMetadata
+            {
+                Host = Host,
+                Port = Port,
+                Username = Username,
+                Password = Password,
+                DatabaseName = databaseName,
+                AuthenticationType = AuthenticationType,
+                DatabaseType = DatabaseType
+            };
         }
     }
 }

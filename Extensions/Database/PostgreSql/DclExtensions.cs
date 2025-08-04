@@ -65,5 +65,23 @@ internal static class PostgreSql
 
             return connection;
         }
+
+        public IConnectionMetadata ChangeDatabaseTo(string databaseName)
+        {
+            if (string.IsNullOrEmpty(databaseName))
+            {
+                throw new ArgumentException("Database name cannot be null or empty.", nameof(databaseName));
+            }
+
+            return new ConnectionMetadata
+            {
+                Host = Host,
+                Port = Port,
+                Username = Username,
+                Password = Password,
+                DatabaseName = databaseName,
+                AuthenticationType = AuthenticationType
+            };
+        }
     }
 }

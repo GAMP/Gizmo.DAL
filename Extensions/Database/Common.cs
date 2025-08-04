@@ -103,4 +103,11 @@ public interface IConnectionMetadata
     /// The format of the returned connection string depends on the specific database provider implementation.
     /// </remarks>
     string ToConnectionString();
+
+    /// <summary>
+    /// Creates a new connection metadata instance with a different database name.
+    /// </summary>
+    /// <param name="databaseName">The name of the database to use in the new connection.</param>
+    /// <returns>A new <see cref="IConnectionMetadata"/> instance with the updated database name.</returns>
+    IConnectionMetadata ChangeDatabaseTo(string databaseName);
 }
