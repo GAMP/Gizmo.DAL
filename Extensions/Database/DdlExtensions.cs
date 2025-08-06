@@ -24,7 +24,7 @@ namespace Gizmo.DAL.Extensions;
 public static class DdlOperations
 {
     /// <summary>
-    /// Checks if the database exists asynchronously.
+    /// Checks if the database exists on the current <see cref="DatabaseFacade"/> instance.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
     /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
@@ -44,7 +44,7 @@ public static class DdlOperations
         };
 
     /// <summary>
-    /// Restores a database from the specified backup file asynchronously.
+    /// Restores a database from the specified backup file using the current <see cref="DatabaseFacade"/> instance.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
     /// <param name="path">The file path to the backup file to restore from.</param>
@@ -71,7 +71,7 @@ public static class DdlOperations
         };
 
     /// <summary>
-    /// Generates an appropriate backup file name based on the database provider type.
+    /// Generates an appropriate backup file name based on the database provider type of the current <see cref="DatabaseFacade"/> instance.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
     /// <returns>
@@ -104,7 +104,7 @@ public static class DdlOperations
     }
 
     /// <summary>
-    /// Creates a backup of the database to the specified location asynchronously.
+    /// Creates a backup of the current database of <see cref="DatabaseFacade"/> to the specified location
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
     /// <param name="path">The file path where the backup will be stored.</param>
@@ -132,7 +132,7 @@ public static class DdlOperations
         };
 
     /// <summary>
-    /// This operation will permanently delete the entire database and all its contents.
+    /// This operation will permanently delete the entire database and all its contents of the current <see cref="DatabaseFacade"/> instance.
     /// After this operation, the database context will be switched to the system database.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
@@ -158,7 +158,7 @@ public static class DdlOperations
         };
 
     /// <summary>
-    /// Truncates logs and dependent tables asynchronously.
+    /// Truncates logs and dependent tables for the current <see cref="DatabaseFacade"/> instance.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
     /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
@@ -174,7 +174,7 @@ public static class DdlOperations
         facade.ExecuteSqlScriptAsync(SQLScripts.TRUNCATE_LOGS, cToken: ct);
 
     /// <summary>
-    /// Retrieves the names of all non-system databases from the server asynchronously.
+    /// Retrieves the names of all non-system databases from the server.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
     /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
@@ -194,7 +194,7 @@ public static class DdlOperations
         };
 
     /// <summary>
-    /// Ensures that a database login with the specified name exists asynchronously.
+    /// Ensures that a database login with the specified name exists.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
     /// <param name="name">The name of the login to ensure exists.</param>

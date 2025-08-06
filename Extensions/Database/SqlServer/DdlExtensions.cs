@@ -183,7 +183,7 @@ internal static class SqlServer
                 $"""
                      BACKUP DATABASE [{originalConnection.Database}]
                      TO DISK = @backupFile
-                     WITH FORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 5
+                     WITH FORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 10
                  """;
 
             command.Parameters.AddWithValue("@backupFile", backupFile);
@@ -207,14 +207,13 @@ internal static class SqlServer
             if (string.IsNullOrWhiteSpace(backupFile))
                 throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
 
-            //This connection should not be disposed if it was created by Entity Framework.
-            var originalConnection = facade.GetDbConnection();
+            var connectionMetadata = facade.GetConnectionMetadata();
+            var masterConnectionString = connectionMetadata.ChangeDatabaseTo("master").ToConnectionString();
 
-            await using var connection = new SqlConnection(originalConnection.ConnectionString);
-            await connection.ChangeDatabaseAsync("master", ct);
+            await using var connection = new SqlConnection(masterConnectionString);
             await connection.OpenAsync(ct);
 
-            var backupFiles = await GetBackupFiles(connection, originalConnection.Database, backupFile, ct);
+            var backupFiles = await connection.GetBackupFiles(backupFile, ct);
 
             var moveStatement = new StringBuilder();
 
@@ -225,9 +224,9 @@ internal static class SqlServer
 
             string restoreSql =
                 $"""
-                     RESTORE DATABASE [{originalConnection.Database}]
-                     FROM DISK = @backupFile
-                     WITH FILE = 1, {moveStatement} NOUNLOAD, STATS = 5, REPLACE
+                    RESTORE DATABASE [{connectionMetadata.DatabaseName}]
+                    FROM DISK = @backupFile
+                    WITH FILE = 1, {moveStatement} NOUNLOAD, STATS = 10, REPLACE, RECOVERY
                  """;
 
             await using var command = connection.CreateCommand();
@@ -292,19 +291,30 @@ internal static class SqlServer
 
         const string Sql =
             """
-                declare @DefaultData nvarchar(512)
-                exec master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'DefaultData', @DefaultData output
-                declare @DefaultLog nvarchar(512)
-                exec master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'DefaultLog', @DefaultLog output
-                declare @MasterData nvarchar(512)
-                exec master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer\Parameters', N'SqlArg0', @MasterData output
-                select @MasterData=substring(@MasterData, 3, 255)
-                select @MasterData=substring(@MasterData, 1, len(@MasterData) - charindex('\', reverse(@MasterData)))
-                declare @MasterLog nvarchar(512)
-                exec master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer\Parameters', N'SqlArg2', @MasterLog output
-                select @MasterLog=substring(@MasterLog, 3, 255)
-                select @MasterLog=substring(@MasterLog, 1, len(@MasterLog) - charindex('\', reverse(@MasterLog)))
-                select isnull(@DefaultData, @MasterData) DefaultData, isnull(@DefaultLog, @MasterLog) DefaultLog
+                IF CHARINDEX('Linux', @@VERSION) > 0
+                    BEGIN
+                        -- On Linux, get directories from system views
+                        SELECT 
+                            DefaultData = (SELECT physical_name FROM sys.master_files WHERE database_id = 1 AND file_id = 1),
+                            DefaultLog = (SELECT physical_name FROM sys.master_files WHERE database_id = 1 AND file_id = 2)
+                    END
+                ELSE
+                    BEGIN
+                        -- On Windows, use registry
+                        DECLARE @DefaultData nvarchar(512)
+                        EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'DefaultData', @DefaultData OUTPUT
+                        DECLARE @DefaultLog nvarchar(512)
+                        EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'DefaultLog', @DefaultLog OUTPUT
+                        DECLARE @MasterData nvarchar(512)
+                        EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer\Parameters', N'SqlArg0', @MasterData OUTPUT
+                        SELECT @MasterData=SUBSTRING(@MasterData, 3, 255)
+                        SELECT @MasterData=SUBSTRING(@MasterData, 1, LEN(@MasterData) - CHARINDEX('\', REVERSE(@MasterData)))
+                        DECLARE @MasterLog nvarchar(512)
+                        EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer\Parameters', N'SqlArg2', @MasterLog OUTPUT
+                        SELECT @MasterLog=SUBSTRING(@MasterLog, 3, 255)
+                        SELECT @MasterLog=SUBSTRING(@MasterLog, 1, LEN(@MasterLog) - CHARINDEX('\', REVERSE(@MasterLog)))
+                        SELECT ISNULL(@DefaultData, @MasterData) DefaultData, ISNULL(@DefaultLog, @MasterLog) DefaultLog
+                    END
             """;
 
         try
@@ -337,12 +347,10 @@ internal static class SqlServer
         return (dataDirectory, logDirectory);
     }
 
-    private static async Task<List<BackupFile>> GetBackupFiles(SqlConnection connection, string dbName, string backupFile, CancellationToken ct)
+    private static async Task<List<BackupFile>> GetBackupFiles(this SqlConnection connection, string backupFile, CancellationToken ct)
     {
         try
         {
-            var (dataDirectory, logDirectory) = await GetDirectories(connection, ct);
-
             await using var command = connection.CreateCommand();
             command.CommandText = "RESTORE FILELISTONLY FROM DISK = @backupFile";
             command.Parameters.AddWithValue("@backupFile", backupFile);
@@ -353,14 +361,10 @@ internal static class SqlServer
             while (await reader.ReadAsync(ct))
             {
                 var logicalName = reader["LogicalName"]?.ToString();
-                var type = reader["Type"]?.ToString();
+                var targetPath = reader["PhysicalName"]?.ToString();
 
-                if (string.IsNullOrWhiteSpace(logicalName))
+                if (string.IsNullOrEmpty(logicalName) || string.IsNullOrEmpty(targetPath))
                     continue;
-
-                var targetPath = type == "L"
-                    ? Path.Combine(logDirectory, $"{dbName}_log.ldf")
-                    : Path.Combine(dataDirectory, $"{dbName}.mdf");
 
                 files.Add(new BackupFile { LogicalName = logicalName, TargetPath = targetPath });
             }
