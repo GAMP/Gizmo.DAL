@@ -54,10 +54,18 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(8)
                 .IsRequired();
 
-            builder.Property(paymentIntent => paymentIntent.PaymentLinkUrl)
+            builder.Property(paymentIntent => paymentIntent.PaymentUrl)
                 .HasColumnOrder(9)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
+
+            builder.Property(paymentIntent => paymentIntent.Expiration)
+                .HasColumnOrder(10)
+                .IsRequired(false);
+
+            builder.Property(paymentIntent => paymentIntent.ExpireAt)
+                .HasColumnOrder(11)
+                .IsRequired(false);
 
             builder.HasOne(paymentIntent => paymentIntent.User)
                 .WithMany(userMember => userMember.PaymentIntents)
