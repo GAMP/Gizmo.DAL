@@ -94,11 +94,13 @@ public static class DdlOperations
     {
         var metadata = facade.GetConnectionMetadata();
 
+        var timeStamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+
         return facade.GetProviderType() switch
         {
-            Provider.Type.SqlServer => $"{metadata.DatabaseName}.bak",
-            Provider.Type.PostgreSql => $"{metadata.DatabaseName}.dump",
-            Provider.Type.MySql => $"{metadata.DatabaseName}.sql",
+            Provider.Type.SqlServer => $"{metadata.DatabaseName}_{timeStamp}.bak",
+            Provider.Type.PostgreSql => $"{metadata.DatabaseName}_{timeStamp}.dump",
+            Provider.Type.MySql => $"{metadata.DatabaseName}_{timeStamp}.sql",
             _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
         };
     }

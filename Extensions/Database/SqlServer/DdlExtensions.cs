@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Gizmo.DAL.Extensions.DdlExtensions;
@@ -19,11 +17,10 @@ internal static class SqlServer
             if (string.IsNullOrWhiteSpace(login))
                 throw new ArgumentException("Login name cannot be null or empty.", nameof(login));
 
-            //This connection should not be disposed if it was created by Entity Framework.
-            var originalConnection = facade.GetDbConnection();
+            var metadata  = facade.GetConnectionMetadata();
+            var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
 
-            await using var connection = new SqlConnection(originalConnection.ConnectionString);
-            await connection.ChangeDatabaseAsync("master", ct);
+            await using var connection = new SqlConnection(cs);
             await connection.OpenAsync(ct);
 
             await using var command = connection.CreateCommand();
@@ -84,8 +81,10 @@ internal static class SqlServer
     {
         try
         {
-            //This connection should not be disposed if it was created by Entity Framework.
-            var connection = facade.GetDbConnection();
+            var metadata = facade.GetConnectionMetadata();
+            var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
+
+            await using var connection = new SqlConnection(cs);
             await connection.OpenAsync(ct);
 
             await using var command = connection.CreateCommand();
@@ -124,23 +123,15 @@ internal static class SqlServer
     {
         try
         {
-            //This connection should not be disposed if it was created by Entity Framework.
-            if (facade.GetDbConnection() is not SqlConnection connection)
-                throw new InvalidOperationException("The database connection is not a valid SQL Server connection.");
+           var metadata = facade.GetConnectionMetadata();
+           var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
 
-            if (connection.Database.Equals("master", StringComparison.OrdinalIgnoreCase)
-                || connection.Database.Equals("tempdb", StringComparison.OrdinalIgnoreCase)
-                || connection.Database.Equals("model", StringComparison.OrdinalIgnoreCase)
-                || connection.Database.Equals("msdb", StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
+            await using var connection = new SqlConnection(cs);
             await connection.OpenAsync(ct);
 
             await using var command = connection.CreateCommand();
-            command.CommandText = "SELECT COUNT(*) FROM master.sys.databases WHERE [name] = @databaseName";
-            command.Parameters.AddWithValue("@databaseName", connection.Database);
+            command.CommandText = "SELECT COUNT(*) FROM sys.databases WHERE [name] = @databaseName";
+            command.Parameters.AddWithValue("@databaseName", metadata.DatabaseName);
 
             await using var reader = await command.ExecuteReaderAsync(ct);
 
@@ -167,21 +158,17 @@ internal static class SqlServer
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(backupFile))
-                throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
+            var metadata = facade.GetConnectionMetadata();
+            var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
 
-            //This connection should not be disposed if it was created by Entity Framework.
-            var originalConnection = facade.GetDbConnection();
-
-            await using var connection = new SqlConnection(originalConnection.ConnectionString);
-            await connection.ChangeDatabaseAsync("master", ct);
+            await using var connection = new SqlConnection(cs);
             await connection.OpenAsync(ct);
 
             await using var command = connection.CreateCommand();
 
             command.CommandText =
                 $"""
-                     BACKUP DATABASE [{originalConnection.Database}]
+                     BACKUP DATABASE [{metadata.DatabaseName}]
                      TO DISK = @backupFile
                      WITH FORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 10
                  """;
@@ -249,29 +236,28 @@ internal static class SqlServer
     {
         try
         {
-            //This connection should not be disposed if it was created by Entity Framework.
-            var originalConnection = facade.GetDbConnection();
+            var metadata = facade.GetConnectionMetadata();
 
-            if (string.IsNullOrWhiteSpace(originalConnection.Database)
-                || originalConnection.Database.Equals("master", StringComparison.OrdinalIgnoreCase)
-                || originalConnection.Database.Equals("tempdb", StringComparison.OrdinalIgnoreCase)
-                || originalConnection.Database.Equals("model", StringComparison.OrdinalIgnoreCase)
-                || originalConnection.Database.Equals("msdb", StringComparison.OrdinalIgnoreCase))
+            if (metadata.DatabaseName.Equals("master", StringComparison.OrdinalIgnoreCase)
+                || metadata.DatabaseName.Equals("tempdb", StringComparison.OrdinalIgnoreCase)
+                || metadata.DatabaseName.Equals("model", StringComparison.OrdinalIgnoreCase)
+                || metadata.DatabaseName.Equals("msdb", StringComparison.OrdinalIgnoreCase))
             {
-                throw new InvalidOperationException($"Cannot drop system database '{originalConnection.Database}'.");
+                throw new InvalidOperationException($"Cannot drop system database '{metadata.DatabaseName}'.");
             }
 
-            await using var connection = new SqlConnection(originalConnection.ConnectionString);
-            await connection.ChangeDatabaseAsync("master", ct);
+            var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
+
+            await using var connection = new SqlConnection(cs);
             await connection.OpenAsync(ct);
 
             await using var command = connection.CreateCommand();
 
             // Force disconnect all users by setting the database to single user mode before dropping it
-            command.CommandText = $"ALTER DATABASE [{originalConnection.Database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
+            command.CommandText = $"ALTER DATABASE [{metadata.DatabaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
             await command.ExecuteNonQueryAsync(ct);
 
-            command.CommandText = $"DROP DATABASE [{originalConnection.Database}]";
+            command.CommandText = $"DROP DATABASE [{metadata.DatabaseName}]";
             await command.ExecuteNonQueryAsync(ct);
         }
         catch (SqlException ex)
