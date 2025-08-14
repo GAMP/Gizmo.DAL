@@ -67,10 +67,6 @@ internal static class SqlServer
                 await command.ExecuteNonQueryAsync(ct);
             }
         }
-        catch (SqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to create SQL Server login '{login}'. SQL Error: {ex.Message}", ex);
-        }
         catch (Exception ex)
         {
             throw new InvalidOperationException($"Failed to create SQL Server login '{login}'.", ex);
@@ -109,10 +105,6 @@ internal static class SqlServer
 
             return dbNames;
         }
-        catch (SqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to retrieve SQL Server database names. SQL Error: {ex.Message}", ex);
-        }
         catch (Exception ex)
         {
             throw new InvalidOperationException("Failed to retrieve SQL Server database names.", ex);
@@ -144,10 +136,6 @@ internal static class SqlServer
 
             return found;
         }
-        catch (SqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to check if SQL Server database exists. SQL Error: {ex.Message}", ex);
-        }
         catch (Exception ex)
         {
             throw new InvalidOperationException("Failed to check if SQL Server database exists.", ex);
@@ -176,10 +164,6 @@ internal static class SqlServer
             command.Parameters.AddWithValue("@backupFile", backupFile);
             command.CommandTimeout = 1000;
             await command.ExecuteNonQueryAsync(ct);
-        }
-        catch (SqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to backup SQL Server database to '{backupFile}'. SQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
@@ -222,10 +206,6 @@ internal static class SqlServer
             command.CommandTimeout = 600;
             await command.ExecuteNonQueryAsync(ct);
         }
-        catch (SqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to restore SQL Server database from '{backupFile}'. SQL Error: {ex.Message}", ex);
-        }
         catch (Exception ex)
         {
             throw new InvalidOperationException($"Failed to restore SQL Server database from '{backupFile}'.", ex);
@@ -259,10 +239,6 @@ internal static class SqlServer
 
             command.CommandText = $"DROP DATABASE [{metadata.DatabaseName}]";
             await command.ExecuteNonQueryAsync(ct);
-        }
-        catch (SqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to drop SQL Server database. SQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
@@ -316,10 +292,6 @@ internal static class SqlServer
                 logDirectory = reader["DefaultLog"].ToString();
             }
         }
-        catch (SqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to get SQL Server default directories. SQL Error: {ex.Message}", ex);
-        }
         catch (Exception ex)
         {
             throw new InvalidOperationException("Failed to get SQL Server default directories.", ex);
@@ -356,10 +328,6 @@ internal static class SqlServer
             }
 
             return files;
-        }
-        catch (SqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to get SQL Server backup file list from '{backupFile}'. SQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {

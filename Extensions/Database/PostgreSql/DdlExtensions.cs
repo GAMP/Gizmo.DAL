@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,10 +38,6 @@ internal static class PostgreSql
                 command.CommandText = $"CREATE ROLE \"{login}\" LOGIN SUPERUSER";
                 await command.ExecuteNonQueryAsync(ct);
             }
-        }
-        catch (NpgsqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to create PostgreSQL login '{login}'. PostgreSQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
@@ -81,10 +78,6 @@ internal static class PostgreSql
 
             return dbNames;
         }
-        catch (NpgsqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to retrieve PostgreSQL database names. PostgreSQL Error: {ex.Message}", ex);
-        }
         catch (Exception ex)
         {
             throw new InvalidOperationException("Failed to retrieve PostgreSQL database names.", ex);
@@ -116,10 +109,6 @@ internal static class PostgreSql
             }
 
             return found;
-        }
-        catch (NpgsqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to check if PostgreSQL database exists. PostgreSQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
@@ -196,8 +185,20 @@ internal static class PostgreSql
                 using var connection = new NpgsqlConnection(cs);
                 await connection.OpenAsync(ct);
                 using var command = connection.CreateCommand();
-                command.CommandText = $"CREATE DATABASE {metadata.DatabaseName} OWNER {metadata.Username} TEMPLATE template0";
+                command.CommandText = $"CREATE DATABASE \"{metadata.DatabaseName}\" OWNER {metadata.Username} TEMPLATE template0";
                 await command.ExecuteNonQueryAsync(ct);
+
+                command.CommandText = "SELECT COUNT(*) FROM pg_database WHERE datname = @databaseName";
+                command.Parameters.AddWithValue("@databaseName", metadata.DatabaseName);
+
+                var found = false;
+
+                await using var reader = await command.ExecuteReaderAsync(ct);
+                if (await reader.ReadAsync(ct))
+                {
+                    found = Convert.ToInt32(reader[0]) > 0;
+                }
+
             }
 
             var docker = Environment.GetEnvironmentVariable("POSTGRES_DOCKER");
@@ -210,8 +211,6 @@ internal static class PostgreSql
                 ".dump" => "psql",
                 _ => throw new NotSupportedException($"Unsupported backup file format: {fileExtension}")
             };
-
-            string restoreArgs = $"{metadata.DatabaseName} < {backupFile} --host={metadata.Host} --port={metadata.Port} --username={metadata.Username}";
 
             string fileName;
             string args;
@@ -231,17 +230,12 @@ internal static class PostgreSql
             else
             {
                 fileName = "docker";
-
-                var envParts = new List<string>
-                {
-                    $"--env PGPASSWORD={metadata.Password}",
-                    $"--env PGUSER={metadata.Username}"
-                };
-
-                args = $"exec {docker} {string.Join(" ", envParts)} {cmd} {restoreArgs}";
+                args = $"exec {docker} {cmd} -U {metadata.Username} -d {metadata.DatabaseName} -v ON_ERROR_STOP=1 -f {backupFile}";
             }
 
-            var processInfo = new System.Diagnostics.ProcessStartInfo
+            using var process = new Process();
+
+            process.StartInfo = new ProcessStartInfo
             {
                 FileName = fileName,
                 Arguments = args,
@@ -251,25 +245,30 @@ internal static class PostgreSql
                 CreateNoWindow = true
             };
 
+
             if (!isDocker)
             {
-                processInfo.Environment["PGPASSWORD"] = metadata.Password;
-                processInfo.Environment["PGUSER"] = metadata.Username;
-                processInfo.Environment["PGHOST"] = metadata.Host;
-                processInfo.Environment["PGPORT"] = metadata.Port.ToString();
+                process.StartInfo.Environment["PGPASSWORD"] = metadata.Password;
+                process.StartInfo.Environment["PGUSER"] = metadata.Username;
+                process.StartInfo.Environment["PGHOST"] = metadata.Host;
+                process.StartInfo.Environment["PGPORT"] = metadata.Port.ToString();
             }
 
-            using var process =
-                System.Diagnostics.Process.Start(processInfo)
-                ?? throw new InvalidOperationException($"Failed to start {cmd} process.");
 
-            _ = await process.StandardOutput.ReadToEndAsync(ct);
-            var error = await process.StandardError.ReadToEndAsync(ct);
+            process.Start();
+
+            var stdOutTask = process.StandardOutput.ReadToEndAsync(ct);
+            var stdErrTask = process.StandardError.ReadToEndAsync(ct);
 
             await process.WaitForExitAsync(ct);
 
+            var stdOut = await stdOutTask;
+            var stdErr = await stdErrTask;
+
             if (process.ExitCode != 0)
-                throw new InvalidOperationException($"{cmd} failed with error code {process.ExitCode}: {error}");
+            {
+                throw new InvalidOperationException($"{cmd} failed with error code {process.ExitCode}: {stdErr}");
+            }
         }
         catch (Exception ex)
         {
@@ -282,7 +281,7 @@ internal static class PostgreSql
         try
         {
             var metadata = facade.GetConnectionMetadata();
-            
+
             if (metadata.DatabaseName.Equals("postgres", StringComparison.OrdinalIgnoreCase)
                 || metadata.DatabaseName.Equals("template0", StringComparison.OrdinalIgnoreCase)
                 || metadata.DatabaseName.Equals("template1", StringComparison.OrdinalIgnoreCase))
@@ -312,10 +311,6 @@ internal static class PostgreSql
             command.Parameters.Clear();
             command.CommandText = $"DROP DATABASE IF EXISTS \"{metadata.DatabaseName}\"";
             await command.ExecuteNonQueryAsync(ct);
-        }
-        catch (NpgsqlException ex)
-        {
-            throw new InvalidOperationException($"Failed to drop PostgreSQL database. PostgreSQL Error: {ex.Message}", ex);
         }
         catch (Exception ex)
         {
