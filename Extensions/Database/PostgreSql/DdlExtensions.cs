@@ -214,59 +214,47 @@ internal static class PostgreSql
 
             string fileName;
             string args;
-
-            if (!isDocker)
+            
+            var arguments = new List<string>
             {
-                fileName = cmd;
-
-                var hostArgs =
-                    $"{(string.IsNullOrWhiteSpace(metadata.Host) ? "" : $" --host={metadata.Host}")}" +
-                    $"{(metadata.Port > 0 ? $" --port={metadata.Port}" : "")}" +
-                    $"{(string.IsNullOrWhiteSpace(metadata.Username) ? "" : $" --username={metadata.Username}")}";
-                args = cmd == "pg_restore"
-                    ? $"--no-owner --if-exists --clean --jobs={Environment.ProcessorCount}{hostArgs} --create --dbname=postgres \"{backupFile}\""
-                    : $"{hostArgs} --dbname=\"{metadata.DatabaseName}\" -f \"{backupFile}\"";
-            }
-            else
-            {
-                fileName = "docker";
-                args = $"exec {docker} {cmd} -U {metadata.Username} -d {metadata.DatabaseName} -v ON_ERROR_STOP=1 -f {backupFile}";
-            }
-
-            using var process = new Process();
-
-            process.StartInfo = new ProcessStartInfo
-            {
-                FileName = fileName,
-                Arguments = args,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
+                $"-d {metadata.DatabaseName}",
+                $"-U {metadata.Username}",
+                $"-f \"{backupFile}\""
             };
 
 
             if (!isDocker)
             {
-                process.StartInfo.Environment["PGPASSWORD"] = metadata.Password;
-                process.StartInfo.Environment["PGUSER"] = metadata.Username;
-                process.StartInfo.Environment["PGHOST"] = metadata.Host;
-                process.StartInfo.Environment["PGPORT"] = metadata.Port.ToString();
+                fileName = cmd;
+                args = string.Join(" ", arguments);
+            }
+            else
+            {
+                fileName = "docker";
+                arguments.Insert(0, $"exec {docker} {cmd}");
+                args = string.Join(" ", arguments);
             }
 
+            using var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = fileName,
+                    Arguments = args,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
 
             process.Start();
 
-            var stdOutTask = process.StandardOutput.ReadToEndAsync(ct);
-            var stdErrTask = process.StandardError.ReadToEndAsync(ct);
-
             await process.WaitForExitAsync(ct);
-
-            var stdOut = await stdOutTask;
-            var stdErr = await stdErrTask;
 
             if (process.ExitCode != 0)
             {
+                var stdErr = await process.StandardError.ReadToEndAsync(ct);
                 throw new InvalidOperationException($"{cmd} failed with error code {process.ExitCode}: {stdErr}");
             }
         }
