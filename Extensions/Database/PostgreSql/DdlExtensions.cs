@@ -127,7 +127,7 @@ internal static class PostgreSql
 
             string commandFile = "pg_dump";
 
-            var processInfo = new System.Diagnostics.ProcessStartInfo
+            var processInfo = new ProcessStartInfo
             {
                 FileName = commandFile,
                 Arguments = $"--dbname=\"{metadata.DatabaseName}\" --file=\"{backupFile}\" --no-owner",
@@ -149,7 +149,7 @@ internal static class PostgreSql
             if (metadata.Port > 0)
                 processInfo.Environment["PGPORT"] = metadata.Port.ToString();
 
-            using var process = System.Diagnostics.Process.Start(processInfo);
+            using var process = Process.Start(processInfo);
 
             if (process is null)
                 throw new InvalidOperationException($"Failed to start pg_dump process. Command: {commandFile} {processInfo.Arguments}");
@@ -178,28 +178,33 @@ internal static class PostgreSql
                 throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
 
             var metadata = facade.GetConnectionMetadata();
+            var postgresConnectionString = metadata.ChangeDatabaseTo("postgres").ToConnectionString();
 
-            if (!await Exists(facade, ct))
-            {
-                var cs = metadata.ChangeDatabaseTo("postgres").ToConnectionString();
-                using var connection = new NpgsqlConnection(cs);
-                await connection.OpenAsync(ct);
-                using var command = connection.CreateCommand();
-                command.CommandText = $"CREATE DATABASE \"{metadata.DatabaseName}\" OWNER {metadata.Username} TEMPLATE template0";
-                await command.ExecuteNonQueryAsync(ct);
+            await using var connection = new NpgsqlConnection(postgresConnectionString);
+            await connection.OpenAsync(ct);
 
-                command.CommandText = "SELECT COUNT(*) FROM pg_database WHERE datname = @databaseName";
-                command.Parameters.AddWithValue("@databaseName", metadata.DatabaseName);
+            await using var command = connection.CreateCommand();
+            command.CommandText =
+                """
+                    SELECT pg_terminate_backend(pg_stat_activity.pid)
+                    FROM pg_stat_activity
+                    WHERE pg_stat_activity.datname = @databaseName
+                    AND pid <> pg_backend_pid()
+                """;
 
-                var found = false;
+            command.Parameters.AddWithValue("@databaseName", metadata.DatabaseName);
+            await command.ExecuteNonQueryAsync(ct);
 
-                await using var reader = await command.ExecuteReaderAsync(ct);
-                if (await reader.ReadAsync(ct))
-                {
-                    found = Convert.ToInt32(reader[0]) > 0;
-                }
+            command.Parameters.Clear();
+            command.CommandText =
+                $"""
+                    DROP DATABASE IF EXISTS "{metadata.DatabaseName}";
+                    CREATE DATABASE "{metadata.DatabaseName}" OWNER "{metadata.Username}";
+                    CREATE ROLE postgres LOGIN SUPERUSER;
+                """;
 
-            }
+            await command.ExecuteNonQueryAsync(ct);
+            await connection.CloseAsync();
 
             var docker = Environment.GetEnvironmentVariable("POSTGRES_DOCKER");
             var isDocker = !string.IsNullOrEmpty(docker);
@@ -213,26 +218,25 @@ internal static class PostgreSql
             };
 
             string fileName;
-            string args;
-            
             var arguments = new List<string>
             {
                 $"-d {metadata.DatabaseName}",
-                $"-U {metadata.Username}",
-                $"-f \"{backupFile}\""
+                $"-U {metadata.Username}", // Default user for PostgreSQL
+                $"-f \"{backupFile}\"",
+                $"-v ON_ERROR_STOP=1", //abort on the first error. Otherwise psql keeps going and you end up half-restored
+                "--single-transaction", //wrap the whole run in one transaction. If anything fails, nothing persists. Works as long as the script doesn’t try to use its own explicit BEGIN/COMMIT
+                "-X", //don’t read ~/.psqlrc. Keeps the session clean and reproducible
             };
 
 
-            if (!isDocker)
-            {
-                fileName = cmd;
-                args = string.Join(" ", arguments);
-            }
-            else
+            if (isDocker)
             {
                 fileName = "docker";
                 arguments.Insert(0, $"exec {docker} {cmd}");
-                args = string.Join(" ", arguments);
+            }
+            else
+            {
+                fileName = cmd;
             }
 
             using var process = new Process
@@ -240,7 +244,7 @@ internal static class PostgreSql
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = fileName,
-                    Arguments = args,
+                    Arguments = string.Join(" ", arguments),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -250,12 +254,17 @@ internal static class PostgreSql
 
             process.Start();
 
+            var stdoutTask = process.StandardOutput.ReadToEndAsync(ct);
+            var stderrTask = process.StandardError.ReadToEndAsync(ct);
+
             await process.WaitForExitAsync(ct);
 
-            if (process.ExitCode != 0)
+            var stdout = await stdoutTask;
+            var stderr = await stderrTask;
+
+            if (process.ExitCode != 0 || !string.IsNullOrEmpty(stderr))
             {
-                var stdErr = await process.StandardError.ReadToEndAsync(ct);
-                throw new InvalidOperationException($"{cmd} failed with error code {process.ExitCode}: {stdErr}");
+                throw new InvalidOperationException($"{cmd} failed with error code {process.ExitCode}: {stderr}");
             }
         }
         catch (Exception ex)

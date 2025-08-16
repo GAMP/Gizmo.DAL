@@ -27,15 +27,16 @@ internal static class SqlServer
 
             command.CommandText =
                 """
-                    SELECT sp.name, sp.is_disabled
+                    SELECT sp.name, sp.is_disabled, sp.type
                     FROM sys.server_principals AS sp
-                    WHERE sp.type = 'U' AND sp.name LIKE @loginName
+                    WHERE sp.name = @loginName
                 """;
 
-            command.Parameters.AddWithValue("@loginName", $"%{Environment.MachineName}\\{login}");
+            command.Parameters.AddWithValue("@loginName", login);
 
             string existingLogin = null;
             bool loginDisabled = false;
+            string loginType = null;
 
             await using (var reader = await command.ExecuteReaderAsync(ct))
             {
@@ -43,19 +44,23 @@ internal static class SqlServer
                 {
                     existingLogin = reader.GetString(0);
                     loginDisabled = reader.GetBoolean(1);
+                    loginType = reader.GetString(2);
                 }
+            }
+
+            if (loginType == "S")
+            {
+                return; // SQL login, not Windows login
             }
 
             command.Parameters.Clear();
 
             if (string.IsNullOrEmpty(existingLogin))
             {
-                var loginName = $"{Environment.MachineName}\\{login}";
-
                 command.CommandText =
                     $"""
-                         CREATE LOGIN [{loginName}] FROM WINDOWS WITH DEFAULT_DATABASE = [master];
-                         ALTER SERVER ROLE [sysadmin] ADD MEMBER [{loginName}];
+                         CREATE LOGIN [{login}] FROM WINDOWS WITH DEFAULT_DATABASE = [master];
+                         ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
                      """;
 
                 await command.ExecuteNonQueryAsync(ct);
@@ -195,9 +200,11 @@ internal static class SqlServer
 
             string restoreSql =
                 $"""
+                    ALTER DATABASE [{connectionMetadata.DatabaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
                     RESTORE DATABASE [{connectionMetadata.DatabaseName}]
                     FROM DISK = @backupFile
                     WITH FILE = 1, {moveStatement} NOUNLOAD, STATS = 10, REPLACE, RECOVERY
+                    ALTER DATABASE [{connectionMetadata.DatabaseName}] SET MULTI_USER;
                  """;
 
             await using var command = connection.CreateCommand();
