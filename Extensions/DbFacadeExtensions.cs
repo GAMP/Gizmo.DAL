@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -75,17 +76,17 @@ namespace Gizmo.DAL.Extensions
         /// </exception>
         public static async Task<int> ExecuteSqlScriptAsync(this DatabaseFacade dbFacade, string scriptName, Dictionary<string, object> parameters = null, CancellationToken cToken = default)
         {
-            var (script, sqlParameters) = dbFacade.ProviderName switch
+            var (script, sqlParameters) = dbFacade.GetProviderType() switch
             {
-                "Microsoft.EntityFrameworkCore.SqlServer" =>
+                Provider.Type.SqlServer =>
                     (MsSqlScripts.GetScript(scriptName),
                     parameters is null or { Count: 0 }
-                        ? Enumerable.Empty<object>()
+                        ? Enumerable.Empty<IDbDataParameter>()
                         : parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
-                "Npgsql.EntityFrameworkCore.PostgreSQL" =>
+                Provider.Type.PostgreSql =>
                     (NpgSqlScripts.GetScript(scriptName),
                     parameters is null or { Count: 0 }
-                        ? Enumerable.Empty<object>()
+                        ? Enumerable.Empty<IDbDataParameter>()
                         : parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
                 _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
             };

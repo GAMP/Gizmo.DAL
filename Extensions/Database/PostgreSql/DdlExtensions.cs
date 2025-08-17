@@ -13,7 +13,7 @@ namespace Gizmo.DAL.Extensions.DdlExtensions;
 
 internal static class PostgreSql
 {
-    public static async Task EnsureLoginExists(DatabaseFacade facade, string login, CancellationToken ct)
+    public static async Task EnsurAdminExists(DatabaseFacade facade, string login, CancellationToken ct)
     {
         try
         {
@@ -133,6 +133,7 @@ internal static class PostgreSql
             string fileName;
             var arguments = new List<string>
             {
+                $"-U {metadata.Username}",
                 $"-d \"{metadata.DatabaseName}\"",
                 $"-f \"{backupFile}\"",
                 "-Fc",
@@ -197,6 +198,11 @@ internal static class PostgreSql
             if (string.IsNullOrWhiteSpace(backupFile))
                 throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
 
+            if (!await Exists(facade, ct))
+            {
+                await Create(facade, ct);
+            }
+
             var metadata = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
 
             var docker = Environment.GetEnvironmentVariable("POSTGRES_DOCKER");
@@ -210,7 +216,7 @@ internal static class PostgreSql
             var arguments = new List<string>
             {
                 $"-d {metadata.DatabaseName}",
-                $"-U {metadata.Username}", // Default user for PostgreSQL
+                $"-U {metadata.Username}",
                 $"-v \"{backupFile}\"",
                 "--clean",
                 "--if-exists",
@@ -318,6 +324,26 @@ internal static class PostgreSql
         catch (Exception ex)
         {
             throw new InvalidOperationException("Failed to drop PostgreSQL database.", ex);
+        }
+    }
+
+    public static async Task Create(DatabaseFacade facade, CancellationToken ct)
+    {
+        try
+        {
+            var metadata = facade.GetConnectionMetadata();
+            var cs = metadata.ChangeDatabaseTo("postgres").ToConnectionString();
+
+            await using var connection = new NpgsqlConnection(cs);
+            await connection.OpenAsync(ct);
+
+            await using var command = connection.CreateCommand();
+            command.CommandText = $"CREATE DATABASE \"{metadata.DatabaseName}\" OWNER \"{metadata.Username}\"";
+            await command.ExecuteNonQueryAsync(ct);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to create PostgreSQL database '{facade.GetConnectionMetadata().DatabaseName}'.", ex);
         }
     }
 }

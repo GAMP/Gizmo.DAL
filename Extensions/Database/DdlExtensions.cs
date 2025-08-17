@@ -94,13 +94,13 @@ public static class DdlOperations
     {
         var metadata = facade.GetConnectionMetadata();
 
-        var timeStamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+        var timeStamp = DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss");
 
         return facade.GetProviderType() switch
         {
-            Provider.Type.SqlServer => $"{metadata.DatabaseName}_{timeStamp}.bak",
-            Provider.Type.PostgreSql => $"{metadata.DatabaseName}_{timeStamp}.dump",
-            Provider.Type.MySql => $"{metadata.DatabaseName}_{timeStamp}.sql",
+            Provider.Type.SqlServer => $"{metadata.DatabaseName}_mssql_{timeStamp}.bak",
+            Provider.Type.PostgreSql => $"{metadata.DatabaseName}_pgsql_{timeStamp}.dump",
+            Provider.Type.MySql => $"{metadata.DatabaseName}_mysql_{timeStamp}.sql",
             _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
         };
     }
@@ -196,10 +196,10 @@ public static class DdlOperations
         };
 
     /// <summary>
-    /// Ensures that a database login with the specified name exists.
+    /// Ensures that a database administrator with the specified name exists.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
-    /// <param name="name">The name of the login to ensure exists.</param>
+    /// <param name="name">The name of the administrator to ensure exists.</param>
     /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="facade"/> or <paramref name="name"/> is null.</exception>
@@ -208,11 +208,11 @@ public static class DdlOperations
     /// <remarks>
     /// This method supports SQL Server and PostgreSQL database providers. It creates the login if it doesn't already exist.
     /// </remarks>
-    public static Task EnsureLoginExists(this DatabaseFacade facade, string name, CancellationToken ct = default) =>
+    public static Task EnsurAdminExists(this DatabaseFacade facade, string name, CancellationToken ct = default) =>
         facade.GetProviderType() switch
         {
-            Provider.Type.SqlServer => SqlServer.EnsureLoginExists(facade, name, ct),
-            Provider.Type.PostgreSql => PostgreSql.EnsureLoginExists(facade, name, ct),
+            Provider.Type.SqlServer => SqlServer.EnsurAdminExists(facade, name, ct),
+            Provider.Type.PostgreSql => PostgreSql.EnsurAdminExists(facade, name, ct),
             _ => throw new NotSupportedException($"Provider '{facade.ProviderName}' is not supported for ensuring login existence.")
         };
 }

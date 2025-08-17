@@ -8,10 +8,6 @@ namespace Gizmo.DAL.Extensions.DmlExtensions;
 
 internal static class PostgreSql
 {
-    // We can use the same cleanup logic as SQL Server, because the logic is written as database-agnostic.
-    public static Task Cleanup(DefaultDbContext cx, bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts, CancellationToken ct) =>
-        SqlServer.Cleanup(cx, deleteUsers, deleteHosts, deleteOperators, deleteProducts, ct);
-
     public static async Task CleanupUsers(DefaultDbContext cx, CancellationToken ct)
     {
         const string DeletedUsersSubquery =
@@ -20,7 +16,7 @@ internal static class PostgreSql
                FROM "User" AS A 
                LEFT OUTER JOIN "UserGuest" AS B ON A."UserId" = B."UserId" 
                LEFT OUTER JOIN "UserOperator" AS C ON A."UserId" = C."UserId" 
-               WHERE A."IsDeleted" = 1 
+               WHERE A."IsDeleted" = true
                AND B."UserId" IS NULL 
                AND C."UserId" IS NULL
             """;
@@ -28,7 +24,8 @@ internal static class PostgreSql
         await using (var trx = await cx.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct))
         {
             cx.ChangeTracker.AutoDetectChangesEnabled = false;
-            cx.Database.SetCommandTimeout(int.MaxValue);
+            // Use a reasonable timeout value for PostgreSQL
+            cx.Database.SetCommandTimeout(3600);
 
             // Basic DELETE operations (direct user ID reference)
             await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("AssetTransaction"), ct);
@@ -141,7 +138,7 @@ internal static class PostgreSql
             await cx.Database.ExecuteSqlRawAsync (
                 $"""
                     DELETE FROM "User" 
-                    WHERE "IsDeleted" = 1 
+                    WHERE "IsDeleted" = true
                     AND "UserId" IN (
                         {DeletedUsersSubquery}
                     )

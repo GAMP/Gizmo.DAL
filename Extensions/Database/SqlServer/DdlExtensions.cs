@@ -10,7 +10,7 @@ namespace Gizmo.DAL.Extensions.DdlExtensions;
 
 internal static class SqlServer
 {
-    public static async Task EnsureLoginExists(DatabaseFacade facade, string login, CancellationToken ct)
+    public static async Task EnsurAdminExists(DatabaseFacade facade, string login, CancellationToken ct)
     {
         try
         {
@@ -183,8 +183,13 @@ internal static class SqlServer
             if (string.IsNullOrWhiteSpace(backupFile))
                 throw new ArgumentException("Backup file path cannot be null or empty.", nameof(backupFile));
 
-            var connectionMetadata = facade.GetConnectionMetadata();
-            var masterConnectionString = connectionMetadata.ChangeDatabaseTo("master").ToConnectionString();
+            if (!await Exists(facade, ct))
+            {
+                await Create(facade, ct);
+            }
+
+            var metadata = facade.GetConnectionMetadata();
+            var masterConnectionString = metadata.ChangeDatabaseTo("master").ToConnectionString();
 
             await using var connection = new SqlConnection(masterConnectionString);
             await connection.OpenAsync(ct);
@@ -200,11 +205,11 @@ internal static class SqlServer
 
             string restoreSql =
                 $"""
-                    ALTER DATABASE [{connectionMetadata.DatabaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-                    RESTORE DATABASE [{connectionMetadata.DatabaseName}]
+                    ALTER DATABASE [{metadata.DatabaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                    RESTORE DATABASE [{metadata.DatabaseName}]
                     FROM DISK = @backupFile
                     WITH FILE = 1, {moveStatement} NOUNLOAD, STATS = 10, REPLACE, RECOVERY
-                    ALTER DATABASE [{connectionMetadata.DatabaseName}] SET MULTI_USER;
+                    ALTER DATABASE [{metadata.DatabaseName}] SET MULTI_USER;
                  """;
 
             await using var command = connection.CreateCommand();
@@ -250,6 +255,32 @@ internal static class SqlServer
         catch (Exception ex)
         {
             throw new InvalidOperationException("Failed to drop SQL Server database.", ex);
+        }
+    }
+
+    public static async Task Create(DatabaseFacade facade, CancellationToken ct)
+    {
+        var metadata = facade.GetConnectionMetadata();
+
+        try
+        {
+            var masterConnectionString = metadata.ChangeDatabaseTo("master").ToConnectionString();
+
+            await using var connection = new SqlConnection(masterConnectionString);
+            await connection.OpenAsync(ct);
+
+            await using var command = connection.CreateCommand();
+
+            // Create the database with proper file locations
+            command.CommandText =
+                $"""
+                    CREATE DATABASE [{metadata.DatabaseName}];
+                """;
+            await command.ExecuteNonQueryAsync(ct);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to create SQL Server database '{metadata.DatabaseName}'.", ex);
         }
     }
 

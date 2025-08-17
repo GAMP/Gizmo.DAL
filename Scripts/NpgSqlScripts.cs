@@ -125,8 +125,8 @@ namespace Gizmo.DAL.Scripts
             """;
         private const string RESET_USERGUESTS = """
             UPDATE "UserGuest"
-            SET "IsReserved" = 0, "ReservedHostId" = NULL, "ReservedSlot" = NULL
-            WHERE ("IsReserved" = 1 OR "ReservedHostId" IS NOT NULL OR "ReservedSlot" IS NOT NULL);
+            SET "IsReserved" = false, "ReservedHostId" = NULL, "ReservedSlot" = NULL
+            WHERE ("IsReserved" = true OR "ReservedHostId" IS NOT NULL OR "ReservedSlot" IS NOT NULL);
             """;
         private const string GET_PAGINATED_PAYMENT_TRANSACTIONS = """
             WITH vars (
