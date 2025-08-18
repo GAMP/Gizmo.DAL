@@ -1,14 +1,314 @@
+using System;
 using System.Data;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Gizmo.DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
+using IntegrationLib;
 
 namespace Gizmo.DAL.Extensions.DmlExtensions;
 
 internal static class SqlServer
 {
-       public static async Task CleanupUsers(DefaultDbContext cx, CancellationToken ct)
+    public static async Task Cleanup(DefaultDbContext cx, bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts, CancellationToken ct)
+    {
+        await using var trx = await cx.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
+        
+        try
+        {
+            cx.ChangeTracker.AutoDetectChangesEnabled = false;
+            cx.Database.SetCommandTimeout(3600);
+
+            // Single comprehensive SQL script that handles all cleanup operations in proper dependency order
+            var cleanupScript = BuildCleanupScript(deleteUsers, deleteHosts, deleteOperators, deleteProducts);
+            
+            // Only execute the script if it contains actual SQL commands
+            if (!string.IsNullOrWhiteSpace(cleanupScript))
+            {
+                await cx.Database.ExecuteSqlRawAsync(cleanupScript, ct);
+            }
+
+            // Handle Entity Framework specific cleanup for users
+            if (deleteUsers)
+            {
+                cx.UsersGuest.RemoveRange(cx.UsersGuest);
+                cx.UsersMember.RemoveRange(cx.UsersMember);
+            }
+
+            // Handle Entity Framework specific cleanup for operators
+            if (deleteOperators)
+            {
+                cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is Entities.UserOperator));
+                cx.UsersOperator.RemoveRange(cx.UsersOperator);
+
+                // Create default admin operator
+                await CreateDefaultAdminOperator(cx, ct);
+            }
+
+            cx.ChangeTracker.DetectChanges();
+            await cx.SaveChangesAsync(ct);
+            await trx.CommitAsync(ct);
+        }
+        catch
+        {
+            await trx.RollbackAsync(ct);
+            throw;
+        }
+    }
+
+    private static string BuildCleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
+    {
+        var script = new StringBuilder();
+        
+        // Handle cross-dependencies first
+        if (deleteUsers || deleteHosts)
+        {
+            script.AppendLine("""
+                -- Clean up reservations and stats that depend on both users and hosts
+                DELETE FROM [AppStat];
+                DELETE FROM [ReservationUser];
+                DELETE FROM [ReservationHost];  
+                DELETE FROM [Reservation];
+                """);
+        }
+
+        if (deleteHosts && !deleteUsers)
+        {
+            script.AppendLine("""
+                -- Reset user guests when deleting hosts but keeping users
+                UPDATE [UserGuest] SET ReservedHostId = NULL WHERE ReservedHostId IS NOT NULL;
+                """);
+        }
+
+        // Always clean up financial data when any category is being deleted
+        if (deleteUsers || deleteHosts || deleteOperators || deleteProducts)
+        {
+            script.AppendLine("""
+                -- Nullify foreign key references that need to be handled before deletion
+                UPDATE [InvoiceLineExtended] SET BundleLineId = NULL;
+                UPDATE [UsageSession] SET CurrentUsageId = NULL;
+                UPDATE [ProductOLExtended] SET BundleLineId = NULL;
+
+                -- Financial data cleanup in dependency order
+                DELETE FROM [UsageRate];
+                DELETE FROM [UsageTimeFixed];
+                DELETE FROM [UsageTime];
+                DELETE FROM [UsageUserSession];
+                DELETE FROM [Usage];
+                DBCC CHECKIDENT ('Usage', RESEED, 1);
+
+                DELETE FROM [UserSessionChange];
+                DELETE FROM [UserSession];
+                DELETE FROM [UsageSession];
+                DBCC CHECKIDENT ('UsageSession', RESEED, 1);
+
+                DELETE FROM [RefundInvoicePayment];
+                DELETE FROM [RefundDepositPayment];
+                DELETE FROM [Refund];
+                DBCC CHECKIDENT ('Refund', RESEED, 1);
+
+                DELETE FROM [VoidInvoice];
+                DELETE FROM [VoidDepositPayment];
+                DELETE FROM [Void];
+                DBCC CHECKIDENT ('Void', RESEED, 1);
+
+                DELETE FROM [InvoicePayment];
+                DBCC CHECKIDENT ('InvoicePayment', RESEED, 1);
+
+                DELETE FROM [PaymentIntentDeposit];
+                DELETE FROM [PaymentIntentOrder];
+                DELETE FROM [PaymentIntent];
+                DBCC CHECKIDENT ('PaymentIntent', RESEED, 1);
+
+                DELETE FROM [DepositPayment];
+                DBCC CHECKIDENT ('DepositPayment', RESEED, 1);
+
+                DELETE FROM [Payment];
+                DBCC CHECKIDENT ('Payment', RESEED, 1);
+
+                DELETE FROM [InvoiceLineProduct];
+                DELETE FROM [InvoiceLineSession];
+                DELETE FROM [InvoiceLineTime];
+                DELETE FROM [InvoiceLineTimeFixed];
+                DELETE FROM [InvoiceLineExtended];
+                DELETE FROM [InvoiceLine];
+                DBCC CHECKIDENT ('InvoiceLine', RESEED, 1);
+
+                DELETE FROM [InvoiceFiscalReceipt];
+                DELETE FROM [Invoice];
+                DBCC CHECKIDENT ('Invoice', RESEED, 1);
+
+                DELETE FROM [ProductOLTimeFixed];
+                DELETE FROM [ProductOLTime];
+                DELETE FROM [ProductOLSession];
+                DELETE FROM [ProductOLProduct];
+                DELETE FROM [ProductOLExtended];
+                DELETE FROM [ProductOL];
+                DBCC CHECKIDENT ('ProductOL', RESEED, 1);
+
+                DELETE FROM [ProductOrder];
+                DBCC CHECKIDENT ('ProductOrder', RESEED, 1);
+
+                DELETE FROM [DepositTransaction];
+                DBCC CHECKIDENT ('DepositTransaction', RESEED, 1);
+
+                DELETE FROM [PointTransaction];
+                DBCC CHECKIDENT ('PointTransaction', RESEED, 1);
+
+                DELETE FROM [StockTransaction];
+                DELETE FROM [ShiftCount];
+                DELETE FROM [RegisterTransaction];
+                DELETE FROM [FiscalReceipt];
+                DELETE FROM [Shift];
+                DELETE FROM [Register];
+                """);
+        }
+
+        // Products cleanup
+        if (deleteProducts)
+        {
+            script.AppendLine("""
+                -- Product cleanup in dependency order
+                DELETE FROM [ProductImage];
+                DELETE FROM [ProductTax];
+                DELETE FROM [ProductPeriod];
+                DELETE FROM [ProductPeriodDayTime];
+                DELETE FROM [ProductPeriodDay];
+                DELETE FROM [ProductTimeHostDisallowed];
+                DELETE FROM [ProductUserDisallowed];
+                DELETE FROM [ProductUserPrice];
+                DELETE FROM [BundleProduct];
+                DELETE FROM [ProductTimePeriod];
+                DELETE FROM [ProductTimePeriodDayTime];
+                DELETE FROM [ProductTimePeriodDay];
+                DELETE FROM [ProductBundle];
+                DELETE FROM [Product];
+                DELETE FROM [ProductTime];
+                DELETE FROM [ProductBaseExtended];
+                DELETE FROM [ProductBase];
+                DBCC CHECKIDENT ('ProductBase', RESEED, 1);
+                """);
+        }
+
+        if (deleteProducts || deleteHosts)
+        {
+            script.AppendLine("DELETE FROM [ProductHostHidden];");
+        }
+
+        // Users cleanup
+        if (deleteUsers)
+        {
+            script.AppendLine("""
+                -- User-related data cleanup
+                DELETE FROM [HostGroupWaitingLineEntry];
+                DELETE FROM [AssetTransaction];
+                DELETE FROM [AppRating];
+                DELETE FROM [UserCreditLimit];
+                DELETE FROM [UserAttribute];
+                DELETE FROM [UserNote];
+                DELETE FROM [Note];
+                DELETE FROM [VerificationEmail];
+                DELETE FROM [VerificationMobilePhone];
+                DELETE FROM [Verification];
+                DELETE FROM [Token];
+                """);
+        }
+
+        // Hosts cleanup
+        if (deleteHosts)
+        {
+            script.AppendLine("""
+                -- Host cleanup
+                DELETE FROM [HostComputer];
+                DELETE FROM [HostEndpoint];
+                DELETE FROM [Host];
+                DBCC CHECKIDENT ('Host', RESEED, 1);
+                """);
+        }
+
+        // Operators cleanup with proper foreign key handling
+        if (deleteOperators)
+        {
+            if (!deleteUsers)
+            {
+                script.AppendLine("""
+                    -- Update foreign key references to NULL before deleting operators
+                    UPDATE [UserCreditLimit] SET CreatedById = NULL, ModifiedById = NULL;
+                    UPDATE [UserPicture] SET CreatedById = NULL, ModifiedById = NULL;
+                    UPDATE [UserAttribute] SET CreatedById = NULL, ModifiedById = NULL;
+                    UPDATE [AssetTransaction] SET CreatedById = NULL, ModifiedById = NULL, CheckedInById = NULL;
+                    """);
+            }
+
+            if (!deleteHosts)
+            {
+                script.AppendLine("UPDATE [Host] SET CreatedById = NULL, ModifiedById = NULL;");
+            }
+
+            if (!deleteHosts && !deleteProducts)
+            {
+                script.AppendLine("UPDATE [ProductHostHidden] SET CreatedById = NULL, ModifiedById = NULL;");
+            }
+
+            script.AppendLine("""
+                -- Update all other foreign key references to operators
+                UPDATE [DeviceHost] SET CreatedById = NULL, ModifiedById = NULL;
+                UPDATE [Device] SET CreatedById = NULL, ModifiedById = NULL;
+                UPDATE [ReservationUser] SET CreatedById = NULL, ModifiedById = NULL;
+                UPDATE [ReservationHost] SET CreatedById = NULL, ModifiedById = NULL;
+                UPDATE [Reservation] SET CreatedById = NULL, ModifiedById = NULL;
+                UPDATE [App] SET CreatedById = NULL, ModifiedById = NULL;
+                UPDATE [AppCategory] SET CreatedById = NULL, ModifiedById = NULL;
+                UPDATE [Setting] SET CreatedById = NULL, ModifiedById = NULL;
+                UPDATE [User] SET CreatedById = NULL, ModifiedById = NULL;
+
+                -- Delete operator tokens (type 0)
+                DELETE FROM [Token] WHERE Type = 0;
+                UPDATE [Token] SET CreatedById = NULL, ModifiedById = NULL;
+
+                -- Clean up operator-specific entities
+                DELETE FROM [AgeRestriction];
+                DELETE FROM [AssistanceRequestType];
+                DELETE FROM [Stock];
+                DELETE FROM [Branch];
+                DELETE FROM [ClientOptions];
+                DELETE FROM [Companion];
+                DELETE FROM [Notification];
+                DELETE FROM [UserPermissionSet];
+                """);
+        }
+
+        return script.ToString();
+    }
+
+    private static async Task CreateDefaultAdminOperator(DefaultDbContext cx, CancellationToken ct)
+    {
+        var defaultOperator = new Entities.UserOperator
+        {
+            UserCredential = new Entities.UserCredential(),
+            Username = "Admin",
+            CreatedTime = DateTime.UtcNow
+        };
+
+        byte[] salt = cx.GetNewSalt();
+        byte[] password = cx.GetHashedPassword("admin", salt);
+
+        defaultOperator.UserCredential.Salt = salt;
+        defaultOperator.UserCredential.Password = password;
+
+        var allPermissions = IntegrationLib.ClaimTypeBase
+            .GetClaimTypes()
+            .Select(claim => new Entities.UserPermission { Type = claim.Resource, Value = claim.Operation });
+
+        defaultOperator.Permissions.UnionWith(allPermissions);
+
+        cx.UsersOperator.Update(defaultOperator);
+        await cx.SaveChangesAsync(ct);
+    }
+
+    public static async Task CleanupUsers(DefaultDbContext cx, CancellationToken ct)
     {
         const string DeletedUsersSubquery =
             """

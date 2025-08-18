@@ -1,13 +1,347 @@
+using System;
 using System.Data;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Gizmo.DAL.Contexts;
+using IntegrationLib;
 
 namespace Gizmo.DAL.Extensions.DmlExtensions;
 
 internal static class PostgreSql
 {
+    public static async Task Cleanup(DefaultDbContext cx, bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts, CancellationToken ct)
+    {
+        await using var trx = await cx.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
+        
+        try
+        {
+            cx.ChangeTracker.AutoDetectChangesEnabled = false;
+            cx.Database.SetCommandTimeout(3600);
+
+            // Single comprehensive SQL script that handles all cleanup operations in proper dependency order
+            var cleanupScript = BuildCleanupScript(deleteUsers, deleteHosts, deleteOperators, deleteProducts);
+            
+            // Only execute the script if it contains actual SQL commands
+            if (!string.IsNullOrWhiteSpace(cleanupScript))
+            {
+                await cx.Database.ExecuteSqlRawAsync(cleanupScript, ct);
+            }
+
+            // Handle Entity Framework specific cleanup for users
+            if (deleteUsers)
+            {
+                cx.UsersGuest.RemoveRange(cx.UsersGuest);
+                cx.UsersMember.RemoveRange(cx.UsersMember);
+            }
+
+            // Handle Entity Framework specific cleanup for operators
+            if (deleteOperators)
+            {
+                cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is Entities.UserOperator));
+                cx.UsersOperator.RemoveRange(cx.UsersOperator);
+
+                // Create default admin operator
+                await CreateDefaultAdminOperator(cx, ct);
+            }
+
+            cx.ChangeTracker.DetectChanges();
+            await cx.SaveChangesAsync(ct);
+            await trx.CommitAsync(ct);
+        }
+        catch
+        {
+            await trx.RollbackAsync(ct);
+            throw;
+        }
+    }
+
+    private static string BuildCleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
+    {
+        var script = new StringBuilder();
+        
+        // Handle cross-dependencies first
+        if (deleteUsers || deleteHosts)
+        {
+            script.AppendLine("""
+                -- Clean up reservations and stats that depend on both users and hosts
+                DELETE FROM "AppStat";
+                DELETE FROM "ReservationUser";
+                DELETE FROM "ReservationHost";  
+                DELETE FROM "Reservation";
+                """);
+        }
+
+        if (deleteHosts)
+        {
+            script.AppendLine("""
+                -- Reset user guests when deleting hosts
+                UPDATE "UserGuest" SET "ReservedHostId" = NULL WHERE "ReservedHostId" IS NOT NULL;
+                """);
+        }
+
+        // Always clean up financial data when any category is being deleted
+        if (deleteUsers || deleteHosts || deleteOperators || deleteProducts)
+        {
+            script.AppendLine("""
+                -- Nullify foreign key references that need to be handled before deletion
+                UPDATE "InvoiceLineExtended" SET "BundleLineId" = NULL;
+                UPDATE "UsageSession" SET "CurrentUsageId" = NULL;
+                UPDATE "ProductOLExtended" SET "BundleLineId" = NULL;
+
+                -- Financial data cleanup in dependency order
+                DELETE FROM "UsageRate";
+                DELETE FROM "UsageTimeFixed";
+                DELETE FROM "UsageTime";
+                DELETE FROM "UsageUserSession";
+                DELETE FROM "Usage";
+                ALTER SEQUENCE "Usage_UsageId_seq" RESTART WITH 1;
+
+                DELETE FROM "UserSessionChange";
+                DELETE FROM "UserSession";
+                DELETE FROM "UsageSession";
+                -- Note: UsageSession might not have an auto-increment sequence
+                -- ALTER SEQUENCE "UsageSession_SessionId_seq" RESTART WITH 1;
+
+                DELETE FROM "RefundInvoicePayment";
+                DELETE FROM "RefundDepositPayment";
+                DELETE FROM "Refund";
+                ALTER SEQUENCE "Refund_RefundId_seq" RESTART WITH 1;
+
+                DELETE FROM "VoidInvoice";
+                DELETE FROM "VoidDepositPayment";
+                DELETE FROM "Void";
+                ALTER SEQUENCE "Void_VoidId_seq" RESTART WITH 1;
+
+                DELETE FROM "InvoicePayment";
+                ALTER SEQUENCE "InvoicePayment_InvoicePaymentId_seq" RESTART WITH 1;
+
+                DELETE FROM "PaymentIntentDeposit";
+                DELETE FROM "PaymentIntentOrder";
+                DELETE FROM "PaymentIntent";
+                ALTER SEQUENCE "PaymentIntent_PaymentIntentId_seq" RESTART WITH 1;
+
+                DELETE FROM "DepositPayment";
+                ALTER SEQUENCE "DepositPayment_DepositPaymentId_seq" RESTART WITH 1;
+
+                DELETE FROM "Payment";
+                ALTER SEQUENCE "Payment_PaymentId_seq" RESTART WITH 1;
+
+                DELETE FROM "InvoiceLineProduct";
+                DELETE FROM "InvoiceLineSession";
+                DELETE FROM "InvoiceLineTime";
+                DELETE FROM "InvoiceLineTimeFixed";
+                DELETE FROM "InvoiceLineExtended";
+                DELETE FROM "InvoiceLine";
+                ALTER SEQUENCE "InvoiceLine_InvoiceLineId_seq" RESTART WITH 1;
+
+                DELETE FROM "InvoiceFiscalReceipt";
+                DELETE FROM "Invoice";
+                ALTER SEQUENCE "Invoice_InvoiceId_seq" RESTART WITH 1;
+
+                DELETE FROM "ProductOLTimeFixed";
+                DELETE FROM "ProductOLTime";
+                DELETE FROM "ProductOLSession";
+                DELETE FROM "ProductOLProduct";
+                DELETE FROM "ProductOLExtended";
+                DELETE FROM "ProductOL";
+                ALTER SEQUENCE "ProductOL_ProductOLId_seq" RESTART WITH 1;
+
+                DELETE FROM "ProductOrder";
+                ALTER SEQUENCE "ProductOrder_ProductOrderId_seq" RESTART WITH 1;
+
+                DELETE FROM "DepositTransaction";
+                ALTER SEQUENCE "DepositTransaction_DepositTransactionId_seq" RESTART WITH 1;
+
+                DELETE FROM "PointTransaction";
+                ALTER SEQUENCE "PointTransaction_PointTransactionId_seq" RESTART WITH 1;
+
+                DELETE FROM "StockTransaction";
+                DELETE FROM "ShiftCount";
+                DELETE FROM "RegisterTransaction";
+                DELETE FROM "FiscalReceipt";
+                DELETE FROM "Shift";
+                DELETE FROM "Register";
+                """);
+        }
+
+        // Products cleanup
+        if (deleteProducts)
+        {
+            script.AppendLine("""
+                -- Product cleanup in dependency order
+                DELETE FROM "ProductImage";
+                DELETE FROM "ProductTax";
+                DELETE FROM "ProductPeriod";
+                DELETE FROM "ProductPeriodDayTime";
+                DELETE FROM "ProductPeriodDay";
+                DELETE FROM "ProductTimeHostDisallowed";
+                DELETE FROM "ProductUserDisallowed";
+                DELETE FROM "ProductUserPrice";
+                DELETE FROM "BundleProduct";
+                DELETE FROM "ProductTimePeriod";
+                DELETE FROM "ProductTimePeriodDayTime";
+                DELETE FROM "ProductTimePeriodDay";
+                DELETE FROM "ProductBundle";
+                DELETE FROM "Product";
+                DELETE FROM "ProductTime";
+                DELETE FROM "ProductBaseExtended";
+                DELETE FROM "ProductBase";
+                ALTER SEQUENCE "ProductBase_ProductId_seq" RESTART WITH 1;
+                """);
+        }
+
+        if (deleteProducts || deleteHosts)
+        {
+            script.AppendLine("DELETE FROM \"ProductHostHidden\";");
+        }
+
+        // Users cleanup
+        if (deleteUsers)
+        {
+            script.AppendLine("""
+                -- User-related data cleanup
+                DELETE FROM "HostGroupWaitingLineEntry";
+                DELETE FROM "AssetTransaction";
+                DELETE FROM "AppRating";
+                DELETE FROM "UserCreditLimit";
+                DELETE FROM "UserAttribute";
+                DELETE FROM "UserNote";
+                DELETE FROM "Note";
+                DELETE FROM "VerificationEmail";
+                DELETE FROM "VerificationMobilePhone";
+                DELETE FROM "Verification";
+                DELETE FROM "Token";
+                """);
+        }
+
+        // Hosts cleanup
+        if (deleteHosts)
+        {
+            script.AppendLine("""
+                -- Host cleanup - must delete dependent tables first
+                DELETE FROM "HostComputer";
+                DELETE FROM "HostEndpoint";
+                DELETE FROM "Host";
+                ALTER SEQUENCE "Host_HostId_seq" RESTART WITH 1;
+                """);
+        }
+
+        // Operators cleanup with proper foreign key handling
+        if (deleteOperators)
+        {
+
+            if (!deleteUsers)
+            {
+                script.AppendLine("""
+                    -- Update foreign key references to NULL before deleting operators
+                    UPDATE "UserCreditLimit" SET "CreatedById" = NULL, "ModifiedById" = NULL;
+                    UPDATE "UserPicture" SET "CreatedById" = NULL, "ModifiedById" = NULL;
+                    UPDATE "UserAttribute" SET "CreatedById" = NULL, "ModifiedById" = NULL;
+                    UPDATE "AssetTransaction" SET "CreatedById" = NULL, "ModifiedById" = NULL, "CheckedInById" = NULL;
+                    """);
+            }
+
+            if (!deleteHosts)
+            {
+                script.AppendLine("UPDATE \"Host\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL;");
+            }
+
+            if (!deleteHosts && !deleteProducts)
+            {
+                script.AppendLine("UPDATE \"ProductHostHidden\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL;");
+            }
+
+            script.AppendLine("""
+                -- Clear ALL foreign key references to operators systematically
+                -- This comprehensive approach handles PostgreSQL's strict foreign key enforcement
+                
+                -- Core entity updates (CreatedById/ModifiedById columns)
+                UPDATE "App" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "AppCategory" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "AppExe" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "AppGroup" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "Attribute" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "BillProfile" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "Device" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "DeviceHost" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "Feed" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "Host" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "HostGroup" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "MonetaryUnit" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "News" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "PaymentMethod" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "PluginLibrary" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "ProductBase" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "ProductGroup" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "ProductImage" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "ProductUserDisallowed" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "Reservation" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "ReservationHost" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "ReservationUser" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "SecurityProfile" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "Setting" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "Tax" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "Token" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "User" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "UserAgreement" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "UserCredential" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "UserGroup" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "UserPermissionSet" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "Variable" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+
+                -- Clear specific foreign key references before deleting related entities
+                UPDATE "Host" SET "HostGroupId" = NULL WHERE "HostGroupId" IS NOT NULL;
+                UPDATE "User" SET "PermissionSetId" = NULL WHERE "PermissionSetId" IS NOT NULL;
+
+                -- Clean up dependent records that would cause foreign key constraint violations
+                DELETE FROM "HostGroupWaitingLineEntry";
+
+                -- Delete operator tokens (type 0)
+                DELETE FROM "Token" WHERE "Type" = 0;
+
+                -- Clean up operator-specific entities
+                DELETE FROM "AgeRestriction";
+                DELETE FROM "AssistanceRequestType";
+                DELETE FROM "Stock";
+                DELETE FROM "Branch";
+                DELETE FROM "ClientOptions";
+                DELETE FROM "Companion";
+                DELETE FROM "Notification";
+                DELETE FROM "UserPermissionSet";
+                """);
+        }
+
+        return script.ToString();
+    }
+
+    private static async Task CreateDefaultAdminOperator(DefaultDbContext cx, CancellationToken ct)
+    {
+        var defaultOperator = new Entities.UserOperator
+        {
+            UserCredential = new Entities.UserCredential(),
+            Username = "Admin",
+            CreatedTime = DateTime.UtcNow
+        };
+
+        byte[] salt = cx.GetNewSalt();
+        byte[] password = cx.GetHashedPassword("admin", salt);
+
+        defaultOperator.UserCredential.Salt = salt;
+        defaultOperator.UserCredential.Password = password;
+
+        var allPermissions = IntegrationLib.ClaimTypeBase
+            .GetClaimTypes()
+            .Select(claim => new Entities.UserPermission { Type = claim.Resource, Value = claim.Operation });
+
+        defaultOperator.Permissions.UnionWith(allPermissions);
+
+        cx.UsersOperator.Update(defaultOperator);
+        await cx.SaveChangesAsync(ct);
+    }
+
     public static async Task CleanupUsers(DefaultDbContext cx, CancellationToken ct)
     {
         const string DeletedUsersSubquery =

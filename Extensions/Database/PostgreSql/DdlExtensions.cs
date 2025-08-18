@@ -338,7 +338,7 @@ internal static class PostgreSql
             await connection.OpenAsync(ct);
 
             await using var command = connection.CreateCommand();
-            command.CommandText = $"CREATE DATABASE \"{metadata.DatabaseName}\" OWNER \"{metadata.Username}\"";
+            command.CommandText = $"CREATE DATABASE \"{metadata.DatabaseName}\"";
             await command.ExecuteNonQueryAsync(ct);
         }
         catch (Exception ex)

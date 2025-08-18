@@ -145,8 +145,8 @@ namespace Gizmo.DAL.Extensions
                         : $"DELETE FROM [dbo].[{tableName}];",
                 Provider.Type.PostgreSql => withReseed
                     ? whereClause.Length > 0
-                        ? $"DELETE FROM \"{tableName}\" WHERE {whereClause}; ALTER SEQUENCE \"{tableName}_{tableName}Id_seq\" RESTART;"
-                        : $"DELETE FROM \"{tableName}\"; ALTER SEQUENCE \"{tableName}_{tableName}Id_seq\" RESTART;"
+                        ? $"DELETE FROM \"{tableName}\" WHERE {whereClause}; ALTER SEQUENCE \"{tableName}_{tableName}Id_seq\" RESTART WITH 1;"
+                        : $"DELETE FROM \"{tableName}\"; ALTER SEQUENCE \"{tableName}_{tableName}Id_seq\" RESTART WITH 1;"
                     : whereClause.Length > 0
                         ? $"DELETE FROM \"{tableName}\" WHERE {whereClause};"
                         : $"DELETE FROM \"{tableName}\";",
