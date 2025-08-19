@@ -9,6 +9,27 @@ namespace Gizmo.DAL.Extensions.DmlExtensions;
 
 internal static class SqlServer
 {
+    private static string DeleteTable(string tableName) =>
+        $"DELETE FROM [{tableName}];";
+
+    private static string DeleteTableWithIdentityReset(string tableName) =>
+        $"DELETE FROM [{tableName}];\nDBCC CHECKIDENT ('{tableName}', RESEED, 1);";
+
+    private static string DeleteFromTableWithCondition(string tableName, string condition) =>
+        $"DELETE FROM [{tableName}] WHERE {condition};";
+
+    private static string SetColumnNull(string tableName, string columnName) =>
+        $"UPDATE [{tableName}] SET {columnName} = NULL;";
+
+    private static string SetColumnNullWithCondition(string tableName, string columnName, string condition) =>
+        $"UPDATE [{tableName}] SET {columnName} = NULL WHERE {condition};";
+
+    private static string SetOperatorColumnsNull(string tableName) =>
+        $"UPDATE [{tableName}] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;";
+
+    private static string SetOperatorColumnsNullWithExtraColumn(string tableName, string additionalColumn) =>
+        $"UPDATE [{tableName}] SET CreatedById = NULL, ModifiedById = NULL, {additionalColumn} = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL OR {additionalColumn} IS NOT NULL;";
+
     public static string CleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
     {
         var script = new StringBuilder();
@@ -16,232 +37,251 @@ internal static class SqlServer
         // Handle cross-dependencies first
         if (deleteUsers || deleteHosts)
         {
-            script.AppendLine("""
-                -- Clean up reservations and stats that depend on both users and hosts
-                DELETE FROM [AppStat];
-                DELETE FROM [ReservationUser];
-                DELETE FROM [ReservationHost];  
-                DELETE FROM [Reservation];
-                """);
+            var commonTables = new[]
+            {
+                "AppStat",
+                "ReservationUser",
+                "ReservationHost",
+                "Reservation"
+            };
+
+            script.AppendLine("-- Cross-dependency cleanup for users and hosts");
+            foreach (var table in commonTables)
+            {
+                script.AppendLine(DeleteTable(table));
+            }
         }
 
         // Always clean up financial data when any category is being deleted
         if (deleteUsers || deleteHosts || deleteOperators || deleteProducts)
         {
-            script.AppendLine("""
-                -- Nullify foreign key references that need to be handled before deletion
-                UPDATE [InvoiceLineExtended] SET BundleLineId = NULL;
-                UPDATE [UsageSession] SET CurrentUsageId = NULL;
-                UPDATE [ProductOLExtended] SET BundleLineId = NULL;
+            script.AppendLine("-- Nullify foreign key references that need to be handled before deletion");
+            script.AppendLine(SetColumnNull("InvoiceLineExtended", "BundleLineId"));
+            script.AppendLine(SetColumnNull("UsageSession", "CurrentUsageId"));
+            script.AppendLine(SetColumnNull("ProductOLExtended", "BundleLineId"));
+            script.AppendLine();
 
-                -- Financial data cleanup in dependency order
-                DELETE FROM [UsageRate];
-                DELETE FROM [UsageTimeFixed];
-                DELETE FROM [UsageTime];
-                DELETE FROM [UsageUserSession];
-                DELETE FROM [Usage];
-                DBCC CHECKIDENT ('Usage', RESEED, 1);
+            script.AppendLine("-- Financial data cleanup in dependency order");
+            script.AppendLine(DeleteTable("UsageRate"));
+            script.AppendLine(DeleteTable("UsageTimeFixed"));
+            script.AppendLine(DeleteTable("UsageTime"));
+            script.AppendLine(DeleteTable("UsageUserSession"));
+            script.AppendLine(DeleteTableWithIdentityReset("Usage"));
 
-                DELETE FROM [UserSessionChange];
-                DELETE FROM [UserSession];
-                DELETE FROM [UsageSession];
-                DBCC CHECKIDENT ('UsageSession', RESEED, 1);
+            script.AppendLine(DeleteTable("UserSessionChange"));
+            script.AppendLine(DeleteTable("UserSession"));
+            script.AppendLine(DeleteTableWithIdentityReset("UsageSession"));
 
-                DELETE FROM [RefundInvoicePayment];
-                DELETE FROM [RefundDepositPayment];
-                DELETE FROM [Refund];
-                DBCC CHECKIDENT ('Refund', RESEED, 1);
+            script.AppendLine(DeleteTable("RefundInvoicePayment"));
+            script.AppendLine(DeleteTable("RefundDepositPayment"));
+            script.AppendLine(DeleteTableWithIdentityReset("Refund"));
 
-                DELETE FROM [VoidInvoice];
-                DELETE FROM [VoidDepositPayment];
-                DELETE FROM [Void];
-                DBCC CHECKIDENT ('Void', RESEED, 1);
+            script.AppendLine(DeleteTable("VoidInvoice"));
+            script.AppendLine(DeleteTable("VoidDepositPayment"));
+            script.AppendLine(DeleteTableWithIdentityReset("Void"));
 
-                DELETE FROM [InvoicePayment];
-                DBCC CHECKIDENT ('InvoicePayment', RESEED, 1);
+            script.AppendLine(DeleteTableWithIdentityReset("InvoicePayment"));
 
-                DELETE FROM [PaymentIntentDeposit];
-                DELETE FROM [PaymentIntentOrder];
-                DELETE FROM [PaymentIntent];
-                DBCC CHECKIDENT ('PaymentIntent', RESEED, 1);
+            script.AppendLine(DeleteTable("PaymentIntentDeposit"));
+            script.AppendLine(DeleteTable("PaymentIntentOrder"));
+            script.AppendLine(DeleteTableWithIdentityReset("PaymentIntent"));
 
-                DELETE FROM [DepositPayment];
-                DBCC CHECKIDENT ('DepositPayment', RESEED, 1);
+            script.AppendLine(DeleteTableWithIdentityReset("DepositPayment"));
+            script.AppendLine(DeleteTableWithIdentityReset("Payment"));
 
-                DELETE FROM [Payment];
-                DBCC CHECKIDENT ('Payment', RESEED, 1);
+            script.AppendLine(DeleteTable("InvoiceLineProduct"));
+            script.AppendLine(DeleteTable("InvoiceLineSession"));
+            script.AppendLine(DeleteTable("InvoiceLineTime"));
+            script.AppendLine(DeleteTable("InvoiceLineTimeFixed"));
+            script.AppendLine(DeleteTable("InvoiceLineExtended"));
+            script.AppendLine(DeleteTableWithIdentityReset("InvoiceLine"));
 
-                DELETE FROM [InvoiceLineProduct];
-                DELETE FROM [InvoiceLineSession];
-                DELETE FROM [InvoiceLineTime];
-                DELETE FROM [InvoiceLineTimeFixed];
-                DELETE FROM [InvoiceLineExtended];
-                DELETE FROM [InvoiceLine];
-                DBCC CHECKIDENT ('InvoiceLine', RESEED, 1);
+            script.AppendLine(DeleteTable("InvoiceFiscalReceipt"));
+            script.AppendLine(DeleteTableWithIdentityReset("Invoice"));
 
-                DELETE FROM [InvoiceFiscalReceipt];
-                DELETE FROM [Invoice];
-                DBCC CHECKIDENT ('Invoice', RESEED, 1);
+            script.AppendLine(DeleteTable("ProductOLTimeFixed"));
+            script.AppendLine(DeleteTable("ProductOLTime"));
+            script.AppendLine(DeleteTable("ProductOLSession"));
+            script.AppendLine(DeleteTable("ProductOLProduct"));
+            script.AppendLine(DeleteTable("ProductOLExtended"));
+            script.AppendLine(DeleteTableWithIdentityReset("ProductOL"));
 
-                DELETE FROM [ProductOLTimeFixed];
-                DELETE FROM [ProductOLTime];
-                DELETE FROM [ProductOLSession];
-                DELETE FROM [ProductOLProduct];
-                DELETE FROM [ProductOLExtended];
-                DELETE FROM [ProductOL];
-                DBCC CHECKIDENT ('ProductOL', RESEED, 1);
+            script.AppendLine(DeleteTableWithIdentityReset("ProductOrder"));
+            script.AppendLine(DeleteTableWithIdentityReset("DepositTransaction"));
+            script.AppendLine(DeleteTableWithIdentityReset("PointTransaction"));
 
-                DELETE FROM [ProductOrder];
-                DBCC CHECKIDENT ('ProductOrder', RESEED, 1);
-
-                DELETE FROM [DepositTransaction];
-                DBCC CHECKIDENT ('DepositTransaction', RESEED, 1);
-
-                DELETE FROM [PointTransaction];
-                DBCC CHECKIDENT ('PointTransaction', RESEED, 1);
-
-                DELETE FROM [StockTransaction];
-                DELETE FROM [ShiftCount];
-                DELETE FROM [RegisterTransaction];
-                DELETE FROM [FiscalReceipt];
-                DELETE FROM [Shift];
-                DELETE FROM [Register];
-                """);
+            script.AppendLine(DeleteTable("StockTransaction"));
+            script.AppendLine(DeleteTable("ShiftCount"));
+            script.AppendLine(DeleteTable("RegisterTransaction"));
+            script.AppendLine(DeleteTable("FiscalReceipt"));
+            script.AppendLine(DeleteTable("Shift"));
+            script.AppendLine(DeleteTable("Register"));
         }
 
         // Products cleanup
         if (deleteProducts)
         {
-            script.AppendLine("""
-                -- Product cleanup in dependency order
-                DELETE FROM [ProductImage];
-                DELETE FROM [ProductTax];
-                DELETE FROM [ProductPeriod];
-                DELETE FROM [ProductPeriodDayTime];
-                DELETE FROM [ProductPeriodDay];
-                DELETE FROM [ProductTimeHostDisallowed];
-                DELETE FROM [ProductUserDisallowed];
-                DELETE FROM [ProductUserPrice];
-                DELETE FROM [BundleProduct];
-                DELETE FROM [ProductTimePeriod];
-                DELETE FROM [ProductTimePeriodDayTime];
-                DELETE FROM [ProductTimePeriodDay];
-                DELETE FROM [ProductBundle];
-                DELETE FROM [Product];
-                DELETE FROM [ProductTime];
-                DELETE FROM [ProductBaseExtended];
-                DELETE FROM [ProductBase];
-                DBCC CHECKIDENT ('ProductBase', RESEED, 1);
-                """);
+            script.AppendLine("-- Product cleanup in dependency order");
+            var productTables = new[]
+            {
+                "ProductImage",
+                "ProductTax",
+                "ProductPeriod",
+                "ProductPeriodDayTime",
+                "ProductPeriodDay",
+                "ProductTimeHostDisallowed",
+                "ProductUserDisallowed",
+                "ProductUserPrice",
+                "BundleProduct",
+                "ProductTimePeriod",
+                "ProductTimePeriodDayTime",
+                "ProductTimePeriodDay",
+                "ProductBundle",
+                "Product",
+                "ProductTime",
+                "ProductBaseExtended"
+            };
+
+            foreach (var table in productTables)
+            {
+                script.AppendLine(DeleteTable(table));
+            }
+            script.AppendLine(DeleteTableWithIdentityReset("ProductBase"));
         }
 
         if (deleteProducts || deleteHosts)
         {
-            script.AppendLine("DELETE FROM [ProductHostHidden];");
+            script.AppendLine(DeleteTable("ProductHostHidden"));
         }
 
         // Users cleanup
         if (deleteUsers)
         {
-            script.AppendLine("""
-                -- User-related data cleanup
-                DELETE FROM [HostGroupWaitingLineEntry];
-                DELETE FROM [AssetTransaction];
-                DELETE FROM [AppRating];
-                DELETE FROM [UserCreditLimit];
-                DELETE FROM [UserAttribute];
-                DELETE FROM [UserNote];
-                DELETE FROM [Note];
-                DELETE FROM [VerificationEmail];
-                DELETE FROM [VerificationMobilePhone];
-                DELETE FROM [Verification];
-                DELETE FROM [Token];
-                """);
+            script.AppendLine("-- User-related data cleanup");
+            var userTables = new[]
+            {
+                "HostGroupWaitingLineEntry",
+                "AssetTransaction",
+                "AppRating",
+                "UserCreditLimit",
+                "UserAttribute",
+                "UserNote",
+                "Note",
+                "VerificationEmail",
+                "VerificationMobilePhone",
+                "Verification",
+                "Token"
+            };
+
+            foreach (var table in userTables)
+            {
+                script.AppendLine(DeleteTable(table));
+            }
         }
 
         // Hosts cleanup
         if (deleteHosts)
         {
-            // Always reset user guests when deleting hosts to avoid foreign key constraint violations
-            script.AppendLine("""
-                -- Reset user guests when deleting hosts but keeping users
-                UPDATE [UserGuest] SET ReservedHostId = NULL WHERE ReservedHostId IS NOT NULL;
-                """);
+            script.AppendLine("-- Reset user guests when deleting hosts to avoid foreign key constraint violations");
+            script.AppendLine(SetColumnNullWithCondition("UserGuest", "ReservedHostId", "ReservedHostId IS NOT NULL"));
+            script.AppendLine();
 
-            script.AppendLine("""
-                -- Host cleanup
-                DELETE FROM [HostComputer];
-                DELETE FROM [HostEndpoint];
-                DELETE FROM [Host];
-                DBCC CHECKIDENT ('Host', RESEED, 1);
-                """);
+            script.AppendLine("-- Host cleanup");
+            script.AppendLine(DeleteTable("HostComputer"));
+            script.AppendLine(DeleteTable("HostEndpoint"));
+            script.AppendLine(DeleteTableWithIdentityReset("Host"));
         }
 
         // Operators cleanup with proper foreign key handling
         if (deleteOperators)
         {
-            script.AppendLine("""
-                -- Clear ALL foreign key references to operators systematically
-                
-                -- Core entity updates (CreatedById/ModifiedById columns)
-                UPDATE [App] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [AppCategory] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [AppExe] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [AppGroup] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [AssetTransaction] SET CreatedById = NULL, ModifiedById = NULL, CheckedInById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL OR CheckedInById IS NOT NULL;
-                UPDATE [Attribute] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [BillProfile] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [Device] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [DeviceHost] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [Feed] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [Host] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [HostGroup] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [MonetaryUnit] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [News] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [PaymentMethod] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [PluginLibrary] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [ProductBase] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [ProductGroup] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [ProductHostHidden] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [ProductImage] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [ProductUserDisallowed] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [Reservation] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [ReservationHost] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [ReservationUser] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [SecurityProfile] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [Setting] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [Tax] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [Token] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [User] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [UserAgreement] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [UserAttribute] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [UserCredential] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [UserCreditLimit] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [UserGroup] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [UserPermissionSet] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [UserPicture] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
-                UPDATE [Variable] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+            script.AppendLine("-- Clear ALL foreign key references to operators systematically");
+            script.AppendLine();
 
-                -- Clear specific foreign key references before deleting related entities
-                UPDATE [Host] SET HostGroupId = NULL WHERE HostGroupId IS NOT NULL;
-                UPDATE [User] SET PermissionSetId = NULL WHERE PermissionSetId IS NOT NULL;
+            script.AppendLine("-- Core entity updates (CreatedById/ModifiedById columns)");
+            var operatorTables = new[]
+            {
+                "App",
+                "AppCategory",
+                "AppExe",
+                "AppGroup",
+                "Attribute",
+                "BillProfile",
+                "Device",
+                "DeviceHost",
+                "Feed",
+                "Host",
+                "HostGroup",
+                "MonetaryUnit",
+                "News",
+                "PaymentMethod",
+                "PluginLibrary",
+                "ProductBase",
+                "ProductGroup",
+                "ProductHostHidden",
+                "ProductImage",
+                "ProductUserDisallowed",
+                "Reservation",
+                "ReservationHost",
+                "ReservationUser",
+                "SecurityProfile",
+                "Setting",
+                "Tax",  
+                "Token",
+                "User",
+                "UserAgreement",
+                "UserAttribute",
+                "UserCredential",
+                "UserCreditLimit",
+                "UserGroup",
+                "UserPermissionSet",
+                "UserPicture",
+                "Variable"
+            };
 
-                -- Clean up dependent records that would cause foreign key constraint violations
-                DELETE FROM [HostGroupWaitingLineEntry];
+            foreach (var table in operatorTables)
+            {
+                if (table == "AssetTransaction")
+                {
+                    script.AppendLine(SetOperatorColumnsNullWithExtraColumn(table, "CheckedInById"));
+                }
+                else
+                {
+                    script.AppendLine(SetOperatorColumnsNull(table));
+                }
+            }
 
-                -- Delete operator tokens (type 0)
-                DELETE FROM [Token] WHERE Type = 0;
+            script.AppendLine();
+            script.AppendLine("-- Clear specific foreign key references before deleting related entities");
+            script.AppendLine(SetColumnNullWithCondition("Host", "HostGroupId", "HostGroupId IS NOT NULL"));
+            script.AppendLine(SetColumnNullWithCondition("User", "PermissionSetId", "PermissionSetId IS NOT NULL"));
+            script.AppendLine();
 
-                -- Clean up operator-specific entities
-                DELETE FROM [AgeRestriction];
-                DELETE FROM [AssistanceRequestType];
-                DELETE FROM [Stock];
-                DELETE FROM [Branch];
-                DELETE FROM [ClientOptions];
-                DELETE FROM [Companion];
-                DELETE FROM [Notification];
-                DELETE FROM [UserPermissionSet];
-                """);
+            script.AppendLine("-- Clean up dependent records that would cause foreign key constraint violations");
+            script.AppendLine(DeleteTable("HostGroupWaitingLineEntry"));
+            script.AppendLine();
+
+            script.AppendLine("-- Delete operator tokens (type 0)");
+            script.AppendLine(DeleteFromTableWithCondition("Token", "Type = 0"));
+            script.AppendLine();
+
+            script.AppendLine("-- Clean up operator-specific entities");
+            var operatorSpecificTables = new[]
+            {
+                "AgeRestriction",
+                "AssistanceRequestType",
+                "Stock",
+                "Branch",
+                "ClientOptions",
+                "Companion",
+                "Notification",
+                "UserPermissionSet"
+            };
+
+            foreach (var table in operatorSpecificTables)
+            {
+                script.AppendLine(DeleteTable(table));
+            }
         }
 
         return script.ToString();
