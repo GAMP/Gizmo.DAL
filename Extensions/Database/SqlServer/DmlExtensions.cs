@@ -1,67 +1,18 @@
-using System;
 using System.Data;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Gizmo.DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
-using IntegrationLib;
 
 namespace Gizmo.DAL.Extensions.DmlExtensions;
 
 internal static class SqlServer
 {
-    public static async Task Cleanup(DefaultDbContext cx, bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts, CancellationToken ct)
-    {
-        await using var trx = await cx.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
-        
-        try
-        {
-            cx.ChangeTracker.AutoDetectChangesEnabled = false;
-            cx.Database.SetCommandTimeout(3600);
-
-            // Single comprehensive SQL script that handles all cleanup operations in proper dependency order
-            var cleanupScript = BuildCleanupScript(deleteUsers, deleteHosts, deleteOperators, deleteProducts);
-            
-            // Only execute the script if it contains actual SQL commands
-            if (!string.IsNullOrWhiteSpace(cleanupScript))
-            {
-                await cx.Database.ExecuteSqlRawAsync(cleanupScript, ct);
-            }
-
-            // Handle Entity Framework specific cleanup for users
-            if (deleteUsers)
-            {
-                cx.UsersGuest.RemoveRange(cx.UsersGuest);
-                cx.UsersMember.RemoveRange(cx.UsersMember);
-            }
-
-            // Handle Entity Framework specific cleanup for operators
-            if (deleteOperators)
-            {
-                cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is Entities.UserOperator));
-                cx.UsersOperator.RemoveRange(cx.UsersOperator);
-
-                // Create default admin operator
-                await CreateDefaultAdminOperator(cx, ct);
-            }
-
-            cx.ChangeTracker.DetectChanges();
-            await cx.SaveChangesAsync(ct);
-            await trx.CommitAsync(ct);
-        }
-        catch
-        {
-            await trx.RollbackAsync(ct);
-            throw;
-        }
-    }
-
-    private static string BuildCleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
+    public static string CleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
     {
         var script = new StringBuilder();
-        
+
         // Handle cross-dependencies first
         if (deleteUsers || deleteHosts)
         {
@@ -71,14 +22,6 @@ internal static class SqlServer
                 DELETE FROM [ReservationUser];
                 DELETE FROM [ReservationHost];  
                 DELETE FROM [Reservation];
-                """);
-        }
-
-        if (deleteHosts && !deleteUsers)
-        {
-            script.AppendLine("""
-                -- Reset user guests when deleting hosts but keeping users
-                UPDATE [UserGuest] SET ReservedHostId = NULL WHERE ReservedHostId IS NOT NULL;
                 """);
         }
 
@@ -219,6 +162,12 @@ internal static class SqlServer
         // Hosts cleanup
         if (deleteHosts)
         {
+            // Always reset user guests when deleting hosts to avoid foreign key constraint violations
+            script.AppendLine("""
+                -- Reset user guests when deleting hosts but keeping users
+                UPDATE [UserGuest] SET ReservedHostId = NULL WHERE ReservedHostId IS NOT NULL;
+                """);
+
             script.AppendLine("""
                 -- Host cleanup
                 DELETE FROM [HostComputer];
@@ -253,20 +202,51 @@ internal static class SqlServer
             }
 
             script.AppendLine("""
-                -- Update all other foreign key references to operators
-                UPDATE [DeviceHost] SET CreatedById = NULL, ModifiedById = NULL;
-                UPDATE [Device] SET CreatedById = NULL, ModifiedById = NULL;
-                UPDATE [ReservationUser] SET CreatedById = NULL, ModifiedById = NULL;
-                UPDATE [ReservationHost] SET CreatedById = NULL, ModifiedById = NULL;
-                UPDATE [Reservation] SET CreatedById = NULL, ModifiedById = NULL;
-                UPDATE [App] SET CreatedById = NULL, ModifiedById = NULL;
-                UPDATE [AppCategory] SET CreatedById = NULL, ModifiedById = NULL;
-                UPDATE [Setting] SET CreatedById = NULL, ModifiedById = NULL;
-                UPDATE [User] SET CreatedById = NULL, ModifiedById = NULL;
+                -- Clear ALL foreign key references to operators systematically
+                
+                -- Core entity updates (CreatedById/ModifiedById columns)
+                UPDATE [App] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [AppCategory] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [AppExe] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [AppGroup] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [Attribute] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [BillProfile] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [Device] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [DeviceHost] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [Feed] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [Host] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [HostGroup] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [MonetaryUnit] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [News] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [PaymentMethod] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [PluginLibrary] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [ProductBase] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [ProductGroup] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [ProductImage] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [ProductUserDisallowed] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [Reservation] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [ReservationHost] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [ReservationUser] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [SecurityProfile] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [Setting] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [Tax] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [Token] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [User] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [UserAgreement] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [UserCredential] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [UserGroup] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [UserPermissionSet] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+                UPDATE [Variable] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;
+
+                -- Clear specific foreign key references before deleting related entities
+                UPDATE [Host] SET HostGroupId = NULL WHERE HostGroupId IS NOT NULL;
+                UPDATE [User] SET PermissionSetId = NULL WHERE PermissionSetId IS NOT NULL;
+
+                -- Clean up dependent records that would cause foreign key constraint violations
+                DELETE FROM [HostGroupWaitingLineEntry];
 
                 -- Delete operator tokens (type 0)
                 DELETE FROM [Token] WHERE Type = 0;
-                UPDATE [Token] SET CreatedById = NULL, ModifiedById = NULL;
 
                 -- Clean up operator-specific entities
                 DELETE FROM [AgeRestriction];
@@ -281,31 +261,6 @@ internal static class SqlServer
         }
 
         return script.ToString();
-    }
-
-    private static async Task CreateDefaultAdminOperator(DefaultDbContext cx, CancellationToken ct)
-    {
-        var defaultOperator = new Entities.UserOperator
-        {
-            UserCredential = new Entities.UserCredential(),
-            Username = "Admin",
-            CreatedTime = DateTime.UtcNow
-        };
-
-        byte[] salt = cx.GetNewSalt();
-        byte[] password = cx.GetHashedPassword("admin", salt);
-
-        defaultOperator.UserCredential.Salt = salt;
-        defaultOperator.UserCredential.Password = password;
-
-        var allPermissions = IntegrationLib.ClaimTypeBase
-            .GetClaimTypes()
-            .Select(claim => new Entities.UserPermission { Type = claim.Resource, Value = claim.Operation });
-
-        defaultOperator.Permissions.UnionWith(allPermissions);
-
-        cx.UsersOperator.Update(defaultOperator);
-        await cx.SaveChangesAsync(ct);
     }
 
     public static async Task CleanupUsers(DefaultDbContext cx, CancellationToken ct)

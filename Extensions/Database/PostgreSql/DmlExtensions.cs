@@ -1,67 +1,18 @@
-using System;
 using System.Data;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Gizmo.DAL.Contexts;
-using IntegrationLib;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gizmo.DAL.Extensions.DmlExtensions;
 
 internal static class PostgreSql
 {
-    public static async Task Cleanup(DefaultDbContext cx, bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts, CancellationToken ct)
-    {
-        await using var trx = await cx.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
-        
-        try
-        {
-            cx.ChangeTracker.AutoDetectChangesEnabled = false;
-            cx.Database.SetCommandTimeout(3600);
-
-            // Single comprehensive SQL script that handles all cleanup operations in proper dependency order
-            var cleanupScript = BuildCleanupScript(deleteUsers, deleteHosts, deleteOperators, deleteProducts);
-            
-            // Only execute the script if it contains actual SQL commands
-            if (!string.IsNullOrWhiteSpace(cleanupScript))
-            {
-                await cx.Database.ExecuteSqlRawAsync(cleanupScript, ct);
-            }
-
-            // Handle Entity Framework specific cleanup for users
-            if (deleteUsers)
-            {
-                cx.UsersGuest.RemoveRange(cx.UsersGuest);
-                cx.UsersMember.RemoveRange(cx.UsersMember);
-            }
-
-            // Handle Entity Framework specific cleanup for operators
-            if (deleteOperators)
-            {
-                cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is Entities.UserOperator));
-                cx.UsersOperator.RemoveRange(cx.UsersOperator);
-
-                // Create default admin operator
-                await CreateDefaultAdminOperator(cx, ct);
-            }
-
-            cx.ChangeTracker.DetectChanges();
-            await cx.SaveChangesAsync(ct);
-            await trx.CommitAsync(ct);
-        }
-        catch
-        {
-            await trx.RollbackAsync(ct);
-            throw;
-        }
-    }
-
-    private static string BuildCleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
+    public static string CleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
     {
         var script = new StringBuilder();
-        
+
         // Handle cross-dependencies first
         if (deleteUsers || deleteHosts)
         {
@@ -71,14 +22,6 @@ internal static class PostgreSql
                 DELETE FROM "ReservationUser";
                 DELETE FROM "ReservationHost";  
                 DELETE FROM "Reservation";
-                """);
-        }
-
-        if (deleteHosts)
-        {
-            script.AppendLine("""
-                -- Reset user guests when deleting hosts
-                UPDATE "UserGuest" SET "ReservedHostId" = NULL WHERE "ReservedHostId" IS NOT NULL;
                 """);
         }
 
@@ -102,8 +45,7 @@ internal static class PostgreSql
                 DELETE FROM "UserSessionChange";
                 DELETE FROM "UserSession";
                 DELETE FROM "UsageSession";
-                -- Note: UsageSession might not have an auto-increment sequence
-                -- ALTER SEQUENCE "UsageSession_SessionId_seq" RESTART WITH 1;
+                ALTER SEQUENCE "UsageSession_UsageSessionId_seq" RESTART WITH 1;
 
                 DELETE FROM "RefundInvoicePayment";
                 DELETE FROM "RefundDepositPayment";
@@ -220,8 +162,14 @@ internal static class PostgreSql
         // Hosts cleanup
         if (deleteHosts)
         {
+            // Always reset user guests when deleting hosts to avoid foreign key constraint violations
             script.AppendLine("""
-                -- Host cleanup - must delete dependent tables first
+                -- Reset user guests when deleting hosts to avoid FK constraint violations
+                UPDATE "UserGuest" SET "ReservedHostId" = NULL WHERE "ReservedHostId" IS NOT NULL;
+                """);
+
+            script.AppendLine("""
+                -- Host cleanup
                 DELETE FROM "HostComputer";
                 DELETE FROM "HostEndpoint";
                 DELETE FROM "Host";
@@ -232,7 +180,6 @@ internal static class PostgreSql
         // Operators cleanup with proper foreign key handling
         if (deleteOperators)
         {
-
             if (!deleteUsers)
             {
                 script.AppendLine("""
@@ -256,7 +203,6 @@ internal static class PostgreSql
 
             script.AppendLine("""
                 -- Clear ALL foreign key references to operators systematically
-                -- This comprehensive approach handles PostgreSQL's strict foreign key enforcement
                 
                 -- Core entity updates (CreatedById/ModifiedById columns)
                 UPDATE "App" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
@@ -317,31 +263,6 @@ internal static class PostgreSql
         return script.ToString();
     }
 
-    private static async Task CreateDefaultAdminOperator(DefaultDbContext cx, CancellationToken ct)
-    {
-        var defaultOperator = new Entities.UserOperator
-        {
-            UserCredential = new Entities.UserCredential(),
-            Username = "Admin",
-            CreatedTime = DateTime.UtcNow
-        };
-
-        byte[] salt = cx.GetNewSalt();
-        byte[] password = cx.GetHashedPassword("admin", salt);
-
-        defaultOperator.UserCredential.Salt = salt;
-        defaultOperator.UserCredential.Password = password;
-
-        var allPermissions = IntegrationLib.ClaimTypeBase
-            .GetClaimTypes()
-            .Select(claim => new Entities.UserPermission { Type = claim.Resource, Value = claim.Operation });
-
-        defaultOperator.Permissions.UnionWith(allPermissions);
-
-        cx.UsersOperator.Update(defaultOperator);
-        await cx.SaveChangesAsync(ct);
-    }
-
     public static async Task CleanupUsers(DefaultDbContext cx, CancellationToken ct)
     {
         const string DeletedUsersSubquery =
@@ -362,25 +283,25 @@ internal static class PostgreSql
             cx.Database.SetCommandTimeout(3600);
 
             // Basic DELETE operations (direct user ID reference)
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("AssetTransaction"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("AppStat"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("AppRating"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("AssistanceRequest"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("ReservationUser"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("Reservation"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AssetTransaction"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AppStat"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AppRating"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AssistanceRequest"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("ReservationUser"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Reservation"), ct);
 
             // Nested DELETE operations (joined tables)
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("UsageTime", "Usage", "UsageId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("UsageTimeFixed", "Usage", "UsageId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("UsageRate", "Usage", "UsageId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("UsageUserSession", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageTime", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageTimeFixed", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageRate", "Usage", "UsageId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageUserSession", "Usage", "UsageId"), ct);
 
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("UsageSession"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("Usage"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("UserSessionChange"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UsageSession"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Usage"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserSessionChange"), ct);
 
             // Delete based on CreatedById
-            await cx.Database.ExecuteSqlRawAsync (
+            await cx.Database.ExecuteSqlRawAsync(
                 $"""
                       DELETE FROM "UserSessionChange" 
                       WHERE "CreatedById" IN (
@@ -388,14 +309,14 @@ internal static class PostgreSql
                       )
                  """, ct);
 
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("UserSession"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserSession"), ct);
 
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("RefundInvoicePayment", "InvoicePayment", "InvoicePaymentId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("RefundDepositPayment", "DepositPayment", "DepositPaymentId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("Refund", "Payment", "PaymentId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("RefundInvoicePayment", "InvoicePayment", "InvoicePaymentId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("RefundDepositPayment", "DepositPayment", "DepositPaymentId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("Refund", "Payment", "PaymentId"), ct);
 
             // Complex join with multiple levels
-            await cx.Database.ExecuteSqlRawAsync (
+            await cx.Database.ExecuteSqlRawAsync(
                 $"""
                      DELETE FROM "RefundDepositPayment" 
                      WHERE "RefundId" IN (
@@ -411,15 +332,15 @@ internal static class PostgreSql
                      )
                  """, ct);
 
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("Refund", "DepositTransaction", "DepositTransactionId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("InvoicePayment"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("PaymentIntentDeposit", "PaymentIntent", "PaymentIntentId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("PaymentIntent"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("DepositPayment"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("Payment"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("Refund", "DepositTransaction", "DepositTransactionId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("InvoicePayment"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("PaymentIntentDeposit", "PaymentIntent", "PaymentIntentId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("PaymentIntent"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("DepositPayment"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Payment"), ct);
 
             // Update operations setting NULL values
-            await cx.Database.ExecuteSqlRawAsync (
+            await cx.Database.ExecuteSqlRawAsync(
                 UpdateTableSetNull(
                     "InvoiceLineExtended",
                     "BundleLineId",
@@ -427,15 +348,15 @@ internal static class PostgreSql
                     "InvoiceLineId"),
                 ct);
 
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("InvoiceLineProduct", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("InvoiceLineSession", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("InvoiceLineTime", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("InvoiceLineTimeFixed", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("InvoiceLineExtended", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("InvoiceLine"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("Invoice"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineProduct", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineSession", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineTime", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineTimeFixed", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineExtended", "InvoiceLine", "InvoiceLineId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("InvoiceLine"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Invoice"), ct);
 
-            await cx.Database.ExecuteSqlRawAsync (
+            await cx.Database.ExecuteSqlRawAsync(
                 UpdateTableSetNull(
                     "ProductOLExtended",
                     "BundleLineId",
@@ -443,33 +364,33 @@ internal static class PostgreSql
                     "ProductOLId"),
                 ct);
 
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("ProductOLTimeFixed", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("ProductOLTime", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("ProductOLSession", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("ProductOLProduct", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("ProductOLExtended", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("ProductOL"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("ProductOrder"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("DepositTransaction"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("PointTransaction"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("HostGroupWaitingLineEntry"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("UserCreditLimit"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("UserAttribute"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLTimeFixed", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLTime", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLSession", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLProduct", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLExtended", "ProductOL", "ProductOLId"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("ProductOL"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("ProductOrder"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("DepositTransaction"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("PointTransaction"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("HostGroupWaitingLineEntry"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserCreditLimit"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserAttribute"), ct);
 
             // Commented in original code
             //await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("Note", "UserNote", "NoteId"), ct);
 
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("UserNote"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("Verification"), ct);
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("Token"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserNote"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Verification"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Token"), ct);
 
             // Commented in original code
             //await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("UserGuest"), ct);
 
-            await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("UserMember"), ct);
+            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserMember"), ct);
 
             // Final user deletion
-            await cx.Database.ExecuteSqlRawAsync (
+            await cx.Database.ExecuteSqlRawAsync(
                 $"""
                     DELETE FROM "User" 
                     WHERE "IsDeleted" = true

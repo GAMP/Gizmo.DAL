@@ -49,13 +49,74 @@ public static class DmlOperations
     /// </list>
     /// <para><strong>Warning:</strong> Use with extreme caution as this operation will permanently delete data based on the specified flags. Always backup your database before running cleanup operations.</para>
     /// </remarks>
-    public static Task Cleanup(this DefaultDbContext cx, bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts, CancellationToken ct) =>
-        cx.Database.GetProviderType() switch
+    public static async Task Cleanup(this DefaultDbContext cx, bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts, CancellationToken ct)
+    {
+        var cleanupScript = cx.Database.GetProviderType() switch
         {
-            Provider.Type.SqlServer => SqlServer.Cleanup(cx, deleteUsers, deleteHosts, deleteOperators, deleteProducts, ct),
-            Provider.Type.PostgreSql => PostgreSql.Cleanup(cx, deleteUsers, deleteHosts, deleteOperators, deleteProducts, ct),
+            Provider.Type.SqlServer => SqlServer.CleanupScript(deleteUsers, deleteHosts, deleteOperators, deleteProducts),
+            Provider.Type.PostgreSql => PostgreSql.CleanupScript(deleteUsers, deleteHosts, deleteOperators, deleteProducts),
             _ => throw new NotSupportedException($"DML operation '{nameof(Cleanup)}' is not supported for the current database provider.")
         };
+
+        await using var trx = await cx.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
+
+        try
+        {
+            cx.ChangeTracker.AutoDetectChangesEnabled = false;
+            cx.Database.SetCommandTimeout(3600);
+
+            // Only execute the script if it contains actual SQL commands
+            if (!string.IsNullOrWhiteSpace(cleanupScript))
+            {
+                await cx.Database.ExecuteSqlRawAsync(cleanupScript, ct);
+            }
+
+            // Handle Entity Framework specific cleanup for users
+            if (deleteUsers)
+            {
+                cx.UsersGuest.RemoveRange(cx.UsersGuest);
+                cx.UsersMember.RemoveRange(cx.UsersMember);
+            }
+
+            // Handle Entity Framework specific cleanup for operators
+            if (deleteOperators)
+            {
+                cx.UserPermissions.RemoveRange(cx.UserPermissions.Where(permission => permission.User is Entities.UserOperator));
+                cx.UsersOperator.RemoveRange(cx.UsersOperator);
+
+                // Create default admin operator
+                var defaultOperator = new Entities.UserOperator
+                {
+                    UserCredential = new Entities.UserCredential(),
+                    Username = "Admin",
+                    CreatedTime = DateTime.UtcNow
+                };
+
+                byte[] salt = cx.GetNewSalt();
+                byte[] password = cx.GetHashedPassword("admin", salt);
+
+                defaultOperator.UserCredential.Salt = salt;
+                defaultOperator.UserCredential.Password = password;
+
+                var allPermissions = IntegrationLib.ClaimTypeBase
+                    .GetClaimTypes()
+                    .Select(claim => new Entities.UserPermission { Type = claim.Resource, Value = claim.Operation });
+
+                defaultOperator.Permissions.UnionWith(allPermissions);
+
+                cx.UsersOperator.Update(defaultOperator);
+            }
+
+            cx.ChangeTracker.DetectChanges();
+            await cx.SaveChangesAsync(ct);
+            await trx.CommitAsync(ct);
+        }
+        catch
+        {
+            await trx.RollbackAsync(ct);
+            throw;
+        }
+    }
 
     /// <summary>
     /// Removes all users that are marked as deleted from the database asynchronously.
