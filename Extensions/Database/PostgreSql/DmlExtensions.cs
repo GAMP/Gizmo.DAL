@@ -180,27 +180,6 @@ internal static class PostgreSql
         // Operators cleanup with proper foreign key handling
         if (deleteOperators)
         {
-            if (!deleteUsers)
-            {
-                script.AppendLine("""
-                    -- Update foreign key references to NULL before deleting operators
-                    UPDATE "UserCreditLimit" SET "CreatedById" = NULL, "ModifiedById" = NULL;
-                    UPDATE "UserPicture" SET "CreatedById" = NULL, "ModifiedById" = NULL;
-                    UPDATE "UserAttribute" SET "CreatedById" = NULL, "ModifiedById" = NULL;
-                    UPDATE "AssetTransaction" SET "CreatedById" = NULL, "ModifiedById" = NULL, "CheckedInById" = NULL;
-                    """);
-            }
-
-            if (!deleteHosts)
-            {
-                script.AppendLine("UPDATE \"Host\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL;");
-            }
-
-            if (!deleteHosts && !deleteProducts)
-            {
-                script.AppendLine("UPDATE \"ProductHostHidden\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL;");
-            }
-
             script.AppendLine("""
                 -- Clear ALL foreign key references to operators systematically
                 
@@ -209,6 +188,7 @@ internal static class PostgreSql
                 UPDATE "AppCategory" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "AppExe" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "AppGroup" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "AssetTransaction" SET "CreatedById" = NULL, "ModifiedById" = NULL, "CheckedInById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL OR "CheckedInById" IS NOT NULL;
                 UPDATE "Attribute" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "BillProfile" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "Device" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
@@ -222,6 +202,7 @@ internal static class PostgreSql
                 UPDATE "PluginLibrary" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "ProductBase" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "ProductGroup" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "ProductHostHidden" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "ProductImage" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "ProductUserDisallowed" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "Reservation" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
@@ -233,9 +214,12 @@ internal static class PostgreSql
                 UPDATE "Token" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "User" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "UserAgreement" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "UserAttribute" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "UserCredential" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "UserCreditLimit" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "UserGroup" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "UserPermissionSet" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
+                UPDATE "UserPicture" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
                 UPDATE "Variable" SET "CreatedById" = NULL, "ModifiedById" = NULL WHERE "CreatedById" IS NOT NULL OR "ModifiedById" IS NOT NULL;
 
                 -- Clear specific foreign key references before deleting related entities
