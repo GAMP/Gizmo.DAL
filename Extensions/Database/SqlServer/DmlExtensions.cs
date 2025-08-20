@@ -6,13 +6,10 @@ internal static class SqlServer
 {
     public static string CleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
     {
-        static string DeleteTable(string tableName) => $"DELETE FROM [{tableName}];";
-        static string DeleteTableWithIdentityReset(string tableName) => $"DELETE FROM [{tableName}];\nDBCC CHECKIDENT ('{tableName}', RESEED, 1);";
-        static string DeleteFromTableWithCondition(string tableName, string condition) => $"DELETE FROM [{tableName}] WHERE {condition};";
-        static string SetColumnNull(string tableName, string columnName) => $"UPDATE [{tableName}] SET {columnName} = NULL;";
-        static string SetColumnNullWithCondition(string tableName, string columnName, string condition) => $"UPDATE [{tableName}] SET {columnName} = NULL WHERE {condition};";
-        static string SetOperatorColumnsNull(string tableName) => $"UPDATE [{tableName}] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;";
-        static string SetOperatorColumnsNullWithExtraColumn(string tableName, string additionalColumn) => $"UPDATE [{tableName}] SET CreatedById = NULL, ModifiedById = NULL, {additionalColumn} = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL OR {additionalColumn} IS NOT NULL;";
+        string DeleteTable(string tableName) => $"DELETE FROM [{tableName}];";
+        string DeleteTableWithIdentityReset(string tableName) => $"DELETE FROM [{tableName}];\nDBCC CHECKIDENT ('{tableName}', RESEED, 1);";
+        string SetColumnNull(string tableName, string columnName) => $"UPDATE [{tableName}] SET {columnName} = NULL;";
+        string SetColumnNullWithCondition(string tableName, string columnName, string condition) => $"UPDATE [{tableName}] SET {columnName} = NULL WHERE {condition};";
 
         var script = new StringBuilder();
 
@@ -148,7 +145,7 @@ internal static class SqlServer
             script.AppendLine("-- Core entity updates (CreatedById/ModifiedById columns)");
             var operatorTables = new[]
             {
-                "App", "AppCategory", "AppExe", "AppGroup", "Attribute", "BillProfile",
+                "App", "AppCategory", "AppExe", "AppGroup", "AssetTransaction", "Attribute", "BillProfile",
                 "Device", "DeviceHost", "Feed", "Host", "HostGroup", "MonetaryUnit",
                 "News", "PaymentMethod", "PluginLibrary", "ProductBase", "ProductGroup",
                 "ProductHostHidden", "ProductImage", "ProductUserDisallowed", "Reservation",
@@ -158,12 +155,7 @@ internal static class SqlServer
             };
 
             foreach (var table in operatorTables)
-            {
-                if (table == "AssetTransaction")
-                    script.AppendLine(SetOperatorColumnsNullWithExtraColumn(table, "CheckedInById"));
-                else
-                    script.AppendLine(SetOperatorColumnsNull(table));
-            }
+                script.AppendLine($"UPDATE [{table}] SET CreatedById = NULL, ModifiedById = NULL WHERE CreatedById IS NOT NULL OR ModifiedById IS NOT NULL;");
 
             script.AppendLine();
             script.AppendLine("-- Clear specific foreign key references before deleting related entities");
@@ -176,7 +168,7 @@ internal static class SqlServer
             script.AppendLine();
 
             script.AppendLine("-- Delete operator tokens (type 0)");
-            script.AppendLine(DeleteFromTableWithCondition("Token", "Type = 0"));
+            script.AppendLine("DELETE FROM [Token] WHERE [Type] = 0;");
             script.AppendLine();
 
             script.AppendLine("-- Clean up operator-specific entities");
@@ -246,7 +238,7 @@ internal static class SqlServer
         {
             "AssetTransaction", "AppStat", "AppRating", "AssistanceRequest", 
             "ReservationUser", "Reservation", "UsageSession", "Usage", 
-            "UserSessionChange", "UserSession", "InvoicePayment", "PaymentIntent", 
+            "UserSession", "InvoicePayment", "PaymentIntent", 
             "DepositPayment", "Payment", "InvoiceLine", "Invoice", "ProductOL", 
             "ProductOrder", "DepositTransaction", "PointTransaction", 
             "HostGroupWaitingLineEntry", "UserCreditLimit", "UserAttribute", 

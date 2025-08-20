@@ -6,37 +6,18 @@ internal static class PostgreSql
 {
     public static string CleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
     {
-        static string DeleteTable(string tableName) => $"DELETE FROM \"{tableName}\";";
-        static string DeleteTableWithSequenceReset(string tableName, string sequenceName = null)
+        string DeleteTable(string tableName) => $"DELETE FROM \"{tableName}\";";
+        string DeleteTableWithSequenceReset(string tableName)
         {
-            sequenceName ??= GetConventionalSequenceName(tableName);
+            var sequenceName = tableName switch
+            {
+                "ProductBase" => "ProductBase_ProductId_seq",
+                _ => $"{tableName}_{tableName}Id_seq"
+            };
             return $"DELETE FROM \"{tableName}\";\nALTER SEQUENCE \"{sequenceName}\" RESTART WITH 1;";
         }
-        static string GetConventionalSequenceName(string tableName) => tableName switch
-        {
-            "Usage" => "Usage_UsageId_seq",
-            "UsageSession" => "UsageSession_UsageSessionId_seq",
-            "Refund" => "Refund_RefundId_seq",
-            "Void" => "Void_VoidId_seq",
-            "InvoicePayment" => "InvoicePayment_InvoicePaymentId_seq",
-            "PaymentIntent" => "PaymentIntent_PaymentIntentId_seq",
-            "DepositPayment" => "DepositPayment_DepositPaymentId_seq",
-            "Payment" => "Payment_PaymentId_seq",
-            "InvoiceLine" => "InvoiceLine_InvoiceLineId_seq",
-            "Invoice" => "Invoice_InvoiceId_seq",
-            "ProductOL" => "ProductOL_ProductOLId_seq",
-            "ProductOrder" => "ProductOrder_ProductOrderId_seq",
-            "DepositTransaction" => "DepositTransaction_DepositTransactionId_seq",
-            "PointTransaction" => "PointTransaction_PointTransactionId_seq",
-            "ProductBase" => "ProductBase_ProductId_seq",
-            "Host" => "Host_HostId_seq",
-            _ => $"{tableName}_{tableName}Id_seq"
-        };
-        static string DeleteFromTableWithCondition(string tableName, string condition) => $"DELETE FROM \"{tableName}\" WHERE {condition};";
-        static string SetColumnNull(string tableName, string columnName) => $"UPDATE \"{tableName}\" SET \"{columnName}\" = NULL;";
-        static string SetColumnNullWithCondition(string tableName, string columnName, string condition) => $"UPDATE \"{tableName}\" SET \"{columnName}\" = NULL WHERE {condition};";
-        static string SetOperatorColumnsNull(string tableName) => $"UPDATE \"{tableName}\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL WHERE \"CreatedById\" IS NOT NULL OR \"ModifiedById\" IS NOT NULL;";
-        static string SetOperatorColumnsNullWithExtraColumn(string tableName, string additionalColumn) => $"UPDATE \"{tableName}\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL, \"{additionalColumn}\" = NULL WHERE \"CreatedById\" IS NOT NULL OR \"ModifiedById\" IS NOT NULL OR \"{additionalColumn}\" IS NOT NULL;";
+        string SetColumnNull(string tableName, string columnName) => $"UPDATE \"{tableName}\" SET \"{columnName}\" = NULL;";
+        string SetColumnNullWithCondition(string tableName, string columnName, string condition) => $"UPDATE \"{tableName}\" SET \"{columnName}\" = NULL WHERE {condition};";
 
         var script = new StringBuilder();
 
@@ -129,6 +110,7 @@ internal static class PostgreSql
 
             foreach (var table in productTables)
                 script.AppendLine(DeleteTable(table));
+
             script.AppendLine(DeleteTableWithSequenceReset("ProductBase"));
         }
 
@@ -172,7 +154,7 @@ internal static class PostgreSql
             script.AppendLine("-- Core entity updates (CreatedById/ModifiedById columns)");
             var operatorTables = new[]
             {
-                "App", "AppCategory", "AppExe", "AppGroup", "Attribute", "BillProfile",
+                "App", "AppCategory", "AppExe", "AppGroup", "AssetTransaction", "Attribute", "BillProfile",
                 "Device", "DeviceHost", "Feed", "Host", "HostGroup", "MonetaryUnit",
                 "News", "PaymentMethod", "PluginLibrary", "ProductBase", "ProductGroup",
                 "ProductHostHidden", "ProductImage", "ProductUserDisallowed", "Reservation",
@@ -182,12 +164,7 @@ internal static class PostgreSql
             };
 
             foreach (var table in operatorTables)
-            {
-                if (table == "AssetTransaction")
-                    script.AppendLine(SetOperatorColumnsNullWithExtraColumn(table, "CheckedInById"));
-                else
-                    script.AppendLine(SetOperatorColumnsNull(table));
-            }
+                script.AppendLine($"UPDATE \"{table}\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL WHERE \"CreatedById\" IS NOT NULL OR \"ModifiedById\" IS NOT NULL;");
 
             script.AppendLine();
             script.AppendLine("-- Clear specific foreign key references before deleting related entities");
@@ -200,7 +177,7 @@ internal static class PostgreSql
             script.AppendLine();
 
             script.AppendLine("-- Delete operator tokens (type 0)");
-            script.AppendLine(DeleteFromTableWithCondition("Token", "\"Type\" = 0"));
+            script.AppendLine("DELETE FROM \"Token\" WHERE \"Type\" = 0;");
             script.AppendLine();
 
             script.AppendLine("-- Clean up operator-specific entities");
@@ -270,7 +247,7 @@ internal static class PostgreSql
         {
             "AssetTransaction", "AppStat", "AppRating", "AssistanceRequest", 
             "ReservationUser", "Reservation", "UsageSession", "Usage", 
-            "UserSessionChange", "UserSession", "InvoicePayment", "PaymentIntent", 
+            "UserSession", "InvoicePayment", "PaymentIntent", 
             "DepositPayment", "Payment", "InvoiceLine", "Invoice", "ProductOL", 
             "ProductOrder", "DepositTransaction", "PointTransaction", 
             "HostGroupWaitingLineEntry", "UserCreditLimit", "UserAttribute", 
