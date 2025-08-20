@@ -1,62 +1,52 @@
-using System.Data;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Gizmo.DAL.Contexts;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gizmo.DAL.Extensions.DmlExtensions;
 
 internal static class PostgreSql
 {
-    private static string DeleteTable(string tableName) =>
-        $"DELETE FROM \"{tableName}\";";
-
-    private static string DeleteTableWithSequenceReset(string tableName)
-    {
-        var sequenceName = tableName switch
-        {
-            "ProductBase" => "ProductBase_ProductId_seq",
-            _ => $"{tableName}_{tableName}Id_seq"
-        };
-        return $"DELETE FROM \"{tableName}\";\nALTER SEQUENCE \"{sequenceName}\" RESTART WITH 1;";
-    }
-
-    private static string DeleteFromTableWithCondition(string tableName, string condition) =>
-        $"DELETE FROM \"{tableName}\" WHERE {condition};";
-
-    private static string SetColumnNull(string tableName, string columnName) =>
-        $"UPDATE \"{tableName}\" SET \"{columnName}\" = NULL;";
-
-    private static string SetColumnNullWithCondition(string tableName, string columnName, string condition) =>
-        $"UPDATE \"{tableName}\" SET \"{columnName}\" = NULL WHERE {condition};";
-
-    private static string SetOperatorColumnsNull(string tableName) =>
-        $"UPDATE \"{tableName}\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL WHERE \"CreatedById\" IS NOT NULL OR \"ModifiedById\" IS NOT NULL;";
-
-    private static string SetOperatorColumnsNullWithExtraColumn(string tableName, string additionalColumn) =>
-        $"UPDATE \"{tableName}\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL, \"{additionalColumn}\" = NULL WHERE \"CreatedById\" IS NOT NULL OR \"ModifiedById\" IS NOT NULL OR \"{additionalColumn}\" IS NOT NULL;";
-
     public static string CleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
     {
+        static string DeleteTable(string tableName) => $"DELETE FROM \"{tableName}\";";
+        static string DeleteTableWithSequenceReset(string tableName, string sequenceName = null)
+        {
+            sequenceName ??= GetConventionalSequenceName(tableName);
+            return $"DELETE FROM \"{tableName}\";\nALTER SEQUENCE \"{sequenceName}\" RESTART WITH 1;";
+        }
+        static string GetConventionalSequenceName(string tableName) => tableName switch
+        {
+            "Usage" => "Usage_UsageId_seq",
+            "UsageSession" => "UsageSession_UsageSessionId_seq",
+            "Refund" => "Refund_RefundId_seq",
+            "Void" => "Void_VoidId_seq",
+            "InvoicePayment" => "InvoicePayment_InvoicePaymentId_seq",
+            "PaymentIntent" => "PaymentIntent_PaymentIntentId_seq",
+            "DepositPayment" => "DepositPayment_DepositPaymentId_seq",
+            "Payment" => "Payment_PaymentId_seq",
+            "InvoiceLine" => "InvoiceLine_InvoiceLineId_seq",
+            "Invoice" => "Invoice_InvoiceId_seq",
+            "ProductOL" => "ProductOL_ProductOLId_seq",
+            "ProductOrder" => "ProductOrder_ProductOrderId_seq",
+            "DepositTransaction" => "DepositTransaction_DepositTransactionId_seq",
+            "PointTransaction" => "PointTransaction_PointTransactionId_seq",
+            "ProductBase" => "ProductBase_ProductId_seq",
+            "Host" => "Host_HostId_seq",
+            _ => $"{tableName}_{tableName}Id_seq"
+        };
+        static string DeleteFromTableWithCondition(string tableName, string condition) => $"DELETE FROM \"{tableName}\" WHERE {condition};";
+        static string SetColumnNull(string tableName, string columnName) => $"UPDATE \"{tableName}\" SET \"{columnName}\" = NULL;";
+        static string SetColumnNullWithCondition(string tableName, string columnName, string condition) => $"UPDATE \"{tableName}\" SET \"{columnName}\" = NULL WHERE {condition};";
+        static string SetOperatorColumnsNull(string tableName) => $"UPDATE \"{tableName}\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL WHERE \"CreatedById\" IS NOT NULL OR \"ModifiedById\" IS NOT NULL;";
+        static string SetOperatorColumnsNullWithExtraColumn(string tableName, string additionalColumn) => $"UPDATE \"{tableName}\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL, \"{additionalColumn}\" = NULL WHERE \"CreatedById\" IS NOT NULL OR \"ModifiedById\" IS NOT NULL OR \"{additionalColumn}\" IS NOT NULL;";
+
         var script = new StringBuilder();
 
         // Handle cross-dependencies first
         if (deleteUsers || deleteHosts)
         {
-            var commonTables = new[]
-            {
-                "AppStat",
-                "ReservationUser",
-                "ReservationHost",
-                "Reservation"
-            };
-
+            var commonTables = new[] { "AppStat", "ReservationUser", "ReservationHost", "Reservation" };
             script.AppendLine("-- Cross-dependency cleanup for users and hosts");
             foreach (var table in commonTables)
-            {
                 script.AppendLine(DeleteTable(table));
-            }
         }
 
         // Always clean up financial data when any category is being deleted
@@ -131,35 +121,19 @@ internal static class PostgreSql
             script.AppendLine("-- Product cleanup in dependency order");
             var productTables = new[]
             {
-                "ProductImage",
-                "ProductTax",
-                "ProductPeriod",
-                "ProductPeriodDayTime",
-                "ProductPeriodDay",
-                "ProductTimeHostDisallowed",
-                "ProductUserDisallowed",
-                "ProductUserPrice",
-                "BundleProduct",
-                "ProductTimePeriod",
-                "ProductTimePeriodDayTime",
-                "ProductTimePeriodDay",
-                "ProductBundle",
-                "Product",
-                "ProductTime",
-                "ProductBaseExtended"
+                "ProductImage", "ProductTax", "ProductPeriod", "ProductPeriodDayTime",
+                "ProductPeriodDay", "ProductTimeHostDisallowed", "ProductUserDisallowed",
+                "ProductUserPrice", "BundleProduct", "ProductTimePeriod", "ProductTimePeriodDayTime",
+                "ProductTimePeriodDay", "ProductBundle", "Product", "ProductTime", "ProductBaseExtended"
             };
 
             foreach (var table in productTables)
-            {
                 script.AppendLine(DeleteTable(table));
-            }
             script.AppendLine(DeleteTableWithSequenceReset("ProductBase"));
         }
 
         if (deleteProducts || deleteHosts)
-        {
             script.AppendLine(DeleteTable("ProductHostHidden"));
-        }
 
         // Users cleanup
         if (deleteUsers)
@@ -167,23 +141,13 @@ internal static class PostgreSql
             script.AppendLine("-- User-related data cleanup");
             var userTables = new[]
             {
-                "HostGroupWaitingLineEntry",
-                "AssetTransaction",
-                "AppRating",
-                "UserCreditLimit",
-                "UserAttribute",
-                "UserNote",
-                "Note",
-                "VerificationEmail",
-                "VerificationMobilePhone",
-                "Verification",
-                "Token"
+                "HostGroupWaitingLineEntry", "AssetTransaction", "AppRating", "UserCreditLimit",
+                "UserAttribute", "UserNote", "Note", "VerificationEmail", "VerificationMobilePhone",
+                "Verification", "Token"
             };
 
             foreach (var table in userTables)
-            {
                 script.AppendLine(DeleteTable(table));
-            }
         }
 
         // Hosts cleanup
@@ -208,54 +172,21 @@ internal static class PostgreSql
             script.AppendLine("-- Core entity updates (CreatedById/ModifiedById columns)");
             var operatorTables = new[]
             {
-                "App",
-                "AppCategory",
-                "AppExe",
-                "AppGroup",
-                "Attribute",
-                "BillProfile",
-                "Device",
-                "DeviceHost",
-                "Feed",
-                "Host",
-                "HostGroup",
-                "MonetaryUnit",
-                "News",
-                "PaymentMethod",
-                "PluginLibrary",
-                "ProductBase",
-                "ProductGroup",
-                "ProductHostHidden",
-                "ProductImage",
-                "ProductUserDisallowed",
-                "Reservation",
-                "ReservationHost",
-                "ReservationUser",
-                "SecurityProfile",
-                "Setting",
-                "Tax",
-                "Token",
-                "User",
-                "UserAgreement",
-                "UserAttribute",
-                "UserCredential",
-                "UserCreditLimit",
-                "UserGroup",
-                "UserPermissionSet",
-                "UserPicture",
-                "Variable"
+                "App", "AppCategory", "AppExe", "AppGroup", "Attribute", "BillProfile",
+                "Device", "DeviceHost", "Feed", "Host", "HostGroup", "MonetaryUnit",
+                "News", "PaymentMethod", "PluginLibrary", "ProductBase", "ProductGroup",
+                "ProductHostHidden", "ProductImage", "ProductUserDisallowed", "Reservation",
+                "ReservationHost", "ReservationUser", "SecurityProfile", "Setting", "Tax",
+                "Token", "User", "UserAgreement", "UserAttribute", "UserCredential",
+                "UserCreditLimit", "UserGroup", "UserPermissionSet", "UserPicture", "Variable"
             };
 
             foreach (var table in operatorTables)
             {
                 if (table == "AssetTransaction")
-                {
                     script.AppendLine(SetOperatorColumnsNullWithExtraColumn(table, "CheckedInById"));
-                }
                 else
-                {
                     script.AppendLine(SetOperatorColumnsNull(table));
-                }
             }
 
             script.AppendLine();
@@ -275,27 +206,52 @@ internal static class PostgreSql
             script.AppendLine("-- Clean up operator-specific entities");
             var operatorSpecificTables = new[]
             {
-                "AgeRestriction",
-                "AssistanceRequestType",
-                "Stock",
-                "Branch",
-                "ClientOptions",
-                "Companion",
-                "Notification",
-                "UserPermissionSet"
+                "AgeRestriction", "AssistanceRequestType", "Stock", "Branch",
+                "ClientOptions", "Companion", "Notification", "UserPermissionSet"
             };
 
             foreach (var table in operatorSpecificTables)
-            {
                 script.AppendLine(DeleteTable(table));
-            }
         }
 
         return script.ToString();
     }
 
-    public static async Task CleanupUsers(DefaultDbContext cx, CancellationToken ct)
+    public static string CleanupUsersScript()
     {
+        static string DeleteFromTableForCleanup(string tableName, string subquery, string columnName = "UserId") =>
+            $"""
+            DELETE FROM "{tableName}" 
+            WHERE "{columnName}" IN (
+                {subquery}
+            );
+            """;
+
+        static string DeleteFromTableWithJoinForCleanup(string tableName, string joinTableName, string joinColumnName, string subquery, string whereColumnName = "UserId") =>
+            $"""
+            DELETE FROM "{tableName}" 
+            WHERE "{joinColumnName}" IN (
+                SELECT "{joinColumnName}" 
+                FROM "{joinTableName}" 
+                WHERE "{whereColumnName}" IN (
+                    {subquery}
+                )
+            );
+            """;
+
+        static string UpdateTableSetNullForCleanup(string tableName, string columnToSetNull, string joinTableName, string joinColumnName, string subquery, string whereColumnName = "UserId") =>
+            $"""
+            UPDATE "{tableName}" 
+            SET "{columnToSetNull}" = NULL 
+            WHERE "{joinColumnName}" IN (
+                SELECT "{joinColumnName}" 
+                FROM "{joinTableName}" 
+                WHERE "{whereColumnName}" IN (
+                    {subquery}
+                )
+            );
+            """;
+
         const string DeletedUsersSubquery =
             """
                SELECT A."UserId" 
@@ -307,172 +263,95 @@ internal static class PostgreSql
                AND C."UserId" IS NULL
             """;
 
-        await using (var trx = await cx.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct))
+        var script = new StringBuilder();
+
+        // Basic DELETE operations (direct user ID reference)
+        var directDeleteTables = new[]
         {
-            cx.ChangeTracker.AutoDetectChangesEnabled = false;
-            // Use a reasonable timeout value for PostgreSQL
-            cx.Database.SetCommandTimeout(3600);
+            "AssetTransaction", "AppStat", "AppRating", "AssistanceRequest", 
+            "ReservationUser", "Reservation", "UsageSession", "Usage", 
+            "UserSessionChange", "UserSession", "InvoicePayment", "PaymentIntent", 
+            "DepositPayment", "Payment", "InvoiceLine", "Invoice", "ProductOL", 
+            "ProductOrder", "DepositTransaction", "PointTransaction", 
+            "HostGroupWaitingLineEntry", "UserCreditLimit", "UserAttribute", 
+            "UserNote", "Verification", "Token", "UserMember"
+        };
 
-            // Basic DELETE operations (direct user ID reference)
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AssetTransaction"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AppStat"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AppRating"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("AssistanceRequest"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("ReservationUser"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Reservation"), ct);
+        script.AppendLine("-- Basic DELETE operations (direct user ID reference)");
+        foreach (var tableName in directDeleteTables)
+            script.AppendLine(DeleteFromTableForCleanup(tableName, DeletedUsersSubquery));
 
-            // Nested DELETE operations (joined tables)
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageTime", "Usage", "UsageId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageTimeFixed", "Usage", "UsageId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageRate", "Usage", "UsageId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("UsageUserSession", "Usage", "UsageId"), ct);
+        // Nested DELETE operations (joined tables)
+        var joinDeleteMappings = new[]
+        {
+            ("UsageTime", "Usage", "UsageId"),
+            ("UsageTimeFixed", "Usage", "UsageId"),
+            ("UsageRate", "Usage", "UsageId"),
+            ("UsageUserSession", "Usage", "UsageId"),
+            ("RefundInvoicePayment", "InvoicePayment", "InvoicePaymentId"),
+            ("RefundDepositPayment", "DepositPayment", "DepositPaymentId"),
+            ("Refund", "Payment", "PaymentId"),
+            ("Refund", "DepositTransaction", "DepositTransactionId"),
+            ("PaymentIntentDeposit", "PaymentIntent", "PaymentIntentId"),
+            ("InvoiceLineProduct", "InvoiceLine", "InvoiceLineId"),
+            ("InvoiceLineSession", "InvoiceLine", "InvoiceLineId"),
+            ("InvoiceLineTime", "InvoiceLine", "InvoiceLineId"),
+            ("InvoiceLineTimeFixed", "InvoiceLine", "InvoiceLineId"),
+            ("InvoiceLineExtended", "InvoiceLine", "InvoiceLineId"),
+            ("ProductOLTimeFixed", "ProductOL", "ProductOLId"),
+            ("ProductOLTime", "ProductOL", "ProductOLId"),
+            ("ProductOLSession", "ProductOL", "ProductOLId"),
+            ("ProductOLProduct", "ProductOL", "ProductOLId"),
+            ("ProductOLExtended", "ProductOL", "ProductOLId")
+        };
 
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UsageSession"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Usage"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserSessionChange"), ct);
+        script.AppendLine();
+        script.AppendLine("-- Nested DELETE operations (joined tables)");
+        foreach (var (tableName, joinTableName, joinColumnName) in joinDeleteMappings)
+            script.AppendLine(DeleteFromTableWithJoinForCleanup(tableName, joinTableName, joinColumnName, DeletedUsersSubquery));
 
-            // Delete based on CreatedById
-            await cx.Database.ExecuteSqlRawAsync(
-                $"""
-                      DELETE FROM "UserSessionChange" 
-                      WHERE "CreatedById" IN (
-                          {DeletedUsersSubquery}
-                      )
-                 """, ct);
+        // Special cases with custom conditions
+        script.AppendLine();
+        script.AppendLine("-- Special DELETE operations with custom conditions");
+        script.AppendLine($"""
+            DELETE FROM "UserSessionChange" 
+            WHERE "CreatedById" IN (
+                {DeletedUsersSubquery}
+            );
+            """);
 
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserSession"), ct);
-
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("RefundInvoicePayment", "InvoicePayment", "InvoicePaymentId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("RefundDepositPayment", "DepositPayment", "DepositPaymentId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("Refund", "Payment", "PaymentId"), ct);
-
-            // Complex join with multiple levels
-            await cx.Database.ExecuteSqlRawAsync(
-                $"""
-                     DELETE FROM "RefundDepositPayment" 
-                     WHERE "RefundId" IN (
-                         SELECT "RefundId" 
-                         FROM "Refund" 
-                         WHERE "DepositTransactionId" IN (
-                             SELECT "DepositTransactionId" 
-                             FROM "DepositTransaction" 
-                             WHERE "UserId" IN (
-                                 {DeletedUsersSubquery}
-                             )
-                         )
-                     )
-                 """, ct);
-
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("Refund", "DepositTransaction", "DepositTransactionId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("InvoicePayment"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("PaymentIntentDeposit", "PaymentIntent", "PaymentIntentId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("PaymentIntent"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("DepositPayment"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Payment"), ct);
-
-            // Update operations setting NULL values
-            await cx.Database.ExecuteSqlRawAsync(
-                UpdateTableSetNull(
-                    "InvoiceLineExtended",
-                    "BundleLineId",
-                    "InvoiceLine",
-                    "InvoiceLineId"),
-                ct);
-
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineProduct", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineSession", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineTime", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineTimeFixed", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("InvoiceLineExtended", "InvoiceLine", "InvoiceLineId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("InvoiceLine"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Invoice"), ct);
-
-            await cx.Database.ExecuteSqlRawAsync(
-                UpdateTableSetNull(
-                    "ProductOLExtended",
-                    "BundleLineId",
-                    "ProductOL",
-                    "ProductOLId"),
-                ct);
-
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLTimeFixed", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLTime", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLSession", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLProduct", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTableWithJoin("ProductOLExtended", "ProductOL", "ProductOLId"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("ProductOL"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("ProductOrder"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("DepositTransaction"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("PointTransaction"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("HostGroupWaitingLineEntry"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserCreditLimit"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserAttribute"), ct);
-
-            // Commented in original code
-            //await cx.Database.ExecuteSqlRawAsync (DeleteFromTableWithJoin("Note", "UserNote", "NoteId"), ct);
-
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserNote"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Verification"), ct);
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("Token"), ct);
-
-            // Commented in original code
-            //await cx.Database.ExecuteSqlRawAsync (DeleteFromTable("UserGuest"), ct);
-
-            await cx.Database.ExecuteSqlRawAsync(DeleteFromTable("UserMember"), ct);
-
-            // Final user deletion
-            await cx.Database.ExecuteSqlRawAsync(
-                $"""
-                    DELETE FROM "User" 
-                    WHERE "IsDeleted" = true
-                    AND "UserId" IN (
-                        {DeletedUsersSubquery}
-                    )
-                 """, ct);
-
-            cx.ChangeTracker.DetectChanges();
-            await cx.SaveChangesAsync(ct);
-            await trx.CommitAsync(ct);
-        }
-
-        return;
-
-        static string UpdateTableSetNull(
-            string tableName,
-            string columnToSetNull,
-            string joinTableName,
-            string joinColumnName,
-            string whereColumnName = "UserId") =>
-            $"""
-                UPDATE "{tableName}" 
-                SET "{columnToSetNull}" = NULL 
-                WHERE "{joinColumnName}" IN (
-                    SELECT "{joinColumnName}" 
-                    FROM "{joinTableName}" 
-                    WHERE "{whereColumnName}" IN (
+        script.AppendLine($"""
+            DELETE FROM "RefundDepositPayment" 
+            WHERE "RefundId" IN (
+                SELECT "RefundId" 
+                FROM "Refund" 
+                WHERE "DepositTransactionId" IN (
+                    SELECT "DepositTransactionId" 
+                    FROM "DepositTransaction" 
+                    WHERE "UserId" IN (
                         {DeletedUsersSubquery}
                     )
                 )
-            """;
+            );
+            """);
 
-        static string DeleteFromTableWithJoin(string tableName, string joinTableName, string joinColumnName, string whereColumnName = "UserId") =>
-            $"""
-                 DELETE FROM "{tableName}" 
-                 WHERE "{joinColumnName}" IN (
-                     SELECT "{joinColumnName}" 
-                     FROM "{joinTableName}" 
-                     WHERE "{whereColumnName}" IN (
-                         {DeletedUsersSubquery}
-                     )
-                 )
-             """;
+        // Update operations setting NULL values
+        script.AppendLine();
+        script.AppendLine("-- Update operations setting NULL values");
+        script.AppendLine(UpdateTableSetNullForCleanup("InvoiceLineExtended", "BundleLineId", "InvoiceLine", "InvoiceLineId", DeletedUsersSubquery));
+        script.AppendLine(UpdateTableSetNullForCleanup("ProductOLExtended", "BundleLineId", "ProductOL", "ProductOLId", DeletedUsersSubquery));
 
-        static string DeleteFromTable(string tableName, string columnName = "UserId") =>
-            $"""
-                DELETE FROM "{tableName}" 
-                WHERE "{columnName}" IN (
-                    {DeletedUsersSubquery}
-                )
-            """;
+        // Final user deletion
+        script.AppendLine();
+        script.AppendLine("-- Final user deletion");
+        script.AppendLine($"""
+            DELETE FROM "User" 
+            WHERE "IsDeleted" = true 
+            AND "UserId" IN (
+                {DeletedUsersSubquery}
+            );
+            """);
+
+        return script.ToString();
     }
 }

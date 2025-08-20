@@ -98,7 +98,7 @@ public static class DmlOperations
                 defaultOperator.UserCredential.Salt = salt;
                 defaultOperator.UserCredential.Password = password;
 
-                var allPermissions = IntegrationLib.ClaimTypeBase
+                var allPermissions = ClaimTypeBase
                     .GetClaimTypes()
                     .Select(claim => new Entities.UserPermission { Type = claim.Resource, Value = claim.Operation });
 
@@ -134,15 +134,40 @@ public static class DmlOperations
     /// <para><strong>Provider Support:</strong></para>
     /// <list type="bullet">
     /// <item><description><strong>SQL Server:</strong> Fully implemented with comprehensive user data cleanup including related financial and session data.</description></item>
-    /// <item><description><strong>PostgreSQL:</strong> Not implemented - throws <see cref="NotImplementedException"/>.</description></item>
+    /// <item><description><strong>PostgreSQL:</strong> Fully implemented with comprehensive user data cleanup including related financial and session data.</description></item>
     /// </list>
     /// <para><strong>Warning:</strong> This operation permanently deletes user data and cannot be undone. Ensure proper backups before execution.</para>
     /// </remarks>
-    public static Task CleanupUsers(this DefaultDbContext cx, CancellationToken ct) =>
-        cx.Database.GetProviderType() switch
+    public static async Task CleanupUsers(this DefaultDbContext cx, CancellationToken ct)
+    {
+        var cleanupScript = cx.Database.GetProviderType() switch
         {
-            Provider.Type.SqlServer => SqlServer.CleanupUsers(cx, ct),
-            Provider.Type.PostgreSql => PostgreSql.CleanupUsers(cx, ct),
+            Provider.Type.SqlServer => SqlServer.CleanupUsersScript(),
+            Provider.Type.PostgreSql => PostgreSql.CleanupUsersScript(),
             _ => throw new NotSupportedException($"DML operation '{nameof(CleanupUsers)}' is not supported for the current database provider.")
         };
+
+        await using var trx = await cx.Database.BeginTransactionAsync(IsolationLevel.Serializable, ct);
+
+        try
+        {
+            cx.ChangeTracker.AutoDetectChangesEnabled = false;
+            cx.Database.SetCommandTimeout(3600);
+
+            // Only execute the script if it contains actual SQL commands
+            if (!string.IsNullOrWhiteSpace(cleanupScript))
+            {
+                await cx.Database.ExecuteSqlRawAsync(cleanupScript, ct);
+            }
+
+            cx.ChangeTracker.DetectChanges();
+            await cx.SaveChangesAsync(ct);
+            await trx.CommitAsync(ct);
+        }
+        catch
+        {
+            await trx.RollbackAsync(ct);
+            throw;
+        }
+    }
 }
