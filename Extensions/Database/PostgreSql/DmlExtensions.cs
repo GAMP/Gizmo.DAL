@@ -7,7 +7,7 @@ internal static class PostgreSql
     public static string CleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
     {
         string DeleteTable(string tableName) => $"DELETE FROM \"{tableName}\";";
-        string DeleteTableWithSequenceReset(string tableName)
+        string DeleteTableWithReseed(string tableName)
         {
             var sequenceName = tableName switch
             {
@@ -30,71 +30,74 @@ internal static class PostgreSql
                 script.AppendLine(DeleteTable(table));
         }
 
-        // Always clean up financial data when any category is being deleted
-        if (deleteUsers || deleteHosts || deleteOperators || deleteProducts)
+        if (deleteHosts && !deleteUsers)
         {
-            script.AppendLine("-- Nullify foreign key references that need to be handled before deletion");
-            script.AppendLine(SetColumnNull("InvoiceLineExtended", "BundleLineId"));
-            script.AppendLine(SetColumnNull("UsageSession", "CurrentUsageId"));
-            script.AppendLine(SetColumnNull("ProductOLExtended", "BundleLineId"));
-            script.AppendLine();
-
-            script.AppendLine("-- Financial data cleanup in dependency order");
-            script.AppendLine(DeleteTable("UsageRate"));
-            script.AppendLine(DeleteTable("UsageTimeFixed"));
-            script.AppendLine(DeleteTable("UsageTime"));
-            script.AppendLine(DeleteTable("UsageUserSession"));
-            script.AppendLine(DeleteTableWithSequenceReset("Usage"));
-
-            script.AppendLine(DeleteTable("UserSessionChange"));
-            script.AppendLine(DeleteTable("UserSession"));
-            script.AppendLine(DeleteTableWithSequenceReset("UsageSession"));
-
-            script.AppendLine(DeleteTable("RefundInvoicePayment"));
-            script.AppendLine(DeleteTable("RefundDepositPayment"));
-            script.AppendLine(DeleteTableWithSequenceReset("Refund"));
-
-            script.AppendLine(DeleteTable("VoidInvoice"));
-            script.AppendLine(DeleteTable("VoidDepositPayment"));
-            script.AppendLine(DeleteTableWithSequenceReset("Void"));
-
-            script.AppendLine(DeleteTableWithSequenceReset("InvoicePayment"));
-
-            script.AppendLine(DeleteTable("PaymentIntentDeposit"));
-            script.AppendLine(DeleteTable("PaymentIntentOrder"));
-            script.AppendLine(DeleteTableWithSequenceReset("PaymentIntent"));
-
-            script.AppendLine(DeleteTableWithSequenceReset("DepositPayment"));
-            script.AppendLine(DeleteTableWithSequenceReset("Payment"));
-
-            script.AppendLine(DeleteTable("InvoiceLineProduct"));
-            script.AppendLine(DeleteTable("InvoiceLineSession"));
-            script.AppendLine(DeleteTable("InvoiceLineTime"));
-            script.AppendLine(DeleteTable("InvoiceLineTimeFixed"));
-            script.AppendLine(DeleteTable("InvoiceLineExtended"));
-            script.AppendLine(DeleteTableWithSequenceReset("InvoiceLine"));
-
-            script.AppendLine(DeleteTable("InvoiceFiscalReceipt"));
-            script.AppendLine(DeleteTableWithSequenceReset("Invoice"));
-
-            script.AppendLine(DeleteTable("ProductOLTimeFixed"));
-            script.AppendLine(DeleteTable("ProductOLTime"));
-            script.AppendLine(DeleteTable("ProductOLSession"));
-            script.AppendLine(DeleteTable("ProductOLProduct"));
-            script.AppendLine(DeleteTable("ProductOLExtended"));
-            script.AppendLine(DeleteTableWithSequenceReset("ProductOL"));
-
-            script.AppendLine(DeleteTableWithSequenceReset("ProductOrder"));
-            script.AppendLine(DeleteTableWithSequenceReset("DepositTransaction"));
-            script.AppendLine(DeleteTableWithSequenceReset("PointTransaction"));
-
-            script.AppendLine(DeleteTable("StockTransaction"));
-            script.AppendLine(DeleteTable("ShiftCount"));
-            script.AppendLine(DeleteTable("RegisterTransaction"));
-            script.AppendLine(DeleteTable("FiscalReceipt"));
-            script.AppendLine(DeleteTable("Shift"));
-            script.AppendLine(DeleteTable("Register"));
+            script.AppendLine("-- Reset user guests when deleting hosts but not users");
+            script.AppendLine(SetColumnNullWithCondition("UserGuest", "ReservedHostId", "\"ReservedHostId\" IS NOT NULL"));
         }
+
+        // Financial data cleanup always runs (matching original implementation)
+        script.AppendLine("-- Nullify foreign key references that need to be handled before deletion");
+        script.AppendLine(SetColumnNull("InvoiceLineExtended", "BundleLineId"));
+        script.AppendLine(SetColumnNull("UsageSession", "CurrentUsageId"));
+        script.AppendLine(SetColumnNull("ProductOLExtended", "BundleLineId"));
+        script.AppendLine();
+
+        script.AppendLine("-- Financial data cleanup in dependency order");
+        script.AppendLine(DeleteTable("UsageRate"));
+        script.AppendLine(DeleteTable("UsageTimeFixed"));
+        script.AppendLine(DeleteTable("UsageTime"));
+        script.AppendLine(DeleteTable("UsageUserSession"));
+        script.AppendLine(DeleteTableWithReseed("Usage"));
+
+        script.AppendLine(DeleteTable("UserSessionChange"));
+        script.AppendLine(DeleteTable("UserSession"));
+        script.AppendLine(DeleteTableWithReseed("UsageSession"));
+
+        script.AppendLine(DeleteTable("RefundInvoicePayment"));
+        script.AppendLine(DeleteTable("RefundDepositPayment"));
+        script.AppendLine(DeleteTableWithReseed("Refund"));
+
+        script.AppendLine(DeleteTable("VoidInvoice"));
+        script.AppendLine(DeleteTable("VoidDepositPayment"));
+        script.AppendLine(DeleteTableWithReseed("Void"));
+
+        script.AppendLine(DeleteTableWithReseed("InvoicePayment"));
+
+        script.AppendLine(DeleteTable("PaymentIntentDeposit"));
+        script.AppendLine(DeleteTable("PaymentIntentOrder"));
+        script.AppendLine(DeleteTableWithReseed("PaymentIntent"));
+
+        script.AppendLine(DeleteTableWithReseed("DepositPayment"));
+        script.AppendLine(DeleteTableWithReseed("Payment"));
+
+        script.AppendLine(DeleteTable("InvoiceLineProduct"));
+        script.AppendLine(DeleteTable("InvoiceLineSession"));
+        script.AppendLine(DeleteTable("InvoiceLineTime"));
+        script.AppendLine(DeleteTable("InvoiceLineTimeFixed"));
+        script.AppendLine(DeleteTable("InvoiceLineExtended"));
+        script.AppendLine(DeleteTableWithReseed("InvoiceLine"));
+
+        script.AppendLine(DeleteTable("InvoiceFiscalReceipt"));
+        script.AppendLine(DeleteTableWithReseed("Invoice"));
+
+        script.AppendLine(DeleteTable("ProductOLTimeFixed"));
+        script.AppendLine(DeleteTable("ProductOLTime"));
+        script.AppendLine(DeleteTable("ProductOLSession"));
+        script.AppendLine(DeleteTable("ProductOLProduct"));
+        script.AppendLine(DeleteTable("ProductOLExtended"));
+        script.AppendLine(DeleteTableWithReseed("ProductOL"));
+
+        script.AppendLine(DeleteTableWithReseed("ProductOrder"));
+        script.AppendLine(DeleteTableWithReseed("DepositTransaction"));
+        script.AppendLine(DeleteTableWithReseed("PointTransaction"));
+
+        script.AppendLine(DeleteTable("StockTransaction"));
+        script.AppendLine(DeleteTable("ShiftCount"));
+        script.AppendLine(DeleteTable("RegisterTransaction"));
+        script.AppendLine(DeleteTable("FiscalReceipt"));
+        script.AppendLine(DeleteTable("Shift"));
+        script.AppendLine(DeleteTable("Register"));
 
         // Products cleanup
         if (deleteProducts)
@@ -111,7 +114,7 @@ internal static class PostgreSql
             foreach (var table in productTables)
                 script.AppendLine(DeleteTable(table));
 
-            script.AppendLine(DeleteTableWithSequenceReset("ProductBase"));
+            script.AppendLine(DeleteTableWithReseed("ProductBase"));
         }
 
         if (deleteProducts || deleteHosts)
@@ -142,7 +145,7 @@ internal static class PostgreSql
             script.AppendLine("-- Host cleanup");
             script.AppendLine(DeleteTable("HostComputer"));
             script.AppendLine(DeleteTable("HostEndpoint"));
-            script.AppendLine(DeleteTableWithSequenceReset("Host"));
+            script.AppendLine(DeleteTableWithReseed("Host"));
         }
 
         // Operators cleanup with proper foreign key handling
@@ -170,10 +173,7 @@ internal static class PostgreSql
             script.AppendLine("-- Clear specific foreign key references before deleting related entities");
             script.AppendLine(SetColumnNullWithCondition("Host", "HostGroupId", "\"HostGroupId\" IS NOT NULL"));
             script.AppendLine(SetColumnNullWithCondition("User", "PermissionSetId", "\"PermissionSetId\" IS NOT NULL"));
-            script.AppendLine();
-
-            script.AppendLine("-- Clean up dependent records that would cause foreign key constraint violations");
-            script.AppendLine(DeleteTable("HostGroupWaitingLineEntry"));
+            script.AppendLine(SetColumnNullWithCondition("AssetTransaction", "CheckedInById", "\"CheckedInById\" IS NOT NULL"));
             script.AppendLine();
 
             script.AppendLine("-- Delete operator tokens (type 0)");
@@ -183,7 +183,8 @@ internal static class PostgreSql
             script.AppendLine("-- Clean up operator-specific entities");
             var operatorSpecificTables = new[]
             {
-                "AgeRestriction", "AssistanceRequestType", "Stock", "Branch",
+                "HostGroupWaitingLineEntry", "Payment",  
+                "AssetTransaction", "AgeRestriction", "AssistanceRequestType", "Stock", "Branch",
                 "ClientOptions", "Companion", "Notification", "UserPermissionSet"
             };
 

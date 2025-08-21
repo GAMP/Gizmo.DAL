@@ -69,6 +69,8 @@ public static class DmlOperations
             if (!string.IsNullOrWhiteSpace(cleanupScript))
             {
                 await cx.Database.ExecuteSqlRawAsync(cleanupScript, ct);
+                // Clear change tracker to avoid conflicts with raw SQL operations
+                cx.ChangeTracker.Clear();
             }
 
             // Handle Entity Framework specific cleanup for users

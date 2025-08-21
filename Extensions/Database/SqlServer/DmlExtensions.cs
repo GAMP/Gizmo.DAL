@@ -7,7 +7,7 @@ internal static class SqlServer
     public static string CleanupScript(bool deleteUsers, bool deleteHosts, bool deleteOperators, bool deleteProducts)
     {
         string DeleteTable(string tableName) => $"DELETE FROM [{tableName}];";
-        string DeleteTableWithIdentityReset(string tableName) => $"DELETE FROM [{tableName}];\nDBCC CHECKIDENT ('{tableName}', RESEED, 1);";
+        string DeleteTableWithReseed(string tableName) => $"DELETE FROM [{tableName}];\nDBCC CHECKIDENT ('{tableName}', RESEED, 1);";
         string SetColumnNull(string tableName, string columnName) => $"UPDATE [{tableName}] SET {columnName} = NULL;";
         string SetColumnNullWithCondition(string tableName, string columnName, string condition) => $"UPDATE [{tableName}] SET {columnName} = NULL WHERE {condition};";
 
@@ -22,71 +22,74 @@ internal static class SqlServer
                 script.AppendLine(DeleteTable(table));
         }
 
-        // Always clean up financial data when any category is being deleted
-        if (deleteUsers || deleteHosts || deleteOperators || deleteProducts)
+        if (deleteHosts && !deleteUsers)
         {
-            script.AppendLine("-- Nullify foreign key references that need to be handled before deletion");
-            script.AppendLine(SetColumnNull("InvoiceLineExtended", "BundleLineId"));
-            script.AppendLine(SetColumnNull("UsageSession", "CurrentUsageId"));
-            script.AppendLine(SetColumnNull("ProductOLExtended", "BundleLineId"));
-            script.AppendLine();
-
-            script.AppendLine("-- Financial data cleanup in dependency order");
-            script.AppendLine(DeleteTable("UsageRate"));
-            script.AppendLine(DeleteTable("UsageTimeFixed"));
-            script.AppendLine(DeleteTable("UsageTime"));
-            script.AppendLine(DeleteTable("UsageUserSession"));
-            script.AppendLine(DeleteTableWithIdentityReset("Usage"));
-
-            script.AppendLine(DeleteTable("UserSessionChange"));
-            script.AppendLine(DeleteTable("UserSession"));
-            script.AppendLine(DeleteTableWithIdentityReset("UsageSession"));
-
-            script.AppendLine(DeleteTable("RefundInvoicePayment"));
-            script.AppendLine(DeleteTable("RefundDepositPayment"));
-            script.AppendLine(DeleteTableWithIdentityReset("Refund"));
-
-            script.AppendLine(DeleteTable("VoidInvoice"));
-            script.AppendLine(DeleteTable("VoidDepositPayment"));
-            script.AppendLine(DeleteTableWithIdentityReset("Void"));
-
-            script.AppendLine(DeleteTableWithIdentityReset("InvoicePayment"));
-
-            script.AppendLine(DeleteTable("PaymentIntentDeposit"));
-            script.AppendLine(DeleteTable("PaymentIntentOrder"));
-            script.AppendLine(DeleteTableWithIdentityReset("PaymentIntent"));
-
-            script.AppendLine(DeleteTableWithIdentityReset("DepositPayment"));
-            script.AppendLine(DeleteTableWithIdentityReset("Payment"));
-
-            script.AppendLine(DeleteTable("InvoiceLineProduct"));
-            script.AppendLine(DeleteTable("InvoiceLineSession"));
-            script.AppendLine(DeleteTable("InvoiceLineTime"));
-            script.AppendLine(DeleteTable("InvoiceLineTimeFixed"));
-            script.AppendLine(DeleteTable("InvoiceLineExtended"));
-            script.AppendLine(DeleteTableWithIdentityReset("InvoiceLine"));
-
-            script.AppendLine(DeleteTable("InvoiceFiscalReceipt"));
-            script.AppendLine(DeleteTableWithIdentityReset("Invoice"));
-
-            script.AppendLine(DeleteTable("ProductOLTimeFixed"));
-            script.AppendLine(DeleteTable("ProductOLTime"));
-            script.AppendLine(DeleteTable("ProductOLSession"));
-            script.AppendLine(DeleteTable("ProductOLProduct"));
-            script.AppendLine(DeleteTable("ProductOLExtended"));
-            script.AppendLine(DeleteTableWithIdentityReset("ProductOL"));
-
-            script.AppendLine(DeleteTableWithIdentityReset("ProductOrder"));
-            script.AppendLine(DeleteTableWithIdentityReset("DepositTransaction"));
-            script.AppendLine(DeleteTableWithIdentityReset("PointTransaction"));
-
-            script.AppendLine(DeleteTable("StockTransaction"));
-            script.AppendLine(DeleteTable("ShiftCount"));
-            script.AppendLine(DeleteTable("RegisterTransaction"));
-            script.AppendLine(DeleteTable("FiscalReceipt"));
-            script.AppendLine(DeleteTable("Shift"));
-            script.AppendLine(DeleteTable("Register"));
+            script.AppendLine("-- Reset user guests when deleting hosts but not users");
+            script.AppendLine(SetColumnNullWithCondition("UserGuest", "ReservedHostId", "ReservedHostId IS NOT NULL"));
         }
+
+        // Financial data cleanup always runs (matching original implementation)
+        script.AppendLine("-- Nullify foreign key references that need to be handled before deletion");
+        script.AppendLine(SetColumnNull("InvoiceLineExtended", "BundleLineId"));
+        script.AppendLine(SetColumnNull("UsageSession", "CurrentUsageId"));
+        script.AppendLine(SetColumnNull("ProductOLExtended", "BundleLineId"));
+        script.AppendLine();
+
+        script.AppendLine("-- Financial data cleanup in dependency order");
+        script.AppendLine(DeleteTable("UsageRate"));
+        script.AppendLine(DeleteTable("UsageTimeFixed"));
+        script.AppendLine(DeleteTable("UsageTime"));
+        script.AppendLine(DeleteTable("UsageUserSession"));
+        script.AppendLine(DeleteTableWithReseed("Usage"));
+
+        script.AppendLine(DeleteTable("UserSessionChange"));
+        script.AppendLine(DeleteTable("UserSession"));
+        script.AppendLine(DeleteTableWithReseed("UsageSession"));
+
+        script.AppendLine(DeleteTable("RefundInvoicePayment"));
+        script.AppendLine(DeleteTable("RefundDepositPayment"));
+        script.AppendLine(DeleteTableWithReseed("Refund"));
+
+        script.AppendLine(DeleteTable("VoidInvoice"));
+        script.AppendLine(DeleteTable("VoidDepositPayment"));
+        script.AppendLine(DeleteTableWithReseed("Void"));
+
+        script.AppendLine(DeleteTableWithReseed("InvoicePayment"));
+
+        script.AppendLine(DeleteTable("PaymentIntentDeposit"));
+        script.AppendLine(DeleteTable("PaymentIntentOrder"));
+        script.AppendLine(DeleteTableWithReseed("PaymentIntent"));
+
+        script.AppendLine(DeleteTableWithReseed("DepositPayment"));
+        script.AppendLine(DeleteTableWithReseed("Payment"));
+
+        script.AppendLine(DeleteTable("InvoiceLineProduct"));
+        script.AppendLine(DeleteTable("InvoiceLineSession"));
+        script.AppendLine(DeleteTable("InvoiceLineTime"));
+        script.AppendLine(DeleteTable("InvoiceLineTimeFixed"));
+        script.AppendLine(DeleteTable("InvoiceLineExtended"));
+        script.AppendLine(DeleteTableWithReseed("InvoiceLine"));
+
+        script.AppendLine(DeleteTable("InvoiceFiscalReceipt"));
+        script.AppendLine(DeleteTableWithReseed("Invoice"));
+
+        script.AppendLine(DeleteTable("ProductOLTimeFixed"));
+        script.AppendLine(DeleteTable("ProductOLTime"));
+        script.AppendLine(DeleteTable("ProductOLSession"));
+        script.AppendLine(DeleteTable("ProductOLProduct"));
+        script.AppendLine(DeleteTable("ProductOLExtended"));
+        script.AppendLine(DeleteTableWithReseed("ProductOL"));
+
+        script.AppendLine(DeleteTableWithReseed("ProductOrder"));
+        script.AppendLine(DeleteTableWithReseed("DepositTransaction"));
+        script.AppendLine(DeleteTableWithReseed("PointTransaction"));
+
+        script.AppendLine(DeleteTable("StockTransaction"));
+        script.AppendLine(DeleteTable("ShiftCount"));
+        script.AppendLine(DeleteTable("RegisterTransaction"));
+        script.AppendLine(DeleteTable("FiscalReceipt"));
+        script.AppendLine(DeleteTable("Shift"));
+        script.AppendLine(DeleteTable("Register"));
 
         // Products cleanup
         if (deleteProducts)
@@ -102,7 +105,7 @@ internal static class SqlServer
 
             foreach (var table in productTables)
                 script.AppendLine(DeleteTable(table));
-            script.AppendLine(DeleteTableWithIdentityReset("ProductBase"));
+            script.AppendLine(DeleteTableWithReseed("ProductBase"));
         }
 
         if (deleteProducts || deleteHosts)
@@ -133,7 +136,7 @@ internal static class SqlServer
             script.AppendLine("-- Host cleanup");
             script.AppendLine(DeleteTable("HostComputer"));
             script.AppendLine(DeleteTable("HostEndpoint"));
-            script.AppendLine(DeleteTableWithIdentityReset("Host"));
+            script.AppendLine(DeleteTableWithReseed("Host"));
         }
 
         // Operators cleanup with proper foreign key handling
@@ -161,10 +164,7 @@ internal static class SqlServer
             script.AppendLine("-- Clear specific foreign key references before deleting related entities");
             script.AppendLine(SetColumnNullWithCondition("Host", "HostGroupId", "HostGroupId IS NOT NULL"));
             script.AppendLine(SetColumnNullWithCondition("User", "PermissionSetId", "PermissionSetId IS NOT NULL"));
-            script.AppendLine();
-
-            script.AppendLine("-- Clean up dependent records that would cause foreign key constraint violations");
-            script.AppendLine(DeleteTable("HostGroupWaitingLineEntry"));
+            script.AppendLine(SetColumnNullWithCondition("AssetTransaction", "CheckedInById", "CheckedInById IS NOT NULL"));
             script.AppendLine();
 
             script.AppendLine("-- Delete operator tokens (type 0)");
@@ -174,7 +174,8 @@ internal static class SqlServer
             script.AppendLine("-- Clean up operator-specific entities");
             var operatorSpecificTables = new[]
             {
-                "AgeRestriction", "AssistanceRequestType", "Stock", "Branch",
+                "HostGroupWaitingLineEntry", "Payment",
+                "AssetTransaction", "AgeRestriction", "AssistanceRequestType", "Stock", "Branch",
                 "ClientOptions", "Companion", "Notification", "UserPermissionSet"
             };
 
