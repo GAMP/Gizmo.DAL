@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Gizmo.DAL.Extensions.DdlExtensions;
@@ -189,12 +191,15 @@ internal static class SqlServer
             }
 
             var metadata = facade.GetConnectionMetadata();
+
+            await using var originalConnection = new SqlConnection(metadata.ToConnectionString());
+            await originalConnection.OpenAsync(ct);
+            var backupFiles = await originalConnection.GetBackupFiles(backupFile, ct);
+
             var masterConnectionString = metadata.ChangeDatabaseTo("master").ToConnectionString();
+            await using var masterConnection = new SqlConnection(masterConnectionString);
+            await masterConnection.OpenAsync(ct);
 
-            await using var connection = new SqlConnection(masterConnectionString);
-            await connection.OpenAsync(ct);
-
-            var backupFiles = await connection.GetBackupFiles(backupFile, ct);
 
             var moveStatement = new StringBuilder();
 
@@ -212,7 +217,7 @@ internal static class SqlServer
                     ALTER DATABASE [{metadata.DatabaseName}] SET MULTI_USER;
                  """;
 
-            await using var command = connection.CreateCommand();
+            await using var command = masterConnection.CreateCommand();
             command.CommandText = restoreSql;
             command.Parameters.AddWithValue("@backupFile", backupFile);
             command.CommandTimeout = 600;
@@ -348,6 +353,9 @@ internal static class SqlServer
         try
         {
             await using var command = connection.CreateCommand();
+
+            var dbName = connection.Database;
+
             command.CommandText = "RESTORE FILELISTONLY FROM DISK = @backupFile";
             command.Parameters.AddWithValue("@backupFile", backupFile);
 
@@ -362,6 +370,17 @@ internal static class SqlServer
                 if (string.IsNullOrEmpty(logicalName) || string.IsNullOrEmpty(targetPath))
                     continue;
 
+                var type = reader["Type"]?.ToString();
+                var directory = Path.GetDirectoryName(targetPath);
+                var extension = Path.GetExtension(targetPath);
+
+                targetPath = type switch
+                {
+                    "D" => Path.Combine(directory, dbName + extension),
+                    "L" => Path.Combine(directory, dbName + "_log" + extension),
+                    _ => throw new NotSupportedException($"Unsupported file type: {type}"),
+                };
+                
                 files.Add(new BackupFile { LogicalName = logicalName, TargetPath = targetPath });
             }
 

@@ -208,8 +208,6 @@ internal static class PostgreSql
             var docker = Environment.GetEnvironmentVariable("POSTGRES_DOCKER");
             var isDocker = !string.IsNullOrEmpty(docker);
 
-            var fileExtension = Path.GetExtension(backupFile);
-
             var cmd = "pg_restore";
 
             string fileName;

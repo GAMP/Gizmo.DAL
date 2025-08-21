@@ -71,41 +71,6 @@ public static class DdlOperations
         };
 
     /// <summary>
-    /// Generates an appropriate backup file name based on the database provider type of the current <see cref="DatabaseFacade"/> instance.
-    /// </summary>
-    /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
-    /// <returns>
-    /// A string containing the backup file name with the appropriate extension:
-    /// <list type="bullet">
-    /// <item><description>.bak for SQL Server variants (MSSQL, MSSQLEXPRESS, LOCALDB)</description></item>
-    /// <item><description>.dump for PostgreSQL</description></item>
-    /// <item><description>.sql for MySQL</description></item>
-    /// </list>
-    /// </returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="facade"/> is null.</exception>
-    /// <exception cref="InvalidOperationException">Thrown when the database provider name is not set or connection metadata cannot be retrieved.</exception>
-    /// <exception cref="NotSupportedException">Thrown when the database provider is not supported for backup file name generation.</exception>
-    /// <remarks>
-    /// This method extracts the database name from the connection metadata and generates a backup file name
-    /// with the appropriate extension for the database provider. The generated name can be used
-    /// for backup and restore operations.
-    /// </remarks>
-    public static string GenerateBackupName(this DatabaseFacade facade)
-    {
-        var metadata = facade.GetConnectionMetadata();
-
-        var timeStamp = DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss");
-
-        return facade.GetProviderType() switch
-        {
-            Provider.Type.SqlServer => $"{metadata.DatabaseName}_mssql_{timeStamp}.bak",
-            Provider.Type.PostgreSql => $"{metadata.DatabaseName}_pgsql_{timeStamp}.dump",
-            Provider.Type.MySql => $"{metadata.DatabaseName}_mysql_{timeStamp}.sql",
-            _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
-        };
-    }
-
-    /// <summary>
     /// Creates a backup of the current database of <see cref="DatabaseFacade"/> to the specified location
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
@@ -215,5 +180,40 @@ public static class DdlOperations
             Provider.Type.PostgreSql => PostgreSql.EnsurAdminExists(facade, name, ct),
             _ => throw new NotSupportedException($"Provider '{facade.ProviderName}' is not supported for ensuring login existence.")
         };
+
+    /// <summary>
+    /// Generates an appropriate backup file name based on the database provider type of the current <see cref="DatabaseFacade"/> instance.
+    /// </summary>
+    /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
+    /// <returns>
+    /// A string containing the backup file name with the appropriate extension:
+    /// <list type="bullet">
+    /// <item><description>.bak for SQL Server variants (MSSQL, MSSQLEXPRESS, LOCALDB)</description></item>
+    /// <item><description>.dump for PostgreSQL</description></item>
+    /// <item><description>.sql for MySQL</description></item>
+    /// </list>
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="facade"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the database provider name is not set or connection metadata cannot be retrieved.</exception>
+    /// <exception cref="NotSupportedException">Thrown when the database provider is not supported for backup file name generation.</exception>
+    /// <remarks>
+    /// This method extracts the database name from the connection metadata and generates a backup file name
+    /// with the appropriate extension for the database provider. The generated name can be used
+    /// for backup and restore operations.
+    /// </remarks>
+    public static string GenerateBackupName(this DatabaseFacade facade)
+    {
+        var metadata = facade.GetConnectionMetadata();
+
+        var timeStamp = DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss");
+
+        return facade.GetProviderType() switch
+        {
+            Provider.Type.SqlServer => $"{metadata.DatabaseName}_mssql_{timeStamp}.bak",
+            Provider.Type.PostgreSql => $"{metadata.DatabaseName}_pgsql_{timeStamp}.dump",
+            Provider.Type.MySql => $"{metadata.DatabaseName}_mysql_{timeStamp}.sql",
+            _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
+        };
+    }
 }
 
