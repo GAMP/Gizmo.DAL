@@ -12,75 +12,72 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
-            // Primary Key
-            builder.HasKey(t => t.Id);
-
-            // Properties
             builder.ToTable("Payment");
 
-            builder.Property(x => x.Id)
+            builder.HasKey(payment => payment.Id);
+
+            builder.Property(payment => payment.Id)
                 .HasColumnName("PaymentId")
                 .HasColumnOrder(0);
 
-            builder.Property(x => x.UserId)
+            builder.Property(payment => payment.UserId)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.PaymentMethodId)
+            builder.Property(payment => payment.PaymentMethodId)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.Amount)
+            builder.Property(payment => payment.Amount)
                 .HasColumnOrder(3);
 
-            builder.Property(x => x.AmountReceived)
+            builder.Property(payment => payment.AmountReceived)
                 .HasColumnOrder(4);
 
-            builder.Property(x => x.IsDeleted)
+            builder.Property(payment => payment.IsDeleted)
                 .HasColumnOrder(5);
 
-            //builder.Property(x => x.IsRefunded)
-            //    .HasColumnOrder(6);
-
-            builder.Property(x => x.IsVoided)
+            builder.Property(payment => payment.IsVoided)
                 .HasColumnOrder(7);
 
-            builder.Property(x => x.DepositTransactionId)
+            builder.Property(payment => payment.DepositTransactionId)
+                .IsRequired(false)
                 .HasColumnOrder(8);
 
-            builder.Property(x => x.PointTransactionId)
+            builder.Property(payment => payment.PointTransactionId)
+                .IsRequired(false)
                 .HasColumnOrder(9);
 
             // Indexes
-            builder.HasIndex(t => t.DepositTransactionId)
+            builder.HasIndex(payment => payment.DepositTransactionId)
                 .IsUnique();
 
-            builder.HasIndex(t => t.PointTransactionId)
+            builder.HasIndex(payment => payment.PointTransactionId)
                 .IsUnique();
 
             // Relationships
-            builder.HasOne(x => x.User)
-                .WithMany(x => x.Payments)
-                .HasForeignKey(x => x.UserId)
+            builder.HasOne(payment => payment.User)
+                .WithMany(userMember => userMember.Payments)
+                .HasForeignKey(payment => payment.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(x => x.PaymentMethod)
-                .WithMany(x => x.Payments)
-                .HasForeignKey(x => x.PaymentMethodId);
+            builder.HasOne(payment => payment.PaymentMethod)
+                .WithMany(paymentMethod => paymentMethod.Payments)
+                .HasForeignKey(payment => payment.PaymentMethodId);
 
-            builder.HasOne(x => x.CreatedBy)
-                .WithMany(x => x.CreatedPayments)
-                .HasForeignKey(x => x.CreatedById);
+            builder.HasOne(payment => payment.CreatedBy)
+                .WithMany(userOperator => userOperator.CreatedPayments)
+                .HasForeignKey(payment => payment.CreatedById);
 
-            builder.HasOne(x => x.ModifiedBy)
-                .WithMany(x => x.ModifiedPayments)
-                .HasForeignKey(x => x.ModifiedById);
+            builder.HasOne(payment => payment.ModifiedBy)
+                .WithMany(userOperator => userOperator.ModifiedPayments)
+                .HasForeignKey(payment => payment.ModifiedById);
 
-            builder.HasOne(x => x.PointTransaction)
+            builder.HasOne(payment => payment.PointTransaction)
                 .WithMany()
-                .HasForeignKey(x => x.PointTransactionId);
+                .HasForeignKey(payment => payment.PointTransactionId);
 
-            builder.HasOne(x => x.DepositTransaction)
+            builder.HasOne(payment => payment.DepositTransaction)
                 .WithMany()
-                .HasForeignKey(x => x.DepositTransactionId);
+                .HasForeignKey(payment => payment.DepositTransactionId);
         }
     }
 }

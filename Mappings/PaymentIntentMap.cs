@@ -67,16 +67,26 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(11)
                 .IsRequired(false);
 
+            builder.Property(paymentIntent => paymentIntent.PaymentId)
+                .HasColumnOrder(12)
+                .IsRequired(false);  
+
             builder.HasOne(paymentIntent => paymentIntent.User)
                 .WithMany(userMember => userMember.PaymentIntents)
                 .HasForeignKey(paymentIntent => paymentIntent.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.NoAction);          
 
             builder.HasOne(paymentIntent => paymentIntent.PaymentMethod)
                 .WithMany(paymentMethod => paymentMethod.PaymentIntents)
                 .HasForeignKey(paymentIntent => paymentIntent.PaymentMethodId);
 
-            builder.HasIndex(paymentIntent => paymentIntent.Guid).IsUnique();         
+            builder.HasOne(paymentIntent => paymentIntent.Payment)
+                .WithOne()
+                .HasForeignKey<PaymentIntent>(paymentIntent => paymentIntent.PaymentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasIndex(paymentIntent => paymentIntent.Guid).IsUnique();  
+            builder.HasIndex(paymentIntent => paymentIntent.PaymentId).IsUnique();
         }
     }
 }

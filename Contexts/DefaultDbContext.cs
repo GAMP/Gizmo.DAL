@@ -1091,7 +1091,7 @@ namespace Gizmo.DAL.Contexts
         public DbSet<AgeRestrictionLogin> AgeLoginRestrictions { get; set; }
 
         /// <summary>
-        /// Gets topup presets.
+        /// Gets top-up presets.
         /// </summary>
         public DbSet<PresetTopUp> PresetTopUps { get; set; }
 
@@ -1459,6 +1459,10 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new ClientOptionsMap());
 
             modelBuilder.ApplyConfiguration(new ProductOrderDiscountMap());
+
+            modelBuilder.ApplyConfiguration(new IntentOrderMap());
+            modelBuilder.ApplyConfiguration(new IntentOrderDepositMap());
+            modelBuilder.ApplyConfiguration(new RefundPaymentMap());
            
 
             #region GLOBAL CONFIGURATIONS

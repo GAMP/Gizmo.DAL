@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Invoice entity map.
+    /// </summary>
     public class InvoiceMap : IEntityTypeConfiguration<Invoice>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Invoice> builder)
         {
             builder.HasKey(x => x.Id);
