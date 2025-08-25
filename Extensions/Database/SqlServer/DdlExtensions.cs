@@ -5,21 +5,125 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Gizmo.DAL.Extensions.DdlExtensions;
 
 internal static class SqlServer
 {
-    public static async Task EnsurAdminExists(DatabaseFacade facade, string login, CancellationToken ct)
+    public static async Task<bool> LoginExists(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
+
+        await using var connection = new SqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = "SELECT COUNT(*) FROM sys.server_principals WHERE name = @loginName";
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@loginName";
+        parameter.Value = loginName;
+        command.Parameters.Add(parameter);
+
+        var result = await command.ExecuteScalarAsync(ct);
+        return Convert.ToInt32(result) > 0;
+    }
+
+    public static async Task<bool> HasAdminPermissions(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
+
+        await using var connection = new SqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = """
+            SELECT COUNT(*) 
+            FROM sys.server_role_members srm
+            JOIN sys.server_principals sp ON srm.member_principal_id = sp.principal_id
+            JOIN sys.server_principals sr ON srm.role_principal_id = sr.principal_id
+            WHERE sp.name = @loginName AND sr.name = 'sysadmin'
+            """;
+
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@loginName";
+        parameter.Value = loginName;
+        command.Parameters.Add(parameter);
+
+        var result = await command.ExecuteScalarAsync(ct);
+        return Convert.ToInt32(result) > 0;
+    }
+
+    public static async Task DisableLogin(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
+
+        await using var connection = new SqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = $"ALTER LOGIN [{loginName}] DISABLE";
+        await command.ExecuteNonQueryAsync(ct);
+    }
+
+    public static async Task<bool> IsLoginDisabled(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
+
+        await using var connection = new SqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = "SELECT is_disabled FROM sys.server_principals WHERE name = @loginName";
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@loginName";
+        parameter.Value = loginName;
+        command.Parameters.Add(parameter);
+
+        var result = await command.ExecuteScalarAsync(ct);
+        return result != null && Convert.ToBoolean(result);
+    }
+
+    public static async Task DropLogin(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
+
+        await using var connection = new SqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = $"DROP LOGIN [{loginName}]";
+        await command.ExecuteNonQueryAsync(ct);
+    }
+
+    public static async Task EnsureAdminExists(DatabaseFacade facade, string login, CancellationToken ct)
     {
         try
         {
             if (string.IsNullOrWhiteSpace(login))
                 throw new ArgumentException("Login name cannot be null or empty.", nameof(login));
 
-            var metadata  = facade.GetConnectionMetadata();
+            var metadata = facade.GetConnectionMetadata();
             var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
 
             await using var connection = new SqlConnection(cs);
@@ -27,6 +131,7 @@ internal static class SqlServer
 
             await using var command = connection.CreateCommand();
 
+            // Check if login exists with detailed info
             command.CommandText =
                 """
                     SELECT sp.name, sp.is_disabled, sp.type
@@ -50,27 +155,42 @@ internal static class SqlServer
                 }
             }
 
-            if (loginType == "S")
+            // If login exists and is SQL type, ensure it's enabled and return
+            if (!string.IsNullOrEmpty(existingLogin) && loginType == "S")
             {
-                return; // SQL login, not Windows login
+                // Just ensure the login is enabled if it was disabled
+                if (loginDisabled)
+                {
+                    command.Parameters.Clear();
+                    command.CommandText = $"ALTER LOGIN [{existingLogin}] ENABLE";
+                    await command.ExecuteNonQueryAsync(ct);
+                }
+                return; // SQL login already exists with proper state
             }
 
             command.Parameters.Clear();
 
             if (string.IsNullOrEmpty(existingLogin))
             {
+                // Create new SQL login
                 command.CommandText =
                     $"""
-                         CREATE LOGIN [{login}] FROM WINDOWS WITH DEFAULT_DATABASE = [master];
-                         ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
+                        CREATE LOGIN [{login}] WITH PASSWORD = N'{metadata.Password}', DEFAULT_DATABASE = [master], CHECK_POLICY = OFF;
+                        ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
                      """;
-
                 await command.ExecuteNonQueryAsync(ct);
             }
-
-            if (loginDisabled)
+            else
             {
-                command.CommandText = $"ALTER LOGIN [{existingLogin}] ENABLE";
+                // Login exists but is not SQL type (probably Windows), convert to SQL and enable
+                command.CommandText = $"DROP LOGIN [{existingLogin}]";
+                await command.ExecuteNonQueryAsync(ct);
+
+                command.CommandText =
+                    $"""
+                        CREATE LOGIN [{login}] WITH PASSWORD = N'{metadata.Password}', DEFAULT_DATABASE = [master], CHECK_POLICY = OFF;
+                        ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
+                     """;
                 await command.ExecuteNonQueryAsync(ct);
             }
         }

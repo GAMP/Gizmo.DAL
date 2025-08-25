@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,105 @@ namespace Gizmo.DAL.Extensions.DdlExtensions;
 
 internal static class PostgreSql
 {
-    public static async Task EnsurAdminExists(DatabaseFacade facade, string login, CancellationToken ct)
+    public static async Task<bool> LoginExists(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ToConnectionString();
+
+        await using var connection = new NpgsqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = "SELECT COUNT(*) FROM pg_roles WHERE rolname = @loginName";
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@loginName";
+        parameter.Value = loginName;
+        command.Parameters.Add(parameter);
+
+        var result = await command.ExecuteScalarAsync(ct);
+        return Convert.ToInt32(result) > 0;
+    }
+
+    public static async Task<bool> HasAdminPermissions(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ToConnectionString();
+
+        await using var connection = new NpgsqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = "SELECT COUNT(*) FROM pg_roles WHERE rolname = @loginName AND rolsuper = true";
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@loginName";
+        parameter.Value = loginName;
+        command.Parameters.Add(parameter);
+
+        var result = await command.ExecuteScalarAsync(ct);
+        return Convert.ToInt32(result) > 0;
+    }
+
+    public static async Task DisableLogin(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ToConnectionString();
+
+        await using var connection = new NpgsqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = $"ALTER ROLE \"{loginName}\" NOLOGIN";
+        await command.ExecuteNonQueryAsync(ct);
+    }
+
+    public static async Task<bool> IsLoginDisabled(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ToConnectionString();
+
+        await using var connection = new NpgsqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = "SELECT NOT rolcanlogin FROM pg_roles WHERE rolname = @loginName";
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@loginName";
+        parameter.Value = loginName;
+        command.Parameters.Add(parameter);
+
+        var result = await command.ExecuteScalarAsync(ct);
+        return result != null && Convert.ToBoolean(result);
+    }
+
+    public static async Task DropLogin(DatabaseFacade facade, string loginName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(loginName))
+            throw new ArgumentException("Login name cannot be null or empty.", nameof(loginName));
+
+        var metadata = facade.GetConnectionMetadata();
+        var cs = metadata.ToConnectionString();
+
+        await using var connection = new NpgsqlConnection(cs);
+        await connection.OpenAsync(ct);
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = $"DROP ROLE IF EXISTS \"{loginName}\"";
+        await command.ExecuteNonQueryAsync(ct);
+    }
+
+    public static async Task EnsureAdminExists(DatabaseFacade facade, string login, CancellationToken ct)
     {
         try
         {
@@ -27,15 +124,56 @@ internal static class PostgreSql
             await connection.OpenAsync(ct);
 
             await using var command = connection.CreateCommand();
-            command.CommandText = "SELECT 1 FROM pg_roles WHERE rolname = @loginName";
+
+            // Check if role exists with detailed info
+            command.CommandText =
+                """
+                    SELECT r.rolname, 
+                        NOT r.rolcanlogin as is_disabled,
+                        CASE WHEN r.rolpassword IS NOT NULL THEN 'P' ELSE 'N' END as has_password
+                    FROM pg_roles r 
+                    WHERE r.rolname = @loginName
+                """;
+
             command.Parameters.AddWithValue("@loginName", login);
 
-            var exists = await command.ExecuteScalarAsync(ct) != null;
+            string existingLogin = null;
+            bool loginDisabled = false;
+            string hasPassword = null;
 
-            if (!exists)
+            await using (var reader = await command.ExecuteReaderAsync(ct))
             {
-                command.Parameters.Clear();
-                command.CommandText = $"CREATE ROLE \"{login}\" LOGIN SUPERUSER";
+                if (await reader.ReadAsync(ct))
+                {
+                    existingLogin = reader.GetString(0);
+                    loginDisabled = reader.GetBoolean(1);
+                    hasPassword = reader.GetString(2);
+                }
+            }
+
+            // If role exists and has password, no need to recreate
+            if (!string.IsNullOrEmpty(existingLogin) && hasPassword == "P")
+            {
+                // Just ensure the role is enabled if it was disabled
+                if (loginDisabled)
+                {
+                    command.Parameters.Clear();
+                    command.CommandText = $"ALTER ROLE \"{existingLogin}\" LOGIN";
+                    await command.ExecuteNonQueryAsync(ct);
+                }
+                return; // Role already exists with password
+            }
+
+            command.Parameters.Clear();
+
+            if (string.IsNullOrEmpty(existingLogin))
+            {
+                command.CommandText = $"CREATE ROLE \"{login}\" LOGIN SUPERUSER PASSWORD '{metadata.Password}'";
+                await command.ExecuteNonQueryAsync(ct);
+            }
+            else
+            {
+                command.CommandText = $"ALTER ROLE \"{existingLogin}\" LOGIN SUPERUSER PASSWORD '{metadata.Password}'";
                 await command.ExecuteNonQueryAsync(ct);
             }
         }

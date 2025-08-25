@@ -173,12 +173,139 @@ public static class DdlOperations
     /// <remarks>
     /// This method supports SQL Server and PostgreSQL database providers. It creates the login if it doesn't already exist.
     /// </remarks>
-    public static Task EnsurAdminExists(this DatabaseFacade facade, string name, CancellationToken ct = default) =>
+    public static Task EnsureAdminExists(this DatabaseFacade facade, string name, CancellationToken ct = default) =>
         facade.GetProviderType() switch
         {
-            Provider.Type.SqlServer => SqlServer.EnsurAdminExists(facade, name, ct),
-            Provider.Type.PostgreSql => PostgreSql.EnsurAdminExists(facade, name, ct),
+            Provider.Type.SqlServer => SqlServer.EnsureAdminExists(facade, name, ct),
+            Provider.Type.PostgreSql => PostgreSql.EnsureAdminExists(facade, name, ct),
             _ => throw new NotSupportedException($"Provider '{facade.ProviderName}' is not supported for ensuring login existence.")
+        };
+
+    /// <summary>
+    /// Checks if a login with the specified name exists on the database server.
+    /// </summary>
+    /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
+    /// <param name="loginName">The name of the login to check for existence.</param>
+    /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation. The task result contains a boolean indicating whether the login exists.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="facade"/> or <paramref name="loginName"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="loginName"/> is empty or whitespace.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the database provider name is not set.</exception>
+    /// <exception cref="NotSupportedException">Thrown when the database provider is not supported for this operation.</exception>
+    /// <remarks>
+    /// This method supports SQL Server and PostgreSQL database providers. It queries the system catalogs to determine login existence.
+    /// </remarks>
+    public static Task<bool> LoginExists(this DatabaseFacade facade, string loginName, CancellationToken ct = default) =>
+        facade.GetProviderType() switch
+        {
+            Provider.Type.SqlServer => SqlServer.LoginExists(facade, loginName, ct),
+            Provider.Type.PostgreSql => PostgreSql.LoginExists(facade, loginName, ct),
+            _ => throw new NotSupportedException($"Provider '{facade.ProviderName}' is not supported for checking login existence.")
+        };
+
+    /// <summary>
+    /// Checks if the specified login has administrator permissions on the database server.
+    /// </summary>
+    /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
+    /// <param name="loginName">The name of the login to check for administrator permissions.</param>
+    /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation. The task result contains a boolean indicating whether the login has administrator permissions.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="facade"/> or <paramref name="loginName"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="loginName"/> is empty or whitespace.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the database provider name is not set.</exception>
+    /// <exception cref="NotSupportedException">Thrown when the database provider is not supported for this operation.</exception>
+    /// <remarks>
+    /// This method supports SQL Server and PostgreSQL database providers:
+    /// <list type="bullet">
+    /// <item><description>SQL Server: Checks if the login is a member of the sysadmin server role.</description></item>
+    /// <item><description>PostgreSQL: Checks if the role has superuser privileges.</description></item>
+    /// </list>
+    /// </remarks>
+    public static Task<bool> HasAdminPermissions(this DatabaseFacade facade, string loginName, CancellationToken ct = default) =>
+        facade.GetProviderType() switch
+        {
+            Provider.Type.SqlServer => SqlServer.HasAdminPermissions(facade, loginName, ct),
+            Provider.Type.PostgreSql => PostgreSql.HasAdminPermissions(facade, loginName, ct),
+            _ => throw new NotSupportedException($"Provider '{facade.ProviderName}' is not supported for checking admin permissions.")
+        };
+
+    /// <summary>
+    /// Disables the specified login on the database server.
+    /// </summary>
+    /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
+    /// <param name="loginName">The name of the login to disable.</param>
+    /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="facade"/> or <paramref name="loginName"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="loginName"/> is empty or whitespace.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the database provider name is not set or the operation fails.</exception>
+    /// <exception cref="NotSupportedException">Thrown when the database provider is not supported for this operation.</exception>
+    /// <remarks>
+    /// This method supports SQL Server and PostgreSQL database providers:
+    /// <list type="bullet">
+    /// <item><description>SQL Server: Uses ALTER LOGIN ... DISABLE command.</description></item>
+    /// <item><description>PostgreSQL: Uses ALTER ROLE ... NOLOGIN command.</description></item>
+    /// </list>
+    /// </remarks>
+    public static Task DisableLogin(this DatabaseFacade facade, string loginName, CancellationToken ct = default) =>
+        facade.GetProviderType() switch
+        {
+            Provider.Type.SqlServer => SqlServer.DisableLogin(facade, loginName, ct),
+            Provider.Type.PostgreSql => PostgreSql.DisableLogin(facade, loginName, ct),
+            _ => throw new NotSupportedException($"Provider '{facade.ProviderName}' is not supported for disabling logins.")
+        };
+
+    /// <summary>
+    /// Checks if the specified login is disabled on the database server.
+    /// </summary>
+    /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
+    /// <param name="loginName">The name of the login to check.</param>
+    /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation. The task result contains a boolean indicating whether the login is disabled.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="facade"/> or <paramref name="loginName"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="loginName"/> is empty or whitespace.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the database provider name is not set.</exception>
+    /// <exception cref="NotSupportedException">Thrown when the database provider is not supported for this operation.</exception>
+    /// <remarks>
+    /// This method supports SQL Server and PostgreSQL database providers:
+    /// <list type="bullet">
+    /// <item><description>SQL Server: Checks the is_disabled column in sys.server_principals.</description></item>
+    /// <item><description>PostgreSQL: Checks the rolcanlogin column in pg_roles (inverted logic).</description></item>
+    /// </list>
+    /// </remarks>
+    public static Task<bool> IsLoginDisabled(this DatabaseFacade facade, string loginName, CancellationToken ct = default) =>
+        facade.GetProviderType() switch
+        {
+            Provider.Type.SqlServer => SqlServer.IsLoginDisabled(facade, loginName, ct),
+            Provider.Type.PostgreSql => PostgreSql.IsLoginDisabled(facade, loginName, ct),
+            _ => throw new NotSupportedException($"Provider '{facade.ProviderName}' is not supported for checking login status.")
+        };
+
+    /// <summary>
+    /// Removes the specified login from the database server.
+    /// </summary>
+    /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
+    /// <param name="loginName">The name of the login to remove.</param>
+    /// <param name="ct">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="facade"/> or <paramref name="loginName"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="loginName"/> is empty or whitespace.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the database provider name is not set or the operation fails.</exception>
+    /// <exception cref="NotSupportedException">Thrown when the database provider is not supported for this operation.</exception>
+    /// <remarks>
+    /// This method supports SQL Server and PostgreSQL database providers:
+    /// <list type="bullet">
+    /// <item><description>SQL Server: Uses DROP LOGIN command.</description></item>
+    /// <item><description>PostgreSQL: Uses DROP ROLE IF EXISTS command.</description></item>
+    /// </list>
+    /// <para><strong>Warning:</strong> This operation permanently removes the login and cannot be undone.</para>
+    /// </remarks>
+    public static Task DropLogin(this DatabaseFacade facade, string loginName, CancellationToken ct = default) =>
+        facade.GetProviderType() switch
+        {
+            Provider.Type.SqlServer => SqlServer.DropLogin(facade, loginName, ct),
+            Provider.Type.PostgreSql => PostgreSql.DropLogin(facade, loginName, ct),
+            _ => throw new NotSupportedException($"Provider '{facade.ProviderName}' is not supported for dropping logins.")
         };
 
     /// <summary>
