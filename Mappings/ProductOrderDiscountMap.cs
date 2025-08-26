@@ -71,11 +71,11 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(productOrderDiscount => productOrderDiscount.UserId);
 
             builder.HasOne(productOrderDiscount => productOrderDiscount.ProductOrder)
-                .WithMany()
+                .WithMany(productOrder => productOrder.Discounts)
                 .HasForeignKey(productOrderDiscount => productOrderDiscount.ProductOrderId);
 
             builder.HasOne(productOrderDiscount => productOrderDiscount.ProductOrderLine)
-                .WithMany()
+                .WithMany(productOrderLine => productOrderLine.Discounts)
                 .HasForeignKey(productOrderDiscount => productOrderDiscount.ProductOrderLineId);
 
             builder.HasOne(productOrderDiscount => productOrderDiscount.Promotion)

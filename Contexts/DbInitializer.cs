@@ -1,16 +1,16 @@
-﻿using Gizmo.DAL.Entities;
-using Gizmo.DAL.Extensions;
-using Gizmo.DAL.Scripts;
-using Gizmo.Server.Security;
-using Gizmo.Server;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Gizmo.DAL.Entities;
+using Gizmo.DAL.Extensions;
+using Gizmo.DAL.Scripts;
+using Gizmo.Server;
+using Gizmo.Server.Security;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.Logging;
 
 namespace Gizmo.DAL.Contexts
 {
@@ -116,7 +116,21 @@ namespace Gizmo.DAL.Contexts
                     {
                         _logger.LogInformation("Source time zone is already UTC.");
                     }
-                }
+
+                    // update v2 deposit payment intents PaymentId based on DepositPayment associated payment
+                    using (var dbTransaction = _dbContext.Database.BeginTransaction())
+                    {
+                        var paymentIntentsQuery = _dbContext.Set<PaymentIntentDeposit>().Where(paymentIntent => paymentIntent.State == Entities.PaymentIntentState.Completed)
+                          .Where(paymentIntent => paymentIntent.DepositPaymentId != null);
+
+                        await paymentIntentsQuery.ExecuteUpdateAsync(setters => setters.SetProperty(paymentIntent => paymentIntent.PaymentId,
+                            paymentIntent => _dbContext.Set<PaymentIntentDeposit>().Where(depositIntent => depositIntent.Id == paymentIntent.DepositPaymentId)
+                            .Select(depositIntent => depositIntent.PaymentId)
+                            .Single()), cancellationToken);
+
+                        await dbTransaction.CommitAsync(cancellationToken);
+                    }
+                }             
             }
             else
             {
@@ -369,15 +383,15 @@ namespace Gizmo.DAL.Contexts
                         }
                     }
 
-                    foreach(var documentType in  Enum.GetValues<DocumentTypes>().Cast<DocumentTypes>())
+                    foreach (var documentType in Enum.GetValues<DocumentTypes>().Cast<DocumentTypes>())
                     {
-                        if(!_dbContext.DocumentTypes.Any(dt => dt.Id == (int)documentType))
+                        if (!_dbContext.DocumentTypes.Any(dt => dt.Id == (int)documentType))
                         {
                             _logger.LogTrace("Creating default document type {DocumentType}.", documentType);
                             var documentTypeEntity = new DocumentType()
                             {
                                 Id = (int)documentType,
-                                Name = documentType.ToString(),                   
+                                Name = documentType.ToString(),
                             };
                             _dbContext.DocumentTypes.Add(documentTypeEntity);
                         }

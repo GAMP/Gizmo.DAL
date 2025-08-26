@@ -51,6 +51,9 @@ namespace Gizmo.DAL.Mappings
             builder.Property(productOrder => productOrder.PrepareTime)
                 .IsRequired(false);
 
+            builder.Property(productOrder => productOrder.BranchId)
+                .IsRequired(false);
+
             builder.HasOne(productOrder => productOrder.User)
                 .WithMany(productOrder => productOrder.ProductOrders)
                 .HasForeignKey(productOrder => productOrder.UserId)
@@ -67,6 +70,11 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(productOrder => productOrder.ModifiedBy)
                 .WithMany(productOrder => productOrder.ModifiedOrders)
                 .HasForeignKey(productOrder => productOrder.ModifiedById);
+
+            builder.HasOne(productOrder => productOrder.Branch)
+                .WithMany(branch => branch.Orders)
+                .HasForeignKey(productOrder => productOrder.BranchId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

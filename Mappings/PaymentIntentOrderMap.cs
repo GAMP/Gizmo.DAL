@@ -14,28 +14,25 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<PaymentIntentOrder> builder)
         {
-            builder.Property(x => x.ProductOrderId)
-                //.IsRequired(false)
+            builder.ToTable(nameof(PaymentIntentOrder));
+
+            builder.Property(paymentIntentOrder => paymentIntentOrder.AutoComplete)
+                .IsRequired(true)
+                .HasColumnOrder(0);
+
+            builder.Property(paymentIntentOrder => paymentIntentOrder.DisableReceiptPrinting)
+                .IsRequired(true)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.InvoicePaymentId)
-                .IsRequired(false)
-                .HasColumnOrder(2);
-
-            // Indexes
-            builder.HasIndex(t => t.InvoicePaymentId).IsUnique(); //same invoice payment may not appear multiple times
-            builder.HasIndex(t => t.Id);
-
-            builder.HasOne(x => x.ProductOrder)
-                .WithMany(x => x.PaymentIntents)
-                .HasForeignKey(x => x.ProductOrderId)
+            builder.HasMany(paymentIntentOrder => paymentIntentOrder.Orders)
+                .WithOne(paymentIntentOrderOrder => paymentIntentOrderOrder.PaymentIntentOrder)
+                .HasForeignKey(paymentIntentOrderOrder => paymentIntentOrderOrder.PaymentIntentOrderId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(x => x.InvoicePayment)
-                .WithMany()
-                .HasForeignKey(x => x.InvoicePaymentId);
-
-            builder.ToTable(nameof(PaymentIntentOrder));
+            builder.HasMany(paymentIntentOrder => paymentIntentOrder.Deposits)
+                .WithOne(paymentIntentOrderDeposit => paymentIntentOrderDeposit.PaymentIntentOrder)
+                .HasForeignKey(paymentIntentOrderDeposit => paymentIntentOrderDeposit.PaymentIntentOrderId)
+                .OnDelete(DeleteBehavior.NoAction);        
         }
     }
 }

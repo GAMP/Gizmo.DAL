@@ -528,6 +528,11 @@ namespace Gizmo.DAL.Contexts
         public DbSet<Reservation> Reservations { get; set; }
 
         /// <summary>
+        /// Reservation orders.
+        /// </summary>
+        public DbSet<ReservationProductOrder> ReservationOrders { get; set; }
+
+        /// <summary>
         /// Gets reservation hosts.
         /// </summary>
         public DbSet<ReservationHost> ReservationHosts { get; set; }
@@ -673,6 +678,11 @@ namespace Gizmo.DAL.Contexts
         /// Gets usage session order lines.
         /// </summary>
         public DbSet<ProductOLSession> OrderLineSession { get; set; }
+
+        /// <summary>
+        /// Order discounts.
+        /// </summary>
+        public DbSet<ProductOrderDiscount> OrderDiscounts { get; set; }
 
         /// <summary>
         /// Gets invoices.
@@ -1081,7 +1091,7 @@ namespace Gizmo.DAL.Contexts
         public DbSet<AgeRestrictionLogin> AgeLoginRestrictions { get; set; }
 
         /// <summary>
-        /// Gets topup presets.
+        /// Gets top-up presets.
         /// </summary>
         public DbSet<PresetTopUp> PresetTopUps { get; set; }
 
@@ -1449,6 +1459,10 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new ClientOptionsMap());
 
             modelBuilder.ApplyConfiguration(new ProductOrderDiscountMap());
+
+            modelBuilder.ApplyConfiguration(new IntentOrderMap());
+            modelBuilder.ApplyConfiguration(new IntentOrderDepositMap());
+            modelBuilder.ApplyConfiguration(new RefundPaymentMap());
            
 
             #region GLOBAL CONFIGURATIONS
