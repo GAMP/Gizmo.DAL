@@ -14,7 +14,11 @@ using Testcontainers.MsSql;
 using Testcontainers.PostgreSql;
 using Xunit;
 
-[assembly: CollectionBehavior(DisableTestParallelization = false, MaxParallelThreads = 4)]
+[CollectionDefinition("DatabaseCollection", DisableParallelization = true)]
+public class DatabaseCollection : ICollectionFixture<DatabaseTestFixture>
+{
+    
+}
 
 public class DatabaseTestFixture : IAsyncLifetime
 {

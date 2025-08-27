@@ -5,7 +5,8 @@ using Xunit;
 
 namespace Gizmo.DAL.Tests.Extensions.Database;
 
-public class DdlExtensionsTests(DatabaseTestFixture fixture) : IClassFixture<DatabaseTestFixture>
+[Collection("DatabaseCollection")]
+public class DdlExtensionsTests(DatabaseTestFixture fixture)
 {
     private readonly DatabaseTestFixture _fixture = fixture;
 

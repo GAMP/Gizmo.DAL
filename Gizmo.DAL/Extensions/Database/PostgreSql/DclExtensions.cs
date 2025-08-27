@@ -51,7 +51,7 @@ internal static class PostgreSql
                     connection = new ConnectionMetadata
                     {
                         Host = builder.Host,
-                        Port = builder.Port != 5432 ? builder.Port : null, // Only store port if non-default
+                        Port = builder.Port,
                         Username = builder.Username,
                         Password = builder.Password,
                         DatabaseName = builder.Database,

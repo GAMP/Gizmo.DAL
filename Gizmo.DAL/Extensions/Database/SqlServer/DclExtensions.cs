@@ -19,6 +19,7 @@ internal static class SqlServer
         public string Password { get; init; }
         public DatabaseType DatabaseType { get; init; } = DatabaseType.MSSQL;
         public SQLServerAuthentication AuthenticationType { get; init; } = SQLServerAuthentication.Integrated;
+        public bool TrustServerCertificate { get; init; } = false;
 
         public string ToConnectionString()
         {
@@ -44,7 +45,7 @@ internal static class SqlServer
                         builder.Password = Password;
                 }
 
-                if (DatabaseType == DatabaseType.LOCALDB)
+                if (DatabaseType == DatabaseType.LOCALDB || TrustServerCertificate)
                     builder.TrustServerCertificate = true;
 
                 return builder.ConnectionString;
@@ -73,7 +74,7 @@ internal static class SqlServer
 
                     var dbType = DatabaseType.MSSQL;
 
-                    if (LocalDbKeys.Any(key => dataSource.Contains(key, StringComparison.OrdinalIgnoreCase)))
+                    if (port is null && LocalDbKeys.Any(key => dataSource.Contains(key, StringComparison.OrdinalIgnoreCase)))
                     {
                         dbType = DatabaseType.LOCALDB;
                     }
@@ -90,7 +91,8 @@ internal static class SqlServer
                         Username = builder.UserID,
                         Password = builder.Password,
                         DatabaseName = builder.InitialCatalog,
-                        DatabaseType = dbType
+                        DatabaseType = dbType,
+                        TrustServerCertificate = builder.TrustServerCertificate
                     };
 
                     Provider.Metadata[connectionString] = connection;
@@ -119,7 +121,8 @@ internal static class SqlServer
                 Password = Password,
                 DatabaseName = databaseName,
                 AuthenticationType = AuthenticationType,
-                DatabaseType = DatabaseType
+                DatabaseType = DatabaseType,
+                TrustServerCertificate = TrustServerCertificate
             };
         }
     }
