@@ -19,7 +19,6 @@ internal static class SqlServer
         public string Password { get; init; }
         public DatabaseType DatabaseType { get; init; } = DatabaseType.MSSQL;
         public SQLServerAuthentication AuthenticationType { get; init; } = SQLServerAuthentication.Integrated;
-        public bool TrustServerCertificate { get; init; } = false;
 
         public string ToConnectionString()
         {
@@ -45,8 +44,7 @@ internal static class SqlServer
                         builder.Password = Password;
                 }
 
-                if (DatabaseType == DatabaseType.LOCALDB || TrustServerCertificate)
-                    builder.TrustServerCertificate = true;
+                builder.TrustServerCertificate = true;
 
                 return builder.ConnectionString;
             }
@@ -92,7 +90,6 @@ internal static class SqlServer
                         Password = builder.Password,
                         DatabaseName = builder.InitialCatalog,
                         DatabaseType = dbType,
-                        TrustServerCertificate = builder.TrustServerCertificate
                     };
 
                     Provider.Metadata[connectionString] = connection;
@@ -121,8 +118,7 @@ internal static class SqlServer
                 Password = Password,
                 DatabaseName = databaseName,
                 AuthenticationType = AuthenticationType,
-                DatabaseType = DatabaseType,
-                TrustServerCertificate = TrustServerCertificate
+                DatabaseType = DatabaseType
             };
         }
     }
