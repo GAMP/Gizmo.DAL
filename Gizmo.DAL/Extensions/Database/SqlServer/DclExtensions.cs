@@ -13,7 +13,7 @@ internal static class SqlServer
     public sealed class ConnectionMetadata : IConnectionMetadata
     {
         public string Host { get; init; } = "localhost";
-        public int Port { get; init; } = 1433;
+        public int? Port { get; init; } = null;
         public string DatabaseName { get; init; } = string.Empty;
         public string Username { get; init; }
         public string Password { get; init; }
@@ -26,7 +26,11 @@ internal static class SqlServer
             {
                 var builder = new SqlConnectionStringBuilder
                 {
-                    DataSource = $"{Host},{Port}",
+                    DataSource = DatabaseType == DatabaseType.LOCALDB
+                        ? Host 
+                        : Port.HasValue
+                            ? $"{Host},{Port.Value}" 
+                            : Host,
                     InitialCatalog = DatabaseName,
                     IntegratedSecurity = AuthenticationType == SQLServerAuthentication.Integrated
                 };
@@ -64,8 +68,8 @@ internal static class SqlServer
 
                     var host = split[0];
                     var port = split.Length > 1 && int.TryParse(split[1], out int parsedPort)
-                        ? parsedPort
-                        : 1433; // Default SQL Server port
+                        ? (int?)parsedPort
+                        : null;
 
                     var dbType = DatabaseType.MSSQL;
 

@@ -61,8 +61,8 @@ public interface IConnectionMetadata
     /// <summary>
     /// Gets the database server port number.
     /// </summary>
-    /// <value>The port number used to connect to the database server. Default varies by provider (e.g., 1433 for SQL Server, 5432 for PostgreSQL).</value>
-    int Port { get; }
+    /// <value>The port number used to connect to the database server. If null, the provider will use its default port or instance resolution.</value>
+    int? Port { get; }
 
     /// <summary>
     /// Gets the username for database authentication.

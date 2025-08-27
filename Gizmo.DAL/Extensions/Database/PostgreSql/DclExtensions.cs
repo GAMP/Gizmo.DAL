@@ -9,7 +9,7 @@ internal static class PostgreSql
     internal sealed class ConnectionMetadata : IConnectionMetadata
     {
         public string Host { get; init; } = "localhost";
-        public int Port { get; init; } = 5432;
+        public int? Port { get; init; } = null;
         public string Username { get; init; } = "postgres";
         public string Password { get; init; } = string.Empty;
         public string DatabaseName { get; init; } = string.Empty;
@@ -23,11 +23,14 @@ internal static class PostgreSql
                 var builder = new NpgsqlConnectionStringBuilder
                 {
                     Host = Host,
-                    Port = Port,
                     Username = Username,
                     Password = Password,
                     Database = DatabaseName
                 };
+
+                // When Port is null → uses default 5432
+                if (Port.HasValue)
+                    builder.Port = Port.Value;
 
                 return builder.ConnectionString;
             }
@@ -48,7 +51,7 @@ internal static class PostgreSql
                     connection = new ConnectionMetadata
                     {
                         Host = builder.Host,
-                        Port = builder.Port,
+                        Port = builder.Port != 5432 ? builder.Port : null, // Only store port if non-default
                         Username = builder.Username,
                         Password = builder.Password,
                         DatabaseName = builder.Database,

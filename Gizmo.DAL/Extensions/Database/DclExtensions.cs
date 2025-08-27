@@ -23,7 +23,7 @@ public static class DclOperations
     /// </summary>
     /// <param name="type">The type of database provider (SQL Server, PostgreSQL, MySQL, etc.).</param>
     /// <param name="host">The host name or IP address of the database server.</param>
-    /// <param name="port">The port number of the database server.</param>
+    /// <param name="port">The port number of the database server. If null, the provider will use its default port or instance resolution.</param>
     /// <param name="databaseName">The name of the database to connect to.</param>
     /// <param name="username">The username for authentication. Optional for integrated authentication scenarios.</param>
     /// <param name="password">The password for authentication. Optional for integrated authentication scenarios.</param>
@@ -38,7 +38,7 @@ public static class DclOperations
     /// </remarks>
     public static IConnectionMetadata CreateConnectionMetadata(DatabaseType type,
             string host,
-            int port,
+            int? port,
             string databaseName,
             string username = null,
             string password = null,

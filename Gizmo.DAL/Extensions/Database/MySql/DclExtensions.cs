@@ -8,14 +8,16 @@ internal static class MySql
     public sealed class ConnectionMetadata : IConnectionMetadata
     {
         public string Host { get; init; } = "localhost";
-        public int Port { get; init; } = 3306;
+        public int? Port { get; init; } = null;
         public string Username { get; init; } = "root";
         public string Password { get; init; } = string.Empty;
         public string DatabaseName { get; init; } = string.Empty;
         public DatabaseType DatabaseType => DatabaseType.MYSQL;
         public SQLServerAuthentication AuthenticationType => SQLServerAuthentication.Unspecified;
 
-        public string ToConnectionString() => $"Server={Host};Port={Port};User ID={Username};Password={Password};Database={DatabaseName};";
+        // When Port is null → uses default 3306
+        public string ToConnectionString() =>
+            $"Server={Host}{(Port.HasValue ? $";Port={Port.Value}" : "")};User ID={Username};Password={Password};Database={DatabaseName};";
 
         public static IConnectionMetadata FromConnectionString(string connectionString)
         {
@@ -25,7 +27,7 @@ internal static class MySql
                 {
                     var tokens = connectionString.Split(';', StringSplitOptions.RemoveEmptyEntries);
                     string host = "localhost";
-                    int port = 3306;
+                    int? port = null;
                     string username = "root";
                     string password = "root";
                     string databaseName = string.Empty;
@@ -46,7 +48,8 @@ internal static class MySql
 
                                     break;
                                 case "port":
-                                    port = int.Parse(value);
+                                    if (int.TryParse(value, out int parsedPort) && parsedPort != 3306)
+                                        port = parsedPort; // Only store non-default ports
 
                                     break;
                                 case "user id":
