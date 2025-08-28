@@ -1,0 +1,58 @@
+version: '3.8'
+
+# Values are loaded from .env file in the same directory
+
+services:
+  #Server=localhost,1433;Database=$MSSQL_DB_NAME;User Id=sa;Password=$MSSQL_DB_PASSWORD;
+  mssql:
+    container_name: mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+      - MSSQL_AGENT_ENABLED=true
+      - MSSQL_SA_PASSWORD=${MSSQL_DB_PASSWORD}
+      - DB_NAME=${MSSQL_DB_NAME}
+      - DB_PASSWORD=${MSSQL_DB_PASSWORD}
+      - BACKUP_FILE=${MSSQL_BACKUP_FILE}
+    ports:
+      - "1433:1433"
+    volumes:
+      - D:\gizmo\test_db:/var/opt/mssql/backups
+      - ./init-db-scripts/init-mssql.sh:/usr/local/bin/init-mssql.sh
+    entrypoint: ["/usr/local/bin/init-mssql.sh"]
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${MSSQL_DB_PASSWORD}", "-C", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    networks:
+      - config-tools-network
+
+  #Host=localhost;Port=5432;Database=$POSTGRES_DB_NAME;Username=$POSTGRES_USER;Password=$POSTGRES_DB_PASSWORD;
+  postgres:
+    container_name: postgres
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_DB_PASSWORD}
+      - DB_NAME=${POSTGRES_DB_NAME}
+      - BACKUP_FILE=${POSTGRES_BACKUP_FILE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - D:\gizmo\test_db:/var/opt/postgres/backups
+      - ./init-db-scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
+    healthcheck:
+      test: ["CMD", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - config-tools-network
+
+networks:
+  config-tools-network:
+    driver: bridge
