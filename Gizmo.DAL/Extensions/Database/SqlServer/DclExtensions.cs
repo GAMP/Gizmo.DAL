@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Microsoft.Data.SqlClient;
 using SharedLib;
@@ -32,7 +32,8 @@ internal static class SqlServer
                             ? $"{Host},{Port.Value}" 
                             : Host,
                     InitialCatalog = DatabaseName,
-                    IntegratedSecurity = AuthenticationType == SQLServerAuthentication.Integrated
+                    IntegratedSecurity = AuthenticationType == SQLServerAuthentication.Integrated,
+                    TrustServerCertificate = true
                 };
 
                 if (!builder.IntegratedSecurity)
@@ -43,8 +44,6 @@ internal static class SqlServer
                     if (Password is not null)
                         builder.Password = Password;
                 }
-
-                builder.TrustServerCertificate = true;
 
                 return builder.ConnectionString;
             }
