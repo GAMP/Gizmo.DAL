@@ -126,14 +126,13 @@ internal static class PostgreSql
             await using var command = connection.CreateCommand();
 
             // Check if role exists with detailed info
-            command.CommandText =
-                """
-                    SELECT r.rolname, 
-                        NOT r.rolcanlogin as is_disabled,
-                        CASE WHEN r.rolpassword IS NOT NULL THEN 'P' ELSE 'N' END as has_password
-                    FROM pg_roles r 
-                    WHERE r.rolname = @loginName
-                """;
+            command.CommandText = """
+                SELECT r.rolname, 
+                    NOT r.rolcanlogin as is_disabled,
+                    CASE WHEN r.rolpassword IS NOT NULL THEN 'P' ELSE 'N' END as has_password
+                FROM pg_roles r 
+                WHERE r.rolname = @loginName
+            """;
 
             command.Parameters.AddWithValue("@loginName", login);
 
@@ -195,14 +194,13 @@ internal static class PostgreSql
 
             await using var command = connection.CreateCommand();
 
-            command.CommandText =
-                """
-                    SELECT datname 
-                    FROM pg_database 
-                    WHERE datistemplate = false 
-                    AND datname NOT IN ('postgres')
-                    ORDER BY datname
-                """;
+            command.CommandText = """
+                SELECT datname 
+                FROM pg_database 
+                WHERE datistemplate = false 
+                AND datname NOT IN ('postgres')
+                ORDER BY datname
+            """;
 
             var dbNames = new List<string>();
 
@@ -263,6 +261,7 @@ internal static class PostgreSql
 
             var metadata = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
 
+            // This is required if we use TestContainers library local
             var docker = Environment.GetEnvironmentVariable("POSTGRES_DOCKER");
             var isDocker = !string.IsNullOrEmpty(docker);
 
@@ -343,6 +342,7 @@ internal static class PostgreSql
 
             var metadata = ConnectionMetadata.FromConnectionString(facade.GetConnectionString());
 
+            // This is required if we use TestContainers library local
             var docker = Environment.GetEnvironmentVariable("POSTGRES_DOCKER");
             var isDocker = !string.IsNullOrEmpty(docker);
 
@@ -442,13 +442,12 @@ internal static class PostgreSql
             // Disconnect all users
             await using var command = connection.CreateCommand();
 
-            command.CommandText =
-                """
-                    SELECT pg_terminate_backend(pg_stat_activity.pid)
-                    FROM pg_stat_activity
-                    WHERE pg_stat_activity.datname = @databaseName
-                    AND pid <> pg_backend_pid()
-                """;
+            command.CommandText = """
+                SELECT pg_terminate_backend(pg_stat_activity.pid)
+                FROM pg_stat_activity
+                WHERE pg_stat_activity.datname = @databaseName
+                AND pid <> pg_backend_pid()
+            """;
 
             command.Parameters.AddWithValue("@databaseName", metadata.DatabaseName);
             await command.ExecuteNonQueryAsync(ct);

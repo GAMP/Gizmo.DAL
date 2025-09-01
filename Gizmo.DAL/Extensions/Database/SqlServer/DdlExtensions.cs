@@ -51,7 +51,7 @@ internal static class SqlServer
             JOIN sys.server_principals sp ON srm.member_principal_id = sp.principal_id
             JOIN sys.server_principals sr ON srm.role_principal_id = sr.principal_id
             WHERE sp.name = @loginName AND sr.name = 'sysadmin'
-            """;
+        """;
 
         var parameter = command.CreateParameter();
         parameter.ParameterName = "@loginName";
@@ -132,12 +132,11 @@ internal static class SqlServer
             await using var command = connection.CreateCommand();
 
             // Check if login exists with detailed info
-            command.CommandText =
-                """
-                    SELECT sp.name, sp.is_disabled, sp.type
-                    FROM sys.server_principals AS sp
-                    WHERE sp.name = @loginName
-                """;
+            command.CommandText = """
+                SELECT sp.name, sp.is_disabled, sp.type
+                FROM sys.server_principals AS sp
+                WHERE sp.name = @loginName
+            """;
 
             command.Parameters.AddWithValue("@loginName", login);
 
@@ -168,16 +167,28 @@ internal static class SqlServer
                 return; // SQL login already exists with proper state
             }
 
+            // This is required if we use TestContainers library local
+            var docker = Environment.GetEnvironmentVariable("POSTGRES_DOCKER");
+            var isDocker = !string.IsNullOrEmpty(docker);
+
+            var isLinux = OperatingSystem.IsLinux() || isDocker;
+
             command.Parameters.Clear();
+
+            var createLoginCommand = isLinux
+            ? $"""
+                    CREATE LOGIN [{login}] WITH PASSWORD = N'{metadata.Password}', DEFAULT_DATABASE = [master], CHECK_POLICY = OFF;
+                    ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
+                """
+            : $"""
+                    CREATE LOGIN [{login}] FROM WINDOWS;
+                    ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
+                """;
 
             if (string.IsNullOrEmpty(existingLogin))
             {
                 // Create new SQL login
-                command.CommandText =
-                    $"""
-                        CREATE LOGIN [{login}] WITH PASSWORD = N'{metadata.Password}', DEFAULT_DATABASE = [master], CHECK_POLICY = OFF;
-                        ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
-                     """;
+                command.CommandText = createLoginCommand;
                 await command.ExecuteNonQueryAsync(ct);
             }
             else
@@ -186,11 +197,7 @@ internal static class SqlServer
                 command.CommandText = $"DROP LOGIN [{existingLogin}]";
                 await command.ExecuteNonQueryAsync(ct);
 
-                command.CommandText =
-                    $"""
-                        CREATE LOGIN [{login}] WITH PASSWORD = N'{metadata.Password}', DEFAULT_DATABASE = [master], CHECK_POLICY = OFF;
-                        ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
-                     """;
+                command.CommandText = createLoginCommand;
                 await command.ExecuteNonQueryAsync(ct);
             }
         }
@@ -212,13 +219,12 @@ internal static class SqlServer
 
             await using var command = connection.CreateCommand();
 
-            command.CommandText =
-                """
-                    SELECT name 
-                    FROM master.sys.databases 
-                    WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb')
-                    ORDER BY name
-                """;
+            command.CommandText = """
+                SELECT name 
+                FROM master.sys.databases 
+                WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb')
+                ORDER BY name
+            """;
 
             var dbNames = new List<string>();
 
@@ -281,12 +287,11 @@ internal static class SqlServer
 
             await using var command = connection.CreateCommand();
 
-            command.CommandText =
-                $"""
-                     BACKUP DATABASE [{metadata.DatabaseName}]
-                     TO DISK = @backupFile
-                     WITH FORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 10
-                 """;
+            command.CommandText = $"""
+                BACKUP DATABASE [{metadata.DatabaseName}]
+                TO DISK = @backupFile
+                WITH FORMAT, INIT, SKIP, NOREWIND, NOUNLOAD, STATS = 10
+            """;
 
             command.Parameters.AddWithValue("@backupFile", backupFile);
             command.CommandTimeout = 1000;
@@ -328,14 +333,13 @@ internal static class SqlServer
                 moveStatement.Append($"MOVE N'{file.LogicalName}' TO N'{file.TargetPath}',");
             }
 
-            string restoreSql =
-                $"""
-                    ALTER DATABASE [{metadata.DatabaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-                    RESTORE DATABASE [{metadata.DatabaseName}]
-                    FROM DISK = @backupFile
-                    WITH FILE = 1, {moveStatement} NOUNLOAD, STATS = 10, REPLACE, RECOVERY
-                    ALTER DATABASE [{metadata.DatabaseName}] SET MULTI_USER;
-                 """;
+            string restoreSql = $"""
+                ALTER DATABASE [{metadata.DatabaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                RESTORE DATABASE [{metadata.DatabaseName}]
+                FROM DISK = @backupFile
+                WITH FILE = 1, {moveStatement} NOUNLOAD, STATS = 10, REPLACE, RECOVERY
+                ALTER DATABASE [{metadata.DatabaseName}] SET MULTI_USER;
+            """;
 
             await using var command = masterConnection.CreateCommand();
             command.CommandText = restoreSql;
@@ -397,10 +401,9 @@ internal static class SqlServer
             await using var command = connection.CreateCommand();
 
             // Create the database with proper file locations
-            command.CommandText =
-                $"""
-                    CREATE DATABASE [{metadata.DatabaseName}];
-                """;
+            command.CommandText = $"""
+                CREATE DATABASE [{metadata.DatabaseName}];
+            """;
             await command.ExecuteNonQueryAsync(ct);
         }
         catch (Exception ex)
@@ -414,33 +417,32 @@ internal static class SqlServer
         var dataDirectory = string.Empty;
         var logDirectory = string.Empty;
 
-        const string Sql =
-            """
-                IF CHARINDEX('Linux', @@VERSION) > 0
-                    BEGIN
-                        -- On Linux, get directories from system views
-                        SELECT 
-                            DefaultData = (SELECT physical_name FROM sys.master_files WHERE database_id = 1 AND file_id = 1),
-                            DefaultLog = (SELECT physical_name FROM sys.master_files WHERE database_id = 1 AND file_id = 2)
-                    END
-                ELSE
-                    BEGIN
-                        -- On Windows, use registry
-                        DECLARE @DefaultData nvarchar(512)
-                        EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'DefaultData', @DefaultData OUTPUT
-                        DECLARE @DefaultLog nvarchar(512)
-                        EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'DefaultLog', @DefaultLog OUTPUT
-                        DECLARE @MasterData nvarchar(512)
-                        EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer\Parameters', N'SqlArg0', @MasterData OUTPUT
-                        SELECT @MasterData=SUBSTRING(@MasterData, 3, 255)
-                        SELECT @MasterData=SUBSTRING(@MasterData, 1, LEN(@MasterData) - CHARINDEX('\', REVERSE(@MasterData)))
-                        DECLARE @MasterLog nvarchar(512)
-                        EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer\Parameters', N'SqlArg2', @MasterLog OUTPUT
-                        SELECT @MasterLog=SUBSTRING(@MasterLog, 3, 255)
-                        SELECT @MasterLog=SUBSTRING(@MasterLog, 1, LEN(@MasterLog) - CHARINDEX('\', REVERSE(@MasterLog)))
-                        SELECT ISNULL(@DefaultData, @MasterData) DefaultData, ISNULL(@DefaultLog, @MasterLog) DefaultLog
-                    END
-            """;
+        const string Sql = """
+            IF CHARINDEX('Linux', @@VERSION) > 0
+                BEGIN
+                    -- On Linux, get directories from system views
+                    SELECT 
+                        DefaultData = (SELECT physical_name FROM sys.master_files WHERE database_id = 1 AND file_id = 1),
+                        DefaultLog = (SELECT physical_name FROM sys.master_files WHERE database_id = 1 AND file_id = 2)
+                END
+            ELSE
+                BEGIN
+                    -- On Windows, use registry
+                    DECLARE @DefaultData nvarchar(512)
+                    EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'DefaultData', @DefaultData OUTPUT
+                    DECLARE @DefaultLog nvarchar(512)
+                    EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'DefaultLog', @DefaultLog OUTPUT
+                    DECLARE @MasterData nvarchar(512)
+                    EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer\Parameters', N'SqlArg0', @MasterData OUTPUT
+                    SELECT @MasterData=SUBSTRING(@MasterData, 3, 255)
+                    SELECT @MasterData=SUBSTRING(@MasterData, 1, LEN(@MasterData) - CHARINDEX('\', REVERSE(@MasterData)))
+                    DECLARE @MasterLog nvarchar(512)
+                    EXEC master.dbo.xp_instance_regread N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer\Parameters', N'SqlArg2', @MasterLog OUTPUT
+                    SELECT @MasterLog=SUBSTRING(@MasterLog, 3, 255)
+                    SELECT @MasterLog=SUBSTRING(@MasterLog, 1, LEN(@MasterLog) - CHARINDEX('\', REVERSE(@MasterLog)))
+                    SELECT ISNULL(@DefaultData, @MasterData) DefaultData, ISNULL(@DefaultLog, @MasterLog) DefaultLog
+                END
+        """;
 
         try
         {

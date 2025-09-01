@@ -188,16 +188,14 @@ internal static class SqlServer
 
     public static string CleanupUsersScript()
     {
-        static string DeleteFromTableForCleanup(string tableName, string subquery, string columnName = "UserId") =>
-            $"""
+        static string DeleteFromTableForCleanup(string tableName, string subquery, string columnName = "UserId") => $"""
             DELETE FROM [{tableName}] 
             WHERE {columnName} IN (
                 {subquery}
             );
-            """;
+        """;
 
-        static string DeleteFromTableWithJoinForCleanup(string tableName, string joinTableName, string joinColumnName, string subquery, string whereColumnName = "UserId") =>
-            $"""
+        static string DeleteFromTableWithJoinForCleanup(string tableName, string joinTableName, string joinColumnName, string subquery, string whereColumnName = "UserId") => $"""
             DELETE FROM [{tableName}] 
             WHERE {joinColumnName} IN (
                 SELECT {joinColumnName} 
@@ -206,10 +204,9 @@ internal static class SqlServer
                     {subquery}
                 )
             );
-            """;
+        """;
 
-        static string UpdateTableSetNullForCleanup(string tableName, string columnToSetNull, string joinTableName, string joinColumnName, string subquery, string whereColumnName = "UserId") =>
-            $"""
+        static string UpdateTableSetNullForCleanup(string tableName, string columnToSetNull, string joinTableName, string joinColumnName, string subquery, string whereColumnName = "UserId") => $"""
             UPDATE [{tableName}] 
             SET {columnToSetNull} = NULL 
             WHERE {joinColumnName} IN (
@@ -219,18 +216,17 @@ internal static class SqlServer
                     {subquery}
                 )
             );
-            """;
+        """;
 
-        const string DeletedUsersSubquery =
-            """
-               SELECT A.UserId 
-               FROM [User] AS A 
-               LEFT OUTER JOIN UserGuest AS B ON A.UserId = B.UserId 
-               LEFT OUTER JOIN UserOperator AS C ON A.UserId = C.UserId 
-               WHERE A.IsDeleted = 1
-               AND B.UserId IS NULL 
-               AND C.UserId IS NULL
-            """;
+        const string DeletedUsersSubquery = """
+            SELECT A.UserId 
+            FROM [User] AS A 
+            LEFT OUTER JOIN UserGuest AS B ON A.UserId = B.UserId 
+            LEFT OUTER JOIN UserOperator AS C ON A.UserId = C.UserId 
+            WHERE A.IsDeleted = 1
+            AND B.UserId IS NULL 
+            AND C.UserId IS NULL
+        """;
 
         var script = new StringBuilder();
 
@@ -287,7 +283,7 @@ internal static class SqlServer
             WHERE CreatedById IN (
                 {DeletedUsersSubquery}
             );
-            """);
+        """);
 
         script.AppendLine($"""
             DELETE FROM [RefundDepositPayment] 
@@ -302,7 +298,7 @@ internal static class SqlServer
                     )
                 )
             );
-            """);
+        """);
 
         // Update operations setting NULL values
         script.AppendLine();
@@ -319,7 +315,7 @@ internal static class SqlServer
             AND UserId IN (
                 {DeletedUsersSubquery}
             );
-            """);
+        """);
 
         return script.ToString();
     }
