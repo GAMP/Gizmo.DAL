@@ -16,8 +16,9 @@ services:
       - DB_PASSWORD=${MSSQL_DB_PASSWORD}
       - BACKUP_FILE=${MSSQL_BACKUP_FILE}
     ports:
-      - "1433:1433"
+      - 1433:1433
     volumes:
+      - mssql_volume:/var/opt/mssql
       - D:\gizmo\test_db:/var/opt/mssql/backups
       - ./init-db-scripts/init-mssql.sh:/usr/local/bin/init-mssql.sh
     entrypoint: ["/usr/local/bin/init-mssql.sh"]
@@ -28,7 +29,7 @@ services:
       retries: 5
       start_period: 60s
     networks:
-      - config-tools-network
+      - gizmo-database-network
 
   #Host=localhost;Port=5432;Database=$POSTGRES_DB_NAME;Username=$POSTGRES_USER;Password=$POSTGRES_DB_PASSWORD;
   postgres:
@@ -40,8 +41,9 @@ services:
       - DB_NAME=${POSTGRES_DB_NAME}
       - BACKUP_FILE=${POSTGRES_BACKUP_FILE}
     ports:
-      - "5432:5432"
+      - 5432:5432
     volumes:
+      - postgres_volume:/var/lib/postgresql/data
       - D:\gizmo\test_db:/var/opt/postgres/backups
       - ./init-db-scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
     healthcheck:
@@ -51,8 +53,26 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      - config-tools-network
+      - gizmo-database-network
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - 5050:80
+    volumes:
+      - pgadmin_volume:/var/lib/pgadmin
+    networks:
+      - gizmo-database-network
 
 networks:
-  config-tools-network:
+  gizmo-database-network:
     driver: bridge
+
+volumes:
+  mssql_volume:
+  postgres_volume:
+  pgadmin_volume:
