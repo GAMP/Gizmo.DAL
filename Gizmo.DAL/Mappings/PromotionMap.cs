@@ -33,6 +33,14 @@ namespace Gizmo.DAL.Mappings
             builder.Property(promotion => promotion.CodeType)
                 .HasColumnOrder(3)
                 .IsRequired();
+
+            builder.Property(promotion => promotion.IsDisabled)
+               .HasColumnOrder(4)
+               .IsRequired();
+
+            builder.Property(promotion => promotion.IsDeleted)
+               .HasColumnOrder(5)
+               .IsRequired();
         }
     }
 }

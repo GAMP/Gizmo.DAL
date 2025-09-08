@@ -3220,6 +3220,109 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.ToTable("Icon", (string)null);
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.IntentOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("IntentOrderId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("InvoicePaymentId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("PaymentIntentOrderId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("ProductOrderId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("InvoicePaymentId")
+                        .IsUnique();
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("ProductOrderId");
+
+                    b.HasIndex("PaymentIntentOrderId", "ProductOrderId")
+                        .IsUnique();
+
+                    b.ToTable("IntentOrder", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.IntentOrderDeposit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("IntentOrderDepositId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)")
+                        .HasColumnOrder(3);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("DepositPaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("PaymentIntentOrderId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("PaymentIntentOrderId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("IntentOrderDeposit", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Inventory", b =>
                 {
                     b.Property<int>("Id")
@@ -4484,6 +4587,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int?>("Expiration")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(10);
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(11);
+
                     b.Property<Guid>("Guid")
                         .HasColumnType("uuid")
                         .HasColumnOrder(8);
@@ -4494,14 +4605,18 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("PaymentLinkUrl")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnOrder(9);
+                    b.Property<int?>("PaymentId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(12);
 
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("integer")
                         .HasColumnOrder(2);
+
+                    b.Property<string>("PaymentUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnOrder(9);
 
                     b.Property<Guid>("Provider")
                         .HasColumnType("uuid")
@@ -4534,6 +4649,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsUnique();
 
                     b.HasIndex("ModifiedById");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
 
                     b.HasIndex("PaymentMethodId");
 
@@ -5556,6 +5674,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("CreatedById")
                         .HasColumnType("integer");
 
@@ -5638,6 +5759,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -6112,6 +6235,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnOrder(2);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(5);
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("integer");
@@ -9414,19 +9545,16 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 {
                     b.HasBaseType("Gizmo.DAL.Entities.PaymentIntent");
 
-                    b.Property<int?>("InvoicePaymentId")
-                        .HasColumnType("integer")
-                        .HasColumnOrder(2);
+                    b.Property<bool>("AutoComplete")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(0);
 
-                    b.Property<int>("ProductOrderId")
-                        .HasColumnType("integer")
+                    b.Property<bool>("DisableReceiptPrinting")
+                        .HasColumnType("boolean")
                         .HasColumnOrder(1);
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("InvoicePaymentId")
-                        .IsUnique();
+                    b.Property<int?>("ProductOrderId")
+                        .HasColumnType("integer");
 
                     b.HasIndex("ProductOrderId");
 
@@ -9627,6 +9755,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsUnique();
 
                     b.ToTable("RefundInvoicePayment", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.RefundPayment", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.Refund");
+
+                    b.Property<int?>("FiscalReceiptId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FiscalReceiptStatus")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("FiscalReceiptId");
+
+                    b.ToTable("RefundPayment", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ScheduleReport", b =>
@@ -10822,7 +10965,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "Host")
-                        .WithMany("AssitanceRequests")
+                        .WithMany("AssistanceRequests")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -11721,6 +11864,74 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("ModifiedBy");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.IntentOrder", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.InvoicePayment", "InvoicePayment")
+                        .WithMany()
+                        .HasForeignKey("InvoicePaymentId");
+
+                    b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.PaymentIntentOrder", "PaymentIntentOrder")
+                        .WithMany("Orders")
+                        .HasForeignKey("PaymentIntentOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductOrder", "ProductOrder")
+                        .WithMany()
+                        .HasForeignKey("ProductOrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("InvoicePayment");
+
+                    b.Navigation("ModifiedBy");
+
+                    b.Navigation("PaymentIntentOrder");
+
+                    b.Navigation("ProductOrder");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.IntentOrderDeposit", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.PaymentIntentOrder", "PaymentIntentOrder")
+                        .WithMany("Deposits")
+                        .HasForeignKey("PaymentIntentOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+
+                    b.Navigation("PaymentIntentOrder");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Inventory", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
@@ -12277,6 +12488,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .WithMany()
                         .HasForeignKey("ModifiedById");
 
+                    b.HasOne("Gizmo.DAL.Entities.Payment", "Payment")
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.PaymentIntent", "PaymentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Gizmo.DAL.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany("PaymentIntents")
                         .HasForeignKey("PaymentMethodId")
@@ -12294,6 +12510,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("ModifiedBy");
+
+                    b.Navigation("Payment");
 
                     b.Navigation("PaymentMethod");
 
@@ -12682,6 +12900,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductOrder", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("Orders")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany("CreatedOrders")
                         .HasForeignKey("CreatedById");
@@ -12712,6 +12935,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("Branch");
+
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Host");
@@ -12740,13 +12965,13 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.ProductOrder", "ProductOrder")
-                        .WithMany()
+                        .WithMany("Discounts")
                         .HasForeignKey("ProductOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.ProductOL", "ProductOrderLine")
-                        .WithMany()
+                        .WithMany("Discounts")
                         .HasForeignKey("ProductOrderLineId");
 
                     b.HasOne("Gizmo.DAL.Entities.PromotionCode", "PromotionCode")
@@ -13321,7 +13546,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Gizmo.DAL.Entities.Host", "Host")
-                        .WithMany()
+                        .WithMany("Reservations")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -14691,19 +14916,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Gizmo.DAL.Entities.InvoicePayment", "InvoicePayment")
-                        .WithMany()
-                        .HasForeignKey("InvoicePaymentId");
-
-                    b.HasOne("Gizmo.DAL.Entities.ProductOrder", "ProductOrder")
+                    b.HasOne("Gizmo.DAL.Entities.ProductOrder", null)
                         .WithMany("PaymentIntents")
-                        .HasForeignKey("ProductOrderId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("InvoicePayment");
-
-                    b.Navigation("ProductOrder");
+                        .HasForeignKey("ProductOrderId");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductBaseExtended", b =>
@@ -14885,6 +15100,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("Invoice");
 
                     b.Navigation("InvoicePayment");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.RefundPayment", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.FiscalReceipt", "FiscalReceipt")
+                        .WithMany()
+                        .HasForeignKey("FiscalReceiptId");
+
+                    b.HasOne("Gizmo.DAL.Entities.Refund", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.RefundPayment", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FiscalReceipt");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ScheduleReport", b =>
@@ -15512,6 +15742,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Navigation("Operators");
 
+                    b.Navigation("Orders");
+
                     b.Navigation("Products");
 
                     b.Navigation("Promotions");
@@ -15595,13 +15827,15 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Host", b =>
                 {
-                    b.Navigation("AssitanceRequests");
+                    b.Navigation("AssistanceRequests");
 
                     b.Navigation("Devices");
 
                     b.Navigation("Layouts");
 
                     b.Navigation("ProductOrders");
+
+                    b.Navigation("Reservations");
 
                     b.Navigation("ReservedGuests");
 
@@ -15726,8 +15960,15 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.ProductOL", b =>
+                {
+                    b.Navigation("Discounts");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductOrder", b =>
                 {
+                    b.Navigation("Discounts");
+
                     b.Navigation("Invoices");
 
                     b.Navigation("OrderLines");
@@ -15948,6 +16189,13 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
             modelBuilder.Entity("Gizmo.DAL.Entities.InvoiceLineTimeFixed", b =>
                 {
                     b.Navigation("Usages");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.PaymentIntentOrder", b =>
+                {
+                    b.Navigation("Deposits");
+
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductBaseExtended", b =>

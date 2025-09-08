@@ -6244,6 +6244,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("nvarchar(255)")
                         .HasColumnOrder(2);
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(5);
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(4);
+
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 

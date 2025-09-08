@@ -1135,6 +1135,16 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<InventoryAdjustmentReason> InventoryAdjustmentReasons { get; set; }
 
+        /// <summary>
+        /// Promotions.
+        /// </summary>
+        public DbSet<Promotion> Promotions { get; set; }
+
+        /// <summary>
+        /// Promotion codes.
+        /// </summary>
+        public DbSet<PromotionCode> PromotionCodes { get; set; }
+
         #endregion
 
         #region OVERRIDES
