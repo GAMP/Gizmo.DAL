@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Values are loaded from .env file in the same directory
 
 services:
@@ -14,12 +12,13 @@ services:
       - MSSQL_SA_PASSWORD=${MSSQL_DB_PASSWORD}
       - DB_NAME=${MSSQL_DB_NAME}
       - DB_PASSWORD=${MSSQL_DB_PASSWORD}
+      - BACKUP_PATH=${MSSQL_BACKUP_PATH}
       - BACKUP_FILE=${MSSQL_BACKUP_FILE}
     ports:
       - 1433:1433
     volumes:
       - mssql_volume:/var/opt/mssql
-      - D:\gizmo\test_db:/var/opt/mssql/backups
+      - ${BACKUP_PATH}:${MSSQL_BACKUP_PATH}
       - ./init-db-scripts/init-mssql.sh:/usr/local/bin/init-mssql.sh
     entrypoint: ["/usr/local/bin/init-mssql.sh"]
     healthcheck:
@@ -39,12 +38,13 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_DB_PASSWORD}
       - DB_NAME=${POSTGRES_DB_NAME}
+      - BACKUP_PATH=${POSTGRES_BACKUP_PATH}
       - BACKUP_FILE=${POSTGRES_BACKUP_FILE}
     ports:
       - 5432:5432
     volumes:
       - postgres_volume:/var/lib/postgresql/data
-      - D:\gizmo\test_db:/var/opt/postgres/backups
+      - ${BACKUP_PATH}:${POSTGRES_BACKUP_PATH}
       - ./init-db-scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
     healthcheck:
       test: ["CMD", "pg_isready -U ${POSTGRES_USER}"]
@@ -55,16 +55,11 @@ services:
     networks:
       - gizmo-database-network
 
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+  adminer:
+    container_name: adminer
+    image: adminer
     ports:
-      - 5050:80
-    volumes:
-      - pgadmin_volume:/var/lib/pgadmin
+      - 8080:8080
     networks:
       - gizmo-database-network
 

@@ -14,7 +14,7 @@ sleep 10
     -Q "  USE [master];
             DROP DATABASE IF EXISTS ${DB_NAME};
             RESTORE DATABASE ${DB_NAME} \
-            FROM DISK = '/var/opt/mssql/backups/${BACKUP_FILE}' \
+            FROM DISK = '${BACKUP_PATH}/${BACKUP_FILE}' \
             WITH MOVE '${DB_NAME}' TO '/var/opt/mssql/data/${DB_NAME}.mdf', \
             MOVE '${DB_NAME}_log' TO '/var/opt/mssql/data/${DB_NAME}_log.ldf';"
 
