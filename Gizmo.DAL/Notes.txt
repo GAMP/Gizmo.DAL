@@ -1,4 +1,7 @@
-﻿HasData will have problems with subequent migrations when any dynamic values such as CreationTime, Password used
+﻿Fix ProductOrderId on PaymentIntentOrder, column must be removed
+Fix OrderIntent property order in mapping
+
+HasData will have problems with subequent migrations when any dynamic values such as CreationTime, Password used
 This is because ModelSnapshot will have different values thus any new migration will generate update for them
 
 Tasks

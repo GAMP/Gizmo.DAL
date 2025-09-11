@@ -62,7 +62,7 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(10)
                 .IsRequired();
 
-            builder.Property(productOrderDiscount => productOrderDiscount.DiscountAmount)
+            builder.Property(productOrderDiscount => productOrderDiscount.Discount)
                 .HasColumnOrder(11)
                 .IsRequired();
 
@@ -86,7 +86,7 @@ namespace Gizmo.DAL.Mappings
                 .WithMany()
                 .HasForeignKey(productOrderDiscount => productOrderDiscount.PromotionCodeId);
 
-            builder.HasOne(productOrderDiscount => productOrderDiscount.Discount)
+            builder.HasOne(productOrderDiscount => productOrderDiscount.OrderDiscount)
                 .WithMany()
                 .HasForeignKey(productOrderDiscount => productOrderDiscount.DiscountId);
         }

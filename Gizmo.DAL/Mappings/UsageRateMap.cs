@@ -43,7 +43,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(7);
 
-            builder.Property(usageRate => usageRate.DiscountAmount)
+            builder.Property(usageRate => usageRate.Discount)
                 .IsRequired()
                 .HasColumnOrder(8);
 
@@ -53,7 +53,7 @@ namespace Gizmo.DAL.Mappings
                 .WithMany(usageRate => usageRate.Usage)
                 .HasForeignKey(usageRate => usageRate.BillRateId);
 
-            builder.HasOne(billRate => billRate.Discount)
+            builder.HasOne(billRate => billRate.OrderDiscount)
                 .WithMany()
                 .HasForeignKey(billRate => billRate.DiscountId)
                 .OnDelete(DeleteBehavior.Restrict);

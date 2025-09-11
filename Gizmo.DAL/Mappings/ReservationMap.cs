@@ -54,6 +54,9 @@ namespace Gizmo.DAL.Mappings
             builder.Property(reservation => reservation.CancellationRefundPercentage)
                 .IsRequired();
 
+            builder.Property(reservation => reservation.MinimumPaymentPercentage)
+                .IsRequired();
+
             builder.Property(reservation => reservation.LoginBlockBeforeTime)
                 .IsRequired(false);
 
