@@ -1,4 +1,6 @@
 # Values are loaded from .env file in the same directory
+#docker-compose -p gizmo-dal down -v
+#docker-compose -p gizmo-dal up -d
 
 services:
   #Server=localhost,1433;Database=$MSSQL_DB_NAME;User Id=sa;Password=$MSSQL_DB_PASSWORD;TrustServerCertificate=True;
