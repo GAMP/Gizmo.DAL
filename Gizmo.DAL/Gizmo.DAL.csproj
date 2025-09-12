@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Configurations>Debug;Release;</Configurations>
-    <TargetFrameworks>net9.0</TargetFrameworks>
+    <TargetFramework>net9.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Product>Gizmo.DAL</Product>
     <Description>Gizmo.DAL</Description>
@@ -37,6 +37,7 @@
     <PackageReference Include="System.ComponentModel.Composition" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.1" />
+    <PackageReference Include="TickerQ.EntityFrameworkCore" Version="2.5.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
