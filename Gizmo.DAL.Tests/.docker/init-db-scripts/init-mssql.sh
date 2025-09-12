@@ -6,6 +6,15 @@
 # Wait for SQL Server to be ready
 sleep 10
 
+# Disable remote admin connections to prevent DAC conflicts
+/opt/mssql-tools18/bin/sqlcmd \
+    -S localhost \
+    -U sa \
+    -P "${DB_PASSWORD}" \
+    -C \
+    -Q "EXEC sp_configure 'remote admin connections', 0; RECONFIGURE;"
+
+# Restore the database
 /opt/mssql-tools18/bin/sqlcmd \
     -S localhost \
     -U sa \
