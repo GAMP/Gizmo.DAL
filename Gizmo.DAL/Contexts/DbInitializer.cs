@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -130,7 +132,7 @@ namespace Gizmo.DAL.Contexts
 
                         await dbTransaction.CommitAsync(cancellationToken);
                     }
-                }             
+                }
             }
             else
             {
@@ -252,12 +254,15 @@ namespace Gizmo.DAL.Contexts
             {
                 _logger.LogTrace("Initializing default data.");
 
-                using (var trx = _dbContext.Database.BeginTransaction())
+                using (var dbTransaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
                 {
                     #region PermissionSets
 
                     //this could be done in seeding BUT since we have two potential database states ef6 and new ef core we might already have seeded the initial data in the ef6
                     //making it harder to distinguish what data should be seeded
+
+                    DAL.Entities.UserPermissionSet? adminPermissionSet = null;
+                    bool permissionsSeeded = false;
 
                     //get permission set setting reflecting previous seeding state
                     var currentSettingEntity = await _dbContext.Settings.Where(setting => setting.GroupName == "SEEDING" && setting.Name == "PERMISSION_SET")
@@ -289,6 +294,7 @@ namespace Gizmo.DAL.Contexts
                             .Where(policy => policy.Description != null && policy.Description.IsAssignable)
                             .ToList();
 
+
                         foreach (var policySet in policySets)
                         {
                             //localize policy name
@@ -310,10 +316,18 @@ namespace Gizmo.DAL.Contexts
                                         }).ToHashSet()
                                     };
 
+                                    // keep permission set reference to be assigned to newly created admin account
+                                    if (policySet == GizmoPolicySet.Owner)
+                                    {
+                                        adminPermissionSet = permissionSet;
+                                    }
+
                                     _dbContext.PermissionSets.Add(permissionSet);
                                 }
                             }
                         }
+
+                        permissionsSeeded = true;
                     }
 
                     #endregion
@@ -325,7 +339,22 @@ namespace Gizmo.DAL.Contexts
 
                     if (adminOperatorId == null)
                     {
-                        //create default operator account
+                        // create default operator account
+                        // currently is expected that admin will be added by SeedDataMethod (will need to review)
+                    }
+                    else
+                    {
+                        // assign permissions set to existing operator in case of seeding
+                        if (permissionsSeeded)
+                        {
+                            var entity = new DAL.Entities.UserOperator()
+                            {
+                                Id = adminOperatorId.Value,
+                                PermissionSet = adminPermissionSet
+                            };
+
+                            _dbContext.Entry(entity).Reference(entity => entity.PermissionSet).IsModified = true;
+                        }
                     }
 
                     //get existing default branch id
@@ -429,7 +458,7 @@ namespace Gizmo.DAL.Contexts
                     await _dbContext.SaveChangesAsync(cancellationToken);
 
                     //commit any changes made
-                    await trx.CommitAsync(cancellationToken);
+                    await dbTransaction.CommitAsync(cancellationToken);
                 }
             }
             catch (Exception ex)
