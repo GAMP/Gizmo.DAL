@@ -22,22 +22,28 @@ namespace Gizmo.DAL.Contexts
     public sealed class DbInitializer
     {
         private readonly DefaultDbContext _dbContext;
-        private readonly ILogger<DefaultDbContext> _logger;
+        private readonly TickerQDbContext _tickerQDbContext;
+        private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IAssemblyResourcesLocalizationService _assemblyResourcesLocalizationService;
 
         /// <summary>
         /// Creates new instance.
         /// </summary>
-        /// <param name="dbContext">
-        /// Database context.
-        /// </param>
+        /// <param name="dbContext">Default database context.</param>
+        /// <param name="tickerQDbContext">TickerQ database context.</param>
         /// <param name="logger">Logger.</param>
         /// <param name="assemblyResourcesLocalizationService">Localization service.</param>
         /// <param name="serviceProvider">Service provider.</param>
-        public DbInitializer(DefaultDbContext dbContext, ILogger<DefaultDbContext> logger, IAssemblyResourcesLocalizationService assemblyResourcesLocalizationService, IServiceProvider serviceProvider)
+        public DbInitializer(
+            DefaultDbContext dbContext,
+            TickerQDbContext tickerQDbContext,
+            ILogger<DbInitializer> logger,
+            IServiceProvider serviceProvider,
+            IAssemblyResourcesLocalizationService assemblyResourcesLocalizationService)
         {
             _dbContext = dbContext;
+            _tickerQDbContext = tickerQDbContext;
             _logger = logger;
             _serviceProvider = serviceProvider;
             _assemblyResourcesLocalizationService = assemblyResourcesLocalizationService;
@@ -153,6 +159,30 @@ namespace Gizmo.DAL.Contexts
 
             //create default data
             await CreateDefaultDataAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Initialize TickerQ database.
+        /// </summary>
+        /// <param name="cancellationToken">
+        /// Cancellation token.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation.
+        /// </returns>
+        public async Task InitializeTickerQAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogTrace("Initializing TickerQ database.");
+
+            var pendingMigrations = await _tickerQDbContext.Database.GetPendingMigrationsAsync(cancellationToken);
+
+            if (pendingMigrations.Any())
+            {
+                _logger.LogTrace("Applying TickerQ database migrations.");
+                await _tickerQDbContext.Database.MigrateAsync(cancellationToken);
+            }
+
+            _logger.LogTrace("TickerQ database initialized.");
         }
 
         private async Task<bool> TryMigrateToEF6InitialAsync(CancellationToken cancellationToken = default)
