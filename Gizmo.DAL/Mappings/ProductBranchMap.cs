@@ -14,23 +14,27 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(ProductBranch));
 
-            builder.HasKey(t => new { t.ProductId, t.BranchId });
+            builder.HasKey(productBranch => new { productBranch.ProductId, productBranch.BranchId });
 
-            builder.Property(e => e.ProductId)
+            builder.Property(productBranch => productBranch.ProductId)
                 .HasColumnOrder(0);
 
-            builder.Property(e => e.BranchId)
+            builder.Property(productBranch => productBranch.BranchId)
                 .HasColumnOrder(1);
 
-            builder.Property(e => e.IsEnabled)
+            builder.Property(productBranch => productBranch.IsEnabled)
                 .HasColumnOrder(2);
 
-            builder.HasIndex(t => new { t.ProductId, t.BranchId })
+            builder.HasIndex(productBranch => new { productBranch.ProductId, productBranch.BranchId })
                 .IsUnique();
 
-            builder.HasOne(x => x.Branch)
-                .WithMany(x => x.Products)
-                .HasForeignKey(x => x.BranchId);
+            builder.HasOne(productBranch => productBranch.Branch)
+                .WithMany(branch => branch.Products)
+                .HasForeignKey(productBranch => productBranch.BranchId);
+
+            builder.HasOne(productBranch => productBranch.Product)
+                .WithMany(product => product.Branches)
+                .HasForeignKey(productBranch => productBranch.ProductId);
         }
     }
 }
