@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using SharedLib.Configuration;
 using TickerQ.EntityFrameworkCore.Configurations;
+using TickerQ.EntityFrameworkCore.Entities;
 
 namespace Gizmo.DAL.Contexts;
 
@@ -21,6 +22,16 @@ public sealed class TickerQDbContext(IOptions<ServiceDatabaseConfig> options) : 
     const string MIGRATIONS_TABLE = "__EFMigrationsHistory";
     const string MIGRATIONS_ASSEMBLY = "Gizmo.DAL.Migrations.TickerQ";
 
+    /// <summary>
+    /// Gets or sets the cron tickers.
+    /// </summary>
+    public DbSet<CronTickerEntity> CronTickers { get; set; }
+
+    /// <summary>
+    /// Gets or sets the time tickers.
+    /// </summary>
+    public DbSet<TimeTickerEntity> TimeTickers { get; set; }
+    
     private readonly ServiceDatabaseConfig _dbConfig = options.Value;
 
     /// <inheritdoc/>
