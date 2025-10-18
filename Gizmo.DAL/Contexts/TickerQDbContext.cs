@@ -20,7 +20,8 @@ public sealed class TickerQDbContext(IOptions<ServiceDatabaseConfig> options) : 
 {
     const string DEFAULT_SCHEMA = "ticker";
     const string MIGRATIONS_TABLE = "__EFMigrationsHistory";
-    const string MIGRATIONS_ASSEMBLY = "Gizmo.DAL.Migrations.TickerQ";
+    const string MIGRATIONS_ASSEMBLY_MSSQL = "Gizmo.DAL.Migrations.TickerQ.MSSQL";
+    const string MIGRATIONS_ASSEMBLY_POSTGRE = "Gizmo.DAL.Migrations.TickerQ.Npgsql";
 
     /// <summary>
     /// Gets or sets the cron tickers.
@@ -55,14 +56,14 @@ public sealed class TickerQDbContext(IOptions<ServiceDatabaseConfig> options) : 
                 builder.UseSqlServer(_dbConfig.DbConnectionString, options =>
                 {
                     options.MigrationsHistoryTable(MIGRATIONS_TABLE, DEFAULT_SCHEMA);
-                    options.MigrationsAssembly(MIGRATIONS_ASSEMBLY);
+                    options.MigrationsAssembly(MIGRATIONS_ASSEMBLY_MSSQL);
                 });
                 break;
             case SharedLib.DatabaseType.POSTGRE:
                 builder.UseNpgsql(_dbConfig.DbConnectionString, options =>
                 {
                     options.MigrationsHistoryTable(MIGRATIONS_TABLE, DEFAULT_SCHEMA);
-                    options.MigrationsAssembly(MIGRATIONS_ASSEMBLY);
+                    options.MigrationsAssembly(MIGRATIONS_ASSEMBLY_POSTGRE);
                 });
                 break;
             default:
@@ -77,12 +78,18 @@ public sealed class TickerQDbContextFactory : IDesignTimeDbContextFactory<Ticker
     /// <inheritdoc/>
     public TickerQDbContext CreateDbContext(string[] args)
     {
-        var config = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("service.json", optional: true, reloadOnChange: false)
-            .Build();
+        //var config = new ConfigurationBuilder()
+        //    .SetBasePath(AppContext.BaseDirectory)
+        //    .AddJsonFile("service.json", optional: true, reloadOnChange: false)
+        //    .Build();
 
-        var options = Options.Create(config.GetRequiredSection("Service:Database").Get<ServiceDatabaseConfig>());
+        //var options = Options.Create(config.GetRequiredSection("Service:Database").Get<ServiceDatabaseConfig>());
+
+        // Since we are using IDesignTimeDbContextFactory, we need to create options manually.
+        // Another option would be using the Startup project to provide the configuration but since the migrations wont be generated often we can stick to this dirty approach for now.
+
+        var options = Options.Create(new ServiceDatabaseConfig() { DbType = SharedLib.DatabaseType.MSSQL, DbConnectionString = @"Server=LOCALHOST\SQLEXPRESS;Initial Catalog=_gizmo_db;Integrated Security=true;TrustServerCertificate=true" });
+        //var options = Options.Create(new ServiceDatabaseConfig() {  DbType = SharedLib.DatabaseType.POSTGRE, DbConnectionString = "Server=localhost;Database=_gizmo_db;User Id=postgres;Password=password" });
 
         return new TickerQDbContext(options);
     }

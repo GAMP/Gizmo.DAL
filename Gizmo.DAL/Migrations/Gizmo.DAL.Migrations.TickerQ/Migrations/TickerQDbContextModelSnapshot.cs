@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.TickerQ.Migrations
+namespace Gizmo.DAL.Migrations.TickerQ.MSSQL.Migrations
 {
     [DbContext(typeof(TickerQDbContext))]
     partial class TickerQDbContextModelSnapshot : ModelSnapshot

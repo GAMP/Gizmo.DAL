@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.TickerQ.Migrations
+namespace Gizmo.DAL.Migrations.TickerQ.MSSQL.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

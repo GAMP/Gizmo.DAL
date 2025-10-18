@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.TickerQ.Migrations
+namespace Gizmo.DAL.Migrations.TickerQ.MSSQL.Migrations
 {
     [DbContext(typeof(TickerQDbContext))]
-    [Migration("20250912192624_Initial")]
+    [Migration("20251018093801_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

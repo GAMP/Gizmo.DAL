@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 {
     /// <inheritdoc />
-    public partial class EFCore_Initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -1716,6 +1716,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     PaymentIntentOrderId = table.Column<int>(type: "integer", nullable: false),
                     ProductOrderId = table.Column<int>(type: "integer", nullable: false),
                     InvoicePaymentId = table.Column<int>(type: "integer", nullable: true),
+                    Amount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -3395,7 +3396,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     CalculationType = table.Column<int>(type: "integer", nullable: false),
                     ApplyType = table.Column<int>(type: "integer", nullable: false),
                     Value = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
-                    DiscountAmount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    Discount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ShiftId = table.Column<int>(type: "integer", nullable: true),
@@ -4030,6 +4031,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     ExpireAfter = table.Column<int>(type: "integer", nullable: true),
                     CancellationGracePeriod = table.Column<int>(type: "integer", nullable: true),
                     CancellationRefundPercentage = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    MinimumPaymentPercentage = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
                     LoginBlockBeforeTime = table.Column<int>(type: "integer", nullable: true),
                     LoginBlockAfterTime = table.Column<int>(type: "integer", nullable: true),
                     FinalizedById = table.Column<int>(type: "integer", nullable: true),
@@ -5034,7 +5036,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     DiscountId = table.Column<int>(type: "integer", nullable: true),
                     DiscountCalculationType = table.Column<int>(type: "integer", nullable: true),
                     DiscountValue = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: true),
-                    DiscountAmount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false)
+                    Discount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false)
                 },
                 constraints: table =>
                 {

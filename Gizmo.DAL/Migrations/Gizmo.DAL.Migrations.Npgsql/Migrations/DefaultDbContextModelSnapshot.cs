@@ -3230,6 +3230,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)")
+                        .HasColumnOrder(4);
+
                     b.Property<int?>("CreatedById")
                         .HasColumnType("integer");
 
@@ -5803,7 +5808,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<decimal>("DiscountAmount")
+                    b.Property<decimal>("Discount")
                         .HasPrecision(19, 4)
                         .HasColumnType("numeric(19,4)")
                         .HasColumnOrder(11);
@@ -6843,6 +6848,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Property<int?>("LoginBlockBeforeTime")
                         .HasColumnType("integer");
+
+                    b.Property<decimal>("MinimumPaymentPercentage")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)");
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("integer");
@@ -10275,7 +10284,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("integer")
                         .HasColumnOrder(1);
 
-                    b.Property<decimal>("DiscountAmount")
+                    b.Property<decimal>("Discount")
                         .HasPrecision(19, 4)
                         .HasColumnType("numeric(19,4)")
                         .HasColumnOrder(8);
@@ -12725,7 +12734,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
-                        .WithMany()
+                        .WithMany("Branches")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -12958,7 +12967,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Gizmo.DAL.Entities.Discount", "Discount")
+                    b.HasOne("Gizmo.DAL.Entities.Discount", "OrderDiscount")
                         .WithMany()
                         .HasForeignKey("DiscountId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -12998,7 +13007,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Navigation("CreatedBy");
 
-                    b.Navigation("Discount");
+                    b.Navigation("OrderDiscount");
 
                     b.Navigation("ProductOrder");
 
@@ -15555,7 +15564,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Gizmo.DAL.Entities.Discount", "Discount")
+                    b.HasOne("Gizmo.DAL.Entities.Discount", "OrderDiscount")
                         .WithMany()
                         .HasForeignKey("DiscountId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -15568,7 +15577,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Navigation("BillRate");
 
-                    b.Navigation("Discount");
+                    b.Navigation("OrderDiscount");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UsageTime", b =>
@@ -15933,6 +15942,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
             modelBuilder.Entity("Gizmo.DAL.Entities.ProductBase", b =>
                 {
                     b.Navigation("AgeRestrictions");
+
+                    b.Navigation("Branches");
 
                     b.Navigation("DisallowedUserGroups");
 
