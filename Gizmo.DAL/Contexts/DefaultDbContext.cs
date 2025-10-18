@@ -2231,8 +2231,8 @@ namespace Gizmo.DAL.Contexts
 
             GuardDatabaseNameExceedLimits(modelBuilder);
 
-            //in our implementation the date time is stored without an timezone
-            //the following conversion applies an conversion rule that will store the date time as unspecified and read as UTC
+            // In our implementation the date time is stored without an time-zone in both MSSQL and Postgres databases
+            // the following conversion applies an conversion rule that will store the date time as unspecified and read (treat) as UTC
 
             // two converters are needed since we have nullable and non-nullable date-times
 
@@ -2246,9 +2246,6 @@ namespace Gizmo.DAL.Contexts
             {
                 foreach (var property in entityType.GetProperties())
                 {
-                    if(IsUnspecifiedDateTimeProperty(property))
-                        continue;
-
                     if (property.ClrType == typeof(DateTime?))
                         property.SetValueConverter(utcNullableConverter);                 
 
@@ -2257,37 +2254,6 @@ namespace Gizmo.DAL.Contexts
                 }
             }
         }
-
-        private static bool IsUnspecifiedDateTimeProperty(IMutableProperty mutableProperty)
-        {
-            //all period dates are kept as local time (unspecified) time zone
-            if (mutableProperty.DeclaringType.ClrType.IsSubclassOf(typeof(PeriodDate)))
-               return true;
-
-            //check news excluded properties
-            if(mutableProperty.DeclaringType.ClrType == typeof(Entities.News))
-            {
-                //start and end date are (unspecified)
-                if(mutableProperty.Name == nameof(DAL.Entities.News.StartDate) || mutableProperty.Name == nameof(DAL.Entities.News.EndDate))
-                    return true;
-            }
-
-            if (mutableProperty.DeclaringType.ClrType == typeof(Entities.User))
-            {
-                //birthdate date are (unspecified)
-                if (mutableProperty.Name == nameof(DAL.Entities.User.BirthDate))
-                    return true;
-            }
-
-            if (mutableProperty.DeclaringType.ClrType == typeof(Entities.App))
-            {
-                //release date is (unspecified)
-                if (mutableProperty.Name == nameof(DAL.Entities.App.ReleaseDate))
-                    return true;
-            }
-
-            return false;
-        }   
 
         /// <summary>
         /// Apply default types configurations
