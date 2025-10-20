@@ -97,7 +97,7 @@ namespace Gizmo.DAL.Contexts
                         var localTimeZone = TimeZoneInfo.Local;
                         _logger.LogInformation("Converting database time to UTC from {currentTimeZone}.", localTimeZone);
 
-                        using (var transaction = _dbContext.Database.BeginTransaction())
+                        using (var dbTransaction = _dbContext.Database.BeginTransaction())
                         {
                             //check if conversion where previously completed
                             var hasConvertedFrom = await _dbContext.Settings.Where(setting => setting.GroupName == "UPGRADE" && setting.Name == "UTC_CONVERTED_FROM")
@@ -116,7 +116,7 @@ namespace Gizmo.DAL.Contexts
                                 });
 
                                 await _dbContext.SaveChangesAsync(cancellationToken);
-                                await transaction.CommitAsync(cancellationToken);
+                                await dbTransaction.CommitAsync(cancellationToken);
                             }
                         }
                     }
@@ -137,6 +137,11 @@ namespace Gizmo.DAL.Contexts
                             .Single()), cancellationToken);
 
                         await dbTransaction.CommitAsync(cancellationToken);
+                    }
+
+                    using (var dbTransaction = _dbContext.Database.BeginTransaction())
+                    {
+
                     }
                 }
             }
@@ -324,7 +329,6 @@ namespace Gizmo.DAL.Contexts
                             .Where(policy => policy.Description != null && policy.Description.IsAssignable)
                             .ToList();
 
-
                         foreach (var policySet in policySets)
                         {
                             //localize policy name
@@ -357,17 +361,18 @@ namespace Gizmo.DAL.Contexts
                             }
                         }
 
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+
                         permissionsSeeded = true;
                     }
 
                     #endregion
 
                     //check if admin account exists
-                    var adminOperatorId = await _dbContext.UsersOperator.Where(userOperator => userOperator.Username.ToLower() == "admin")
-                        .Select(userOperator => (int?)userOperator.Id)
+                    var defaultOperator = await _dbContext.UsersOperator.Where(userOperator => userOperator.Username.ToLower() == "admin")
                         .FirstOrDefaultAsync(cancellationToken);
 
-                    if (adminOperatorId == null)
+                    if (defaultOperator == null)
                     {
                         // create default operator account
                         // currently is expected that admin will be added by SeedDataMethod (will need to review)
@@ -377,13 +382,8 @@ namespace Gizmo.DAL.Contexts
                         // assign permissions set to existing operator in case of seeding
                         if (permissionsSeeded)
                         {
-                            var entity = new DAL.Entities.UserOperator()
-                            {
-                                Id = adminOperatorId.Value,
-                                PermissionSet = adminPermissionSet
-                            };
-
-                            _dbContext.Entry(entity).Reference(entity => entity.PermissionSet).IsModified = true;
+                            defaultOperator.PermissionSetId = adminPermissionSet!.Id;
+                            _dbContext.Entry(defaultOperator).Property(entity => entity.PermissionSetId).IsModified = true;
                         }
                     }
 
@@ -429,15 +429,15 @@ namespace Gizmo.DAL.Contexts
                     }
 
                     //check if one found
-                    if (adminOperatorId != null)
+                    if (defaultOperator != null)
                     {
-                        if (!await _dbContext.UserOperatorBranches.Where(operatorBranch => operatorBranch.OperatorId == adminOperatorId).AnyAsync(cancellationToken: cancellationToken))
+                        if (!await _dbContext.UserOperatorBranches.Where(operatorBranch => operatorBranch.OperatorId == defaultOperator.Id).AnyAsync(cancellationToken: cancellationToken))
                         {
                             _logger.LogInformation("Adding admin operator to default branch.");
                             _dbContext.UserOperatorBranches.Add(new UserOperatorBranch()
                             {
                                 BranchId = usableBranchId!.Value,
-                                OperatorId = adminOperatorId!.Value,
+                                OperatorId = defaultOperator.Id,
                             });
                         }
                     }
