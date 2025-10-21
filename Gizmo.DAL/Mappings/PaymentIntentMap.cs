@@ -57,7 +57,7 @@ namespace Gizmo.DAL.Mappings
             builder.Property(paymentIntent => paymentIntent.PaymentUrl)
                 .HasColumnOrder(9)
                 .IsRequired(false)
-                .HasMaxLength(SQLStringSize.TINY);
+                .HasMaxLength(2048);
 
             builder.Property(paymentIntent => paymentIntent.Expiration)
                 .HasColumnOrder(10)
@@ -69,7 +69,11 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(paymentIntent => paymentIntent.PaymentId)
                 .HasColumnOrder(12)
-                .IsRequired(false);  
+                .IsRequired(false);
+
+            builder.Property(paymentIntent => paymentIntent.DisableReceiptPrinting)
+                .HasColumnOrder(13)
+                .IsRequired(true);
 
             builder.HasOne(paymentIntent => paymentIntent.User)
                 .WithMany(userMember => userMember.PaymentIntents)

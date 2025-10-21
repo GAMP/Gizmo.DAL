@@ -12,21 +12,22 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<PaymentIntentDeposit> builder)
         {
-            builder.Property(x => x.DepositPaymentId)
+            builder.ToTable(nameof(PaymentIntentDeposit))
+                .HasBaseType<PaymentIntent>();
+
+            builder.Property(paymentIntentDeposit => paymentIntentDeposit.DepositPaymentId)
                 .HasColumnOrder(1)
                 .IsRequired(false);
 
             // Indexes
-            builder.HasIndex(t => t.DepositPaymentId)
+            builder.HasIndex(paymentIntentDeposit => paymentIntentDeposit.DepositPaymentId)
                 .IsUnique();
             
-            builder.HasIndex(t => t.Id);
+            builder.HasIndex(paymentIntentDeposit => paymentIntentDeposit.Id);
 
-            builder.HasOne(x => x.DepositPayment)
+            builder.HasOne(paymentIntentDeposit => paymentIntentDeposit.DepositPayment)
                 .WithMany()
-                .HasForeignKey(x => x.DepositPaymentId);
-
-            builder.ToTable(nameof(PaymentIntentDeposit));
+                .HasForeignKey(paymentIntentDeposit => paymentIntentDeposit.DepositPaymentId);    
         }
     }
 }

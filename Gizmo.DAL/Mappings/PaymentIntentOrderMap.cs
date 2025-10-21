@@ -14,15 +14,12 @@ namespace Gizmo.DAL.Mappings
         /// </summary>
         public void Configure(EntityTypeBuilder<PaymentIntentOrder> builder)
         {
-            builder.ToTable(nameof(PaymentIntentOrder));
+            builder.ToTable(nameof(PaymentIntentOrder))
+                .HasBaseType<PaymentIntent>();
 
             builder.Property(paymentIntentOrder => paymentIntentOrder.AutoComplete)
                 .IsRequired(true)
                 .HasColumnOrder(0);
-
-            builder.Property(paymentIntentOrder => paymentIntentOrder.DisableReceiptPrinting)
-                .IsRequired(true)
-                .HasColumnOrder(1);
 
             builder.HasMany(paymentIntentOrder => paymentIntentOrder.Orders)
                 .WithOne(paymentIntentOrderOrder => paymentIntentOrderOrder.PaymentIntentOrder)

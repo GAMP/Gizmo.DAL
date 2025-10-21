@@ -1472,6 +1472,7 @@ namespace Gizmo.DAL.Contexts
 
             modelBuilder.ApplyConfiguration(new IntentOrderMap());
             modelBuilder.ApplyConfiguration(new IntentOrderDepositMap());
+            modelBuilder.ApplyConfiguration(new IntentInvoiceMap());
             modelBuilder.ApplyConfiguration(new RefundPaymentMap());
            
 
@@ -1579,10 +1580,6 @@ namespace Gizmo.DAL.Contexts
                     modifiedEntity.Property(nameof(IReplicatable.Guid)).IsModified = false;
                 }
 
-                #endregion
-
-                #region IDeleteable
-                var iDeletable = modifiedEntity.Entity as IDeletable;
                 #endregion
             }
             #endregion
