@@ -4,33 +4,32 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    /// <inheritdoc/>
+    /// <summary>
+    /// Fiscal receipt invoice map.
+    /// </summary>
     public class InvoiceFiscalReceiptMap : IEntityTypeConfiguration<InvoiceFiscalReceipt>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<InvoiceFiscalReceipt> builder)
         {
-            builder.HasKey(x=>x.Id);
+            builder.ToTable(nameof(InvoiceFiscalReceipt));
 
-            builder.Property(x => x.Id)
+            builder.HasKey(invoiceFiscalReceipt => invoiceFiscalReceipt.Id);
+
+            builder.Property(invoiceFiscalReceipt => invoiceFiscalReceipt.Id)
                 .HasColumnName("InvoiceFiscalReceiptId");
 
-            builder.Property(x => x.InvoiceId)
+            builder.Property(invoiceFiscalReceipt => invoiceFiscalReceipt.InvoiceId)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.FiscalReceiptId)
+            builder.Property(invoiceFiscalReceipt => invoiceFiscalReceipt.FiscalReceiptId)
                 .HasColumnOrder(2);
 
-            // Indexes
-            builder.HasIndex(t => t.FiscalReceiptId).IsUnique();
+            builder.HasIndex(invoiceFiscalReceipt => invoiceFiscalReceipt.FiscalReceiptId).IsUnique();
 
-            builder.HasOne(x => x.Invoice)
-                .WithMany(x => x.FiscalReceipts)
-                .HasForeignKey(x => x.InvoiceId);
-
-            builder.ToTable(nameof(InvoiceFiscalReceipt));
+            builder.HasOne(invoiceFiscalReceipt => invoiceFiscalReceipt.Invoice)
+                .WithMany(invoice => invoice.FiscalReceipts)
+                .HasForeignKey(invoiceFiscalReceipt => invoiceFiscalReceipt.InvoiceId);
         }
     }
 }

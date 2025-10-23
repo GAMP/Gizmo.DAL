@@ -4,35 +4,49 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
-    public class FiscalReceiptMap : IEntityTypeConfiguration<FiscalReceipt>
+    /// <summary>
+    /// Fiscal receipt entity map.
+    /// </summary>
+    public sealed class FiscalReceiptMap : IEntityTypeConfiguration<FiscalReceipt>
     {
-        /// <summary>
-        /// Configure entity
-        /// </summary>
+        /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<FiscalReceipt> builder)
         {
-            //Primary key
-            builder.HasIndex(x => x.Id);
+            //Table name
+            builder.ToTable(nameof(FiscalReceipt));
 
-            builder.Property(x => x.Id)
+            //Primary key
+            builder.HasIndex(fiscalReceipt => fiscalReceipt.Id);
+
+            builder.Property(fiscalReceipt => fiscalReceipt.Id)
                 .HasColumnOrder(0)
                 .HasColumnName("FiscalReceiptId");
 
-            builder.Property(x => x.Type)
+            builder.Property(fiscalReceipt => fiscalReceipt.Type)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.TaxSystem)
+            builder.Property(fiscalReceipt => fiscalReceipt.TaxSystem)
                 .HasColumnOrder(2);
 
-            builder.Property(x => x.DocumentNumber)
+            builder.Property(fiscalReceipt => fiscalReceipt.DocumentNumber)
                 .HasColumnOrder(3);
 
-            builder.Property(x => x.Signature)
+            builder.Property(fiscalReceipt => fiscalReceipt.Signature)
                 .HasColumnOrder(4)
-                .IsRequired(false);            
+                .IsRequired(false);
 
-            //Table name
-            builder.ToTable(nameof(FiscalReceipt));
+            builder.Property(fiscalReceipt => fiscalReceipt.CompanionId)
+                .HasColumnOrder(5)
+                .IsRequired(false);
+
+            builder.Property(fiscalReceipt => fiscalReceipt.PrinterNumber)
+                .HasColumnOrder(6)
+                .IsRequired(false);
+
+            builder.HasOne(fiscalReceipt => fiscalReceipt.Companion)
+                .WithMany(companion => companion.FiscalReceipts)
+                .HasForeignKey(fiscalReceipt => fiscalReceipt.CompanionId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
