@@ -114,7 +114,7 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(20);
 
-            builder.Property(branch => branch.BusinessVATId)
+            builder.Property(branch => branch.BusinessVATID)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY45)
                 .HasColumnOrder(21);
@@ -131,16 +131,15 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(24);
 
-            builder.Property(branch => branch.TreatDepositsAsService)
+            builder.Property(branch => branch.DepositTaxSystem)
                 .IsRequired(false)
                 .HasColumnOrder(25);
 
-            builder.Property(branch => branch.DepositServiceDescription)
+            builder.Property(branch => branch.GoodsVATRate)
                 .IsRequired(false)
-                .HasMaxLength(SQLStringSize.TINY)
                 .HasColumnOrder(26);
 
-            builder.Property(branch => branch.TimeBasedServiceVATRate)
+            builder.Property(branch => branch.ServicesVATRate)
                 .IsRequired(false)
                 .HasColumnOrder(27);
 
@@ -148,29 +147,38 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(28);
 
-            builder.Property(branch => branch.DepositAdvancePaymentType)
+            builder.Property(branch => branch.TimeBasedServiceVATRate)
                 .IsRequired(false)
                 .HasColumnOrder(29);
 
-            builder.Property(branch => branch.CompanionId)
+            builder.Property(branch => branch.TreatDepositsAsService)
                 .IsRequired(false)
                 .HasColumnOrder(30);
 
+            builder.Property(branch => branch.DepositServiceDescription)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY)
+                .HasColumnOrder(31); 
+
+            builder.Property(branch => branch.CompanionId)
+                .IsRequired(false)
+                .HasColumnOrder(32);
+
             builder.Property(branch => branch.Guid)
-                .HasColumnOrder(31)
+                .HasColumnOrder(33)
                 .IsRequired();
 
             builder.Property(branch => branch.IsDisabled)
                 .IsRequired()
-                .HasColumnOrder(32);
+                .HasColumnOrder(34);
 
             builder.Property(branch => branch.DisableTime)
                 .IsRequired(false)
-                .HasColumnOrder(33);
+                .HasColumnOrder(35);
 
             builder.Property(branch => branch.IsDeleted)
                 .IsRequired()
-                .HasColumnOrder(34);
+                .HasColumnOrder(36);
 
             builder.HasIndex(branch => branch.Name)
                 .IsUnique();

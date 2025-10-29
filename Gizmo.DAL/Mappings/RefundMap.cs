@@ -12,53 +12,54 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<Refund> builder)
         {
-            // Primary Key
-            builder.HasKey(t => t.Id);
+            builder.ToTable(nameof(Refund));
 
-            // Properties
-            builder.Property(t => t.Id)
+            builder.HasKey(refund => refund.Id);
+
+            builder.Property(refund => refund.Id)
                 .HasColumnName("RefundId")
                 .HasColumnOrder(0);
 
-            builder.Property(t => t.PaymentId)
+            builder.Property(refund => refund.PaymentId)
                 .HasColumnOrder(1);
 
-            builder.Property(t => t.Amount)
+            builder.Property(refund => refund.Amount)
                 .HasColumnOrder(2);
 
-            builder.Property(t => t.DepositTransactionId)
+            builder.Property(refund => refund.DepositTransactionId)
                 .HasColumnOrder(3);
 
-            builder.Property(t => t.PointTransactionId)
+            builder.Property(refund => refund.PointTransactionId)
                 .HasColumnOrder(4);
 
-            builder.Property(t => t.RefundMethodId)
+            builder.Property(refund => refund.RefundMethodId)
                 .HasColumnOrder(5);
 
-            builder.HasOne(t => t.Payment)
-                .WithMany()
-                .HasForeignKey(t => t.PaymentId);
+            builder.Property(refund => refund.PaymentReversalStatus)
+                .IsRequired(true)
+                .HasColumnOrder(6);
 
-            builder.HasOne(t => t.DepositTransaction)
+            builder.HasOne(refund => refund.Payment)
                 .WithMany()
-                .HasForeignKey(t => t.DepositTransactionId);
+                .HasForeignKey(refund => refund.PaymentId);
 
-            builder.HasOne(t => t.PointTransaction)
+            builder.HasOne(refund => refund.DepositTransaction)
                 .WithMany()
-                .HasForeignKey(t => t.PointTransactionId);
+                .HasForeignKey(refund => refund.DepositTransactionId);
 
-            builder.HasOne(t => t.Shift)
-                .WithMany(t => t.Refunds)
-                .HasForeignKey(t => t.ShiftId)
+            builder.HasOne(refund => refund.PointTransaction)
+                .WithMany()
+                .HasForeignKey(refund => refund.PointTransactionId);
+
+            builder.HasOne(refund => refund.Shift)
+                .WithMany(shift => shift.Refunds)
+                .HasForeignKey(refund => refund.ShiftId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(t => t.RefundMethod)
+            builder.HasOne(refund => refund.RefundMethod)
                 .WithMany()
-                .HasForeignKey(t => t.RefundMethodId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Table & Column Mappings
-            builder.ToTable(nameof(Refund));
+                .HasForeignKey(refund => refund.RefundMethodId)
+                .OnDelete(DeleteBehavior.Restrict);           
         }
     }
 }
