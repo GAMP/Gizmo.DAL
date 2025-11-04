@@ -2438,7 +2438,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("DiscountId");
 
-                    b.ToTable("DiscountGroupDiscount");
+                    b.ToTable("DiscountGroupDiscount", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriod", b =>
