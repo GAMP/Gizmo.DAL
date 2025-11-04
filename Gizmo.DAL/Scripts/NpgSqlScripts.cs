@@ -137,12 +137,9 @@ namespace Gizmo.DAL.Scripts
                 OperatorId, 
                 UserId, 
                 PaymentMethodId, 
-                IncludeInvoicePayments, 
-                IncludeDepositPayments, 
-                IncludeInvoiceRefunds, 
-                IncludeDepositRefunds, 
-                IncludePayIns, 
-                IncludePayOuts, 
+                IncludeInvoiceTransactions, 
+                IncludeDepositTransactions, 
+                IncludeRegisterTransactions, 
                 PaymentDirection, 
                 SortBy, 
                 SortOrder, 
@@ -157,12 +154,9 @@ namespace Gizmo.DAL.Scripts
                     @OperatorId::int, 
                     @UserId::int, 
                     @PaymentMethodId::int, 
-                    @IncludeInvoicePayments::boolean,
-                    @IncludeDepositPayments::boolean,
-                    @IncludeInvoiceRefunds::boolean, 
-                    @IncludeDepositRefunds::boolean,
-                    @IncludePayIns::boolean,
-                    @IncludePayOuts::boolean,
+                    @IncludeInvoiceTransactions::boolean,
+                    @IncludeDepositTransactions::boolean,
+                    @IncludeRegisterTransactions::boolean,
                     @PaymentDirection::int, 
                     @SortBy::text,
                     @SortOrder::text,
@@ -193,7 +187,7 @@ namespace Gizmo.DAL.Scripts
                     AND (vars.OperatorId IS NULL OR ip."CreatedById" = vars.OperatorId)
                     AND (vars.UserId IS NULL OR ip."UserId" = vars.UserId)
                     AND (vars.PaymentMethodId IS NULL OR p."PaymentMethodId" = vars.PaymentMethodId)
-                    AND (COALESCE(vars.IncludeInvoicePayments, true)) 
+                    AND (COALESCE(vars.IncludeInvoiceTransactions, true)) 
                     AND (vars.PaymentDirection IS NULL OR vars.PaymentDirection != 1) --PaymentTransactionDirection.Out
 
                 UNION ALL
@@ -220,7 +214,7 @@ namespace Gizmo.DAL.Scripts
                     AND (vars.OperatorId IS NULL OR dp."CreatedById" = vars.OperatorId)
                     AND (vars.UserId IS NULL OR dp."UserId" = vars.UserId)
                     AND (vars.PaymentMethodId IS NULL OR p."PaymentMethodId" = vars.PaymentMethodId)
-                    AND (COALESCE(vars.IncludeDepositPayments, true))
+                    AND (COALESCE(vars.IncludeDepositTransactions, true))
                     AND (vars.PaymentDirection IS NULL OR vars.PaymentDirection != 1) --PaymentTransactionDirection.Out
 
                 UNION ALL
@@ -249,7 +243,7 @@ namespace Gizmo.DAL.Scripts
                     AND (vars.OperatorId IS NULL OR r."CreatedById" = vars.OperatorId)
                     AND (vars.UserId IS NULL OR i."UserId" = vars.UserId)
                     AND (vars.PaymentMethodId IS NULL OR r."RefundMethodId" = vars.PaymentMethodId)
-                    AND (COALESCE(vars.IncludeInvoiceRefunds, true))
+                    AND (COALESCE(vars.IncludeInvoiceTransactions, true))
                     AND (vars.PaymentDirection IS NULL OR vars.PaymentDirection != 0) --PaymentTransactionDirection.In
 
                 UNION ALL
@@ -279,7 +273,7 @@ namespace Gizmo.DAL.Scripts
                     AND (vars.OperatorId IS NULL OR r."CreatedById" = vars.OperatorId)
                     AND (vars.UserId IS NULL OR dp."UserId" = vars.UserId)
                     AND (vars.PaymentMethodId IS NULL OR r."RefundMethodId" = vars.PaymentMethodId)
-                    AND (COALESCE(vars.IncludeDepositRefunds, true))
+                    AND (COALESCE(vars.IncludeDepositTransactions, true))
                     AND (vars.PaymentDirection IS NULL OR vars.PaymentDirection != 0) --PaymentTransactionDirection.In
 
                 UNION ALL
@@ -310,7 +304,7 @@ namespace Gizmo.DAL.Scripts
                     AND (vars.OperatorId IS NULL OR rt."CreatedById" = vars.OperatorId)
                     AND (COALESCE(vars.PaymentMethodId, -1) = -1 -- cash or default to cash if NULL
                         AND vars.UserId IS NOT NULL
-                        AND (COALESCE(vars.IncludePayIns, true) OR COALESCE(vars.IncludePayOuts, true))))
+                        AND (COALESCE(vars.IncludeRegisterTransactions, true))))
 
             SELECT json_build_object(
         	    'Total', (SELECT COUNT(*) FROM "PaymentTransactions"),
