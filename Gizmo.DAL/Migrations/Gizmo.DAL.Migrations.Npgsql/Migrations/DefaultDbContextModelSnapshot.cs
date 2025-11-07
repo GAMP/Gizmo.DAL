@@ -6795,6 +6795,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("numeric(19,4)")
                         .HasColumnOrder(3);
 
+                    b.Property<int>("BranchId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("CreatedById")
                         .HasColumnType("integer");
 
@@ -6832,6 +6835,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnOrder(4);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CreatedById");
 
@@ -13618,6 +13623,12 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             modelBuilder.Entity("Gizmo.DAL.Entities.RegisterTransaction", b =>
                 {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany("RegisterTransactions")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany("RegisterTransactions")
                         .HasForeignKey("CreatedById");
@@ -13639,6 +13650,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
                         .WithMany("RegisterTransactions")
                         .HasForeignKey("ShiftId");
+
+                    b.Navigation("Branch");
 
                     b.Navigation("CreatedBy");
 
@@ -15256,7 +15269,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.Invoice", "Invoice")
-                        .WithMany()
+                        .WithMany("InvoicePaymentRefunds")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -15918,6 +15931,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Navigation("Promotions");
 
+                    b.Navigation("RegisterTransactions");
+
                     b.Navigation("Shifts");
 
                     b.Navigation("Stocks");
@@ -16069,6 +16084,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("FiscalReceipts");
 
                     b.Navigation("InvoiceLines");
+
+                    b.Navigation("InvoicePaymentRefunds");
 
                     b.Navigation("InvoicePayments");
 

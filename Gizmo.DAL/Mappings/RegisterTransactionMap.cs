@@ -52,6 +52,11 @@ namespace Gizmo.DAL.Mappings
                 .WithMany(register => register.Transactions)
                 .HasForeignKey(registerTransaction => registerTransaction.RegisterId);
 
+            builder.HasOne(registerTransaction => registerTransaction.Branch)
+                .WithMany(branch => branch.RegisterTransactions)
+                .HasForeignKey(registerTransaction => registerTransaction.BranchId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder.HasOne(registerTransaction => registerTransaction.Shift)
                 .WithMany(shift => shift.RegisterTransactions)
                 .HasForeignKey(registerTransaction => registerTransaction.ShiftId);

@@ -19,6 +19,7 @@
         SET @DefaultBranchId = (SELECT MIN(BranchId) FROM [dbo].[Branch]);
         
         UPDATE [dbo].[Register] Set BranchId=@DefaultBranchId;
+        UPDATE [dbo].[RegisterTransaction] Set BranchId=@DefaultBranchId;
         UPDATE [dbo].[Asset] Set BranchId=@DefaultBranchId;
         UPDATE [dbo].[Device] Set BranchId=@DefaultBranchId;
         UPDATE [dbo].[HostGroup] Set BranchId=@DefaultBranchId;

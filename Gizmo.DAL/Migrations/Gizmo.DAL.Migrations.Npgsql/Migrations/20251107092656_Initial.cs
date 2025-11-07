@@ -4017,6 +4017,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     Note = table.Column<string>(type: "text", nullable: true),
                     FiscalReceiptStatus = table.Column<int>(type: "integer", nullable: false),
                     FiscalReceiptId = table.Column<int>(type: "integer", nullable: true),
+                    BranchId = table.Column<int>(type: "integer", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -4025,6 +4026,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RegisterTransaction", x => x.RegisterTransactionId);
+                    table.ForeignKey(
+                        name: "FK_RegisterTransaction_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId");
                     table.ForeignKey(
                         name: "FK_RegisterTransaction_FiscalReceipt_FiscalReceiptId",
                         column: x => x.FiscalReceiptId,
@@ -8831,6 +8837,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "IX_Register_StockId",
                 table: "Register",
                 column: "StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RegisterTransaction_BranchId",
+                table: "RegisterTransaction",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RegisterTransaction_CreatedById",
