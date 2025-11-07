@@ -183,8 +183,9 @@ namespace Gizmo.DAL.Scripts
                 JOIN Payment AS p ON ip.PaymentId = p.PaymentId
                 WHERE 
                     ip.CreatedTime >= @DateFrom AND ip.CreatedTime <= @DateTo
-                    AND (@ShiftId IS NULL OR ip.ShiftId = @ShiftId)
+                    AND (@BranchId IS NULL OR ip.BranchId = @BranchId)
                     AND (@RegisterId IS NULL OR ip.RegisterId = @RegisterId)
+                    AND (@ShiftId IS NULL OR ip.ShiftId = @ShiftId)              
                     AND (@OperatorId IS NULL OR ip.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR ip.UserId = @UserId)
                     AND (@PaymentMethodId IS NULL OR p.PaymentMethodId = @PaymentMethodId)
@@ -210,6 +211,7 @@ namespace Gizmo.DAL.Scripts
                 WHERE 
                     dp.CreatedTime >= @DateFrom AND dp.CreatedTime <= @DateTo
                     AND (@ShiftId IS NULL OR dp.ShiftId = @ShiftId)
+                    AND (@BranchId IS NULL OR dp.BranchId = @BranchId)
                     AND (@RegisterId IS NULL OR dp.RegisterId = @RegisterId)
                     AND (@OperatorId IS NULL OR dp.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR dp.UserId = @UserId)
@@ -222,7 +224,7 @@ namespace Gizmo.DAL.Scripts
                 SELECT
                     3 AS Type, --'RefundInvoicePayment'
                     p.UserId,
-                    p.Amount,
+                    r.Amount,
                     r.CreatedTime AS Date,
                     r.CreatedById AS OperatorId,
                     r.ShiftId,
@@ -238,6 +240,7 @@ namespace Gizmo.DAL.Scripts
                 WHERE 
                     r.CreatedTime >= @DateFrom AND r.CreatedTime <= @DateTo
                     AND (@ShiftId IS NULL OR r.ShiftId = @ShiftId)
+                    AND (@BranchId IS NULL OR r.BranchId = @BranchId)
                     AND (@RegisterId IS NULL OR r.RegisterId = @RegisterId)
                     AND (@OperatorId IS NULL OR r.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR i.UserId = @UserId)
@@ -267,6 +270,7 @@ namespace Gizmo.DAL.Scripts
                 WHERE 
                     r.CreatedTime >= @DateFrom AND r.CreatedTime <= @DateTo
                     AND (@ShiftId IS NULL OR r.ShiftId = @ShiftId)
+                    AND (@BranchId IS NULL OR r.BranchId = @BranchId)
                     AND (@RegisterId IS NULL OR r.RegisterId = @RegisterId)
                     AND (@OperatorId IS NULL OR r.CreatedById = @OperatorId)
                     AND (@UserId IS NULL OR dp.UserId = @UserId)
@@ -297,12 +301,18 @@ namespace Gizmo.DAL.Scripts
                     rt.CreatedTime >= @DateFrom AND rt.CreatedTime <= @DateTo
                     AND (rt.Type = 1 OR rt.Type = 2)
                     AND (@ShiftId IS NULL OR rt.ShiftId = @ShiftId)
+                    AND (@BranchId IS NULL OR rt.BranchId = @BranchId)
                     AND (@RegisterId IS NULL OR rt.RegisterId = @RegisterId)
                     AND (@OperatorId IS NULL OR rt.CreatedById = @OperatorId)
                     AND (COALESCE(@PaymentMethodId, -1) = -1 -- cash or default to cash if NULL
-                        AND @UserId IS NOT NULL
-                        AND COALESCE(@IncludeRegisterTransactions, 1) = 1) -- true
-            )
+                    AND @UserId IS NULL
+                    AND COALESCE(@IncludeRegisterTransactions, 1) = 1) -- true
+                    AND (
+                         @PaymentDirection IS NULL                     -- optional: honor direction
+                         OR (@PaymentDirection = 0 AND rt.Type = 1)    -- In  => PayIn
+                         OR (@PaymentDirection = 1 AND rt.Type = 2)    -- Out => PayOut
+                        )
+                    )
 
              -- This is required to obtain the correct paginated items count
 

@@ -133,6 +133,7 @@ namespace Gizmo.DAL.Scripts
                 DateFrom, 
                 DateTo, 
                 ShiftId, 
+                BranchId,
                 RegisterId, 
                 OperatorId, 
                 UserId, 
@@ -150,6 +151,7 @@ namespace Gizmo.DAL.Scripts
                     @DateFrom::timestamp, 
                     @DateTo::timestamp, 
                     @ShiftId::int, 
+                    @BranchId::int,
                     @RegisterId::int, 
                     @OperatorId::int, 
                     @UserId::int, 
@@ -183,6 +185,7 @@ namespace Gizmo.DAL.Scripts
                 WHERE 
                     ip."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
                     AND (vars.ShiftId IS NULL OR ip."ShiftId" = vars.ShiftId)
+                    AND (vars.BranchId IS NULL OR ip."BranchId" = vars.BranchId)
                     AND (vars.RegisterId IS NULL OR ip."RegisterId" = vars.RegisterId)
                     AND (vars.OperatorId IS NULL OR ip."CreatedById" = vars.OperatorId)
                     AND (vars.UserId IS NULL OR ip."UserId" = vars.UserId)
@@ -210,6 +213,7 @@ namespace Gizmo.DAL.Scripts
                 WHERE 
                     dp."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
                     AND (vars.ShiftId IS NULL OR dp."ShiftId" = vars.ShiftId)
+                    AND (vars.BranchId IS NULL OR dp."BranchId" = vars.BranchId)
                     AND (vars.RegisterId IS NULL OR dp."RegisterId" = vars.RegisterId)
                     AND (vars.OperatorId IS NULL OR dp."CreatedById" = vars.OperatorId)
                     AND (vars.UserId IS NULL OR dp."UserId" = vars.UserId)
@@ -222,7 +226,7 @@ namespace Gizmo.DAL.Scripts
                 SELECT
                     3 AS "Type", --'RefundInvoicePayment'
                     p."UserId",
-                    p."Amount",
+                    r."Amount",
                     r."CreatedTime" AS "Date",
                     r."CreatedById" AS "OperatorId",
                     r."ShiftId",
@@ -239,6 +243,7 @@ namespace Gizmo.DAL.Scripts
                 WHERE 
                     r."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
                     AND (vars.ShiftId IS NULL OR r."ShiftId" = vars.ShiftId)
+                    AND (vars.BranchId IS NULL OR r."BranchId" = vars.BranchId)
                     AND (vars.RegisterId IS NULL OR r."RegisterId" = vars.RegisterId)
                     AND (vars.OperatorId IS NULL OR r."CreatedById" = vars.OperatorId)
                     AND (vars.UserId IS NULL OR i."UserId" = vars.UserId)
@@ -263,12 +268,12 @@ namespace Gizmo.DAL.Scripts
                 FROM "RefundDepositPayment" AS rdp
                 JOIN "Refund" AS r ON rdp."RefundId" = r."RefundId"
                 JOIN "Payment" AS p ON r."PaymentId" = p."PaymentId"
-                JOIN "DepositTransaction" AS dt ON r."DepositTransactionId" = dt."DepositTransactionId"
                 JOIN "DepositPayment" AS dp ON rdp."DepositPaymentId" = dp."DepositPaymentId"
                 JOIN vars ON true
                 WHERE 
                     r."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
                     AND (vars.ShiftId IS NULL OR r."ShiftId" = vars.ShiftId)
+                    AND (vars.BranchId IS NULL OR r."BranchId" = vars.BranchId)
                     AND (vars.RegisterId IS NULL OR r."RegisterId" = vars.RegisterId)
                     AND (vars.OperatorId IS NULL OR r."CreatedById" = vars.OperatorId)
                     AND (vars.UserId IS NULL OR dp."UserId" = vars.UserId)
@@ -300,11 +305,18 @@ namespace Gizmo.DAL.Scripts
                     rt."CreatedTime" BETWEEN vars.DateFrom AND vars.DateTo
                     AND (rt."Type" = 1 OR rt."Type" = 2)
                     AND (vars.ShiftId IS NULL OR rt."ShiftId" = vars.ShiftId)
+                    AND (vars.BranchId IS NULL OR rt."BranchId" = vars.BranchId)
                     AND (vars.RegisterId IS NULL OR rt."RegisterId" = vars.RegisterId)
                     AND (vars.OperatorId IS NULL OR rt."CreatedById" = vars.OperatorId)
-                    AND (COALESCE(vars.PaymentMethodId, -1) = -1 -- cash or default to cash if NULL
-                        AND vars.UserId IS NOT NULL
-                        AND (COALESCE(vars.IncludeRegisterTransactions, true))))
+                    AND vars.UserId IS NULL
+                    AND (COALESCE(vars.PaymentMethodId, -1) = -1 -- cash or default to cash if NULL                    
+                    AND (COALESCE(vars.IncludeRegisterTransactions, true)))
+                    AND (
+                         vars.PaymentDirection IS NULL
+                         OR (vars.PaymentDirection = 0 AND rt."Type" = 1)  -- In  => PayIn
+                         OR (vars.PaymentDirection = 1 AND rt."Type" = 2)  -- Out => PayOut
+                        )
+                    )
 
             SELECT json_build_object(
         	    'Total', (SELECT COUNT(*) FROM "PaymentTransactions"),
@@ -332,7 +344,13 @@ namespace Gizmo.DAL.Scripts
         				    CASE WHEN vars.SortBy = 'PaymentMethodId' AND vars.SortOrder = 'ASC' THEN "PaymentMethodId" END ASC,
         				    CASE WHEN vars.SortBy = 'PaymentMethodId' AND vars.SortOrder = 'DESC' THEN "PaymentMethodId" END DESC,
         				    CASE WHEN vars.SortBy = 'OperatorId' AND vars.SortOrder = 'ASC' THEN "OperatorId" END ASC,
-        				    CASE WHEN vars.SortBy = 'OperatorId' AND vars.SortOrder = 'DESC' THEN "OperatorId" END DESC
+        				    CASE WHEN vars.SortBy = 'OperatorId' AND vars.SortOrder = 'DESC' THEN "OperatorId" END DESC,
+                            CASE WHEN vars.SortBy = 'ShiftId' AND vars.SortOrder = 'ASC' THEN "ShiftId" END ASC,
+        				    CASE WHEN vars.SortBy = 'ShiftId' AND vars.SortOrder = 'DESC' THEN "ShiftId" END DESC,
+                            CASE WHEN vars.SortBy = 'RegisterId' AND vars.SortOrder = 'ASC' THEN "RegisterId" END ASC,
+        				    CASE WHEN vars.SortBy = 'RegisterId' AND vars.SortOrder = 'DESC' THEN "RegisterId" END DESC,
+                            CASE WHEN vars.SortBy = 'Type' AND vars.SortOrder = 'ASC' THEN "Type" END ASC,
+        				    CASE WHEN vars.SortBy = 'Type' AND vars.SortOrder = 'DESC' THEN "Type" END DESC
         			    OFFSET (SELECT "Offset" FROM vars) LIMIT (SELECT "Limit" FROM vars)) "PaginatedResult"),
         		    '[]'::jsonb
         		    )
