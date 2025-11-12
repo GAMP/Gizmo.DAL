@@ -42,12 +42,12 @@ namespace Gizmo.DAL.Mappings
             builder.HasIndex(intentOrder => intentOrder.InvoicePaymentId).IsUnique();
 
             builder.HasOne(intentOrder => intentOrder.PaymentIntentOrder)
-                .WithMany(paymentIntentOrder => paymentIntentOrder.Orders)
+                .WithMany(paymentIntentOrder => paymentIntentOrder.IntentOrders)
                 .HasForeignKey(intentOrder => intentOrder.PaymentIntentOrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(intentOrder => intentOrder.ProductOrder)
-                .WithMany()
+                .WithMany(productOrder => productOrder.PaymentIntents)
                 .HasForeignKey(paymentIntentOrder => paymentIntentOrder.ProductOrderId)
                 .OnDelete(DeleteBehavior.Restrict);
 

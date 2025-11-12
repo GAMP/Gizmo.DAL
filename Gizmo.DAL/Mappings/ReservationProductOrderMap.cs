@@ -37,6 +37,11 @@ namespace Gizmo.DAL.Mappings
                 .IsUnique()
                 .HasFilter(null);
 
+            builder.HasOne(reservationOrder => reservationOrder.ProductOrder)
+                .WithMany(productOrder => productOrder.Reservations)
+                .HasForeignKey(reservationOrder => reservationOrder.ProductOrderId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder.HasOne(reservationOrder => reservationOrder.Reservation)
                 .WithMany(reservation => reservation.Orders)
                 .HasForeignKey(reservationOrder => reservationOrder.ReservationId)

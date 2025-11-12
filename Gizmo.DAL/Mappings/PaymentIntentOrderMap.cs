@@ -21,12 +21,12 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(true)
                 .HasColumnOrder(0);
 
-            builder.HasMany(paymentIntentOrder => paymentIntentOrder.Orders)
+            builder.HasMany(paymentIntentOrder => paymentIntentOrder.IntentOrders)
                 .WithOne(paymentIntentOrderOrder => paymentIntentOrderOrder.PaymentIntentOrder)
                 .HasForeignKey(paymentIntentOrderOrder => paymentIntentOrderOrder.PaymentIntentOrderId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasMany(paymentIntentOrder => paymentIntentOrder.Deposits)
+            builder.HasMany(paymentIntentOrder => paymentIntentOrder.IntentDeposits)
                 .WithOne(paymentIntentOrderDeposit => paymentIntentOrderDeposit.PaymentIntentOrder)
                 .HasForeignKey(paymentIntentOrderDeposit => paymentIntentOrderDeposit.PaymentIntentOrderId)
                 .OnDelete(DeleteBehavior.NoAction);        
