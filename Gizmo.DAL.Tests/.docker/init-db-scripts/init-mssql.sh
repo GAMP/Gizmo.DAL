@@ -10,7 +10,7 @@ sleep 10
 /opt/mssql-tools18/bin/sqlcmd \
     -S localhost \
     -U sa \
-    -P "${DB_PASSWORD}" \
+    -P "${MSSQL_SA_PASSWORD}" \
     -C \
     -Q "EXEC sp_configure 'remote admin connections', 0; RECONFIGURE;"
 
@@ -18,7 +18,7 @@ sleep 10
 /opt/mssql-tools18/bin/sqlcmd \
     -S localhost \
     -U sa \
-    -P "${DB_PASSWORD}" \
+    -P "${MSSQL_SA_PASSWORD}" \
     -C \
     -Q "  USE [master];
             DROP DATABASE IF EXISTS ${DB_NAME};
