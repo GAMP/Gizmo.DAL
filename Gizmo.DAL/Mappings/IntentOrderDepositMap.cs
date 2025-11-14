@@ -35,7 +35,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasIndex(paymentIntentOrder => new { paymentIntentOrder.PaymentIntentOrderId, paymentIntentOrder.UserId }).IsUnique();
 
             builder.HasOne(paymentIntentOrder => paymentIntentOrder.PaymentIntentOrder)
-                .WithMany(paymentIntentOrder => paymentIntentOrder.Deposits)
+                .WithMany(paymentIntentOrder => paymentIntentOrder.IntentDeposits)
                 .HasForeignKey(paymentIntentOrder => paymentIntentOrder.PaymentIntentOrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
