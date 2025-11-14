@@ -312,6 +312,7 @@ public static class DdlOperations
     /// Generates an appropriate backup file name based on the database provider type of the current <see cref="DatabaseFacade"/> instance.
     /// </summary>
     /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
+    /// <param name="dateTime">The date and time to use for the timestamp in the backup file name. If null, uses the current UTC time.</param>
     /// <returns>
     /// A string containing the backup file name with the appropriate extension:
     /// <list type="bullet">
@@ -328,19 +329,45 @@ public static class DdlOperations
     /// with the appropriate extension for the database provider. The generated name can be used
     /// for backup and restore operations.
     /// </remarks>
-    public static string GenerateBackupName(this DatabaseFacade facade)
+    public static string GenerateBackupName(this DatabaseFacade facade, DateTime? dateTime = null)
     {
         var metadata = facade.GetConnectionMetadata();
 
-        var timeStamp = DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss");
-
+        var effectiveDateTime = dateTime ?? DateTime.UtcNow;
+        var timeStamp = effectiveDateTime.ToString("yyyy_MM_dd_HH_mm");
         return facade.GetProviderType() switch
         {
-            Provider.Type.SqlServer => $"{metadata.DatabaseName}_mssql_{timeStamp}.bak",
-            Provider.Type.PostgreSql => $"{metadata.DatabaseName}_pgsql_{timeStamp}.dump",
-            Provider.Type.MySql => $"{metadata.DatabaseName}_mysql_{timeStamp}.sql",
+            Provider.Type.SqlServer => $"BACKUP_MSSQL_{metadata.DatabaseName}_{timeStamp}.BAK",
+            Provider.Type.PostgreSql => $"BACKUP_PGSQL{metadata.DatabaseName}_{timeStamp}.DUMP",
+            Provider.Type.MySql => $"BACKUP_MYSQL_{metadata.DatabaseName}_{timeStamp}.SQL",
             _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
         };
+    }
+
+    /// <summary>
+    /// Attempts to parse the backup timestamp from a backup file name.
+    /// </summary>\
+    /// <remarks>
+    /// <para> ⚠️ IMPORTANT: </para>
+    /// <list type="bullet">
+    /// <item><description>The method assumes that the backup file name follows the naming convention established by <see cref="GenerateBackupName"/>.</description></item>
+    /// <item><description>The parsed <see cref="DateTime"/> is in UTC.</description></item>
+    /// </list>
+    /// </remarks>
+    /// <param name="backupName">The backup file name to parse. Can include the file extension or be just the file name.</param>
+    /// <param name="backupTime">When this method returns <c>true</c>, contains the <see cref="DateTime"/> parsed from the backup file name; otherwise, contains the default value for <see cref="DateTime"/>.</param>
+    /// <returns><c>true</c> if the backup timestamp was successfully parsed; otherwise, <c>false</c>.</returns>
+    public static bool TryParseBackupTime(string backupName, out DateTime backupTime)
+    {
+        backupTime = default;
+        backupName = Path.GetFileNameWithoutExtension(backupName);
+
+        if (string.IsNullOrWhiteSpace(backupName) || backupName.Length < 16)
+            return false;
+
+        var timeStamp = backupName.Substring(backupName.Length - 16, 16);
+
+        return DateTime.TryParseExact(timeStamp, "yyyy_MM_dd_HH_mm", null, System.Globalization.DateTimeStyles.AdjustToUniversal, out backupTime);
     }
 }
 

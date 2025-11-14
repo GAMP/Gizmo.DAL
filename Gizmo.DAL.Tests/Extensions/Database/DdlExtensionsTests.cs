@@ -10,6 +10,13 @@ public class DdlExtensionsTests(DatabaseTestFixture fixture)
 {
     private readonly DatabaseTestFixture _fixture = fixture;
 
+    [Fact]
+    public void TryParseBackupTime()
+    {
+        GeneralDdlTestsImpl.TryParseBackupTime_ReturnsTrue();
+        GeneralDdlTestsImpl.TryParseBackupTime_ReturnsFalse();
+    }
+
     [Theory]
     [InlineData(DatabaseType.MSSQL)]
     [InlineData(DatabaseType.POSTGRE)]

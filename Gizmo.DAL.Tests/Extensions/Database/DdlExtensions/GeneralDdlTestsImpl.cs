@@ -16,20 +16,20 @@ public static class GeneralDdlTestsImpl
     {
         var cnmd = context.Database.GetConnectionMetadata();
         var name = context.Database.GenerateBackupName();
-        
+
         var extension = dbType switch
         {
             DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => ".bak",
             DatabaseType.POSTGRE => ".dump",
             _ => throw new NotSupportedException($"Database type {dbType} is not supported for backup.")
         };
-        
+
         Assert.EndsWith(extension, name);
         Assert.StartsWith(cnmd.DatabaseName, name);
-        
+
         // Verify the name contains a timestamp
         Assert.Contains("_", name);
-        
+
         // Verify the name format: {DatabaseName}_{provider}_{timestamp}.{extension}
         var expectedProvider = dbType switch
         {
@@ -37,7 +37,7 @@ public static class GeneralDdlTestsImpl
             DatabaseType.POSTGRE => "pgsql",
             _ => throw new NotSupportedException($"Database type {dbType} is not supported.")
         };
-        
+
         Assert.Contains($"_{expectedProvider}_", name);
     }
 
@@ -48,7 +48,7 @@ public static class GeneralDdlTestsImpl
         await Task.Delay(1000); // Simulate waiting for a second
 
         var name2 = context.Database.GenerateBackupName();
-        
+
         // Names should be different due to timestamp
         Assert.NotEqual(name1, name2);
     }
@@ -56,7 +56,7 @@ public static class GeneralDdlTestsImpl
     public static void GenerateBackupName_HandlesSpecialCharacters(DefaultDbContext context)
     {
         var name = context.Database.GenerateBackupName();
-        
+
         // Verify the name doesn't contain problematic characters for file systems
         Assert.DoesNotContain("/", name);
         Assert.DoesNotContain("\\", name);
@@ -67,6 +67,56 @@ public static class GeneralDdlTestsImpl
         Assert.DoesNotContain("<", name);
         Assert.DoesNotContain(">", name);
         Assert.DoesNotContain("|", name);
+    }
+    
+    public static void TryParseBackupTime_ReturnsTrue()
+    {
+        // Arrange
+        var testCases = new[]
+        {
+            ("BACKUP_MSSQL_MyDatabase_2025_11_13_14_30", new DateTime(2025, 11, 13, 14, 30, 0, DateTimeKind.Utc)),
+            ("BACKUP_MSSQL_MyDatabase_2025_11_13_14_30.BAK", new DateTime(2025, 11, 13, 14, 30, 0, DateTimeKind.Utc)),
+            ("BACKUP_PGSQLMyDatabase_2025_01_01_00_00.DUMP", new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)),
+            ("BACKUP_MYSQL_MyDatabase_2024_12_31_23_59.SQL", new DateTime(2024, 12, 31, 23, 59, 0, DateTimeKind.Utc))
+        };
+
+        foreach (var (backupName, expectedDateTime) in testCases)
+        {
+            // Act
+            var result = DdlOperations.TryParseBackupTime(backupName, out var backupTime);
+
+            // Assert
+            Assert.True(result, $"Failed to parse: {backupName}");
+            Assert.Equal(expectedDateTime, backupTime);
+        }
+    }
+
+    public static void TryParseBackupTime_ReturnsFalse()
+    {
+        // Arrange
+        var invalidBackupNames = new[]
+        {
+            null,
+            "   ",
+            string.Empty,
+            "Short_2025", // Too short
+            "InvalidBackupName",
+            "SomeRandomFile.txt", // Not a backup file
+            "backup_2025_11_13.bak", // Incomplete timestamp
+            "BACKUP_MSSQL_MyDatabase", // Missing timestamp
+            "BACKUP_MSSQL_MyDatabase_25_11_13_14_30.BAK",    // Two-digit year
+            "BACKUP_MSSQL_MyDatabase_2025-11-13-14-30.BAK",  // Wrong separator
+            "BACKUP_MSSQL_MyDatabase_abcd_ef_gh_ij_kl.BAK",   // Non-numeric characters
+            "BACKUP_MSSQL_MyDatabase_2025_13_32_25_61.BAK"  // Invalid date/time values
+        };
+
+        foreach (var backupName in invalidBackupNames)
+        {
+            var result = DdlOperations.TryParseBackupTime(backupName, out var backupTime);
+
+            Assert.False(result, $"Should not parse: {backupName}");
+            Assert.Equal(default, backupTime);
+        }
     }
 
     public static async Task GetNonSystemDbName(DefaultDbContext context)

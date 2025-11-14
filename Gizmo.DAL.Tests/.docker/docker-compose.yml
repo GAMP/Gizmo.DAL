@@ -20,8 +20,8 @@ services:
     volumes:
       - mssql-volume:/var/opt/mssql
       - ${WINDOWS_BACKUP_PATH}:/usr/backups
-      - ./init-db-scripts/init-mssql.sh:/usr/local/bin/init-mssql.sh
-    entrypoint: ["/usr/local/bin/init-mssql.sh"]
+    #   - ./init-db-scripts/init-mssql.sh:/usr/local/bin/init-mssql.sh
+    # entrypoint: ["/usr/local/bin/init-mssql.sh"]
     networks:
       - gizmo-dal-network
 
@@ -40,7 +40,7 @@ services:
     volumes:
       - postgres-volume:/var/lib/postgresql/data
       - ${WINDOWS_BACKUP_PATH}:/usr/backups
-      - ./init-db-scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
+      # - ./init-db-scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
     networks:
       - gizmo-dal-network
 
