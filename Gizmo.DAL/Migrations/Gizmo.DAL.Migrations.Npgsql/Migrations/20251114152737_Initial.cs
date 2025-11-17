@@ -2618,8 +2618,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 columns: table => new
                 {
                     PaymentIntentId = table.Column<int>(type: "integer", nullable: false),
-                    AutoComplete = table.Column<bool>(type: "boolean", nullable: false),
-                    ProductOrderId = table.Column<int>(type: "integer", nullable: true)
+                    AutoComplete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -4163,8 +4162,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         name: "FK_ReservationProductOrder_ProductOrder_ProductOrderId",
                         column: x => x.ProductOrderId,
                         principalTable: "ProductOrder",
-                        principalColumn: "ProductOrderId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ProductOrderId");
                     table.ForeignKey(
                         name: "FK_ReservationProductOrder_Reservation_ReservationId",
                         column: x => x.ReservationId,
@@ -8008,11 +8006,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentIntentOrder_ProductOrderId",
-                table: "PaymentIntentOrder",
-                column: "ProductOrderId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethod_CreatedById",
                 table: "PaymentMethod",
                 column: "CreatedById");
@@ -11678,13 +11671,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 column: "ModifiedById",
                 principalTable: "User",
                 principalColumn: "UserId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_PaymentIntentOrder_ProductOrder_ProductOrderId",
-                table: "PaymentIntentOrder",
-                column: "ProductOrderId",
-                principalTable: "ProductOrder",
-                principalColumn: "ProductOrderId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_PaymentMethod_UserOperator_CreatedById",
