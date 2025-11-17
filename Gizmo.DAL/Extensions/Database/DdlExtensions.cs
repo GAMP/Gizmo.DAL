@@ -338,7 +338,7 @@ public static class DdlOperations
         return facade.GetProviderType() switch
         {
             Provider.Type.SqlServer => $"BACKUP_MSSQL_{metadata.DatabaseName}_{timeStamp}.BAK",
-            Provider.Type.PostgreSql => $"BACKUP_PGSQL{metadata.DatabaseName}_{timeStamp}.DUMP",
+            Provider.Type.PostgreSql => $"BACKUP_PGSQL_{metadata.DatabaseName}_{timeStamp}.DUMP",
             Provider.Type.MySql => $"BACKUP_MYSQL_{metadata.DatabaseName}_{timeStamp}.SQL",
             _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
         };

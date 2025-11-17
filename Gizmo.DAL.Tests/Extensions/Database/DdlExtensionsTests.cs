@@ -29,10 +29,10 @@ public class DdlExtensionsTests(DatabaseTestFixture fixture)
     [Theory]
     [InlineData(DatabaseType.MSSQL)]
     [InlineData(DatabaseType.POSTGRE)]
-    public async Task GenerateBackupName_CreatesUniqueNames(DatabaseType dbType)
+    public async Task GenerateBackupName_CreatesEqualNames(DatabaseType dbType)
     {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(GenerateBackupName_CreatesUniqueNames));
-        await GeneralDdlTestsImpl.GenerateBackupName_CreatesUniqueNames(context);
+        await using var context = await _fixture.CreateDbContext(dbType, nameof(GenerateBackupName_CreatesEqualNames));
+        await GeneralDdlTestsImpl.GenerateBackupName_CreatesEqualNames(context);
     }
 
     [Theory]

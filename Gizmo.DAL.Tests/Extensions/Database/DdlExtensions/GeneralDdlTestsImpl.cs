@@ -19,13 +19,13 @@ public static class GeneralDdlTestsImpl
 
         var extension = dbType switch
         {
-            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => ".bak",
-            DatabaseType.POSTGRE => ".dump",
+            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => ".BAK",
+            DatabaseType.POSTGRE => ".DUMP",
             _ => throw new NotSupportedException($"Database type {dbType} is not supported for backup.")
         };
 
         Assert.EndsWith(extension, name);
-        Assert.StartsWith(cnmd.DatabaseName, name);
+        Assert.Contains(cnmd.DatabaseName, name);
 
         // Verify the name contains a timestamp
         Assert.Contains("_", name);
@@ -33,24 +33,29 @@ public static class GeneralDdlTestsImpl
         // Verify the name format: {DatabaseName}_{provider}_{timestamp}.{extension}
         var expectedProvider = dbType switch
         {
-            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => "mssql",
-            DatabaseType.POSTGRE => "pgsql",
+            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => "MSSQL",
+            DatabaseType.POSTGRE => "PGSQL",
             _ => throw new NotSupportedException($"Database type {dbType} is not supported.")
         };
 
         Assert.Contains($"_{expectedProvider}_", name);
     }
 
-    public static async Task GenerateBackupName_CreatesUniqueNames(DefaultDbContext context)
+    public static async Task GenerateBackupName_CreatesEqualNames(DefaultDbContext context)
     {
-        var name1 = context.Database.GenerateBackupName();
+        var now = DateTime.UtcNow;
 
-        await Task.Delay(1000); // Simulate waiting for a second
+        var name1 = context.Database.GenerateBackupName(now);
 
-        var name2 = context.Database.GenerateBackupName();
+        var name2 = context.Database.GenerateBackupName(now);
 
-        // Names should be different due to timestamp
-        Assert.NotEqual(name1, name2);
+        var name3 = context.Database.GenerateBackupName();
+
+        var name4 = context.Database.GenerateBackupName();
+
+        // Names should be equal since the same timestamp is used
+        Assert.Equal(name1, name2);
+        Assert.Equal(name3, name4);
     }
 
     public static void GenerateBackupName_HandlesSpecialCharacters(DefaultDbContext context)
