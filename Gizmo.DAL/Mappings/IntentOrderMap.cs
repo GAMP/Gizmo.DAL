@@ -29,11 +29,11 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(intentOrder => intentOrder.Amount)
                .IsRequired()
-               .HasColumnOrder(4);
+               .HasColumnOrder(3);
 
             builder.Property(intentOrder => intentOrder.InvoicePaymentId)
                 .IsRequired(false)
-                .HasColumnOrder(3);
+                .HasColumnOrder(4);
 
             // same order should not appear multiple times for the same payment intent order
             builder.HasIndex(paymentIntentOrder => new { paymentIntentOrder.PaymentIntentOrderId, paymentIntentOrder.ProductOrderId }).IsUnique();

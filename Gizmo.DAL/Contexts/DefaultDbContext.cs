@@ -1121,11 +1121,6 @@ namespace Gizmo.DAL.Contexts
         public DbSet<PaymentReceipt> PaymentReceipts { get; set; }
 
         /// <summary>
-        /// Refund receipts.
-        /// </summary>
-        public DbSet<RefundReceipt> RefundReceipts { get; set; }
-
-        /// <summary>
         /// Client options.
         /// </summary>
         public DbSet<ClientOptions> ClientOptions { get; set; }
@@ -1465,7 +1460,6 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new ReservationProductOrderMap());
 
             modelBuilder.ApplyConfiguration(new PaymentReceiptMap());
-            modelBuilder.ApplyConfiguration(new RefundReceiptMap());
             modelBuilder.ApplyConfiguration(new ClientOptionsMap());
 
             modelBuilder.ApplyConfiguration(new ProductOrderDiscountMap());
@@ -1473,8 +1467,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new IntentOrderMap());
             modelBuilder.ApplyConfiguration(new IntentOrderDepositMap());
             modelBuilder.ApplyConfiguration(new IntentInvoiceMap());
-            modelBuilder.ApplyConfiguration(new RefundPaymentMap());
-           
+            modelBuilder.ApplyConfiguration(new RefundPaymentMap());           
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
