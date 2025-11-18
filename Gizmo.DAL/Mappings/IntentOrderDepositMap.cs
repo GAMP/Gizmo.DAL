@@ -31,6 +31,10 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired()
                 .HasColumnOrder(3);
 
+            builder.Property(paymentIntentOrder => paymentIntentOrder.DepositPaymentId)
+                .IsRequired(false)
+                .HasColumnOrder(4);
+
             // same user should not appear multiple times for the same payment intent order
             builder.HasIndex(paymentIntentOrder => new { paymentIntentOrder.PaymentIntentOrderId, paymentIntentOrder.UserId }).IsUnique();
 

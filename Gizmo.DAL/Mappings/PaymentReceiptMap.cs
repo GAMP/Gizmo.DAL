@@ -14,34 +14,36 @@ namespace Gizmo.DAL.Mappings
 
             builder.HasKey(paymentReceipt => paymentReceipt.Id);
 
-            // payment receipt have one - to - one mapping to payment
-            // multiple receipts are possible with same or different types
-
             builder.Property(paymentReceipt => paymentReceipt.Id)
-                .HasColumnName("PaymentId")
-                .HasColumnOrder(0)
-                .ValueGeneratedNever();
+                .HasColumnName("PaymentReceiptId")
+                .HasColumnOrder(0);
+
+            builder.Property(paymentReceipt => paymentReceipt.PaymentId)
+                .HasColumnOrder(1)
+                .IsRequired();
 
             builder.Property(paymentReceipt => paymentReceipt.Type)
                 .IsRequired()
-                .HasColumnOrder(1);
+                .HasColumnOrder(2);
 
             builder.Property(paymentReceipt => paymentReceipt.RRN)
                 .HasMaxLength(SQLStringSize.TINY)
                 .IsRequired(false)
-                .HasColumnOrder(2);
+                .HasColumnOrder(3);
 
             builder.Property(paymentReceipt => paymentReceipt.CompanionId)
                 .IsRequired(false)
-                .HasColumnOrder(3);
+                .HasColumnOrder(4);
 
             builder.Property(paymentReceipt => paymentReceipt.TerminalNumber)
                 .IsRequired(false)
-                .HasColumnOrder(4);
+                .HasColumnOrder(5);
+
+            builder.HasIndex(paymentReceipt => paymentReceipt.PaymentId);
 
             builder.HasOne(paymentReceipt => paymentReceipt.Payment)
-                .WithOne(payment => payment.Receipt)
-                .HasForeignKey<PaymentReceipt>(paymentReceipt => paymentReceipt.Id)
+                .WithMany(payment => payment.Receipts)
+                .HasForeignKey(paymentReceipt => paymentReceipt.PaymentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(paymentReceipt => paymentReceipt.Companion)

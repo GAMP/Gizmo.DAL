@@ -1,9 +1,10 @@
-﻿Fix ProductOrderId on PaymentIntentOrder, column must be removed
-Fix OrderIntent property order in mapping
+﻿Enable all branched entities in the default branch on migration
+
+- Fix OrderIntent property order in mapping
+- Fix ProductOrderId on PaymentIntentOrder, column must be removed
 - Add InvoiceIntent, ability to execute payment intent on deposits
 - Make Promotion Name non unique, its common that names might repeat
-Enable all branched entities in the default branch on migration
-Move DisableReceiptPrinting to PaymentIntent, its shared behavior for both orders and deposits
+- Move DisableReceiptPrinting to PaymentIntent, its shared behavior for both orders and deposits
 
 HasData will have problems with subequent migrations when any dynamic values such as CreationTime, Password used
 This is because ModelSnapshot will have different values thus any new migration will generate update for them
