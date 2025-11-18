@@ -345,6 +345,31 @@ public static class DdlOperations
     }
 
     /// <summary>
+    /// Generates a temporary backup file name with a random component based on the database provider type of the current <see cref="DatabaseFacade"/> instance.
+    /// </summary>
+    /// <param name="facade">The <see cref="DatabaseFacade"/> instance representing the database connection.</param>
+    /// <returns>A string containing the temporary backup file name with the appropriate extension.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="facade"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the database provider name is not set.</exception>
+    /// <exception cref="NotSupportedException">Thrown when the database provider is not supported.</exception>
+    /// <remarks>
+    /// This method generates a unique temporary file name using a random GUID substring and the appropriate file extension for the database provider.
+    /// </remarks>
+    public static string GenerateTemporaryBackupName(this DatabaseFacade facade)
+    {
+        var dbType = facade.GetProviderType();
+        var randomPart = Guid.NewGuid().ToString("N")[..8];
+        
+        return dbType switch
+        {
+            Provider.Type.SqlServer => $"{randomPart}.BAK",
+            Provider.Type.PostgreSql => $"{randomPart}.DUMP",
+            Provider.Type.MySql => $"{randomPart}.SQL",
+            _ => throw new NotSupportedException($"Database type '{dbType}' is not supported.")
+        };
+    }
+
+    /// <summary>
     /// Attempts to parse the backup timestamp from a backup file name.
     /// </summary>\
     /// <remarks>

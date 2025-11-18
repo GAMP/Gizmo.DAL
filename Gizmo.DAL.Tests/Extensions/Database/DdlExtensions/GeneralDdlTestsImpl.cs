@@ -73,6 +73,42 @@ public static class GeneralDdlTestsImpl
         Assert.DoesNotContain(">", name);
         Assert.DoesNotContain("|", name);
     }
+
+    public static void GenerateTemporaryBackupName_CreatesCorrectFormat(DefaultDbContext context, DatabaseType dbType)
+    {
+        var name = context.Database.GenerateTemporaryBackupName();
+
+        var extension = dbType switch
+        {
+            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => ".BAK",
+            DatabaseType.POSTGRE => ".DUMP",
+            _ => throw new NotSupportedException($"Database type {dbType} is not supported for backup.")
+        };
+
+        // Verify the name ends with the correct extension
+        Assert.EndsWith(extension, name);
+
+        // Verify the name format: {randomPart}.{extension}
+        var nameWithoutExtension = Path.GetFileNameWithoutExtension(name);
+        
+        // Should be 8 characters (GUID substring)
+        Assert.Equal(8, nameWithoutExtension.Length);
+        
+        // Should be all hex characters
+        Assert.Matches("^[0-9a-f]{8}$", nameWithoutExtension);
+    }
+
+    public static void GenerateTemporaryBackupName_CreatesUniqueNames(DefaultDbContext context)
+    {
+        var name1 = context.Database.GenerateTemporaryBackupName();
+        var name2 = context.Database.GenerateTemporaryBackupName();
+        var name3 = context.Database.GenerateTemporaryBackupName();
+
+        // All generated names should be unique
+        Assert.NotEqual(name1, name2);
+        Assert.NotEqual(name1, name3);
+        Assert.NotEqual(name2, name3);
+    }
     
     public static void TryParseBackupTime_ReturnsTrue()
     {

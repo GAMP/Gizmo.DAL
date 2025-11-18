@@ -10,13 +10,6 @@ public class DdlExtensionsTests(DatabaseTestFixture fixture)
 {
     private readonly DatabaseTestFixture _fixture = fixture;
 
-    [Fact]
-    public void TryParseBackupTime()
-    {
-        GeneralDdlTestsImpl.TryParseBackupTime_ReturnsTrue();
-        GeneralDdlTestsImpl.TryParseBackupTime_ReturnsFalse();
-    }
-
     [Theory]
     [InlineData(DatabaseType.MSSQL)]
     [InlineData(DatabaseType.POSTGRE)]
@@ -24,24 +17,25 @@ public class DdlExtensionsTests(DatabaseTestFixture fixture)
     {
         await using var context = await _fixture.CreateDbContext(dbType, nameof(GenerateBackupName));
         GeneralDdlTestsImpl.GenerateBackupName_CreatesCorrectFormat(context, dbType);
-    }
-
-    [Theory]
-    [InlineData(DatabaseType.MSSQL)]
-    [InlineData(DatabaseType.POSTGRE)]
-    public async Task GenerateBackupName_CreatesEqualNames(DatabaseType dbType)
-    {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(GenerateBackupName_CreatesEqualNames));
         await GeneralDdlTestsImpl.GenerateBackupName_CreatesEqualNames(context);
+        GeneralDdlTestsImpl.GenerateBackupName_HandlesSpecialCharacters(context);
     }
 
     [Theory]
     [InlineData(DatabaseType.MSSQL)]
     [InlineData(DatabaseType.POSTGRE)]
-    public async Task GenerateBackupName_HandlesSpecialCharacters(DatabaseType dbType)
+    public async Task GenerateTemporaryBackupName(DatabaseType dbType)
     {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(GenerateBackupName_HandlesSpecialCharacters));
-        GeneralDdlTestsImpl.GenerateBackupName_HandlesSpecialCharacters(context);
+        await using var context = await _fixture.CreateDbContext(dbType, nameof(GenerateTemporaryBackupName));
+        GeneralDdlTestsImpl.GenerateTemporaryBackupName_CreatesCorrectFormat(context, dbType);
+        GeneralDdlTestsImpl.GenerateTemporaryBackupName_CreatesUniqueNames(context);
+    }
+
+    [Fact]
+    public void TryParseBackupTime()
+    {
+        GeneralDdlTestsImpl.TryParseBackupTime_ReturnsTrue();
+        GeneralDdlTestsImpl.TryParseBackupTime_ReturnsFalse();
     }
 
     [Theory]
