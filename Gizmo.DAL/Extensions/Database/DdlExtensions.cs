@@ -355,7 +355,7 @@ public static class DdlOperations
     /// <remarks>
     /// This method generates a unique temporary file name using a random GUID substring and the appropriate file extension for the database provider.
     /// </remarks>
-    public static string GenerateTemporaryBackupName(this DatabaseFacade facade)
+    public static string GenerateTempBackupName(this DatabaseFacade facade)
     {
         var dbType = facade.GetProviderType();
         var randomPart = Guid.NewGuid().ToString("N")[..8];

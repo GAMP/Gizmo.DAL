@@ -74,9 +74,9 @@ public static class GeneralDdlTestsImpl
         Assert.DoesNotContain("|", name);
     }
 
-    public static void GenerateTemporaryBackupName_CreatesCorrectFormat(DefaultDbContext context, DatabaseType dbType)
+    public static void GenerateTempBackupName_CreatesCorrectFormat(DefaultDbContext context, DatabaseType dbType)
     {
-        var name = context.Database.GenerateTemporaryBackupName();
+        var name = context.Database.GenerateTempBackupName();
 
         var extension = dbType switch
         {
@@ -98,11 +98,11 @@ public static class GeneralDdlTestsImpl
         Assert.Matches("^[0-9a-f]{8}$", nameWithoutExtension);
     }
 
-    public static void GenerateTemporaryBackupName_CreatesUniqueNames(DefaultDbContext context)
+    public static void GenerateTempBackupName_CreatesUniqueNames(DefaultDbContext context)
     {
-        var name1 = context.Database.GenerateTemporaryBackupName();
-        var name2 = context.Database.GenerateTemporaryBackupName();
-        var name3 = context.Database.GenerateTemporaryBackupName();
+        var name1 = context.Database.GenerateTempBackupName();
+        var name2 = context.Database.GenerateTempBackupName();
+        var name3 = context.Database.GenerateTempBackupName();
 
         // All generated names should be unique
         Assert.NotEqual(name1, name2);

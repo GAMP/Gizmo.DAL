@@ -24,11 +24,11 @@ public class DdlExtensionsTests(DatabaseTestFixture fixture)
     [Theory]
     [InlineData(DatabaseType.MSSQL)]
     [InlineData(DatabaseType.POSTGRE)]
-    public async Task GenerateTemporaryBackupName(DatabaseType dbType)
+    public async Task GenerateTempBackupName(DatabaseType dbType)
     {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(GenerateTemporaryBackupName));
-        GeneralDdlTestsImpl.GenerateTemporaryBackupName_CreatesCorrectFormat(context, dbType);
-        GeneralDdlTestsImpl.GenerateTemporaryBackupName_CreatesUniqueNames(context);
+        await using var context = await _fixture.CreateDbContext(dbType, nameof(GenerateTempBackupName));
+        GeneralDdlTestsImpl.GenerateTempBackupName_CreatesCorrectFormat(context, dbType);
+        GeneralDdlTestsImpl.GenerateTempBackupName_CreatesUniqueNames(context);
     }
 
     [Fact]
