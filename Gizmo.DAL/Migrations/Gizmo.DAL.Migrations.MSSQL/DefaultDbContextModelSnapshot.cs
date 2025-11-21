@@ -2438,7 +2438,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("DiscountId");
 
-                    b.ToTable("DiscountGroupDiscount", (string)null);
+                    b.ToTable("DiscountGroupDiscount");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.DiscountPeriod", b =>
@@ -3310,7 +3310,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(3);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
@@ -3320,7 +3320,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<int?>("InvoicePaymentId")
                         .HasColumnType("int")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
@@ -3376,7 +3376,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("DepositPaymentId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
@@ -4667,6 +4668,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int?>("BranchId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CompanionId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(14);
+
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
@@ -4716,6 +4721,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("int")
                         .HasColumnOrder(4);
 
+                    b.Property<int?>("TerminalNumber")
+                        .HasColumnType("int")
+                        .HasColumnOrder(15);
+
                     b.Property<string>("TransactionId")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
@@ -4732,6 +4741,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("CompanionId");
 
                     b.HasIndex("CreatedById");
 
@@ -4835,13 +4846,16 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.PaymentReceipt", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("PaymentId")
+                        .HasColumnName("PaymentReceiptId")
                         .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CompanionId")
                         .HasColumnType("int")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
@@ -4849,10 +4863,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
                     b.Property<string>("RRN")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<int?>("RegisterId")
                         .HasColumnType("int");
@@ -4862,17 +4880,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<int?>("TerminalNumber")
                         .HasColumnType("int")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<int>("Type")
                         .HasColumnType("int")
-                        .HasColumnOrder(1);
+                        .HasColumnOrder(2);
 
                     b.HasKey("Id");
 
                     b.HasIndex("CompanionId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("PaymentId");
 
                     b.HasIndex("RegisterId");
 
@@ -6661,40 +6681,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.ToTable("Refund", (string)null);
 
                     b.UseTptMappingStrategy();
-                });
-
-            modelBuilder.Entity("Gizmo.DAL.Entities.RefundReceipt", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasColumnName("RefundId")
-                        .HasColumnOrder(0);
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RRN")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int?>("RegisterId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ShiftId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("RegisterId");
-
-                    b.HasIndex("ShiftId");
-
-                    b.ToTable("RefundReceipt", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Register", b =>
@@ -9895,10 +9881,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasBaseType("Gizmo.DAL.Entities.Refund");
 
                     b.Property<int?>("FiscalReceiptId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.Property<int>("FiscalReceiptStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
 
                     b.HasIndex("FiscalReceiptId");
 
@@ -12660,6 +12648,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .WithMany()
                         .HasForeignKey("BranchId");
 
+                    b.HasOne("Gizmo.DAL.Entities.Companion", "Companion")
+                        .WithMany()
+                        .HasForeignKey("CompanionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Gizmo.DAL.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -12686,6 +12679,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .IsRequired();
 
                     b.Navigation("Branch");
+
+                    b.Navigation("Companion");
 
                     b.Navigation("CreatedBy");
 
@@ -12725,8 +12720,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("Gizmo.DAL.Entities.Payment", "Payment")
-                        .WithOne("Receipt")
-                        .HasForeignKey("Gizmo.DAL.Entities.PaymentReceipt", "Id")
+                        .WithMany("Receipts")
+                        .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -13567,35 +13562,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("PointTransaction");
 
                     b.Navigation("RefundMethod");
-
-                    b.Navigation("Register");
-
-                    b.Navigation("Shift");
-                });
-
-            modelBuilder.Entity("Gizmo.DAL.Entities.RefundReceipt", b =>
-                {
-                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("Gizmo.DAL.Entities.Refund", "Refund")
-                        .WithOne("Receipt")
-                        .HasForeignKey("Gizmo.DAL.Entities.RefundReceipt", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gizmo.DAL.Entities.Register", "Register")
-                        .WithMany()
-                        .HasForeignKey("RegisterId");
-
-                    b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
-                        .WithMany()
-                        .HasForeignKey("ShiftId");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Refund");
 
                     b.Navigation("Register");
 
@@ -16122,7 +16088,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Payment", b =>
                 {
-                    b.Navigation("Receipt");
+                    b.Navigation("Receipts");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.PaymentMethod", b =>
@@ -16232,11 +16198,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
             modelBuilder.Entity("Gizmo.DAL.Entities.Recipient", b =>
                 {
                     b.Navigation("Channels");
-                });
-
-            modelBuilder.Entity("Gizmo.DAL.Entities.Refund", b =>
-                {
-                    b.Navigation("Receipt");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.Register", b =>
