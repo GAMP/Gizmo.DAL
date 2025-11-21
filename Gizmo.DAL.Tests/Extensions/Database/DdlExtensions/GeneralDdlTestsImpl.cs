@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -19,8 +19,8 @@ public static class GeneralDdlTestsImpl
 
         var extension = dbType switch
         {
-            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => ".BAK",
-            DatabaseType.POSTGRE => ".DUMP",
+            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => ".bak",
+            DatabaseType.POSTGRE => ".dump",
             _ => throw new NotSupportedException($"Database type {dbType} is not supported for backup.")
         };
 
@@ -30,15 +30,15 @@ public static class GeneralDdlTestsImpl
         // Verify the name contains a timestamp
         Assert.Contains("_", name);
 
-        // Verify the name format: {DatabaseName}_{provider}_{timestamp}.{extension}
+        // Verify the name format: {provider}_{DatabaseName}_{timestamp}.{extension}
         var expectedProvider = dbType switch
         {
-            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => "MSSQL",
-            DatabaseType.POSTGRE => "PGSQL",
+            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => "mssql",
+            DatabaseType.POSTGRE => "pgsql",
             _ => throw new NotSupportedException($"Database type {dbType} is not supported.")
         };
 
-        Assert.Contains($"_{expectedProvider}_", name);
+        Assert.Contains($"{expectedProvider}_", name);
     }
 
     public static async Task GenerateBackupName_CreatesEqualNames(DefaultDbContext context)
@@ -80,22 +80,36 @@ public static class GeneralDdlTestsImpl
 
         var extension = dbType switch
         {
-            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => ".BAK",
-            DatabaseType.POSTGRE => ".DUMP",
+            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => ".bak",
+            DatabaseType.POSTGRE => ".dump",
             _ => throw new NotSupportedException($"Database type {dbType} is not supported for backup.")
         };
 
         // Verify the name ends with the correct extension
         Assert.EndsWith(extension, name);
 
-        // Verify the name format: {randomPart}.{extension}
+        // Verify the name format: {provider}_{randomPart}.{extension}
         var nameWithoutExtension = Path.GetFileNameWithoutExtension(name);
         
-        // Should be 8 characters (GUID substring)
-        Assert.Equal(8, nameWithoutExtension.Length);
+        // Expected provider prefix
+        var expectedPrefix = dbType switch
+        {
+            DatabaseType.MSSQL or DatabaseType.MSSQLEXPRESS or DatabaseType.LOCALDB => "mssql_",
+            DatabaseType.POSTGRE => "pgsql_",
+            _ => throw new NotSupportedException($"Database type {dbType} is not supported.")
+        };
+
+        // Verify the name starts with the expected provider prefix
+        Assert.StartsWith(expectedPrefix, nameWithoutExtension);
+
+        // Extract the random part (should be after the provider prefix)
+        var randomPart = nameWithoutExtension.Substring(expectedPrefix.Length);
         
-        // Should be all hex characters
-        Assert.Matches("^[0-9a-f]{8}$", nameWithoutExtension);
+        // Should be 8 characters (GUID substring)
+        Assert.Equal(8, randomPart.Length);
+        
+        // Should be all hex characters (lowercase)
+        Assert.Matches("^[0-9a-f]{8}$", randomPart);
     }
 
     public static void GenerateTempBackupName_CreatesUniqueNames(DefaultDbContext context)
@@ -115,10 +129,10 @@ public static class GeneralDdlTestsImpl
         // Arrange
         var testCases = new[]
         {
-            ("BACKUP_MSSQL_MyDatabase_2025_11_13_14_30", new DateTime(2025, 11, 13, 14, 30, 0, DateTimeKind.Utc)),
-            ("BACKUP_MSSQL_MyDatabase_2025_11_13_14_30.BAK", new DateTime(2025, 11, 13, 14, 30, 0, DateTimeKind.Utc)),
-            ("BACKUP_PGSQLMyDatabase_2025_01_01_00_00.DUMP", new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)),
-            ("BACKUP_MYSQL_MyDatabase_2024_12_31_23_59.SQL", new DateTime(2024, 12, 31, 23, 59, 0, DateTimeKind.Utc))
+            ("mssql_MyDatabase_2025_11_13_14_30", new DateTime(2025, 11, 13, 14, 30, 0, DateTimeKind.Utc)),
+            ("mssql_MyDatabase_2025_11_13_14_30.bak", new DateTime(2025, 11, 13, 14, 30, 0, DateTimeKind.Utc)),
+            ("pgsqlMyDatabase_2025_01_01_00_00.dump", new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc)),
+            ("mysql_MyDatabase_2024_12_31_23_59.sql", new DateTime(2024, 12, 31, 23, 59, 0, DateTimeKind.Utc))
         };
 
         foreach (var (backupName, expectedDateTime) in testCases)
@@ -143,12 +157,12 @@ public static class GeneralDdlTestsImpl
             "Short_2025", // Too short
             "InvalidBackupName",
             "SomeRandomFile.txt", // Not a backup file
-            "backup_2025_11_13.bak", // Incomplete timestamp
-            "BACKUP_MSSQL_MyDatabase", // Missing timestamp
-            "BACKUP_MSSQL_MyDatabase_25_11_13_14_30.BAK",    // Two-digit year
-            "BACKUP_MSSQL_MyDatabase_2025-11-13-14-30.BAK",  // Wrong separator
-            "BACKUP_MSSQL_MyDatabase_abcd_ef_gh_ij_kl.BAK",   // Non-numeric characters
-            "BACKUP_MSSQL_MyDatabase_2025_13_32_25_61.BAK"  // Invalid date/time values
+            "2025_11_13.bak", // Incomplete timestamp
+            "mssql_MyDatabase", // Missing timestamp
+            "mssql_MyDatabase_25_11_13_14_30.bak",    // Two-digit year
+            "mssql_MyDatabase_2025-11-13-14-30.bak",  // Wrong separator
+            "mssql_MyDatabase_abcd_ef_gh_ij_kl.bak",   // Non-numeric characters
+            "mssql_MyDatabase_2025_13_32_25_61.bak"  // Invalid date/time values
         };
 
         foreach (var backupName in invalidBackupNames)

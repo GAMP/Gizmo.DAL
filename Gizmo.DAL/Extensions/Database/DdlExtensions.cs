@@ -337,9 +337,9 @@ public static class DdlOperations
         var timeStamp = effectiveDateTime.ToString("yyyy_MM_dd_HH_mm");
         return facade.GetProviderType() switch
         {
-            Provider.Type.SqlServer => $"BACKUP_MSSQL_{metadata.DatabaseName}_{timeStamp}.BAK",
-            Provider.Type.PostgreSql => $"BACKUP_PGSQL_{metadata.DatabaseName}_{timeStamp}.DUMP",
-            Provider.Type.MySql => $"BACKUP_MYSQL_{metadata.DatabaseName}_{timeStamp}.SQL",
+            Provider.Type.SqlServer => $"mssql_{metadata.DatabaseName}_{timeStamp}.bak",
+            Provider.Type.PostgreSql => $"pgsql_{metadata.DatabaseName}_{timeStamp}.dump",
+            Provider.Type.MySql => $"mysql_{metadata.DatabaseName}_{timeStamp}.sql",
             _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
         };
     }
@@ -362,9 +362,9 @@ public static class DdlOperations
         
         return dbType switch
         {
-            Provider.Type.SqlServer => $"{randomPart}.BAK",
-            Provider.Type.PostgreSql => $"{randomPart}.DUMP",
-            Provider.Type.MySql => $"{randomPart}.SQL",
+            Provider.Type.SqlServer => $"mssql_{randomPart}.bak",
+            Provider.Type.PostgreSql => $"pgsql_{randomPart}.dump",
+            Provider.Type.MySql => $"mysql_{randomPart}.sql",
             _ => throw new NotSupportedException($"Database type '{dbType}' is not supported.")
         };
     }
