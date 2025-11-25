@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using SharedLib;
@@ -81,6 +81,12 @@ public interface IConnectionMetadata
     /// </summary>
     /// <value>The name of the database to connect to. May be empty for connections to the default database.</value>
     string DatabaseName { get; }
+
+    /// <summary>
+    /// Gets the file extension used for database backups.
+    /// </summary>
+    /// <value>The file extension (including the dot, e.g., ".bak") used for database backup files.</value>
+    string BackupExtension { get; }
 
     /// <summary>
     /// Gets the authentication type used for database connection.

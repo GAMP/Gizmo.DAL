@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Npgsql;
 using SharedLib;
 
@@ -13,8 +13,9 @@ internal static class PostgreSql
         public string Username { get; init; } = "postgres";
         public string Password { get; init; } = string.Empty;
         public string DatabaseName { get; init; } = string.Empty;
+        public string BackupExtension { get; init; } = ".dump";
         public DatabaseType DatabaseType => DatabaseType.POSTGRE;
-        public SQLServerAuthentication AuthenticationType { get; init; } = SQLServerAuthentication.Unspecified;
+        public SQLServerAuthentication AuthenticationType { get; init; } = SQLServerAuthentication.Server;
 
         public string ToConnectionString()
         {
@@ -55,7 +56,7 @@ internal static class PostgreSql
                         Username = builder.Username,
                         Password = builder.Password,
                         DatabaseName = builder.Database,
-                        AuthenticationType = builder.SslMode == SslMode.Disable ? SQLServerAuthentication.Unspecified : SQLServerAuthentication.Integrated
+                        AuthenticationType = SQLServerAuthentication.Server // PostgreSQL will use only standard authentication for us
                     };
 
                     Provider.Metadata[connectionString] = connection;

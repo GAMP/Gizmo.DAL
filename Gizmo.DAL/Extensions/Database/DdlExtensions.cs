@@ -332,16 +332,18 @@ public static class DdlOperations
     public static string GenerateBackupName(this DatabaseFacade facade, DateTime? dateTime = null)
     {
         var metadata = facade.GetConnectionMetadata();
+        var prefix = facade.GetProviderType() switch
+        {
+            Provider.Type.SqlServer => "mssql",
+            Provider.Type.PostgreSql => "pgsql",
+            Provider.Type.MySql => "mysql",
+            _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
+        };
 
         var effectiveDateTime = dateTime ?? DateTime.UtcNow;
         var timeStamp = effectiveDateTime.ToString("yyyy_MM_dd_HH_mm");
-        return facade.GetProviderType() switch
-        {
-            Provider.Type.SqlServer => $"mssql_{metadata.DatabaseName}_{timeStamp}.bak",
-            Provider.Type.PostgreSql => $"pgsql_{metadata.DatabaseName}_{timeStamp}.dump",
-            Provider.Type.MySql => $"mysql_{metadata.DatabaseName}_{timeStamp}.sql",
-            _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
-        };
+        
+        return $"{prefix}_{metadata.DatabaseName}_{timeStamp}{metadata.BackupExtension}";
     }
 
     /// <summary>
@@ -357,16 +359,17 @@ public static class DdlOperations
     /// </remarks>
     public static string GenerateTempBackupName(this DatabaseFacade facade)
     {
-        var dbType = facade.GetProviderType();
-        var randomPart = Guid.NewGuid().ToString("N")[..8];
-        
-        return dbType switch
+        var metadata = facade.GetConnectionMetadata();
+        var prefix = facade.GetProviderType() switch
         {
-            Provider.Type.SqlServer => $"mssql_{randomPart}.bak",
-            Provider.Type.PostgreSql => $"pgsql_{randomPart}.dump",
-            Provider.Type.MySql => $"mysql_{randomPart}.sql",
-            _ => throw new NotSupportedException($"Database type '{dbType}' is not supported.")
+            Provider.Type.SqlServer => "mssql",
+            Provider.Type.PostgreSql => "pgsql",
+            Provider.Type.MySql => "mysql",
+            _ => throw new NotSupportedException($"Database type '{metadata.DatabaseType}' is not supported.")
         };
+
+        var randomPart = Guid.NewGuid().ToString("N")[..8];
+        return $"{prefix}_{randomPart}{metadata.BackupExtension}";
     }
 
     /// <summary>

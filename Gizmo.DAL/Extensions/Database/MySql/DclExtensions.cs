@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using SharedLib;
 
 namespace Gizmo.DAL.Extensions.DclExtensions;
@@ -12,6 +12,7 @@ internal static class MySql
         public string Username { get; init; } = "root";
         public string Password { get; init; } = string.Empty;
         public string DatabaseName { get; init; } = string.Empty;
+        public string BackupExtension => ".sql";
         public DatabaseType DatabaseType => DatabaseType.MYSQL;
         public SQLServerAuthentication AuthenticationType => SQLServerAuthentication.Unspecified;
 

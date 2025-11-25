@@ -14,9 +14,10 @@ internal static class SqlServer
     {
         public string Host { get; init; } = "localhost";
         public int? Port { get; init; } = null;
-        public string DatabaseName { get; init; } = string.Empty;
         public string Username { get; init; }
         public string Password { get; init; }
+        public string DatabaseName { get; init; } = string.Empty;
+        public string BackupExtension { get; init; } = ".bak";
         public DatabaseType DatabaseType { get; init; } = DatabaseType.MSSQL;
         public SQLServerAuthentication AuthenticationType { get; init; } = SQLServerAuthentication.Integrated;
 
@@ -84,11 +85,11 @@ internal static class SqlServer
                     {
                         Host = host,
                         Port = port,
-                        AuthenticationType = builder.IntegratedSecurity ? SQLServerAuthentication.Integrated : SQLServerAuthentication.Unspecified,
                         Username = builder.UserID,
                         Password = builder.Password,
                         DatabaseName = builder.InitialCatalog,
                         DatabaseType = dbType,
+                        AuthenticationType = builder.IntegratedSecurity ? SQLServerAuthentication.Integrated : SQLServerAuthentication.Server,
                     };
 
                     Provider.Metadata[connectionString] = connection;
