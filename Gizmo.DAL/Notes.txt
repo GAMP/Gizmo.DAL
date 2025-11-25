@@ -1,5 +1,5 @@
-﻿Enable all branched entities in the default branch on migration
-
+﻿
+- Enable all branched entities in the default branch on migration
 - Fix OrderIntent property order in mapping
 - Fix ProductOrderId on PaymentIntentOrder, column must be removed
 - Add InvoiceIntent, ability to execute payment intent on deposits

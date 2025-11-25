@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class EFCore_Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -1745,8 +1745,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PaymentIntentOrderId = table.Column<int>(type: "integer", nullable: false),
                     ProductOrderId = table.Column<int>(type: "integer", nullable: false),
-                    InvoicePaymentId = table.Column<int>(type: "integer", nullable: true),
                     Amount = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
+                    InvoicePaymentId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ModifiedById = table.Column<int>(type: "integer", nullable: true),
@@ -2568,6 +2568,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     ExpireAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     PaymentId = table.Column<int>(type: "integer", nullable: true),
                     DisableReceiptPrinting = table.Column<bool>(type: "boolean", nullable: false),
+                    CompanionId = table.Column<int>(type: "integer", nullable: true),
+                    TerminalNumber = table.Column<int>(type: "integer", nullable: true),
                     BranchId = table.Column<int>(type: "integer", nullable: true),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -2582,6 +2584,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         column: x => x.BranchId,
                         principalTable: "Branch",
                         principalColumn: "BranchId");
+                    table.ForeignKey(
+                        name: "FK_PaymentIntent_Companion_CompanionId",
+                        column: x => x.CompanionId,
+                        principalTable: "Companion",
+                        principalColumn: "CompanionId");
                     table.ForeignKey(
                         name: "FK_PaymentIntent_Payment_PaymentId",
                         column: x => x.PaymentId,
@@ -2661,6 +2668,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "PaymentReceipt",
                 columns: table => new
                 {
+                    PaymentReceiptId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PaymentId = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     RRN = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -2673,7 +2682,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PaymentReceipt", x => x.PaymentId);
+                    table.PrimaryKey("PK_PaymentReceipt", x => x.PaymentReceiptId);
                     table.ForeignKey(
                         name: "FK_PaymentReceipt_Companion_CompanionId",
                         column: x => x.CompanionId,
@@ -3935,28 +3944,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         principalColumn: "FiscalReceiptId");
                     table.ForeignKey(
                         name: "FK_RefundPayment_Refund_RefundId",
-                        column: x => x.RefundId,
-                        principalTable: "Refund",
-                        principalColumn: "RefundId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RefundReceipt",
-                columns: table => new
-                {
-                    RefundId = table.Column<int>(type: "integer", nullable: false),
-                    RRN = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ShiftId = table.Column<int>(type: "integer", nullable: true),
-                    RegisterId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RefundReceipt", x => x.RefundId);
-                    table.ForeignKey(
-                        name: "FK_RefundReceipt_Refund_RefundId",
                         column: x => x.RefundId,
                         principalTable: "Refund",
                         principalColumn: "RefundId",
@@ -7956,6 +7943,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 column: "BranchId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaymentIntent_CompanionId",
+                table: "PaymentIntent",
+                column: "CompanionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PaymentIntent_CreatedById",
                 table: "PaymentIntent",
                 column: "CreatedById");
@@ -8030,6 +8022,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "IX_PaymentReceipt_CreatedById",
                 table: "PaymentReceipt",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentReceipt_PaymentId",
+                table: "PaymentReceipt",
+                column: "PaymentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentReceipt_RegisterId",
@@ -8778,21 +8775,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "IX_RefundPayment_FiscalReceiptId",
                 table: "RefundPayment",
                 column: "FiscalReceiptId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefundReceipt_CreatedById",
-                table: "RefundReceipt",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefundReceipt_RegisterId",
-                table: "RefundReceipt",
-                column: "RegisterId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefundReceipt_ShiftId",
-                table: "RefundReceipt",
-                column: "ShiftId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Register_BranchId",
@@ -12217,27 +12199,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 principalColumn: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_RefundReceipt_Register_RegisterId",
-                table: "RefundReceipt",
-                column: "RegisterId",
-                principalTable: "Register",
-                principalColumn: "RegisterId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_RefundReceipt_Shift_ShiftId",
-                table: "RefundReceipt",
-                column: "ShiftId",
-                principalTable: "Shift",
-                principalColumn: "ShiftId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_RefundReceipt_UserOperator_CreatedById",
-                table: "RefundReceipt",
-                column: "CreatedById",
-                principalTable: "UserOperator",
-                principalColumn: "UserId");
-
-            migrationBuilder.AddForeignKey(
                 name: "FK_Register_Stock_StockId",
                 table: "Register",
                 column: "StockId",
@@ -13400,9 +13361,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             migrationBuilder.DropTable(
                 name: "RefundPayment");
-
-            migrationBuilder.DropTable(
-                name: "RefundReceipt");
 
             migrationBuilder.DropTable(
                 name: "RegisterTransaction");
