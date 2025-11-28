@@ -103,7 +103,7 @@
               ProductId  = ae.ProductId
             , BranchId  = @DefaultBranchId
             , IsEnabled = CAST(1 AS bit)
-        FROM [dbo].[Product] AS ae
+        FROM [dbo].[ProductBase] AS ae
         WHERE NOT EXISTS (
             SELECT
                 1
