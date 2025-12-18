@@ -3393,6 +3393,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("DepositPaymentId");
+
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("UserId");
@@ -6736,6 +6738,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<int?>("PaymentTerminalNumber")
                         .HasColumnType("integer")
                         .HasColumnOrder(8);
+
+                    b.Property<int?>("QrDisplayNumber")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
@@ -12052,6 +12057,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("Gizmo.DAL.Entities.DepositPayment", "DepositPayment")
+                        .WithMany()
+                        .HasForeignKey("DepositPaymentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Gizmo.DAL.Entities.User", "ModifiedBy")
                         .WithMany()
                         .HasForeignKey("ModifiedById");
@@ -12069,6 +12079,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("DepositPayment");
 
                     b.Navigation("ModifiedBy");
 

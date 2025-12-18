@@ -5,6 +5,7 @@
 - Add InvoiceIntent, ability to execute payment intent on deposits
 - Make Promotion Name non unique, its common that names might repeat
 - Move DisableReceiptPrinting to PaymentIntent, its shared behavior for both orders and deposits
+- Add QRDisplayDeviceNumber - the number assigned to the display device for QR code payments
 
 HasData will have problems with subequent migrations when any dynamic values such as CreationTime, Password used
 This is because ModelSnapshot will have different values thus any new migration will generate update for them
