@@ -43,6 +43,11 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(paymentIntentOrder => paymentIntentOrder.PaymentIntentOrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasOne(paymentIntentOrderDeposit => paymentIntentOrderDeposit.DepositPayment)
+                .WithMany()
+                .HasForeignKey(paymentIntentOrderDeposit => paymentIntentOrderDeposit.DepositPaymentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasOne(paymentIntentOrderDeposit => paymentIntentOrderDeposit.User)
                 .WithMany()
                 .HasForeignKey(paymentIntentOrderDeposit => paymentIntentOrderDeposit.UserId)
