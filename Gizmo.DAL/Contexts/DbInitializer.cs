@@ -289,7 +289,7 @@ namespace Gizmo.DAL.Contexts
             {
                 _logger.LogTrace("Initializing default data.");
 
-                using (var dbTransaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
+                await using (var dbTransaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
                 {
                     #region PermissionSets
 
