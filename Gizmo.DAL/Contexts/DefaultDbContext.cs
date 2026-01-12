@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Gizmo.DAL.Entities;
 using Gizmo.DAL.Mappings;
 using Gizmo.Server;
+using Gizmo.Server.Security;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
