@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Icon entity map.
+    /// </summary>
     public class IconMap : IEntityTypeConfiguration<Icon>
     {
         /// <summary>

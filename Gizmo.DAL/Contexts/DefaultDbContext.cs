@@ -10,12 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gizmo.DAL.Entities;
 using Gizmo.DAL.Mappings;
-using Gizmo.Server;
 using Gizmo.Server.Security;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql;
@@ -457,7 +455,7 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Get or sets preset reservation time.
         /// </summary>
-        public DbSet<PresetReservationTime> PresetReservationTime   { get; set; }
+        public DbSet<PresetReservationTime> PresetReservationTime { get; set; }
 
         #region TASKS
 
@@ -1010,7 +1008,7 @@ namespace Gizmo.DAL.Contexts
         /// Get documents.
         /// </summary>
         public DbSet<FileDocument> Documents { get; set; }
-        
+
         /// <summary>
         /// File Images.
         /// </summary>
@@ -1140,6 +1138,11 @@ namespace Gizmo.DAL.Contexts
         /// Promotion codes.
         /// </summary>
         public DbSet<PromotionCode> PromotionCodes { get; set; }
+
+        /// <summary>
+        /// Gets integrations.
+        /// </summary>
+        public DbSet<Integration> Integrations { get; set; }
 
         #endregion
 
@@ -1392,7 +1395,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new TargetProductMap());
             modelBuilder.ApplyConfiguration(new TargetProductTimeMap());
             modelBuilder.ApplyConfiguration(new TargetProductGroupMap());
-            modelBuilder.ApplyConfiguration(new TargetBillProfileMap());           
+            modelBuilder.ApplyConfiguration(new TargetBillProfileMap());
             modelBuilder.ApplyConfiguration(new TargetPaymentMethodMap());
 
             modelBuilder.ApplyConfiguration(new PromotionMap());
@@ -1412,11 +1415,11 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new StockCountAdjustmentMap());
 
             modelBuilder.ApplyConfiguration(new InventoryMap());
-            
+
             modelBuilder.ApplyConfiguration(new InventoryInboundMap());
             modelBuilder.ApplyConfiguration(new InventoryAdjustmentMap());
             modelBuilder.ApplyConfiguration(new InventoryTransferMap());
-            
+
             modelBuilder.ApplyConfiguration(new InventoryEntryMap());
             modelBuilder.ApplyConfiguration(new InventoryInboundEntryMap());
             modelBuilder.ApplyConfiguration(new InventoryAdjustmentEntryMap());
@@ -1468,7 +1471,9 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new IntentOrderMap());
             modelBuilder.ApplyConfiguration(new IntentOrderDepositMap());
             modelBuilder.ApplyConfiguration(new IntentInvoiceMap());
-            modelBuilder.ApplyConfiguration(new RefundPaymentMap());           
+            modelBuilder.ApplyConfiguration(new RefundPaymentMap());
+
+            modelBuilder.ApplyConfiguration(new IntegrationMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
@@ -2176,11 +2181,11 @@ namespace Gizmo.DAL.Contexts
         {
             if (userQuery == null)
                 throw new ArgumentNullException(nameof(userQuery));
-            
-            using(var dbTransaction = Database.BeginTransaction())
+
+            using (var dbTransaction = Database.BeginTransaction())
             {
                 // reset all user permission sets, this will allow the normal policies attached to the user to be used
-                userQuery.ExecuteUpdate(userOperator => userOperator.SetProperty(entity => entity.PermissionSetId,entity => null));
+                userQuery.ExecuteUpdate(userOperator => userOperator.SetProperty(entity => entity.PermissionSetId, entity => null));
 
                 foreach (int userId in userQuery.Select(user => user.Id).ToList())
                 {
@@ -2209,7 +2214,7 @@ namespace Gizmo.DAL.Contexts
                 }
                 SaveChanges();
                 dbTransaction.Commit();
-            }           
+            }
         }
 
         /// <summary>
@@ -2238,10 +2243,10 @@ namespace Gizmo.DAL.Contexts
                 foreach (var property in entityType.GetProperties())
                 {
                     if (property.ClrType == typeof(DateTime?))
-                        property.SetValueConverter(utcNullableConverter);                 
+                        property.SetValueConverter(utcNullableConverter);
 
                     if (property.ClrType == typeof(DateTime))
-                        property.SetValueConverter(utcConverter);                    
+                        property.SetValueConverter(utcConverter);
                 }
             }
         }
@@ -2278,7 +2283,7 @@ namespace Gizmo.DAL.Contexts
                 //make all decimal properties to have 19,4 precision
                 var decimalProperties = entity.GetProperties().Where(p => p.PropertyType == typeof(decimal) || p.PropertyType.GenericTypeArguments?.FirstOrDefault() == typeof(decimal)).ToList();
                 foreach (var property in decimalProperties)
-                    modelBuilder.Entity(entity).Property(property.Name).HasPrecision(19, 4);         
+                    modelBuilder.Entity(entity).Property(property.Name).HasPrecision(19, 4);
             }
 
             if (Database.IsNpgsql())
