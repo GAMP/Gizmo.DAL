@@ -4536,7 +4536,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("integer")
                         .HasColumnOrder(1);
 
-                    b.Property<int>("Sevirity")
+                    b.Property<int>("Severity")
                         .HasColumnType("integer")
                         .HasColumnOrder(2);
 
