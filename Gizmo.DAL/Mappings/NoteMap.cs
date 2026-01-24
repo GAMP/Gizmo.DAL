@@ -25,7 +25,7 @@ namespace Gizmo.DAL.Mappings
             builder.Property(x => x.Options)
                 .HasColumnOrder(1);
 
-            builder.Property(x => x.Sevirity)
+            builder.Property(x => x.Severity)
                 .HasColumnOrder(2);
 
             builder.Property(x => x.IsDeleted)
