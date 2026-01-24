@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Verification mobile phone entity map.
+    /// </summary>
     public class VerificationMobilePhoneMap : IEntityTypeConfiguration<VerificationMobilePhone>
     {
         /// <summary>
