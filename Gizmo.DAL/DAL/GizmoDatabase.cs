@@ -1086,7 +1086,7 @@ namespace Gizmo.DAL
                             FirstName = user.FirstName,
                             LastName = user.LastName,
                             Email = user.Email,
-                            Sex = (SharedLib.Sex)user.Sex,
+                            Sex = (Entities.Sex)user.Sex,
                             Phone = user.Phone,
                             MobilePhone = user.MobilePhone,
                             BirthDate = user.BirthDate,
