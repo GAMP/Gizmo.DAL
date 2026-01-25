@@ -1159,7 +1159,7 @@ namespace Gizmo.DAL
                             {
                                 ProductOrder = order,
                                 User = order.User,
-                                Status = SharedLib.InvoiceStatus.Paid,
+                                Status = Entities.InvoiceStatus.Paid,
                             };
 
                             //create invoice line
