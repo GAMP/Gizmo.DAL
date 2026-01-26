@@ -1137,7 +1137,7 @@ namespace Gizmo.DAL
                                 User = userMember,
                                 IsDelivered = true,
                                 DeliveredTime = DateTime.UtcNow,
-                                Status = SharedLib.OrderStatus.Completed,
+                                Status = DAL.Entities.OrderStatus.Completed,
                             };
 
                             //create time order line
