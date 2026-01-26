@@ -297,27 +297,27 @@ namespace Gizmo.DAL.Extensions
                         new ()
                         {
                             Id = productMars.Id,
-                            Options = PeriodOptionType.None
+                            Options = Entities.PeriodOptionType.None
                         },
                         new ()
                         {
                             Id = productSnickers.Id,
-                            Options = PeriodOptionType.None
+                            Options = Entities.PeriodOptionType.None
                         },
                         new ()
                         {
                             Id = productPizza.Id,
-                            Options = PeriodOptionType.None
+                            Options = Entities.PeriodOptionType.None
                         },
                         new ()
                         {
                             Id = productCocaCola.Id,
-                            Options = PeriodOptionType.None
+                            Options = Entities.PeriodOptionType.None
                         },
                         new ()
                         {
                             Id = productBundlePizzaAndCola.Id,
-                            Options = PeriodOptionType.None
+                            Options = Entities.PeriodOptionType.None
                         },
                     };
 
@@ -420,7 +420,7 @@ namespace Gizmo.DAL.Extensions
                     #region AddUserGroups
 
                     var userGroupMember = new UserGroup() { Name = "Members", BillProfileId = billProfileMemberPrices.Id, IsDefault = true };
-                    var userGroupGuest = new UserGroup() { Name = "Guests", BillProfileId = billProfileGuestsPrices.Id, Options = UserGroupOptionType.GuestUse };
+                    var userGroupGuest = new UserGroup() { Name = "Guests", BillProfileId = billProfileGuestsPrices.Id, Options = Entities.UserGroupOptionType.GuestUse };
 
                     var userGroups = new UserGroup[] { userGroupMember, userGroupGuest };
 
