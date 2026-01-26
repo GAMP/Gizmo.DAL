@@ -1191,7 +1191,7 @@ namespace Gizmo.DAL
                             {
                                 User = userMember,
                                 Amount = deposits,
-                                Type = SharedLib.DepositTransactionType.Credit,
+                                Type = DAL.Entities.DepositTransactionType.Credit,
                                 Balance = deposits,
                             };
 
