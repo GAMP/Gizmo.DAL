@@ -238,7 +238,7 @@ namespace Gizmo.DAL.Extensions
                         Cost = 0.90m,
                         Price = 1.10m,
                         Points = 10,
-                        StockOptions = StockOptionType.EnableStock,
+                        StockOptions = Entities.StockOptionType.EnableStock,
                         Guid = Guid.NewGuid()
                     };
                     var productSnickers = new Product()
@@ -246,7 +246,7 @@ namespace Gizmo.DAL.Extensions
                         ProductGroupId = productGroupSweets.Id,
                         Name = "Snickers Bar",
                         Points = 15,
-                        StockOptions = StockOptionType.EnableStock,
+                        StockOptions = Entities.StockOptionType.EnableStock,
                         Cost = 1.20m,
                         Price = 2.0m,
                         Guid = Guid.NewGuid()
@@ -264,7 +264,7 @@ namespace Gizmo.DAL.Extensions
                         ProductGroupId = productGroupDrinks.Id,
                         Name = "Coca Cola (Can)",
                         Points = 20,
-                        StockOptions = StockOptionType.EnableStock,
+                        StockOptions = Entities.StockOptionType.EnableStock,
                         Cost = 1.20m,
                         Price = 2.0m,
                         Guid = Guid.NewGuid()
@@ -276,7 +276,7 @@ namespace Gizmo.DAL.Extensions
                     {
                         ProductGroupId = productGroupFood.Id,
                         Name = "Pizza and Cola",
-                        StockOptions = StockOptionType.EnableStock,
+                        StockOptions = Entities.StockOptionType.EnableStock,
                         Points = 200,
                         Price = 3.40m, //pizza plus cola
                         Guid = Guid.NewGuid()
