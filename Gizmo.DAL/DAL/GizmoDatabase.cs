@@ -1207,7 +1207,7 @@ namespace Gizmo.DAL
                                 User = userMember,
                                 Amount = user.Points,
                                 Balance = user.Points,
-                                Type = Entities.LoyaltyPointsTransactionType.Credit,
+                                Type = Entities.PointsTransactionType.Credit,
                             };
 
                             //add points
