@@ -50,16 +50,16 @@ public sealed class TickerQDbContext(IOptions<ServiceDatabaseConfig> options) : 
     {
         switch (_dbConfig.DbType)
         {
-            case SharedLib.DatabaseType.LOCALDB:
-            case SharedLib.DatabaseType.MSSQLEXPRESS:
-            case SharedLib.DatabaseType.MSSQL:
+            case DatabaseType.LOCALDB:
+            case DatabaseType.MSSQLEXPRESS:
+            case DatabaseType.MSSQL:
                 builder.UseSqlServer(_dbConfig.DbConnectionString, options =>
                 {
                     options.MigrationsHistoryTable(MIGRATIONS_TABLE, DEFAULT_SCHEMA);
                     options.MigrationsAssembly(MIGRATIONS_ASSEMBLY_MSSQL);
                 });
                 break;
-            case SharedLib.DatabaseType.POSTGRE:
+            case DatabaseType.POSTGRE:
                 builder.UseNpgsql(_dbConfig.DbConnectionString, options =>
                 {
                     options.MigrationsHistoryTable(MIGRATIONS_TABLE, DEFAULT_SCHEMA);
@@ -88,7 +88,7 @@ public sealed class TickerQDbContextFactory : IDesignTimeDbContextFactory<Ticker
         // Since we are using IDesignTimeDbContextFactory, we need to create options manually.
         // Another option would be using the Startup project to provide the configuration but since the migrations wont be generated often we can stick to this dirty approach for now.
 
-        var options = Options.Create(new ServiceDatabaseConfig() { DbType = SharedLib.DatabaseType.MSSQL, DbConnectionString = @"Server=LOCALHOST\SQLEXPRESS;Initial Catalog=_gizmo_db;Integrated Security=true;TrustServerCertificate=true" });
+        var options = Options.Create(new ServiceDatabaseConfig() { DbType = DatabaseType.MSSQL, DbConnectionString = @"Server=LOCALHOST\SQLEXPRESS;Initial Catalog=_gizmo_db;Integrated Security=true;TrustServerCertificate=true" });
         //var options = Options.Create(new ServiceDatabaseConfig() {  DbType = SharedLib.DatabaseType.POSTGRE, DbConnectionString = "Server=localhost;Database=_gizmo_db;User Id=postgres;Password=password" });
 
         return new TickerQDbContext(options);
