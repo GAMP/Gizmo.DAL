@@ -39,6 +39,11 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(true)
                 .HasColumnOrder(6);
 
+            builder.Property(refund => refund.Note)
+                .HasMaxLength(SQLStringSize.TINY)
+                .IsRequired(false)
+                .HasColumnOrder(7);
+
             builder.HasOne(refund => refund.Payment)
                 .WithMany()
                 .HasForeignKey(refund => refund.PaymentId);

@@ -6689,6 +6689,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("integer")
                         .HasColumnOrder(3);
 
+                    b.Property<string>("Note")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnOrder(7);
+
                     b.Property<int?>("PaymentId")
                         .HasColumnType("integer")
                         .HasColumnOrder(1);
