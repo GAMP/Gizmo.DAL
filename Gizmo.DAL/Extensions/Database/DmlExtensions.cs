@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gizmo.DAL.Contexts;
 using Gizmo.DAL.Extensions.DmlExtensions;
-using IntegrationLib;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gizmo.DAL.Extensions;
@@ -100,9 +99,7 @@ public static class DmlOperations
                 defaultOperator.UserCredential.Salt = salt;
                 defaultOperator.UserCredential.Password = password;
 
-                var allPermissions = ClaimTypeBase
-                    .GetClaimTypes()
-                    .Select(claim => new Entities.UserPermission { Type = claim.Resource, Value = claim.Operation });
+                var allPermissions = Gizmo.Server.Security.PolicesBuilder.Claims().Select(claim => new Entities.UserPermission { Type = claim.Resource, Value = claim.Operation });
 
                 defaultOperator.Permissions.UnionWith(allPermissions);
 

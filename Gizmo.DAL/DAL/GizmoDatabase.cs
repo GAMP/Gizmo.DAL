@@ -1,9 +1,5 @@
-﻿using CoreLib;
-
-using Gizmo.DAL.Contexts;
+﻿using Gizmo.DAL.Contexts;
 using Gizmo.DAL.DTO;
-
-using IntegrationLib;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +7,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 
 using Npgsql;
-
-using SharedLib;
 
 using System;
 using System.Collections.Generic;
@@ -839,7 +833,7 @@ namespace Gizmo.DAL
                     defaultOperator.UserCredential.Salt = salt;
                     defaultOperator.UserCredential.Password = password;
 
-                    var allPermissions = ClaimTypeBase.GetClaimTypes().Select(claim =>
+                    var allPermissions = PolicesBuilder.Claims().Select(claim =>
                     {
                         return new Entities.UserPermission() { Type = claim.Resource, Value = claim.Operation };
                     });
@@ -998,7 +992,7 @@ namespace Gizmo.DAL
                 var users = export.Users ?? Enumerable.Empty<UserImportInfo>();
 
                 //normalize users
-                //here we will need to check if all input parameters have valid lengths and convert them to maximum allowed lenghts
+                //here we will need to check if all input parameters have valid lengths and convert them to maximum allowed lengths
                 var normalizedUsers = users.Select(user => new UserImportInfo()
                 {
                     Username = user.Username.WithMaxLength(30, true),

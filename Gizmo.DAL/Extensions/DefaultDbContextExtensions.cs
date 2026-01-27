@@ -193,7 +193,7 @@ namespace Gizmo.DAL.Extensions
 
                     var adminCredential = new UserCredential() { Id = admin.Id, Salt = salt, Password = password };
 
-                    var adminPermissions = IntegrationLib.ClaimTypeBase.GetClaimTypes()
+                    var adminPermissions = Gizmo.Server.Security.PolicesBuilder.Claims()
                         .Select(claim => new UserPermission() { UserId = admin.Id, Type = claim.Resource, Value = claim.Operation });
 
                     dbContext.Credentials.AddRange(adminCredential);
