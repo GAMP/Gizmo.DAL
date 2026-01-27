@@ -3,9 +3,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-using SharedLib;
-using SharedLib.Configuration;
-
 namespace Gizmo.DAL.Contexts
 {
     /// <summary>

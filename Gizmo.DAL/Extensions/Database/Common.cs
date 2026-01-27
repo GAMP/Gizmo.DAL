@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using SharedLib;
 
 namespace Gizmo.DAL.Extensions;
 

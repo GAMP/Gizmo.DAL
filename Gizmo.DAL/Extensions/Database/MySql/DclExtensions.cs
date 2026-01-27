@@ -1,5 +1,4 @@
 ﻿using System;
-using SharedLib;
 
 namespace Gizmo.DAL.Extensions.DclExtensions;
 

@@ -2,7 +2,6 @@
 using Gizmo.DAL.Extensions.DclExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using SharedLib;
 
 namespace Gizmo.DAL.Extensions;
 

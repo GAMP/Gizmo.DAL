@@ -8,7 +8,6 @@ using Gizmo.DAL.Contexts;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Gizmo.DAL.Entities;
-using SharedLib;
 using System.Globalization;
 using Gizmo.DAL.Scripts;
 using Microsoft.Data.SqlClient;

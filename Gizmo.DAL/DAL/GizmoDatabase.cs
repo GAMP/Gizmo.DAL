@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Npgsql;
 
 using SharedLib;
-using SharedLib.Configuration;
 
 using System;
 using System.Collections.Generic;

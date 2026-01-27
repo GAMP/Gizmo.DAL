@@ -1,6 +1,4 @@
-﻿using SharedLib.Configuration;
-
-namespace Gizmo.DAL.Contexts
+﻿namespace Gizmo.DAL.Contexts
 {
     /// <summary>
     /// Gizmo.DALl default db context provider.

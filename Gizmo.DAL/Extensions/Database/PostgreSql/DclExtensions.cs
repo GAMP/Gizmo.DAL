@@ -1,6 +1,5 @@
 ﻿using System;
 using Npgsql;
-using SharedLib;
 
 namespace Gizmo.DAL.Extensions.DclExtensions;
 

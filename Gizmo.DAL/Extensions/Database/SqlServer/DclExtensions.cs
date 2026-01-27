@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Data.SqlClient;
-using SharedLib;
 
 namespace Gizmo.DAL.Extensions.DclExtensions;
 

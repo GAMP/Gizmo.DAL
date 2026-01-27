@@ -1,9 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using SharedLib.Configuration;
 using TickerQ.EntityFrameworkCore.Configurations;
 using TickerQ.EntityFrameworkCore.Entities;
 
