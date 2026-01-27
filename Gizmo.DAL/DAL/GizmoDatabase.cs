@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 
 using Gizmo.DAL.Extensions;
 using Gizmo.DAL.Scripts;
+using Gizmo.Server.Security;
 
 namespace Gizmo.DAL
 {
@@ -108,9 +109,9 @@ namespace Gizmo.DAL
         /// <summary>
         /// Gets current principal.
         /// </summary>
-        public static IDispatcherPrincipal CurrentPrincipal
+        public static IGizmoServerPrincipal CurrentPrincipal
         {
-            get { return Thread.CurrentPrincipal as IDispatcherPrincipal; }
+            get { return Thread.CurrentPrincipal as IGizmoServerPrincipal; }
         }
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace Gizmo.DAL
         /// </summary>
         public int? CurrentUserId
         {
-            get { return CurrentPrincipal != null ? CurrentPrincipal.UserIdentity.UserId : (int?)null; }
+            get { return CurrentPrincipal?.UserId; }
         }
 
         /// <summary>
