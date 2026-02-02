@@ -1149,6 +1149,11 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<UserMemberDisableEntry> UserDisableEntries { get; set; }
 
+        /// <summary>
+        /// User disable reasons.
+        /// </summary>
+        public DbSet<UserMemberDisableReason> UserDisableReasons { get; set; }
+
         #endregion
 
         #region OVERRIDES
