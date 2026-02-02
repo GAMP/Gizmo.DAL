@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizmo.DAL.Migrations.MSSQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20260202133556_Update6")]
+    [Migration("20260202142654_Update6")]
     partial class Update6
     {
         /// <inheritdoc />
@@ -8701,86 +8701,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.ToTable("UserCreditLimit", (string)null);
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.UserDisableEntry", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("UserDisableEntryId")
-                        .HasColumnOrder(0);
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DisableReasonId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(2);
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(3);
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DisableReasonId");
-
-                    b.ToTable("UserDisableEntry", (string)null);
-                });
-
-            modelBuilder.Entity("Gizmo.DAL.Entities.UserDisableReason", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("UserDisableReasonId")
-                        .HasColumnOrder(0);
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnOrder(2);
-
-                    b.Property<int?>("ModifiedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)")
-                        .HasColumnOrder(1);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("ModifiedById");
-
-                    b.ToTable("UserDisableReason", (string)null);
-                });
-
             modelBuilder.Entity("Gizmo.DAL.Entities.UserGroup", b =>
                 {
                     b.Property<int>("Id")
@@ -8953,6 +8873,92 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .IsUnique();
 
                     b.ToTable("UserGroupHostDisallowed", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserMemberDisableEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("UserDisableEntryId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DisableReasonId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DisableReasonId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserMemberDisableEntry", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserMemberDisableReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("UserDisableReasonId")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("UserMemberDisableReason", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserOperatorBranch", b =>
@@ -14622,37 +14628,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.UserDisableEntry", b =>
-                {
-                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("Gizmo.DAL.Entities.UserDisableReason", "DisableReason")
-                        .WithMany("Entries")
-                        .HasForeignKey("DisableReasonId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DisableReason");
-                });
-
-            modelBuilder.Entity("Gizmo.DAL.Entities.UserDisableReason", b =>
-                {
-                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
-                        .WithMany()
-                        .HasForeignKey("ModifiedById");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("ModifiedBy");
-                });
-
             modelBuilder.Entity("Gizmo.DAL.Entities.UserGroup", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.AppGroup", "AppGroup")
@@ -14722,6 +14697,45 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("ModifiedBy");
 
                     b.Navigation("UserGroup");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserMemberDisableEntry", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserMemberDisableReason", "DisableReason")
+                        .WithMany("Entries")
+                        .HasForeignKey("DisableReasonId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
+                        .WithMany("DisableEntries")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DisableReason");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserMemberDisableReason", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserOperatorBranch", b =>
@@ -16521,11 +16535,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("UserAgreementStates");
                 });
 
-            modelBuilder.Entity("Gizmo.DAL.Entities.UserDisableReason", b =>
-                {
-                    b.Navigation("Entries");
-                });
-
             modelBuilder.Entity("Gizmo.DAL.Entities.UserGroup", b =>
                 {
                     b.Navigation("DisallowedHostGroups");
@@ -16535,6 +16544,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("ProductPrices");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.UserMemberDisableReason", b =>
+                {
+                    b.Navigation("Entries");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.UserPermissionSet", b =>
@@ -16636,6 +16650,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Navigation("DepositPayments");
 
                     b.Navigation("Deposits");
+
+                    b.Navigation("DisableEntries");
 
                     b.Navigation("InvoiceLines");
 

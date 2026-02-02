@@ -7,12 +7,12 @@ namespace Gizmo.DAL.Mappings
     /// <summary>
     /// User disable entry entity map.
     /// </summary>
-    public sealed class UserDisableEntryMap : IEntityTypeConfiguration<UserDisableEntry>
+    public sealed class UserDisableEntryMap : IEntityTypeConfiguration<UserMemberDisableEntry>
     {
         /// <inheritdoc/>
-        public void Configure(EntityTypeBuilder<UserDisableEntry> builder)
+        public void Configure(EntityTypeBuilder<UserMemberDisableEntry> builder)
         {
-            builder.ToTable(nameof(UserDisableEntry));
+            builder.ToTable(nameof(UserMemberDisableEntry));
 
             builder.HasKey(userDisableEntry => userDisableEntry.Id);
 
@@ -20,16 +20,20 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnName("UserDisableEntryId")
                 .HasColumnOrder(0);
 
-            builder.Property(userDisableEntry => userDisableEntry.Type)
+            builder.Property(userDisableEntry => userDisableEntry.UserId)
                 .HasColumnOrder(1)
+                .IsRequired(true);
+
+            builder.Property(userDisableEntry => userDisableEntry.Type)
+                .HasColumnOrder(2)
                 .IsRequired();
 
             builder.Property(userDisableEntry => userDisableEntry.DisableReasonId)
-                .HasColumnOrder(2)
+                .HasColumnOrder(3)
                 .IsRequired(false);
 
             builder.Property(userDisableEntry => userDisableEntry.Note)
-                .HasColumnOrder(3)
+                .HasColumnOrder(4)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
 
@@ -38,6 +42,12 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(userDisableEntry => userDisableEntry.DisableReasonId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(userDisableEntry => userDisableEntry.User)
+                .WithMany(userMember => userMember.DisableEntries)
+                .HasForeignKey(userDisableEntry => userDisableEntry.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

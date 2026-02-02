@@ -1147,7 +1147,7 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// User disable entries.
         /// </summary>
-        public DbSet<UserDisableEntry> UserDisableEntries { get; set; }
+        public DbSet<UserMemberDisableEntry> UserDisableEntries { get; set; }
 
         #endregion
 
