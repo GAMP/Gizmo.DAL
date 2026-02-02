@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gizmo.DAL.Mappings
 {
+    /// <summary>
+    /// Token entity map.
+    /// </summary>
     public class TokenMap : IEntityTypeConfiguration<Token>
     {
         /// <summary>
