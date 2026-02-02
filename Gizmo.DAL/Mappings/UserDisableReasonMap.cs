@@ -1,0 +1,40 @@
+﻿using Gizmo.DAL.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Gizmo.DAL.Mappings
+{
+    /// <summary>
+    /// User disable entity map.
+    /// </summary>
+    public sealed class UserDisableReasonMap : IEntityTypeConfiguration<UserDisableReason>
+    {
+        /// <inheritdoc/>
+        public void Configure(EntityTypeBuilder<UserDisableReason> builder)
+        {
+            builder.ToTable(nameof(UserDisableReason));
+
+            builder.HasKey(stock => stock.Id);
+
+            builder.Property(userDisableReason => userDisableReason.Id)
+                .HasColumnName("UserDisableReasonId")
+                .HasColumnOrder(0);
+
+            builder.Property(userDisableReason => userDisableReason.Name)
+                .HasColumnOrder(1)
+                .IsRequired()
+                .HasMaxLength(SQLStringSize.TINY45);
+
+            builder.Property(userDisableReason => userDisableReason.Description)
+                .HasColumnOrder(2)
+                .IsRequired(false)
+                .HasMaxLength(SQLStringSize.TINY);
+
+            builder.HasMany(userDisableReason => userDisableReason.Entries)
+                .WithOne(userDisableEntry => userDisableEntry.DisableReason)
+                .HasForeignKey(userDisableEntry => userDisableEntry.DisableReasonId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
+    }
+}

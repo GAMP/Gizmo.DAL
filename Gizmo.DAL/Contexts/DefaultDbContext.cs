@@ -1144,6 +1144,11 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<Integration> Integrations { get; set; }
 
+        /// <summary>
+        /// User disable entries.
+        /// </summary>
+        public DbSet<UserDisableEntry> UserDisableEntries { get; set; }
+
         #endregion
 
         #region OVERRIDES
@@ -1474,6 +1479,9 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new RefundPaymentMap());
 
             modelBuilder.ApplyConfiguration(new IntegrationMap());
+
+            modelBuilder.ApplyConfiguration(new UserDisableReasonMap());
+            modelBuilder.ApplyConfiguration(new UserDisableEntryMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
