@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
+namespace Gizmo.DAL.Migrations.TickerQ.MSSQL.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -19,16 +19,16 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                 schema: "ticker",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Expression = table.Column<string>(type: "text", nullable: true),
-                    Request = table.Column<byte[]>(type: "bytea", nullable: true),
-                    Retries = table.Column<int>(type: "integer", nullable: false),
-                    RetryIntervals = table.Column<int[]>(type: "integer[]", nullable: true),
-                    Function = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    InitIdentifier = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Expression = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Request = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Retries = table.Column<int>(type: "int", nullable: false),
+                    RetryIntervals = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Function = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InitIdentifier = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,36 +40,36 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                 schema: "ticker",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    LockHolder = table.Column<string>(type: "text", nullable: true),
-                    Request = table.Column<byte[]>(type: "bytea", nullable: true),
-                    ExecutionTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LockedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ExecutedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Exception = table.Column<string>(type: "text", nullable: true),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Function = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InitIdentifier = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    LockHolder = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Request = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    ExecutionTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LockedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ExecutedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ExceptionMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SkippedReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ElapsedTime = table.Column<long>(type: "bigint", nullable: false),
-                    Retries = table.Column<int>(type: "integer", nullable: false),
-                    RetryCount = table.Column<int>(type: "integer", nullable: false),
-                    RetryIntervals = table.Column<int[]>(type: "integer[]", nullable: true),
-                    BatchParent = table.Column<Guid>(type: "uuid", nullable: true),
-                    BatchRunCondition = table.Column<int>(type: "integer", nullable: true),
-                    Function = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    InitIdentifier = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Retries = table.Column<int>(type: "int", nullable: false),
+                    RetryCount = table.Column<int>(type: "int", nullable: false),
+                    RetryIntervals = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    RunCondition = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TimeTickers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TimeTickers_TimeTickers_BatchParent",
-                        column: x => x.BatchParent,
+                        name: "FK_TimeTickers_TimeTickers_ParentId",
+                        column: x => x.ParentId,
                         principalSchema: "ticker",
                         principalTable: "TimeTickers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -77,16 +77,19 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                 schema: "ticker",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    LockHolder = table.Column<string>(type: "text", nullable: true),
-                    ExecutionTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CronTickerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    LockedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ExecutedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Exception = table.Column<string>(type: "text", nullable: true),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    LockHolder = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExecutionTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CronTickerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LockedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ExecutedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ExceptionMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SkippedReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ElapsedTime = table.Column<long>(type: "bigint", nullable: false),
-                    RetryCount = table.Column<int>(type: "integer", nullable: false)
+                    RetryCount = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -132,6 +135,12 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                 column: "Expression");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Function_Expression",
+                schema: "ticker",
+                table: "CronTickers",
+                columns: new[] { "Function", "Expression" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TimeTicker_ExecutionTime",
                 schema: "ticker",
                 table: "TimeTickers",
@@ -144,10 +153,10 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                 columns: new[] { "Status", "ExecutionTime" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TimeTickers_BatchParent",
+                name: "IX_TimeTickers_ParentId",
                 schema: "ticker",
                 table: "TimeTickers",
-                column: "BatchParent");
+                column: "ParentId");
         }
 
         /// <inheritdoc />
