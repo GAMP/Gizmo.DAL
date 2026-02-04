@@ -24,8 +24,12 @@ namespace Gizmo.DAL.Scripts
 
         private const string APPLY_SPECIFIC_SETTINGS = """
             IF (SELECT compatibility_level FROM sys.databases WHERE name = @DbName) < 130
-                ALTER DATABASE [@DbName] SET COMPATIBILITY_LEVEL = 130;
-
+            BEGIN
+            DECLARE @sql nvarchar(max) =
+                N'ALTER DATABASE ' + QUOTENAME(@DbName) + N' SET COMPATIBILITY_LEVEL = 130;';
+            EXEC sp_executesql @sql;
+            END
+            
             -- Create a temporary table to return success result
             CREATE TABLE #temp (id INT);
             UPDATE #temp SET id = id WHERE 1 = 0;
