@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
 {
     [DbContext(typeof(TickerQDbContext))]
-    [Migration("20251018085650_Initial")]
+    [Migration("20260202195108_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,15 +20,14 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TickerQ.EntityFrameworkCore.Entities.CronTickerEntity", b =>
+            modelBuilder.Entity("TickerQ.Utilities.Entities.CronTickerEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -63,14 +62,19 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                     b.HasIndex("Expression")
                         .HasDatabaseName("IX_CronTickers_Expression");
 
+                    b.HasIndex("Function", "Expression")
+                        .HasDatabaseName("IX_Function_Expression");
+
                     b.ToTable("CronTickers", "ticker");
                 });
 
-            modelBuilder.Entity("TickerQ.EntityFrameworkCore.Entities.CronTickerOccurrenceEntity<TickerQ.EntityFrameworkCore.Entities.CronTickerEntity>", b =>
+            modelBuilder.Entity("TickerQ.Utilities.Entities.CronTickerOccurrenceEntity<TickerQ.Utilities.Entities.CronTickerEntity>", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CronTickerId")
                         .HasColumnType("uuid");
@@ -78,7 +82,7 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                     b.Property<long>("ElapsedTime")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Exception")
+                    b.Property<string>("ExceptionMessage")
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ExecutedAt")
@@ -88,7 +92,6 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LockHolder")
-                        .IsConcurrencyToken()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("LockedAt")
@@ -97,8 +100,14 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                     b.Property<int>("RetryCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SkippedReason")
+                        .HasColumnType("text");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -118,17 +127,11 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                     b.ToTable("CronTickerOccurrences", "ticker");
                 });
 
-            modelBuilder.Entity("TickerQ.EntityFrameworkCore.Entities.TimeTickerEntity", b =>
+            modelBuilder.Entity("TickerQ.Utilities.Entities.TimeTickerEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<Guid?>("BatchParent")
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("BatchRunCondition")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -139,13 +142,13 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                     b.Property<long>("ElapsedTime")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Exception")
+                    b.Property<string>("ExceptionMessage")
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ExecutedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("ExecutionTime")
+                    b.Property<DateTime?>("ExecutionTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Function")
@@ -155,11 +158,13 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("LockHolder")
-                        .IsConcurrencyToken()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("LockedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
 
                     b.Property<byte[]>("Request")
                         .HasColumnType("bytea");
@@ -173,6 +178,12 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                     b.PrimitiveCollection<int[]>("RetryIntervals")
                         .HasColumnType("integer[]");
 
+                    b.Property<int?>("RunCondition")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SkippedReason")
+                        .HasColumnType("text");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -181,10 +192,10 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BatchParent");
-
                     b.HasIndex("ExecutionTime")
                         .HasDatabaseName("IX_TimeTicker_ExecutionTime");
+
+                    b.HasIndex("ParentId");
 
                     b.HasIndex("Status", "ExecutionTime")
                         .HasDatabaseName("IX_TimeTicker_Status_ExecutionTime");
@@ -192,9 +203,9 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                     b.ToTable("TimeTickers", "ticker");
                 });
 
-            modelBuilder.Entity("TickerQ.EntityFrameworkCore.Entities.CronTickerOccurrenceEntity<TickerQ.EntityFrameworkCore.Entities.CronTickerEntity>", b =>
+            modelBuilder.Entity("TickerQ.Utilities.Entities.CronTickerOccurrenceEntity<TickerQ.Utilities.Entities.CronTickerEntity>", b =>
                 {
-                    b.HasOne("TickerQ.EntityFrameworkCore.Entities.CronTickerEntity", "CronTicker")
+                    b.HasOne("TickerQ.Utilities.Entities.CronTickerEntity", "CronTicker")
                         .WithMany()
                         .HasForeignKey("CronTickerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -203,19 +214,19 @@ namespace Gizmo.DAL.Migrations.TickerQ.Npgsql.Migrations
                     b.Navigation("CronTicker");
                 });
 
-            modelBuilder.Entity("TickerQ.EntityFrameworkCore.Entities.TimeTickerEntity", b =>
+            modelBuilder.Entity("TickerQ.Utilities.Entities.TimeTickerEntity", b =>
                 {
-                    b.HasOne("TickerQ.EntityFrameworkCore.Entities.TimeTickerEntity", "ParentJob")
-                        .WithMany("ChildJobs")
-                        .HasForeignKey("BatchParent")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("TickerQ.Utilities.Entities.TimeTickerEntity", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.Navigation("ParentJob");
+                    b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("TickerQ.EntityFrameworkCore.Entities.TimeTickerEntity", b =>
+            modelBuilder.Entity("TickerQ.Utilities.Entities.TimeTickerEntity", b =>
                 {
-                    b.Navigation("ChildJobs");
+                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }
