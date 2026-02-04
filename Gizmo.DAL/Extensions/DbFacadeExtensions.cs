@@ -41,10 +41,12 @@ namespace Gizmo.DAL.Extensions
             {
                 "Microsoft.EntityFrameworkCore.SqlServer" => dbFacade.ExecuteSqlRaw(
                     MsSqlScripts.GetScript(scriptName),
-                    parameters.Select(x => new SqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
+                    [.. parameters.Select(x => new SqlParameter(NormalizeParamName(x.Key), x.Value ?? DBNull.Value))]),
+
                 "Npgsql.EntityFrameworkCore.PostgreSQL" => dbFacade.ExecuteSqlRaw(
                     NpgSqlScripts.GetScript(scriptName),
-                    parameters.Select(x => new Npgsql.NpgsqlParameter(x.Key, x.Value ?? DBNull.Value)).ToArray()),
+                    [.. parameters.Select(x => new Npgsql.NpgsqlParameter(NormalizeParamName(x.Key), x.Value ?? DBNull.Value))]),
+
                 _ => throw new NotSupportedException($"Database provider {dbFacade.ProviderName} is not supported for this sql command."),
             };
 
@@ -247,6 +249,23 @@ namespace Gizmo.DAL.Extensions
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Normalizes SQL parameter key.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <returns>Normalized key.</returns>
+        /// <remarks>
+        /// <see href="https://learn.microsoft.com/en-us/dotnet/api/microsoft.data.sqlclient.sqlparameter.parametername?view=sqlclient-dotnet-core-6.0#remarks"/>
+        /// </remarks>
+        /// <exception cref="ArgumentException"></exception>
+        private static string NormalizeParamName(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("Parameter key is empty.", nameof(key));
+
+            return (key[0] == '@' || key[0] == ':') ? key : "@" + key;
         }
     }
 }
