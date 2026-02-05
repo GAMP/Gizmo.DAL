@@ -7,17 +7,17 @@ namespace Gizmo.DAL.Mappings
     /// <summary>
     /// User disable entity map.
     /// </summary>
-    public sealed class UserDisableReasonMap : IEntityTypeConfiguration<UserMemberDisableReason>
+    public sealed class UserMemberDisableReasonMap : IEntityTypeConfiguration<UserMemberDisableReason>
     {
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<UserMemberDisableReason> builder)
         {
             builder.ToTable(nameof(UserMemberDisableReason));
 
-            builder.HasKey(stock => stock.Id);
+            builder.HasKey(userDisableReason => userDisableReason.Id);
 
             builder.Property(userDisableReason => userDisableReason.Id)
-                .HasColumnName("UserDisableReasonId")
+                .HasColumnName("UserMemberDisableReasonId")
                 .HasColumnOrder(0);
 
             builder.Property(userDisableReason => userDisableReason.Name)

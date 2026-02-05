@@ -60,13 +60,13 @@ namespace Gizmo.DAL.Contexts
         /// </returns>
         public async Task InitializeAsync(CancellationToken cancellationToken = default)
         {
-            _logger.LogTrace("Initializing database.");
+            _logger.LogInformation("Initializing database.");
 
             bool seedData = false;
 
             if (await _dbContext.Database.CanConnectAsync(cancellationToken))
             {
-                _logger.LogTrace("Connected to existing database.");
+                _logger.LogInformation("Connected to existing database.");
 
                 //we will only reach this code in case that database already exist, its state or version is not know at this stage
 
@@ -74,7 +74,7 @@ namespace Gizmo.DAL.Contexts
                 var isMigrated = await TryMigrateToEF6InitialAsync(cancellationToken);
 
                 if (isMigrated)
-                    _logger.LogTrace("Existing database was migrated from EF6.");
+                    _logger.LogInformation("Existing database was migrated from EF6.");
 
                 //will contain currently applied migrations count, zero will mean that this is initial database
                 var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cancellationToken);
@@ -147,7 +147,7 @@ namespace Gizmo.DAL.Contexts
             }
             else
             {
-                _logger.LogTrace("Connected to new database.");
+                _logger.LogInformation("Connected to new database.");
 
                 var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
 
@@ -287,7 +287,7 @@ namespace Gizmo.DAL.Contexts
         {
             try
             {
-                _logger.LogTrace("Initializing default data.");
+                _logger.LogInformation("Initializing default data.");
 
                 await using (var dbTransaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
                 {
@@ -396,7 +396,7 @@ namespace Gizmo.DAL.Contexts
                     //check if any default branches exists
                     if (usableBranchId == null)
                     {
-                        _logger.LogTrace("Creating default branch.");
+                        _logger.LogInformation("Creating default branch.");
                         var defaultBranch = new Branch()
                         {
                             Name = "Default",
@@ -416,7 +416,7 @@ namespace Gizmo.DAL.Contexts
                     //check if any branches exists
                     if (!await _dbContext.Registers.AnyAsync(cancellationToken))
                     {
-                        _logger.LogTrace("Creating default register.");
+                        _logger.LogInformation("Creating default register.");
                         var defaultRegister = new Register()
                         {
                             Name = "Default",
@@ -446,7 +446,7 @@ namespace Gizmo.DAL.Contexts
                     {
                         if (!_dbContext.DocumentTypes.Any(dt => dt.Id == (int)documentType))
                         {
-                            _logger.LogTrace("Creating default document type {DocumentType}.", documentType);
+                            _logger.LogInformation("Creating default document type {DocumentType}.", documentType);
                             var documentTypeEntity = new DocumentType()
                             {
                                 Id = (int)documentType,
@@ -460,7 +460,7 @@ namespace Gizmo.DAL.Contexts
                     {
                         if (!_dbContext.Set<InventoryTransferReason>().Any(dt => dt.Id == (int)transferReason))
                         {
-                            _logger.LogTrace("Creating default transfer reason {TransferReason}.", transferReason);
+                            _logger.LogInformation("Creating default transfer reason {TransferReason}.", transferReason);
                             var transferReasonEntity = new InventoryTransferReason()
                             {
                                 Id = (int)transferReason,
@@ -474,7 +474,7 @@ namespace Gizmo.DAL.Contexts
                     {
                         if (!_dbContext.Set<InventoryAdjustmentReason>().Any(dt => dt.Id == (int)adjustmentReason))
                         {
-                            _logger.LogTrace("Creating default adjustment reason {AdjustmentReason}.", adjustmentReason);
+                            _logger.LogInformation("Creating default adjustment reason {AdjustmentReason}.", adjustmentReason);
                             var adjustmentReasonEntity = new InventoryAdjustmentReason()
                             {
                                 Id = (int)adjustmentReason,

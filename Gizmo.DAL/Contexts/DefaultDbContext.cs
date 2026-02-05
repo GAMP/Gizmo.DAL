@@ -1485,8 +1485,8 @@ namespace Gizmo.DAL.Contexts
 
             modelBuilder.ApplyConfiguration(new IntegrationMap());
 
-            modelBuilder.ApplyConfiguration(new UserDisableReasonMap());
-            modelBuilder.ApplyConfiguration(new UserDisableEntryMap());
+            modelBuilder.ApplyConfiguration(new UserMemberDisableReasonMap());
+            modelBuilder.ApplyConfiguration(new UserMemberDisableEntryMap());
 
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);

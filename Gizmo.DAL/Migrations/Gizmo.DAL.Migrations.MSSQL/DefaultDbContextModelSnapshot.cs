@@ -8749,9 +8749,15 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("bit")
                         .HasColumnOrder(16);
 
+                    b.Property<bool>("IsLoginAgeRatingEnabled")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsNegativeBalanceAllowed")
                         .HasColumnType("bit")
                         .HasColumnOrder(10);
+
+                    b.Property<bool>("IsProductAgeRatingEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsWaitingLinePriorityEnabled")
                         .HasColumnType("bit");
@@ -8877,10 +8883,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("UserDisableEntryId")
+                        .HasColumnName("UserMemberDisableEntryId")
                         .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AcknowledgeState")
+                        .HasColumnType("int")
+                        .HasColumnOrder(5);
+
+                    b.Property<DateTime?>("AcknowledgedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(6);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
@@ -8921,7 +8935,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("UserDisableReasonId")
+                        .HasColumnName("UserMemberDisableReasonId")
                         .HasColumnOrder(0);
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));

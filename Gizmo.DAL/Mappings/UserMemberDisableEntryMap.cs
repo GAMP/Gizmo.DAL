@@ -7,7 +7,7 @@ namespace Gizmo.DAL.Mappings
     /// <summary>
     /// User disable entry entity map.
     /// </summary>
-    public sealed class UserDisableEntryMap : IEntityTypeConfiguration<UserMemberDisableEntry>
+    public sealed class UserMemberDisableEntryMap : IEntityTypeConfiguration<UserMemberDisableEntry>
     {
         /// <inheritdoc/>
         public void Configure(EntityTypeBuilder<UserMemberDisableEntry> builder)
@@ -17,7 +17,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasKey(userDisableEntry => userDisableEntry.Id);
 
             builder.Property(userDisableEntry => userDisableEntry.Id)
-                .HasColumnName("UserDisableEntryId")
+                .HasColumnName("UserMemberDisableEntryId")
                 .HasColumnOrder(0);
 
             builder.Property(userDisableEntry => userDisableEntry.UserId)
@@ -36,6 +36,13 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(4)
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
+
+            builder.Property(userDisableEntry => userDisableEntry.AcknowledgeState)
+                .HasColumnOrder(5);
+
+            builder.Property(userDisableEntry => userDisableEntry.AcknowledgedDate)
+                .HasColumnOrder(6)
+                .IsRequired(false);
 
             builder.HasOne(userDisableEntry => userDisableEntry.DisableReason)
                 .WithMany(userDisableReason => userDisableReason.Entries)
