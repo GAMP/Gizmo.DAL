@@ -85,6 +85,7 @@ namespace Gizmo.DAL.Contexts
             
             optionsBuilder.UseSqlServer(connectionString, options =>
             {
+                options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                 options.CommandTimeout(commandTimeout ?? 180);
                 options.MigrationsAssembly("Gizmo.DAL.Migrations.MSSQL");
             });
@@ -100,6 +101,7 @@ namespace Gizmo.DAL.Contexts
             
             optionsBuilder.UseNpgsql(connectionString, options =>
             {
+                options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                 options.CommandTimeout(commandTimeout ?? 180);
                 options.MigrationsAssembly("Gizmo.DAL.Migrations.Npgsql");
             });

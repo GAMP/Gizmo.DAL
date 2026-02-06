@@ -97,6 +97,7 @@ public static class TickerQDbContextExtensions
             case DatabaseType.MSSQL:
                 optionsBuilder.UseSqlServer(connectionString, options =>
                 {
+                    options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                     options.MigrationsHistoryTable(MIGRATIONS_TABLE, TickerQDbContext.DEFAULT_SCHEMA);
                     options.MigrationsAssembly(MIGRATIONS_ASSEMBLY_MSSQL);
                 });
@@ -104,6 +105,7 @@ public static class TickerQDbContextExtensions
             case DatabaseType.POSTGRE:
                 optionsBuilder.UseNpgsql(connectionString, options =>
                 {
+                    options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                     options.MigrationsHistoryTable(MIGRATIONS_TABLE, TickerQDbContext.DEFAULT_SCHEMA);
                     options.MigrationsAssembly(MIGRATIONS_ASSEMBLY_POSTGRE);
                 });
