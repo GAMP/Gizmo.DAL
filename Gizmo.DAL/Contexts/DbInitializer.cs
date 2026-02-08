@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 using Gizmo.DAL.Entities;
 using Gizmo.DAL.Extensions;
 using Gizmo.DAL.Scripts;
-using Gizmo.Server;
 using Gizmo.Server.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Gizmo.DAL.Contexts
@@ -62,7 +62,7 @@ namespace Gizmo.DAL.Contexts
         {
             _logger.LogInformation("Initializing database.");
 
-            bool seedData = false;
+            MigrationResult? result = null;
 
             if (await _dbContext.Database.CanConnectAsync(cancellationToken))
             {
@@ -71,13 +71,10 @@ namespace Gizmo.DAL.Contexts
                 //we will only reach this code in case that database already exist, its state or version is not know at this stage
 
                 //attempt to update ef6 database
-                var isMigrated = await TryMigrateToEF6InitialAsync(cancellationToken);
+                var isUpgrade = await TryMigrateToEF6InitialAsync(cancellationToken);
 
-                if (isMigrated)
-                    _logger.LogInformation("Existing database was migrated from EF6.");
-
-                //will contain currently applied migrations count, zero will mean that this is initial database
-                var appliedMigrations = await _dbContext.Database.GetAppliedMigrationsAsync(cancellationToken);
+                if (isUpgrade)
+                    _logger.LogInformation("Existing database was migrated from v2.");
 
                 //gets currently pending migrations
                 var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
@@ -86,19 +83,16 @@ namespace Gizmo.DAL.Contexts
                 if (pendingMigrations.Any())
                     await _dbContext.Database.MigrateAsync(cancellationToken);
 
-                //if there are no applied migrations then this is a new database so we need to seed data
-                seedData = !appliedMigrations.Any();
-
-                if (isMigrated)
+                if (isUpgrade)
                 {
-                    // check if local time zone is not UTC
-                    if (TimeZoneInfo.Local.BaseUtcOffset != TimeSpan.Zero)
+                    using (var dbTransaction = _dbContext.Database.BeginTransaction())
                     {
-                        var localTimeZone = TimeZoneInfo.Local;
-                        _logger.LogInformation("Converting database time to UTC from {currentTimeZone}.", localTimeZone);
-
-                        using (var dbTransaction = _dbContext.Database.BeginTransaction())
+                        // check if local time zone is not UTC
+                        if (TimeZoneInfo.Local.BaseUtcOffset != TimeSpan.Zero)
                         {
+                            var localTimeZone = TimeZoneInfo.Local;
+                            _logger.LogInformation("Converting database time to UTC from {currentTimeZone}.", localTimeZone);
+
                             //check if conversion where previously completed
                             var hasConvertedFrom = await _dbContext.Settings.Where(setting => setting.GroupName == "UPGRADE" && setting.Name == "UTC_CONVERTED_FROM")
                                 .AnyAsync(cancellationToken: cancellationToken);
@@ -114,20 +108,15 @@ namespace Gizmo.DAL.Contexts
                                     Name = "UTC_CONVERTED_FROM",
                                     Value = localTimeZone.Id
                                 });
-
-                                await _dbContext.SaveChangesAsync(cancellationToken);
-                                await dbTransaction.CommitAsync(cancellationToken);
                             }
                         }
-                    }
-                    else
-                    {
-                        _logger.LogInformation("Source time zone is already UTC.");
-                    }
+                        else
+                        {
+                            _logger.LogInformation("Source time zone is already UTC.");
+                        }
 
-                    // update v2 deposit payment intents PaymentId based on DepositPayment associated payment
-                    using (var dbTransaction = _dbContext.Database.BeginTransaction())
-                    {
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+
                         var paymentIntentsQuery = _dbContext.Set<PaymentIntentDeposit>().Where(paymentIntent => paymentIntent.State == Entities.PaymentIntentState.Completed)
                           .Where(paymentIntent => paymentIntent.DepositPaymentId != null);
 
@@ -138,32 +127,32 @@ namespace Gizmo.DAL.Contexts
 
                         await dbTransaction.CommitAsync(cancellationToken);
                     }
-
-                    using (var dbTransaction = _dbContext.Database.BeginTransaction())
-                    {
-
-                    }
                 }
+
+                result = new MigrationResult() { IsCreate = false, IsMigrate = pendingMigrations.Any(), IsUpgrade = isUpgrade };
             }
             else
             {
-                _logger.LogInformation("Connected to new database.");
+                // we will end up here whether if no actual database exist OR if connection have failed
+                // reaching this code does not automatically mean that the database is actually new although its probably very common          
+
+                var existingDatabase = await _dbContext.Database.Exists(cancellationToken);
+                if (!existingDatabase)
+                    _logger.LogInformation("Creating new database {dbName}.", _dbContext.Database.GetConnectionMetadata().DatabaseName);
 
                 var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
 
                 if (pendingMigrations.Any())
+                {
                     await _dbContext.Database.MigrateAsync(cancellationToken);
+                }
 
-                //since a new database created we should seed data
-                seedData = true;
+                // new database created, no upgrade happen, new migrations where applied
+                result = new MigrationResult() { IsCreate = !existingDatabase, IsUpgrade = false, IsMigrate = pendingMigrations.Any() };
             }
 
-            //check if data seeding is required
-            if (seedData)
-                await _dbContext.AddSeedDataAsync(_serviceProvider, cancellationToken);
-
             //create default data
-            await CreateDefaultDataAsync(cancellationToken);
+            await ValidateDataAsync(result, cancellationToken);
         }
 
         /// <summary>
@@ -282,40 +271,61 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Validates and create default required data entities.
         /// </summary>
+        /// <param name="result">Migration result.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        private async Task CreateDefaultDataAsync(CancellationToken cancellationToken)
+        private async Task ValidateDataAsync(MigrationResult result, CancellationToken cancellationToken)
         {
             try
             {
-                _logger.LogInformation("Initializing default data.");
+                // this service is only registered in bootstrap mode, needs care!
+                var optionsService = _serviceProvider.GetRequiredService<IDatabaseOptionsInitializeAccess>();
+
+                _logger.LogInformation("Initializing-validating default data.");
 
                 await using (var dbTransaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
                 {
-                    #region PermissionSets
+                    #region Branch
 
-                    //this could be done in seeding BUT since we have two potential database states ef6 and new ef core we might already have seeded the initial data in the ef6
-                    //making it harder to distinguish what data should be seeded
+                    // attempt to obtain single branch, status is irrelevant at this stage
+                    int? targetBranchId = await _dbContext.Branches.Select(branch => (int?)branch.Id).FirstOrDefaultAsync(cancellationToken);
 
-                    DAL.Entities.UserPermissionSet? adminPermissionSet = null;
-                    bool permissionsSeeded = false;
-
-                    //get permission set setting reflecting previous seeding state
-                    var currentSettingEntity = await _dbContext.Settings.Where(setting => setting.GroupName == "SEEDING" && setting.Name == "PERMISSION_SET")
-                        .Select(setting => new { setting.Value, setting.Id })
-                        .FirstOrDefaultAsync(cancellationToken);
-
-                    if (currentSettingEntity == null || bool.TryParse(currentSettingEntity.Value, out bool hasSeeded) && !hasSeeded)
+                    if (targetBranchId == null)
                     {
-                        //add or update seeding state
-                        var settingEntity = new Setting()
+                        var branch = new Branch()
                         {
-                            Id = currentSettingEntity?.Id ?? 0,
-                            GroupName = "SEEDING",
-                            Name = "PERMISSION_SET",
-                            Value = true.ToString(),
+                            Id = targetBranchId ?? 0,
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.BRANCH_DEFAULT_NAME),
                         };
 
-                        _dbContext.Entry(settingEntity).State = settingEntity.Id == 0 ? EntityState.Added : EntityState.Modified;
+                        _dbContext.Branches.Add(branch);
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+                        targetBranchId = branch.Id;
+                    }
+                    else
+                    {
+                        // simply update the branch name based on same localization values we would have used with the new database
+                        if (result.IsUpgrade)
+                        {
+                            var branch = new Branch()
+                            {
+                                Id = targetBranchId.Value,
+                                Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.BRANCH_DEFAULT_NAME),
+                            };
+
+                            _dbContext.Entry(branch).Property(branch => branch.Name).IsModified = true;
+                            await _dbContext.SaveChangesAsync(cancellationToken);
+                        }
+                    }
+
+                    #endregion                    
+
+                    #region Operator                
+
+                    if (result.IsCreate || result.IsUpgrade)
+                    {
+                        #region Permission sets
+
+                        DAL.Entities.UserPermissionSet? ownerPermissionSet = null;
 
                         //gets all system policy sets
                         var policySets = Enum.GetValues<GizmoPolicySet>();
@@ -332,157 +342,503 @@ namespace Gizmo.DAL.Contexts
                         foreach (var policySet in policySets)
                         {
                             //localize policy name
-                            var localizedName = _assemblyResourcesLocalizationService.GetLocalizedStringValue(policySet);
+                            var localizedName = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(policySet);
                             if (!string.IsNullOrEmpty(localizedName))
                             {
-                                if (await _dbContext.PermissionSets.Where(permissionSet => permissionSet.Name.ToLower() == localizedName.ToLower()).AnyAsync(cancellationToken) == false)
+                                var setPermissions = attributes.Where(a => a.Description!.DefaultSets.Contains(policySet))
+                                    .ToArray();
+
+                                var permissionSet = new DAL.Entities.UserPermissionSet()
                                 {
-                                    var setPermissions = attributes.Where(a => a.Description.DefaultSets.Contains(policySet))
-                                        .ToArray();
-
-                                    var permissionSet = new DAL.Entities.UserPermissionSet()
+                                    Name = localizedName,
+                                    Permissions = setPermissions.Select(s => new UserPermissionSetPermission()
                                     {
-                                        Name = localizedName,
-                                        Permissions = setPermissions.Select(s => new UserPermissionSetPermission()
-                                        {
-                                            Type = s.Description.Resource,
-                                            Value = s.Description.Operation
-                                        }).ToHashSet()
-                                    };
+                                        Type = s.Description!.Resource,
+                                        Value = s.Description.Operation
+                                    }).ToHashSet()
+                                };
 
-                                    // keep permission set reference to be assigned to newly created admin account
-                                    if (policySet == GizmoPolicySet.Owner)
-                                    {
-                                        adminPermissionSet = permissionSet;
-                                    }
+                                // keep permission set reference to be assigned to newly created admin account
+                                if (policySet == GizmoPolicySet.Owner)
+                                    ownerPermissionSet = permissionSet;
 
-                                    _dbContext.PermissionSets.Add(permissionSet);
-                                }
+                                _dbContext.PermissionSets.Add(permissionSet);
                             }
                         }
 
                         await _dbContext.SaveChangesAsync(cancellationToken);
 
-                        permissionsSeeded = true;
+                        #endregion
+
+                        if (result.IsCreate)
+                        {
+                            #region AddDefaultOperator
+
+                            byte[] salt = _dbContext.GetNewSalt();
+                            byte[] password = _dbContext.GetHashedPassword("admin", salt);
+
+                            DAL.Entities.UserOperator? defaultOperator = new UserOperator
+                            {
+                                Username = "Admin",
+                                CreatedTime = DateTimeOffset.UtcNow.DateTime,
+                                Guid = Guid.NewGuid(),
+                                PermissionSetId = ownerPermissionSet?.Id,
+                            };
+
+                            _dbContext.UsersOperator.Add(defaultOperator);
+                            await _dbContext.SaveChangesAsync(cancellationToken);
+
+                            var adminCredential = new UserCredential()
+                            {
+                                Id = defaultOperator.Id,
+                                Salt = salt,
+                                Password = password
+                            };
+
+                            _dbContext.Credentials.Add(adminCredential);
+                            _dbContext.UserOperatorBranches.Add(new UserOperatorBranch()
+                            {
+                                BranchId = targetBranchId!.Value,
+                                OperatorId = defaultOperator.Id,
+                            });
+
+                            await _dbContext.SaveChangesAsync(cancellationToken);
+
+                            #endregion
+                        }
+                        else
+                        {
+                            // upgrade case, since we don't really know current permissions configuration in existing ef6 database we cant practically map them to the 
+                            // new permission sets, its up to user
+                            // validating existing operator and restoring permissions is also not part of initialization, its better to use other tools for such cases
+
+                            if (result.IsUpgrade)
+                            {
+                                // we do need to add all existing operators to the newly created branch, their state is irrelevant
+                                var currentOperators = await _dbContext.UsersOperator.Select(userOperator => userOperator.Id).ToArrayAsync(cancellationToken);
+                                _dbContext.UserOperatorBranches.AddRange(currentOperators.Select(userOperatorId => new DAL.Entities.UserOperatorBranch()
+                                {
+                                    OperatorId = userOperatorId,
+                                    BranchId = targetBranchId.Value
+                                }));
+
+                                await _dbContext.SaveChangesAsync(cancellationToken);
+                            }
+                        }
                     }
 
                     #endregion
 
-                    //check if admin account exists
-                    var defaultOperator = await _dbContext.UsersOperator.Where(userOperator => userOperator.Username.ToLower() == "admin")
-                        .FirstOrDefaultAsync(cancellationToken);
+                    #region Stock
 
-                    if (defaultOperator == null)
+                    if (result.IsCreate || result.IsUpgrade)
                     {
-                        // create default operator account
-                        // currently is expected that admin will be added by SeedDataMethod (will need to review)
-                    }
-                    else
-                    {
-                        // assign permissions set to existing operator in case of seeding
-                        if (permissionsSeeded)
+                        int? targetStockId = await _dbContext.Stocks.Select(stock => (int?)stock.Id).FirstOrDefaultAsync(cancellationToken);
+
+                        var stock = new Stock()
                         {
-                            defaultOperator.PermissionSetId = adminPermissionSet!.Id;
-                            _dbContext.Entry(defaultOperator).Property(entity => entity.PermissionSetId).IsModified = true;
-                        }
-                    }
-
-                    //get existing default branch id
-                    int? usableBranchId = await _dbContext.Branches
-                        .Where(branch => !branch.IsDisabled && !branch.IsDeleted)
-                        .Select(branch => (int?)branch.Id)
-                        .FirstOrDefaultAsync(cancellationToken);
-
-                    //check if any default branches exists
-                    if (usableBranchId == null)
-                    {
-                        _logger.LogInformation("Creating default branch.");
-                        var defaultBranch = new Branch()
-                        {
-                            Name = "Default",
-                            IsDisabled = false,
+                            BranchId = targetBranchId.Value,
+                            Id = targetStockId ?? 0,
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.STOCK_SELLING_POINT_DEFAULT_NAME),
                             IsDeleted = false,
+                            Type = StockType.SellingPoint
                         };
 
-                        _dbContext.Branches.Add(defaultBranch);
+                        if (targetStockId == null)
+                        {
+                            _dbContext.Stocks.Add(stock);
+                            await _dbContext.SaveChangesAsync(cancellationToken);
+                        }
+                        else
+                        {
+                            // simply update the stock name based on same localization values we would have used with the new database
+                            // we will only end up here in case of ef6 database upgrade where an single stock created automatically by migration sql script
 
-                        //save changes so we can receive branch id
-                        await _dbContext.SaveChangesAsync(cancellationToken);
+                            _dbContext.Entry(stock).Property(stock => stock.Name).IsModified = true;
+                            await _dbContext.SaveChangesAsync(cancellationToken);
+                        }
 
-                        //use id of default branch
-                        usableBranchId = defaultBranch.Id;
+                        #region Warehouse Stock
+
+                        _dbContext.Stocks.Add(new Stock()
+                        {
+                            BranchId = targetBranchId,
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.STOCK_WAREHOUSE_DEFAULT_NAME),
+                            IsDeleted = false,
+                            Type = StockType.Warehouse
+                        });
+
+                        #endregion
                     }
 
-                    //check if any branches exists
+                    #endregion
+
+                    #region Register
+                    // always create at least one register no matter of the database migration result
                     if (!await _dbContext.Registers.AnyAsync(cancellationToken))
                     {
                         _logger.LogInformation("Creating default register.");
                         var defaultRegister = new Register()
                         {
-                            Name = "Default",
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.REGISTER_DEFAULT_NAME),
                             StartCash = 0,
                             IdleTimeout = null,
-                            BranchId = usableBranchId!.Value,
+                            MacAddress = null,
+                            BranchId = targetBranchId!.Value,
                         };
 
                         _dbContext.Registers.Add(defaultRegister);
                     }
+                    #endregion
 
-                    //check if one found
-                    if (defaultOperator != null)
-                    {
-                        if (!await _dbContext.UserOperatorBranches.Where(operatorBranch => operatorBranch.OperatorId == defaultOperator.Id).AnyAsync(cancellationToken: cancellationToken))
-                        {
-                            _logger.LogInformation("Adding admin operator to default branch.");
-                            _dbContext.UserOperatorBranches.Add(new UserOperatorBranch()
-                            {
-                                BranchId = usableBranchId!.Value,
-                                OperatorId = defaultOperator.Id,
-                            });
-                        }
-                    }
-
+                    #region Document types
                     foreach (var documentType in Enum.GetValues<DocumentTypes>().Cast<DocumentTypes>())
                     {
-                        if (!_dbContext.DocumentTypes.Any(dt => dt.Id == (int)documentType))
+                        if (!await _dbContext.DocumentTypes.AnyAsync(dt => dt.Id == (int)documentType, cancellationToken))
                         {
                             _logger.LogInformation("Creating default document type {DocumentType}.", documentType);
                             var documentTypeEntity = new DocumentType()
                             {
                                 Id = (int)documentType,
-                                Name = documentType.ToString(),
+                                Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(documentType),
                             };
                             _dbContext.DocumentTypes.Add(documentTypeEntity);
                         }
                     }
+                    #endregion
 
+                    #region Transfer reason
                     foreach (var transferReason in Enum.GetValues<InventoryTransferReasons>().Cast<InventoryTransferReasons>())
                     {
-                        if (!_dbContext.Set<InventoryTransferReason>().Any(dt => dt.Id == (int)transferReason))
+                        if (!await _dbContext.Set<InventoryTransferReason>().AnyAsync(dt => dt.Id == (int)transferReason, cancellationToken))
                         {
                             _logger.LogInformation("Creating default transfer reason {TransferReason}.", transferReason);
                             var transferReasonEntity = new InventoryTransferReason()
                             {
                                 Id = (int)transferReason,
-                                Name = transferReason.ToString(),
+                                Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(transferReason),
                             };
                             _dbContext.Set<InventoryTransferReason>().Add(transferReasonEntity);
                         }
                     }
+                    #endregion
 
+                    #region Adjustment rason
                     foreach (var adjustmentReason in Enum.GetValues<InventoryAdjustmentReasons>().Cast<InventoryAdjustmentReasons>())
                     {
-                        if (!_dbContext.Set<InventoryAdjustmentReason>().Any(dt => dt.Id == (int)adjustmentReason))
+                        if (!await _dbContext.Set<InventoryAdjustmentReason>().AnyAsync(dt => dt.Id == (int)adjustmentReason, cancellationToken))
                         {
                             _logger.LogInformation("Creating default adjustment reason {AdjustmentReason}.", adjustmentReason);
                             var adjustmentReasonEntity = new InventoryAdjustmentReason()
                             {
                                 Id = (int)adjustmentReason,
-                                Name = adjustmentReason.ToString(),
+                                Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(adjustmentReason),
                             };
                             _dbContext.Set<InventoryAdjustmentReason>().Add(adjustmentReasonEntity);
                         }
                     }
+                    #endregion
+
+                    #region Skin Options
+
+                    if (result.IsCreate || result.IsUpgrade)
+                    {
+                        var clientSkinOptions = new
+                        {
+                            UserLoginDisabled = false,
+                            HomeDisabled = false,
+                            QuickLaunchMaxItems = 6,
+
+                            HomePageMaxItemsPerRow = 8,
+                            AppsPageMaxItemsPerRow = 8,
+                            ProductsPageMaxItemsPerRow = 8,
+
+                            MaxPopularProducts = 8,
+                            MaxPopularApplications = 8,
+
+                            ShopDisabled = false,
+                        };
+                        _dbContext.ClientOptions.Add(new DAL.Entities.ClientOptions()
+                        {
+                            Data = System.Text.Json.JsonSerializer.Serialize(clientSkinOptions),
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.CLIENT_OPTIONS_DEFAULT_NAME),
+                            IsDefault = true,
+                        });
+                    }
+
+                    #endregion
+
+                    if (result.IsCreate)
+                    {
+                        // only new database seeding
+
+                        #region AddPaymentMethods
+
+                        _dbContext.PaymentMethods.AddRange(
+                            [
+                            new()
+                            {
+                                Id = (int)PaymentMethodType.Cash,
+                                Name =  _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.PAYMENT_METHOD_CASH_NAME),
+                                DisplayOrder = 0,
+                                IsEnabled = true,
+                                IsClient = true,
+                                IsManager = true
+                            },
+                            new()
+                            {
+                                Id = (int)PaymentMethodType.CreditCard,
+                                Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.PAYMENT_METHOD_CREDIT_CARD_NAME),
+                                DisplayOrder = 1,
+                                IsEnabled = true,
+                                IsClient = true,
+                                IsManager = true
+                            },
+                            new()
+                            {
+                                Id = (int)PaymentMethodType.Deposit,
+                                Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.PAYMENT_METHOD_DEPOSIT_NAME),
+                                DisplayOrder = 2,
+                                IsEnabled = true,
+                                IsClient = true,
+                                IsManager = true
+                            },
+                            new()
+                            {
+                                Id = (int)PaymentMethodType.Points,
+                                Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.PAYMENT_METHOD_POINTS_NAME),
+                                DisplayOrder = 3,
+                                IsEnabled = true,
+                                IsClient = true,
+                                IsManager = true
+                            }
+                            ]);
+
+                        #endregion
+
+                        #region AddLayoutGroups
+
+                        _dbContext.HostLayoutGroups.Add(new HostLayoutGroup()
+                        {
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.HOST_LAYOUT_GROUPED_DEFAULT_NAME),
+                            DisplayOrder = 0
+                        });
+
+                        #endregion
+
+                        #region AddBillProfiles
+
+                        var billProfileMemberPrices = new BillProfile() { Name = "Member Prices" };
+                        var billProfileGuestsPrices = new BillProfile() { Name = "Guests Prices" };
+
+                        var billProfiles = new BillProfile[] { billProfileMemberPrices, billProfileGuestsPrices };
+
+                        _dbContext.BillProfiles.AddRange(billProfiles);
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+
+                        var billRates = new BillRate[]
+                        {
+                            new()
+                            {
+                                BillProfileId = billProfileMemberPrices.Id,
+                                IsDefault = true,
+                                MinimumFee = 2,
+                                ChargeAfter = 1,
+                                ChargeEvery = 5,
+                                Rate = 2,
+                                StartFee = 1
+                            },
+                            new()
+                            {
+                                BillProfileId = billProfileGuestsPrices.Id,
+                                IsDefault = true,
+                                MinimumFee = 2,
+                                ChargeAfter = 1,
+                                ChargeEvery = 5,
+                                Rate = 2,
+                                StartFee = 1
+                            }
+                        };
+
+                        _dbContext.BillRates.AddRange(billRates);
+
+                        #endregion
+
+                        #region AddUserGroups
+
+                        var userGroupMember = new UserGroup()
+                        {
+                            Name = "Members",
+                            IsDefault = true
+                        };
+                        var userGroupGuest = new UserGroup()
+                        {
+                            Name = "Guests",
+                            Options = Entities.UserGroupOptionType.GuestUse
+                        };
+
+                        var userGroups = new UserGroup[] { userGroupMember, userGroupGuest };
+
+                        _dbContext.UserGroups.AddRange(userGroups);
+
+                        #endregion
+
+                        #region AddHostGroups
+
+                        var hostGroupComputers = new HostGroup()
+                        {
+                            BranchId = targetBranchId.Value,
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.HOST_GROUP_COMPUERS_DEFAULT_NAME),
+                            DefaultGuestGroup = userGroupGuest
+                        };
+                        var hostGroupEndpoints = new HostGroup()
+                        {
+                            BranchId = targetBranchId.Value,
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.HOST_GROUP_ENDPOINTS_DEFAULT_NAME),
+                            DefaultGuestGroup = userGroupGuest
+                        };
+
+                        var hostGroups = new HostGroup[]
+                        {
+                            hostGroupComputers,
+                            hostGroupEndpoints
+                        };
+
+                        _dbContext.HostGroups.AddRange(hostGroups);
+
+                        #endregion
+
+                        #region PresetTimeSale
+
+                        _dbContext.PresetTimeSale.AddRange(
+                            [
+                            new() { Value = 1 },
+                            new() { Value = 5 },
+                            new() { Value = 15 },
+                            new() { Value = 30 },
+                            new() { Value = 60 }
+                            ]);
+
+                        #endregion
+
+                        #region PresetTimeSaleMoney
+
+                        _dbContext.PresetTimeSaleMoney.AddRange(
+                            [
+                            new() { Value = 1 },
+                            new() { Value = 2 },
+                            new() { Value = 5 },
+                            new() { Value = 10 },
+                            new() { Value = 20 }
+                            ]);
+                        #endregion 
+
+                        #region Notifications
+
+                        _dbContext.Notifications.Add(new DAL.Entities.NotificationTimedRemaining()
+                        {
+                            Minute = 5,
+                            Type = NotificationType.Visual,
+                        });
+
+                        _dbContext.Notifications.Add(new DAL.Entities.NotificationTimedReservation()
+                        {
+                            Minute = 15,
+                            Type = NotificationType.Visual,
+                        });
+
+                        #endregion
+
+                        #region Assistance requests
+
+                        _dbContext.AssistanceRequestTypes.Add(new AssistanceRequestType()
+                        {
+                            Title = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.ASSISTANCE_REQUEST_TYPE_DEFAULT_NAME),
+                            DisplayOrder = 0,
+                        });
+
+                        #endregion                        
+                    }
+
+                    #region Options
+
+                    // cases for newly created or upgraded databases
+                    if (result.IsCreate || result.IsUpgrade)
+                    {
+                        if (result.IsCreate)
+                        {
+                            // process cases that for newly created databases
+
+                            await optionsService.WriteAsync(_dbContext, new Server.Options.UserSessionsOptions()
+                            {
+                                TerminatePending = true,
+                                LogoutDisconnected = true,
+                                PendingTimeout = 60
+                            }, cancellationToken);
+
+                            await optionsService.WriteAsync(_dbContext, new Server.Options.InvoicingOptions()
+                            {
+                                AutoInvoiceGuest = true,
+                                AutoInvoiceMember = true,
+                                AutoInvoicePaymentGuest = true,
+                                AutoInvoicePaymentMember = true,
+                                AutoInvoiceGuestTime = 60,
+                                AutoInvoiceMemberTime = 60,
+                            }, cancellationToken);
+
+                            await optionsService.WriteAsync(_dbContext, new Server.Options.UserBalanceOptions()
+                            {
+                                WithholdUnpaidUsageSessionDeposits = true,
+                            }, cancellationToken);
+
+                            await optionsService.WriteAsync(_dbContext, new Server.Options.POSAutomationOptions()
+                            {
+                                AutoDelivery = true,
+                                AutoGuestLogin = true,
+                                AutoPrepare = true,
+                                DisablePrintReceiptByDefault = false,
+
+                            }, cancellationToken);
+
+                            await optionsService.WriteAsync(_dbContext, new Server.Options.PaymentProcessingOptions()
+                            {
+                                CreditCardUseTerminal = false,
+                            }, cancellationToken);
+
+                            await optionsService.WriteAsync(_dbContext, new Server.Options.TopUpOptions()
+                            {
+                                IsCustomValueAllowed = true,
+                                MinimumValue = 1
+                            }, cancellationToken);
+                        }
+
+                        await optionsService.WriteAsync(_dbContext, new Server.Options.NetworkOptions()
+                        {
+                            HostName = "gizmo.local",
+                            HttpProtocols = Server.HttpProtocols.HttpHttps
+                        },cancellationToken);
+                        await optionsService.WriteAsync(_dbContext, new Server.Options.SkinOptions() { DefaultSkin = "Next" });
+                        await optionsService.WriteAsync(_dbContext, new Server.Options.ReservationsOptions()
+                        {
+                            EnableLoginBlockBefore = true,
+                            LoginBlockBeforeTime = 15,
+
+                            EnableLoginBlockAfter = true,
+                            LoginBlockAfterTime = 15,
+
+                            EnableExpiration = true,
+                            ExpireAfter = 20,
+
+                            TimeSourceType = Web.Api.Models.ReservationTimeSourceType.TimeOfferFixedTime,
+                            PaymentExpireAfter = 15,
+
+                            CancellationGracePeriod = 1440,
+                            CancellationRefundPercentage = 100,
+
+                        }, cancellationToken);
+                    }
+
+                    #endregion
 
                     //save any changes made
                     await _dbContext.SaveChangesAsync(cancellationToken);
@@ -495,6 +851,24 @@ namespace Gizmo.DAL.Contexts
             {
                 _logger.LogCritical(ex, "Error creating default data.");
             }
+        }
+
+        sealed class MigrationResult
+        {
+            /// <summary>
+            /// Indicates upgrade from ef6 to ef core.
+            /// </summary>
+            public bool IsUpgrade { get; init; }
+
+            /// <summary>
+            /// Indicates a new database creation.
+            /// </summary>
+            public bool IsCreate { get; init; }
+
+            /// <summary>
+            /// Indicates that new migrations where applied.
+            /// </summary>
+            public bool IsMigrate { get; init; }
         }
     }
 }
