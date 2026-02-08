@@ -10,4 +10,8 @@
     <ProjectReference Include="..\..\Gizmo.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

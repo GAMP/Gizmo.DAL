@@ -2400,6 +2400,10 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(2);
+
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
@@ -15386,7 +15390,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("Gizmo.DAL.Entities.Discount", "Discount")
                         .WithMany()
                         .HasForeignKey("DiscountId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.Promotion", null)
@@ -15403,7 +15407,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("Gizmo.DAL.Entities.DiscountGroup", "DiscountGroup")
                         .WithMany()
                         .HasForeignKey("DiscountGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.Promotion", null)

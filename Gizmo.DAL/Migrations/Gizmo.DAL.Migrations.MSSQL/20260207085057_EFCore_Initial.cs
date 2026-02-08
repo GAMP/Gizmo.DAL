@@ -102,6 +102,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "ProductOrder",
                 newName: "IX_ProductOrder_PreferredPaymentMethodId");
 
+            migrationBuilder.RenameColumn(
+                name: "Sevirity",
+                table: "Note",
+                newName: "Severity");
+
             migrationBuilder.RenameIndex(
                 name: "IX_Time",
                 table: "Log",
@@ -219,6 +224,20 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "UserGroup",
                 type: "int",
                 nullable: true);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsLoginAgeRatingEnabled",
+                table: "UserGroup",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsProductAgeRatingEnabled",
+                table: "UserGroup",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
 
             migrationBuilder.AlterColumn<int>(
                 name: "UserId",
@@ -544,6 +563,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 .Annotation("Relational:ColumnOrder", 8);
 
             migrationBuilder.AddColumn<int>(
+                name: "QrDisplayNumber",
+                table: "Register",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
                 name: "StockId",
                 table: "Register",
                 type: "int",
@@ -554,6 +579,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "Refund",
                 type: "int",
                 nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Note",
+                table: "Refund",
+                type: "nvarchar(255)",
+                maxLength: 255,
+                nullable: true)
+                .Annotation("Relational:ColumnOrder", 7);
 
             migrationBuilder.AddColumn<int>(
                 name: "PaymentReversalStatus",
@@ -1064,6 +1097,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     DiscountGroupId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedById = table.Column<int>(type: "int", nullable: true),
@@ -1139,6 +1173,32 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     table.ForeignKey(
                         name: "FK_File_UserOperator_ModifiedById",
                         column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Integration",
+                columns: table => new
+                {
+                    IntegrationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    TypeGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ConfigJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConfigSchemaVersion = table.Column<int>(type: "int", nullable: true),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Integration", x => x.IntegrationId);
+                    table.ForeignKey(
+                        name: "FK_Integration_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId");
                 });
@@ -1255,6 +1315,12 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_IntentOrderDeposit", x => x.IntentOrderDepositId);
+                    table.ForeignKey(
+                        name: "FK_IntentOrderDeposit_DepositPayment_DepositPaymentId",
+                        column: x => x.DepositPaymentId,
+                        principalTable: "DepositPayment",
+                        principalColumn: "DepositPaymentId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_IntentOrderDeposit_PaymentIntentOrder_PaymentIntentOrderId",
                         column: x => x.PaymentIntentOrderId,
@@ -1684,6 +1750,34 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserMemberDisableReason",
+                columns: table => new
+                {
+                    UserMemberDisableReasonId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMemberDisableReason", x => x.UserMemberDisableReasonId);
+                    table.ForeignKey(
+                        name: "FK_UserMemberDisableReason_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserMemberDisableReason_UserOperator_ModifiedById",
+                        column: x => x.ModifiedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserPermissionSet",
                 columns: table => new
                 {
@@ -2083,7 +2177,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         column: x => x.DiscountId,
                         principalTable: "Discount",
                         principalColumn: "DiscountId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PromotionDiscount_Promotion_PromotionId",
                         column: x => x.PromotionId,
@@ -2107,7 +2201,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         column: x => x.DiscountGroupId,
                         principalTable: "DiscountGroup",
                         principalColumn: "DiscountGroupId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PromotionDiscountGroup_Promotion_PromotionId",
                         column: x => x.PromotionId,
@@ -2197,6 +2291,43 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         principalTable: "Schedule",
                         principalColumn: "ScheduleId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserMemberDisableEntry",
+                columns: table => new
+                {
+                    UserMemberDisableEntryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    DisableReasonId = table.Column<int>(type: "int", nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    AcknowledgeState = table.Column<int>(type: "int", nullable: false),
+                    AcknowledgedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMemberDisableEntry", x => x.UserMemberDisableEntryId);
+                    table.ForeignKey(
+                        name: "FK_UserMemberDisableEntry_UserMemberDisableReason_DisableReasonId",
+                        column: x => x.DisableReasonId,
+                        principalTable: "UserMemberDisableReason",
+                        principalColumn: "UserMemberDisableReasonId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_UserMemberDisableEntry_UserMember_UserId",
+                        column: x => x.UserId,
+                        principalTable: "UserMember",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserMemberDisableEntry_UserOperator_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UserOperator",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -3333,7 +3464,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         onDelete: ReferentialAction.Cascade);
                 });
 
-
             migrationBuilder.Sql(Scripts.EF_6_BRANCH_SET);
 
             migrationBuilder.CreateIndex(
@@ -3778,6 +3908,22 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 column: "DocumentTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Integration_CreatedById",
+                table: "Integration",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Integration_PublicId",
+                table: "Integration",
+                column: "PublicId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Integration_TypeGuid",
+                table: "Integration",
+                column: "TypeGuid");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_IntentInvoice_CreatedById",
                 table: "IntentInvoice",
                 column: "CreatedById");
@@ -3837,6 +3983,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "IX_IntentOrderDeposit_CreatedById",
                 table: "IntentOrderDeposit",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IntentOrderDeposit_DepositPaymentId",
+                table: "IntentOrderDeposit",
+                column: "DepositPaymentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IntentOrderDeposit_ModifiedById",
@@ -4452,6 +4603,31 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "IX_UserChannel_UserId_Channel",
                 table: "UserChannel",
                 columns: new[] { "UserId", "Channel" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMemberDisableEntry_CreatedById",
+                table: "UserMemberDisableEntry",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMemberDisableEntry_DisableReasonId",
+                table: "UserMemberDisableEntry",
+                column: "DisableReasonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMemberDisableEntry_UserId",
+                table: "UserMemberDisableEntry",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMemberDisableReason_CreatedById",
+                table: "UserMemberDisableReason",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserMemberDisableReason_ModifiedById",
+                table: "UserMemberDisableReason",
+                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserOperatorBranch_BranchId_OperatorId",
@@ -5084,6 +5260,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "FileImage");
 
             migrationBuilder.DropTable(
+                name: "Integration");
+
+            migrationBuilder.DropTable(
                 name: "IntentInvoice");
 
             migrationBuilder.DropTable(
@@ -5189,6 +5368,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "UserChannel");
 
             migrationBuilder.DropTable(
+                name: "UserMemberDisableEntry");
+
+            migrationBuilder.DropTable(
                 name: "UserOperatorBranch");
 
             migrationBuilder.DropTable(
@@ -5256,6 +5438,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             migrationBuilder.DropTable(
                 name: "Target");
+
+            migrationBuilder.DropTable(
+                name: "UserMemberDisableReason");
 
             migrationBuilder.DropTable(
                 name: "UserPermissionSet");
@@ -5512,6 +5697,14 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "UserGroup");
 
             migrationBuilder.DropColumn(
+                name: "IsLoginAgeRatingEnabled",
+                table: "UserGroup");
+
+            migrationBuilder.DropColumn(
+                name: "IsProductAgeRatingEnabled",
+                table: "UserGroup");
+
+            migrationBuilder.DropColumn(
                 name: "BranchId",
                 table: "User");
 
@@ -5652,11 +5845,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 table: "Register");
 
             migrationBuilder.DropColumn(
+                name: "QrDisplayNumber",
+                table: "Register");
+
+            migrationBuilder.DropColumn(
                 name: "StockId",
                 table: "Register");
 
             migrationBuilder.DropColumn(
                 name: "BranchId",
+                table: "Refund");
+
+            migrationBuilder.DropColumn(
+                name: "Note",
                 table: "Refund");
 
             migrationBuilder.DropColumn(
@@ -5865,6 +6066,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                 name: "IX_ProductOrder_PreferredPaymentMethodId",
                 table: "ProductOrder",
                 newName: "IX_ProductOrder_PreferedPaymentMethodId");
+
+            migrationBuilder.RenameColumn(
+                name: "Severity",
+                table: "Note",
+                newName: "Sevirity");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Log_Time",
