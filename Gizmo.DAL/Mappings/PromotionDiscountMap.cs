@@ -18,7 +18,7 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(promotionDiscount => promotionDiscount.Discount)
                 .WithMany()
                 .HasForeignKey(promotionDiscount => promotionDiscount.DiscountId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

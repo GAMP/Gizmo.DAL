@@ -25,6 +25,10 @@ namespace Gizmo.DAL.Mappings
                 .HasMaxLength(SQLStringSize.TINY45)
                 .IsRequired();
 
+            builder.Property(discountBase => discountBase.IsDeleted)
+                .IsRequired()
+                .HasColumnOrder(2);
+
             builder.HasIndex(discountGroup => discountGroup.Name)
                 .IsUnique();
         }
