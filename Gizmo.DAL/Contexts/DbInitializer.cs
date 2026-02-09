@@ -628,19 +628,22 @@ namespace Gizmo.DAL.Contexts
 
                         #region AddBillProfiles
 
-                        var billProfileMemberPrices = new BillProfile() { Name = "Member Prices" };
-                        var billProfileGuestsPrices = new BillProfile() { Name = "Guests Prices" };
+                        var computersBillingProfile = new BillProfile()
+                        {
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.BILL_PROFILE_COMPUTERS_DEFAULT_NAME)
+                        };
+                        var endpointsBillingProfile = new BillProfile()
+                        {
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.BILL_PROFILE_ENDPOINTS_DEFAULT_NAME)
+                        };
 
-                        var billProfiles = new BillProfile[] { billProfileMemberPrices, billProfileGuestsPrices };
-
-                        _dbContext.BillProfiles.AddRange(billProfiles);
-                        await _dbContext.SaveChangesAsync(cancellationToken);
+                        var billProfiles = new BillProfile[] { computersBillingProfile, endpointsBillingProfile };
 
                         var billRates = new BillRate[]
                         {
                             new()
                             {
-                                BillProfileId = billProfileMemberPrices.Id,
+                                BillProfile = computersBillingProfile,
                                 IsDefault = true,
                                 MinimumFee = 2,
                                 ChargeAfter = 1,
@@ -650,7 +653,7 @@ namespace Gizmo.DAL.Contexts
                             },
                             new()
                             {
-                                BillProfileId = billProfileGuestsPrices.Id,
+                                BillProfile = endpointsBillingProfile,
                                 IsDefault = true,
                                 MinimumFee = 2,
                                 ChargeAfter = 1,
@@ -660,7 +663,10 @@ namespace Gizmo.DAL.Contexts
                             }
                         };
 
+                        _dbContext.BillProfiles.AddRange(billProfiles);
                         _dbContext.BillRates.AddRange(billRates);
+
+                        await _dbContext.SaveChangesAsync(cancellationToken);
 
                         #endregion
 
@@ -689,13 +695,15 @@ namespace Gizmo.DAL.Contexts
                         {
                             BranchId = targetBranchId.Value,
                             Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.HOST_GROUP_COMPUERS_DEFAULT_NAME),
-                            DefaultGuestGroup = userGroupGuest
+                            DefaultGuestGroup = userGroupGuest,
+                            BillProfileId = computersBillingProfile.Id,
                         };
                         var hostGroupEndpoints = new HostGroup()
                         {
                             BranchId = targetBranchId.Value,
                             Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Gizmo.Server.DefaultNames.HOST_GROUP_ENDPOINTS_DEFAULT_NAME),
-                            DefaultGuestGroup = userGroupGuest
+                            DefaultGuestGroup = userGroupGuest,
+                            BillProfileId = endpointsBillingProfile.Id,
                         };
 
                         var hostGroups = new HostGroup[]
@@ -741,12 +749,6 @@ namespace Gizmo.DAL.Contexts
                             Type = NotificationType.Visual,
                         });
 
-                        _dbContext.Notifications.Add(new DAL.Entities.NotificationTimedReservation()
-                        {
-                            Minute = 15,
-                            Type = NotificationType.Visual,
-                        });
-
                         #endregion
 
                         #region Assistance requests
@@ -757,8 +759,78 @@ namespace Gizmo.DAL.Contexts
                             DisplayOrder = 0,
                         });
 
-                        #endregion                        
+                        #endregion
+
+                        #region App categories
+
+                        _dbContext.Categories.Add(new AppCategory()
+                        {
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.APP_CATEGORY_APPLICATIONS_DEFAULT_NAME)
+                        });
+                        _dbContext.Categories.Add(new AppCategory()
+                        {
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.APP_CATEGORY_GAMES_DEFAULT_NAME)
+                        });
+                        _dbContext.Categories.Add(new AppCategory()
+                        {
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.APP_CATEGORY_LAUNCHERS_DEFAULT_NAME)
+                        });
+
+                        #endregion
+
+                        #region App profile
+
+                        _dbContext.AppGroups.Add(new AppGroup()
+                        {
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.APP_GROUP_DEFAULT_NAME)
+                        });
+
+                        #endregion
+
+                        #region Product groups
+
+                        _dbContext.ProductGroups.Add(new ProductGroup()
+                        {
+                            DisplayOrder = 0,
+                            SortOption = ProductSortOptionType.Name,
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.PRODUCT_GROUP_TIME_OFFERS_DEFAULT_NAME)
+                        });
+
+                        _dbContext.ProductGroups.Add(new ProductGroup()
+                        {
+                            DisplayOrder = 1,
+                            SortOption = ProductSortOptionType.Name,
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.PRODUCT_GROUP_FOOD_DEFAULT_NAME)
+                        });
+
+                        _dbContext.ProductGroups.Add(new ProductGroup()
+                        {
+                            DisplayOrder = 2,
+                            SortOption = ProductSortOptionType.Name,
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.PRODUCT_GROUP_DRINKS_DEFAULT_NAME)
+                        });
+
+                        _dbContext.ProductGroups.Add(new ProductGroup()
+                        {
+                            DisplayOrder = 3,
+                            SortOption = ProductSortOptionType.Name,
+                            Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.PRODUCT_GROUP_SWEETS_DEFAULT_NAME)
+                        }); 
+
+                        #endregion
                     }
+
+                    if (result.IsCreate || result.IsUpgrade)
+                    {
+                        #region Reservation notification
+                        _dbContext.Notifications.Add(new DAL.Entities.NotificationTimedReservation()
+                        {
+                            Minute = 15,
+                            Type = NotificationType.Visual,
+                        });
+                        #endregion
+                    }
+
 
                     #region Options
 
@@ -773,7 +845,13 @@ namespace Gizmo.DAL.Contexts
                             {
                                 TerminatePending = true,
                                 LogoutDisconnected = true,
-                                PendingTimeout = 60
+                            }, cancellationToken);
+
+                            await optionsService.WriteAsync(_dbContext, new Server.Options.UserRegistrationOptions()
+                            {
+                                IsClientEnabled = true,
+                                IsPortalEnabled = false,
+                                VerificationMethod = Server.RegistrationVerificationMethod.None,
                             }, cancellationToken);
 
                             await optionsService.WriteAsync(_dbContext, new Server.Options.InvoicingOptions()
@@ -782,8 +860,6 @@ namespace Gizmo.DAL.Contexts
                                 AutoInvoiceMember = true,
                                 AutoInvoicePaymentGuest = true,
                                 AutoInvoicePaymentMember = true,
-                                AutoInvoiceGuestTime = 60,
-                                AutoInvoiceMemberTime = 60,
                             }, cancellationToken);
 
                             await optionsService.WriteAsync(_dbContext, new Server.Options.UserBalanceOptions()
@@ -816,8 +892,8 @@ namespace Gizmo.DAL.Contexts
                         {
                             HostName = "gizmo.local",
                             HttpProtocols = Server.HttpProtocols.HttpHttps
-                        },cancellationToken);
-                        await optionsService.WriteAsync(_dbContext, new Server.Options.SkinOptions() { DefaultSkin = "Next" });
+                        }, cancellationToken);
+                        await optionsService.WriteAsync(_dbContext, new Server.Options.SkinOptions() { DefaultSkin = "Next" }, cancellationToken);
                         await optionsService.WriteAsync(_dbContext, new Server.Options.ReservationsOptions()
                         {
                             EnableLoginBlockBefore = true,
