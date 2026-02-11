@@ -73,18 +73,20 @@ namespace Gizmo.DAL.Contexts
                 //attempt to update ef6 database
                 var isUpgrade = await TryMigrateToEF6InitialAsync(cancellationToken);
 
-                if (isUpgrade)
-                    _logger.LogInformation("Existing database was migrated from v2.");
-
                 //gets currently pending migrations
                 var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
 
                 //any pending migration should be applied
                 if (pendingMigrations.Any())
+                {
+                    _logger.LogInformation("Migrating database to latest version.");
                     await _dbContext.Database.MigrateAsync(cancellationToken);
+                }
 
                 if (isUpgrade)
                 {
+                    // NOTE we can only execute this step (UTC conversion) once the v3 migrations are applied
+
                     using (var dbTransaction = _dbContext.Database.BeginTransaction())
                     {
                         // check if local time zone is not UTC
@@ -115,8 +117,7 @@ namespace Gizmo.DAL.Contexts
                             _logger.LogInformation("Source time zone is already UTC.");
                         }
 
-                        await _dbContext.SaveChangesAsync(cancellationToken);
-
+                        _logger.LogInformation("Populating payment intents due to incompatibility with v3.");
                         var paymentIntentsQuery = _dbContext.Set<PaymentIntentDeposit>().Where(paymentIntent => paymentIntent.State == Entities.PaymentIntentState.Completed)
                           .Where(paymentIntent => paymentIntent.DepositPaymentId != null);
 
@@ -125,6 +126,7 @@ namespace Gizmo.DAL.Contexts
                             .Select(depositIntent => depositIntent.PaymentId)
                             .Single()), cancellationToken);
 
+                        await _dbContext.SaveChangesAsync(cancellationToken);
                         await dbTransaction.CommitAsync(cancellationToken);
                     }
                 }
@@ -149,6 +151,16 @@ namespace Gizmo.DAL.Contexts
 
                 // new database created, no upgrade happen, new migrations where applied
                 result = new MigrationResult() { IsCreate = !existingDatabase, IsUpgrade = false, IsMigrate = pendingMigrations.Any() };
+            }
+
+            try
+            {
+                var dbName = _dbContext.Database.GetDbConnection().Database;
+                var _ = await _dbContext.Database.ExecuteSqlScriptAsync(SQLScripts.APPLY_SPECIFIC_DATABASE_SETTINGS, new() { { "DbName", dbName } }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to apply database specific settings.");
             }
 
             //create default data
@@ -213,8 +225,12 @@ namespace Gizmo.DAL.Contexts
 
                         if (pendingMigrations.Count() == 1)
                         {
+                            _logger.LogInformation("Upgrading existing database {databaseName} from V2 to V3.", _dbContext.Database.GetConnectionMetadata().DatabaseName);
+
                             await migrationDbContext.Database.MigrateAsync(cancellationToken);
                             await MigrateEFValidateDataAsync(cancellationToken);
+
+                            _logger.LogInformation("Existing database {databaseName} was upgraded from v2.", _dbContext.Database.GetConnectionMetadata().DatabaseName);
 
                             return true;
                         }
@@ -242,7 +258,7 @@ namespace Gizmo.DAL.Contexts
 
             if (registerNameGroup.Count > 0)
             {
-                foreach (var nameGroup in registerNameGroup)
+                foreach (var nameGroup in registerNameGroup.Where(nameGroup => nameGroup.Count() > 1))
                 {
                     //each name group will start from 1
                     int currentNumber = 1;
@@ -251,6 +267,8 @@ namespace Gizmo.DAL.Contexts
                         //take up to 40 characters from existing name and append an register number to it
                         var existingNameTruncated = register.Name[..Math.Min(register.Name.Length, 40)];
                         var newName = $"{existingNameTruncated} ({currentNumber})";
+
+                        _logger.LogWarning("Renaming existing register {original} to {new} due to unique name incompatibility with v3.", register.Name, newName);
 
                         var registerEntity = new DAL.Entities.Register()
                         {
@@ -815,7 +833,7 @@ namespace Gizmo.DAL.Contexts
                             DisplayOrder = 3,
                             SortOption = ProductSortOptionType.Name,
                             Name = _assemblyResourcesLocalizationService.GetLocalizedStringValueOrName(Server.DefaultNames.PRODUCT_GROUP_SWEETS_DEFAULT_NAME)
-                        }); 
+                        });
 
                         #endregion
                     }
