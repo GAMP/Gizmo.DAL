@@ -66,7 +66,7 @@ namespace Gizmo.DAL.Contexts
 
             if (await _dbContext.Database.CanConnectAsync(cancellationToken))
             {
-                _logger.LogInformation("Connected to existing database.");
+                _logger.LogInformation("Connected to existing database {databaseName}.", _dbContext.Database.GetConnectionMetadata().DatabaseName);
 
                 //we will only reach this code in case that database already exist, its state or version is not know at this stage
 
