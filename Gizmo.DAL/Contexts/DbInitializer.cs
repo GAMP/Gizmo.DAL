@@ -70,8 +70,13 @@ namespace Gizmo.DAL.Contexts
 
                 //we will only reach this code in case that database already exist, its state or version is not know at this stage
 
+                bool isCreate = await DetermineNewDatabaseAsync(_dbContext, cancellationToken);
+
                 //attempt to update ef6 database
                 var isUpgrade = await TryMigrateToEF6InitialAsync(cancellationToken);
+
+                // update state based on upgrade, if upgrade executed then we are not considering this to be newly created database
+                isCreate = isCreate && !isUpgrade;
 
                 //gets currently pending migrations
                 var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
@@ -131,7 +136,7 @@ namespace Gizmo.DAL.Contexts
                     }
                 }
 
-                result = new MigrationResult() { IsCreate = false, IsMigrate = pendingMigrations.Any(), IsUpgrade = isUpgrade };
+                result = new MigrationResult() { IsCreate = isCreate, IsMigrate = pendingMigrations.Any(), IsUpgrade = isUpgrade };
             }
             else
             {
@@ -142,7 +147,8 @@ namespace Gizmo.DAL.Contexts
                 if (!existingDatabase)
                     _logger.LogInformation("Creating new database {dbName}.", _dbContext.Database.GetConnectionMetadata().DatabaseName);
 
-                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
+                bool isCreate = !existingDatabase || await DetermineNewDatabaseAsync(_dbContext, cancellationToken);
+                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken);     
 
                 if (pendingMigrations.Any())
                 {
@@ -945,6 +951,26 @@ namespace Gizmo.DAL.Contexts
             {
                 _logger.LogCritical(ex, "Error creating default data.");
             }
+        }
+
+        /// <summary>
+        /// Executes logic to determine if the database is considered as a new.
+        /// </summary>
+        /// <param name="dbContext">DbContext.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns><see langword="true"/> or <see langword="false"/>.</returns>
+        /// <remarks>
+        /// This function is used to determine logical database creation state, currently we are considering the database a newly created as long as none of expected migrations are applied.<br></br>
+        /// The main usage of this result is to be able to trigger data seeding in some scenarios where database might be already created but not migrated.
+        /// </remarks>
+        private static async Task<bool> DetermineNewDatabaseAsync(DefaultDbContext dbContext, CancellationToken cancellationToken)
+        {
+            //gets currently pending migrations
+            var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
+            var totalMigrationsCount = dbContext.Database.GetMigrations().Count();
+
+            // treat as new database if pending migrations count is equal to total migrations count
+           return pendingMigrations.Count() == totalMigrationsCount;
         }
 
         sealed class MigrationResult
