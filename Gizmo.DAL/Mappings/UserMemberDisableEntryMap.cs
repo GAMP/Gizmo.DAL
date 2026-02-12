@@ -37,11 +37,15 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
 
+            builder.Property(userDisableEntry => userDisableEntry.EnableDate)
+                .HasColumnOrder(5)
+                .IsRequired(false);
+
             builder.Property(userDisableEntry => userDisableEntry.AcknowledgeState)
-                .HasColumnOrder(5);
+                .HasColumnOrder(6);
 
             builder.Property(userDisableEntry => userDisableEntry.AcknowledgedDate)
-                .HasColumnOrder(6)
+                .HasColumnOrder(7)
                 .IsRequired(false);
 
             builder.HasOne(userDisableEntry => userDisableEntry.DisableReason)

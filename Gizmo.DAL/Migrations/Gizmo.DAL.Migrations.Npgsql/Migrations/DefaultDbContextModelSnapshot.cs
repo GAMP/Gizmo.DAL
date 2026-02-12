@@ -8881,11 +8881,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Property<int>("AcknowledgeState")
                         .HasColumnType("integer")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("AcknowledgedDate")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("integer");
@@ -8896,6 +8896,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<int?>("DisableReasonId")
                         .HasColumnType("integer")
                         .HasColumnOrder(3);
+
+                    b.Property<DateTime?>("EnableDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("Note")
                         .HasMaxLength(255)
@@ -8941,6 +8945,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnOrder(2);
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
 
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("integer");

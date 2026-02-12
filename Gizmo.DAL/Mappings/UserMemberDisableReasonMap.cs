@@ -30,6 +30,10 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasMaxLength(SQLStringSize.TINY);
 
+            builder.Property(userDisableReason => userDisableReason.DisplayOrder)
+                .IsRequired()
+                .HasColumnOrder(3);
+
             builder.HasMany(userDisableReason => userDisableReason.Entries)
                 .WithOne(userDisableEntry => userDisableEntry.DisableReason)
                 .HasForeignKey(userDisableEntry => userDisableEntry.DisableReasonId)
