@@ -855,7 +855,6 @@ namespace Gizmo.DAL.Contexts
                         #endregion
                     }
 
-
                     #region Options
 
                     // cases for newly created or upgraded databases
@@ -869,6 +868,7 @@ namespace Gizmo.DAL.Contexts
                             {
                                 TerminatePending = true,
                                 LogoutDisconnected = true,
+                                PendingTimeout = 180 
                             }, cancellationToken);
 
                             await optionsService.WriteAsync(_dbContext, new Server.Options.UserRegistrationOptions()
