@@ -13,7 +13,8 @@ namespace Gizmo.DAL.Mappings
         /// <inheritdoc></inheritdoc>/>
         public void Configure(EntityTypeBuilder<PaymentIntent> builder)
         {
-            builder.ToTable(nameof(PaymentIntent));
+            builder.ToTable(nameof(PaymentIntent))
+                .UseTptMappingStrategy();
 
             builder.HasKey(paymentIntent => paymentIntent.Id);
 
