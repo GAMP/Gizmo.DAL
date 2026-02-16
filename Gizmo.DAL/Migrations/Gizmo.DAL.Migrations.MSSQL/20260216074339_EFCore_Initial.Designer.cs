@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizmo.DAL.Migrations.MSSQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20260212083509_Update1")]
-    partial class Update1
+    [Migration("20260216074339_EFCore_Initial")]
+    partial class EFCore_Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
