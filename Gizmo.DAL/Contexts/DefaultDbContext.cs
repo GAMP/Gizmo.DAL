@@ -2708,6 +2708,32 @@ namespace Gizmo.DAL.Contexts
         }
 
         #endregion
+
+        /// <summary>
+        /// Checks if the exception is a unique constraint violation.
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns></returns>
+        public bool IsUniqueViolation(DbUpdateException ex)
+        {
+            if (Database.IsSqlServer())
+            {
+                if (ex.InnerException is SqlException sqlException)
+                {
+                    // SQL Server unique constraint violation error code
+                    return sqlException.Number == 2627 || sqlException.Number == 2601;
+                }
+            }
+            else if (Database.IsNpgsql())
+            {
+                if (ex.InnerException is PostgresException postgresException)
+                {
+                    return postgresException.SqlState == PostgresErrorCodes.UniqueViolation;
+                }
+            }
+
+            return false;
+        }
     }
 
     #endregion
