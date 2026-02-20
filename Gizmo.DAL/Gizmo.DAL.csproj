@@ -5,17 +5,18 @@
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Product>Gizmo.DAL</Product>
-    <Description>Gizmo.DAL</Description>
-    <Copyright>NETProjects</Copyright>
-    <Authors />
-    <Company>NETProjects</Company>
+    <Description>Gizmo database access library</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>NETProjects LP</Authors>
+    <Company>NETProjects LP</Company>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
     <Optimize>true</Optimize>
     <!-- !IMPORTANT! will break compatibility with older builds if name is changed-->
     <AssemblyName>Gizmo.DAL</AssemblyName>
-    <Version>3.0.0</Version>
+    <Version>3.0.1</Version>
+    <PackageIcon>package_icon.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -31,6 +32,13 @@
     <Compile Remove="Migrations\**" />
     <EmbeddedResource Remove="Migrations\**" />
     <None Remove="Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Resources\package_icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
