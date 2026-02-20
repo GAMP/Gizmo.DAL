@@ -15,6 +15,7 @@
     <Optimize>true</Optimize>
     <!-- !IMPORTANT! will break compatibility with older builds if name is changed-->
     <AssemblyName>Gizmo.DAL</AssemblyName>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -44,8 +45,12 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="Exists('..\..\Gizmo.DAL.Entities\Gizmo.DAL.Entities.csproj')">
     <ProjectReference Include="..\..\Gizmo.DAL.Entities\Gizmo.DAL.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!Exists('..\..\Gizmo.DAL.Entities\Gizmo.DAL.Entities.csproj')">
+    <PackageReference Include="Gizmo.DAL.Entities" Version="3.0.0" />
   </ItemGroup>
 
 </Project>
