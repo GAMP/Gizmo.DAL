@@ -251,28 +251,31 @@ namespace Gizmo.DAL.Contexts
 
         private async Task MigrateEFValidateDataAsync(CancellationToken cancellationToken)
         {
-            //there is an potential of same register names being used in EF6 database
-            //we will need to generate new unique names for each register
+            // Same register names may exist in EF6 databases; v3 adds a unique index so we
+            // must dedupe here. Group using SQL Server's default-collation comparison rules
+            // (ANSI_PADDING ON → trailing spaces insignificant; default CI collation → case-insensitive)
+            // otherwise pairs like "SM-01" / "SM-01 " slip through as separate groups under C#
+            // string equality, but SQL Server rejects them as duplicates when the index is built.
+            static string Normalized(string name) => name.TrimEnd().ToLowerInvariant();
 
-            //get all registers grouped by name
-            var registerNameGroup = await _dbContext.Registers
-                .Select(x => new
-                {
-                    x.Id,
-                    x.Name
-                }).GroupBy(x => x.Name).ToListAsync(cancellationToken);
+            var registers = await _dbContext.Registers
+                .Select(x => new { x.Id, x.Name })
+                .ToListAsync(cancellationToken);
 
-            if (registerNameGroup.Count > 0)
+            var hasChanges = false;
+
+            foreach (var group in registers.GroupBy(r => Normalized(r.Name)))
             {
-                foreach (var nameGroup in registerNameGroup.Where(nameGroup => nameGroup.Count() > 1))
+                var items = group.ToList();
+
+                if (items.Count > 1)
                 {
-                    //each name group will start from 1
                     int currentNumber = 1;
-                    foreach (var register in nameGroup)
+                    foreach (var register in items)
                     {
-                        //take up to 40 characters from existing name and append an register number to it
-                        var existingNameTruncated = register.Name[..Math.Min(register.Name.Length, 40)];
-                        var newName = $"{existingNameTruncated} ({currentNumber})";
+                        var trimmed = register.Name.TrimEnd();
+                        var truncated = trimmed[..Math.Min(trimmed.Length, 40)];
+                        var newName = $"{truncated} ({currentNumber})";
 
                         _logger.LogWarning("Renaming existing register {original} to {new} due to unique name incompatibility with v3.", register.Name, newName);
 
@@ -286,10 +289,24 @@ namespace Gizmo.DAL.Contexts
 
                         currentNumber++;
                     }
+                    hasChanges = true;
                 }
-
-                await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                else
+                {
+                    // Single entry: trim trailing whitespace so it doesn't collide with a future insert.
+                    var register = items[0];
+                    var trimmed = register.Name.TrimEnd();
+                    if (trimmed != register.Name)
+                    {
+                        _dbContext.Entry(new DAL.Entities.Register { Id = register.Id, Name = trimmed })
+                            .Property(r => r.Name).IsModified = true;
+                        hasChanges = true;
+                    }
+                }
             }
+
+            if (hasChanges)
+                await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
