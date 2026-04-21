@@ -123,6 +123,17 @@ internal static class SqlServer
             if (string.IsNullOrWhiteSpace(login))
                 throw new ArgumentException("Login name cannot be null or empty.", nameof(login));
 
+            // POSTGRES_DOCKER is set by the TestContainers fixture.
+            var isDocker = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("POSTGRES_DOCKER"));
+            var useSqlAuth = OperatingSystem.IsLinux() || isDocker;
+
+            // Windows logins require a qualified NT name (DOMAIN\user or MACHINE\user),
+            // otherwise SQL Server rejects the CREATE LOGIN with a cryptic error.
+            if (!useSqlAuth && !login.Contains('\\'))
+                throw new ArgumentException(
+                    $"Login '{login}' must be a qualified Windows name (DOMAIN\\user or MACHINE\\user).",
+                    nameof(login));
+
             var metadata = facade.GetConnectionMetadata();
             var cs = metadata.ChangeDatabaseTo("master").ToConnectionString();
 
@@ -131,7 +142,6 @@ internal static class SqlServer
 
             await using var command = connection.CreateCommand();
 
-            // Check if login exists with detailed info
             command.CommandText = """
                 SELECT sp.name, sp.is_disabled, sp.type
                 FROM sys.server_principals AS sp
@@ -154,52 +164,53 @@ internal static class SqlServer
                 }
             }
 
-            // If login exists and is SQL type, ensure it's enabled and return
-            if (!string.IsNullOrEmpty(existingLogin) && loginType == "S")
+            // Type codes: 'S' = SQL login, 'U' = Windows user, 'G' = Windows group.
+            var existingMatchesIntent = useSqlAuth
+                ? loginType == "S"
+                : loginType is "U" or "G";
+
+            if (!string.IsNullOrEmpty(existingLogin) && existingMatchesIntent)
             {
-                // Just ensure the login is enabled if it was disabled
                 if (loginDisabled)
                 {
                     command.Parameters.Clear();
                     command.CommandText = $"ALTER LOGIN [{existingLogin}] ENABLE";
                     await command.ExecuteNonQueryAsync(ct);
                 }
-                return; // SQL login already exists with proper state
+                return;
             }
-
-            // This is required if we use TestContainers library local
-            var docker = Environment.GetEnvironmentVariable("POSTGRES_DOCKER");
-            var isDocker = !string.IsNullOrEmpty(docker);
-
-            var isLinux = OperatingSystem.IsLinux() || isDocker;
 
             command.Parameters.Clear();
 
-            var createLoginCommand = isLinux
-            ? $"""
-                    CREATE LOGIN [{login}] WITH PASSWORD = N'{metadata.Password}', DEFAULT_DATABASE = [master], CHECK_POLICY = OFF;
-                    ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
-                """
-            : $"""
-                    CREATE LOGIN [{login}] FROM WINDOWS;
+            string createLoginCommand;
+            if (useSqlAuth)
+            {
+                // CREATE LOGIN cannot parameterize the password, so escape embedded quotes.
+                // The new SQL login reuses the admin connection's password — only intended for the
+                // TestContainers/Linux path where the same password is shared across the container.
+                var escapedPassword = (metadata.Password ?? string.Empty).Replace("'", "''");
+                createLoginCommand = $"""
+                    CREATE LOGIN [{login}] WITH PASSWORD = N'{escapedPassword}', DEFAULT_DATABASE = [master], CHECK_POLICY = OFF;
                     ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
                 """;
-
-            if (string.IsNullOrEmpty(existingLogin))
-            {
-                // Create new SQL login
-                command.CommandText = createLoginCommand;
-                await command.ExecuteNonQueryAsync(ct);
             }
             else
             {
-                // Login exists but is not SQL type (probably Windows), convert to SQL and enable
+                createLoginCommand = $"""
+                    CREATE LOGIN [{login}] FROM WINDOWS;
+                    ALTER SERVER ROLE [sysadmin] ADD MEMBER [{login}];
+                """;
+            }
+
+            if (!string.IsNullOrEmpty(existingLogin))
+            {
+                // Existing principal's auth type doesn't match intent — drop and recreate.
                 command.CommandText = $"DROP LOGIN [{existingLogin}]";
                 await command.ExecuteNonQueryAsync(ct);
-
-                command.CommandText = createLoginCommand;
-                await command.ExecuteNonQueryAsync(ct);
             }
+
+            command.CommandText = createLoginCommand;
+            await command.ExecuteNonQueryAsync(ct);
         }
         catch (Exception ex)
         {

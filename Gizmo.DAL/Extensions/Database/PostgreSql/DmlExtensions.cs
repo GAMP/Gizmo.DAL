@@ -21,13 +21,14 @@ internal static class PostgreSql
 
         var script = new StringBuilder();
 
-        // Handle cross-dependencies first
+        // Tables that couple users and hosts — cleared when either is being deleted.
+        // AppStat: app usage logged per user/host.
+        // HostGroupWaitingLineEntry: queue state linking a user to a host group.
         if (deleteUsers || deleteHosts)
         {
-            var commonTables = new[] { "AppStat", "ReservationUser", "ReservationHost", "Reservation" };
             script.AppendLine("-- Cross-dependency cleanup for users and hosts");
-            foreach (var table in commonTables)
-                script.AppendLine(DeleteTable(table));
+            script.AppendLine(DeleteTable("AppStat"));
+            script.AppendLine(DeleteTable("HostGroupWaitingLineEntry"));
         }
 
         if (deleteHosts && !deleteUsers)
@@ -36,7 +37,9 @@ internal static class PostgreSql
             script.AppendLine(SetColumnNullWithCondition("UserGuest", "ReservedHostId", "\"ReservedHostId\" IS NOT NULL"));
         }
 
-        // Financial data cleanup always runs (matching original implementation)
+        // Financial data cleanup always runs (matching original implementation).
+        // Reservations are grouped here too: financial tables (InvoiceLine, ProductOL) carry
+        // ReservationHostId FKs, so reservation rows can only be removed once those are gone.
         script.AppendLine("-- Nullify foreign key references that need to be handled before deletion");
         script.AppendLine(SetColumnNull("InvoiceLineExtended", "BundleLineId"));
         script.AppendLine(SetColumnNull("UsageSession", "CurrentUsageId"));
@@ -86,18 +89,35 @@ internal static class PostgreSql
         script.AppendLine(DeleteTable("ProductOLSession"));
         script.AppendLine(DeleteTable("ProductOLProduct"));
         script.AppendLine(DeleteTable("ProductOLExtended"));
+        script.AppendLine(DeleteTable("ProductOrderDiscount"));
         script.AppendLine(DeleteTableWithReseed("ProductOL"));
 
+        script.AppendLine(DeleteTable("ReservationProductOrder"));
         script.AppendLine(DeleteTableWithReseed("ProductOrder"));
         script.AppendLine(DeleteTableWithReseed("DepositTransaction"));
         script.AppendLine(DeleteTableWithReseed("PointTransaction"));
 
+        script.AppendLine(DeleteTable("InventoryEntry"));
+        script.AppendLine(DeleteTable("InventoryDocument"));
+        // Inventory has a restrict FK to Shift (Inventory.ShiftId) — must go before Shift below.
+        // Its Cascade children (InventoryEntry, InventoryDocument, InventoryTransfer) are handled above/via cascade.
+        script.AppendLine(DeleteTable("Inventory"));
         script.AppendLine(DeleteTable("StockTransaction"));
         script.AppendLine(DeleteTable("ShiftCount"));
         script.AppendLine(DeleteTable("RegisterTransaction"));
         script.AppendLine(DeleteTable("FiscalReceipt"));
         script.AppendLine(DeleteTable("Shift"));
         script.AppendLine(DeleteTable("Register"));
+        // Stock: blockers are cleared above — Inventory/StockTransaction/InventoryEntry deleted,
+        // InventoryTransfer cascades from Inventory, Register.StockId is SetNull, StockCount cascades from Stock.
+        script.AppendLine(DeleteTableWithReseed("Stock"));
+
+        // Reservations — moved here from the top cross-dep section so that financial tables
+        // carrying ReservationHostId (InvoiceLine, ProductOL) are already gone by this point.
+        script.AppendLine("-- Reservation cleanup (runs after financial tables that reference ReservationHost)");
+        script.AppendLine(DeleteTable("ReservationUser"));
+        script.AppendLine(DeleteTable("ReservationHost"));
+        script.AppendLine(DeleteTable("Reservation"));
 
         // Products cleanup
         if (deleteProducts)
@@ -124,9 +144,11 @@ internal static class PostgreSql
         if (deleteUsers)
         {
             script.AppendLine("-- User-related data cleanup");
+            // HostGroupWaitingLineEntry moved to the cross-dep section — it couples users+hosts
+            // and should be wiped whenever either is cleaned, not just on the user path.
             var userTables = new[]
             {
-                "HostGroupWaitingLineEntry", "AssetTransaction", "AppRating", "UserCreditLimit",
+                "AssetTransaction", "AppRating", "UserCreditLimit",
                 "UserAttribute", "UserNote", "Note", "VerificationEmail", "VerificationMobilePhone",
                 "Verification", "Token"
             };
@@ -143,6 +165,8 @@ internal static class PostgreSql
             script.AppendLine();
 
             script.AppendLine("-- Host cleanup");
+            // LicenseKey.AssignedHostId is a restrict FK to HostComputer — null it first.
+            script.AppendLine(SetColumnNullWithCondition("LicenseKey", "AssignedHostId", "\"AssignedHostId\" IS NOT NULL"));
             script.AppendLine(DeleteTable("HostComputer"));
             script.AppendLine(DeleteTable("HostEndpoint"));
             script.AppendLine(DeleteTableWithReseed("Host"));
@@ -154,20 +178,33 @@ internal static class PostgreSql
             script.AppendLine("-- Clear ALL foreign key references to operators systematically");
             script.AppendLine();
 
-            script.AppendLine("-- Core entity updates (CreatedById/ModifiedById columns)");
-            var operatorTables = new[]
-            {
-                "App", "AppCategory", "AppExe", "AppGroup", "AssetTransaction", "Attribute", "BillProfile",
-                "Device", "DeviceHost", "Feed", "Host", "HostGroup", "MonetaryUnit",
-                "News", "PaymentMethod", "PluginLibrary", "ProductBase", "ProductGroup",
-                "ProductHostHidden", "ProductImage", "ProductUserDisallowed", "Reservation",
-                "ReservationHost", "ReservationUser", "SecurityProfile", "Setting", "Tax",
-                "Token", "User", "UserAgreement", "UserAttribute", "UserCredential",
-                "UserCreditLimit", "UserGroup", "UserPermissionSet", "UserPicture", "Variable"
-            };
-
-            foreach (var table in operatorTables)
-                script.AppendLine($"UPDATE \"{table}\" SET \"CreatedById\" = NULL, \"ModifiedById\" = NULL WHERE \"CreatedById\" IS NOT NULL OR \"ModifiedById\" IS NOT NULL;");
+            // Null every CreatedById/ModifiedById FK to "User"/"UserOperator" by querying
+            // information_schema at runtime. This replaces a hardcoded table list that drifted as
+            // new migrations added tables (e.g. HostLayoutGroupImage), causing FK violations
+            // when EF later deletes UserOperator rows in SaveChangesAsync.
+            script.AppendLine("-- Null CreatedById/ModifiedById on every table that FKs to \"User\" or \"UserOperator\"");
+            script.AppendLine("""
+                DO $$
+                DECLARE
+                    r RECORD;
+                BEGIN
+                    FOR r IN
+                        SELECT DISTINCT kcu.table_schema, kcu.table_name, kcu.column_name
+                        FROM information_schema.referential_constraints rc
+                        JOIN information_schema.key_column_usage kcu
+                            ON rc.constraint_name = kcu.constraint_name
+                           AND rc.constraint_schema = kcu.constraint_schema
+                        JOIN information_schema.constraint_column_usage ccu
+                            ON rc.unique_constraint_name = ccu.constraint_name
+                           AND rc.unique_constraint_schema = ccu.constraint_schema
+                        WHERE ccu.table_name IN ('User', 'UserOperator')
+                          AND kcu.column_name IN ('CreatedById', 'ModifiedById')
+                    LOOP
+                        EXECUTE format('UPDATE %I.%I SET %I = NULL WHERE %I IS NOT NULL',
+                            r.table_schema, r.table_name, r.column_name, r.column_name);
+                    END LOOP;
+                END $$;
+            """);
 
             script.AppendLine();
             script.AppendLine("-- Clear specific foreign key references before deleting related entities");
@@ -176,20 +213,19 @@ internal static class PostgreSql
             script.AppendLine(SetColumnNullWithCondition("AssetTransaction", "CheckedInById", "\"CheckedInById\" IS NOT NULL"));
             script.AppendLine();
 
-            script.AppendLine("-- Delete operator tokens (type 0)");
-            script.AppendLine("DELETE FROM \"Token\" WHERE \"Type\" = 0;");
+            script.AppendLine("-- Delete any tokens owned by operators (any type) before deleting the operators themselves");
+            script.AppendLine("DELETE FROM \"Token\" WHERE \"UserId\" IN (SELECT \"UserId\" FROM \"UserOperator\");");
             script.AppendLine();
 
-            script.AppendLine("-- Clean up operator-specific entities");
-            var operatorSpecificTables = new[]
-            {
-                "HostGroupWaitingLineEntry", "Payment",  
-                "AssetTransaction", "AgeRestriction", "AssistanceRequestType", "Stock", "Branch",
-                "ClientOptions", "Companion", "Notification", "UserPermissionSet"
-            };
-
-            foreach (var table in operatorSpecificTables)
-                script.AppendLine(DeleteTable(table));
+            // Clean up entities that genuinely block the operator delete. Only ScheduleReportRecipient
+            // has a Restrict FK to UserOperator (via User) that would prevent EF's
+            // cx.UsersOperator.RemoveRange(...) from succeeding. Everything else (AgeRestriction,
+            // AssistanceRequestType, ClientOptions, Companion, Notification, UserPermissionSet,
+            // Branch, Payment, AssetTransaction, HostGroupWaitingLineEntry) is either config/template
+            // data that should survive an operator wipe, or already handled by the schema-driven
+            // null block above / deleted in other sections.
+            script.AppendLine("-- Clean up entities with Restrict FKs to UserOperator");
+            script.AppendLine(DeleteTable("ScheduleReportRecipient"));
         }
 
         return script.ToString();
@@ -239,23 +275,37 @@ internal static class PostgreSql
 
         var script = new StringBuilder();
 
-        // Basic DELETE operations (direct user ID reference)
-        var directDeleteTables = new[]
-        {
-            "AssetTransaction", "AppStat", "AppRating", "AssistanceRequest", 
-            "ReservationUser", "Reservation", "UsageSession", "Usage", 
-            "UserSession", "InvoicePayment", "PaymentIntent", 
-            "DepositPayment", "Payment", "InvoiceLine", "Invoice", "ProductOL", 
-            "ProductOrder", "DepositTransaction", "PointTransaction", 
-            "HostGroupWaitingLineEntry", "UserCreditLimit", "UserAttribute", 
-            "UserNote", "Verification", "Token", "UserMember"
-        };
+        // Pre-delete child rows that reference UserSession/UserMember via restrict FKs,
+        // otherwise subsequent DELETE FROM "UserSession"/"UserMember" fails.
+        script.AppendLine("-- Pre-delete UserSessionChange rows (restrict FKs to UserSession and UserMember)");
+        script.AppendLine($"""
+            DELETE FROM "UserSessionChange"
+            WHERE "UserSessionId" IN (
+                SELECT "UserSessionId"
+                FROM "UserSession"
+                WHERE "UserId" IN (
+                    {DeletedUsersSubquery}
+                )
+            );
+        """);
+        script.AppendLine($"""
+            DELETE FROM "UserSessionChange"
+            WHERE "UserId" IN (
+                {DeletedUsersSubquery}
+            );
+        """);
 
-        script.AppendLine("-- Basic DELETE operations (direct user ID reference)");
-        foreach (var tableName in directDeleteTables)
-            script.AppendLine(DeleteFromTableForCleanup(tableName, DeletedUsersSubquery));
+        // Null out self-referential bundle-line columns BEFORE deleting InvoiceLine/ProductOL rows,
+        // otherwise those rows can't be touched (Extended subtypes reference other InvoiceLine/ProductOL rows).
+        script.AppendLine();
+        script.AppendLine("-- Null self-referential BundleLineId columns before parent deletes");
+        script.AppendLine(UpdateTableSetNullForCleanup("InvoiceLineExtended", "BundleLineId", "InvoiceLine", "InvoiceLineId", DeletedUsersSubquery));
+        script.AppendLine(UpdateTableSetNullForCleanup("ProductOLExtended", "BundleLineId", "ProductOL", "ProductOLId", DeletedUsersSubquery));
 
-        // Nested DELETE operations (joined tables)
+        // Nested DELETE operations (joined tables) — MUST run before the direct parent deletes
+        // below, otherwise parent deletes hit restrict FKs from these children (e.g.
+        // RefundInvoicePayment → InvoicePayment, InvoiceLineProduct → InvoiceLine, etc).
+        // Subqueries use the parent's UserId to find rows, so parents must still be intact here.
         var joinDeleteMappings = new[]
         {
             ("UsageTime", "Usage", "UsageId"),
@@ -284,24 +334,24 @@ internal static class PostgreSql
         foreach (var (tableName, joinTableName, joinColumnName) in joinDeleteMappings)
             script.AppendLine(DeleteFromTableWithJoinForCleanup(tableName, joinTableName, joinColumnName, DeletedUsersSubquery));
 
-        // Special cases with custom conditions
+        // Special cases with custom conditions — also run before direct parent deletes.
         script.AppendLine();
         script.AppendLine("-- Special DELETE operations with custom conditions");
         script.AppendLine($"""
-            DELETE FROM "UserSessionChange" 
+            DELETE FROM "UserSessionChange"
             WHERE "CreatedById" IN (
                 {DeletedUsersSubquery}
             );
         """);
 
         script.AppendLine($"""
-            DELETE FROM "RefundDepositPayment" 
+            DELETE FROM "RefundDepositPayment"
             WHERE "RefundId" IN (
-                SELECT "RefundId" 
-                FROM "Refund" 
+                SELECT "RefundId"
+                FROM "Refund"
                 WHERE "DepositTransactionId" IN (
-                    SELECT "DepositTransactionId" 
-                    FROM "DepositTransaction" 
+                    SELECT "DepositTransactionId"
+                    FROM "DepositTransaction"
                     WHERE "UserId" IN (
                         {DeletedUsersSubquery}
                     )
@@ -309,11 +359,23 @@ internal static class PostgreSql
             );
         """);
 
-        // Update operations setting NULL values
+        // Basic DELETE operations (direct user ID reference) — runs LAST (before final User delete)
+        // so that children from the join/special sections above are already gone and don't block.
+        var directDeleteTables = new[]
+        {
+            "AssetTransaction", "AppStat", "AppRating", "AssistanceRequest",
+            "ReservationUser", "Reservation", "UsageSession", "Usage",
+            "UserSession", "InvoicePayment", "IntentOrderDeposit", "PaymentIntent",
+            "DepositPayment", "Payment", "InvoiceLine", "Invoice", "ProductOL",
+            "ProductOrder", "DepositTransaction", "PointTransaction",
+            "HostGroupWaitingLineEntry", "UserCreditLimit", "UserAttribute",
+            "UserNote", "Verification", "Token", "UserMember"
+        };
+
         script.AppendLine();
-        script.AppendLine("-- Update operations setting NULL values");
-        script.AppendLine(UpdateTableSetNullForCleanup("InvoiceLineExtended", "BundleLineId", "InvoiceLine", "InvoiceLineId", DeletedUsersSubquery));
-        script.AppendLine(UpdateTableSetNullForCleanup("ProductOLExtended", "BundleLineId", "ProductOL", "ProductOLId", DeletedUsersSubquery));
+        script.AppendLine("-- Basic DELETE operations (direct user ID reference)");
+        foreach (var tableName in directDeleteTables)
+            script.AppendLine(DeleteFromTableForCleanup(tableName, DeletedUsersSubquery));
 
         // Final user deletion
         script.AppendLine();

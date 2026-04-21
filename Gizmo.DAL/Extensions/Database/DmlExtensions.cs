@@ -99,11 +99,37 @@ public static class DmlOperations
                 defaultOperator.UserCredential.Salt = salt;
                 defaultOperator.UserCredential.Password = password;
 
-                var allPermissions = Gizmo.Server.Security.PolicesBuilder.Claims().Select(claim => new Entities.UserPermission { Type = claim.Resource, Value = claim.Operation });
+                // Enumerate GizmoPolicies directly (same source of truth DbInitializer uses).
+                // Avoid PolicesBuilder.Claims() — its tuple element names are swapped relative to
+                // construction, which silently stores Type/Value inverted and breaks auth checks.
+                var allPermissions = Enum.GetValues<Gizmo.Server.Security.GizmoPolicies>()
+                    .Select(policy => policy.GetAttribute<Gizmo.Server.Security.PolicyDescriptionAttribute>())
+                    .Where(description => description != null && description.IsAssignable)
+                    .Select(description => new Entities.UserPermission
+                    {
+                        Type = description!.Resource,
+                        Value = description.Operation,
+                    });
 
                 defaultOperator.Permissions.UnionWith(allPermissions);
 
                 cx.UsersOperator.Update(defaultOperator);
+
+                // Link the new operator to the first existing branch so it's usable post-cleanup.
+                // DbInitializer only runs at startup and won't backfill this after a live cleanup.
+                var firstBranchId = await cx.Branches
+                    .OrderBy(branch => branch.Id)
+                    .Select(branch => (int?)branch.Id)
+                    .FirstOrDefaultAsync(ct);
+
+                if (firstBranchId.HasValue)
+                {
+                    cx.UserOperatorBranches.Add(new Entities.UserOperatorBranch
+                    {
+                        Operator = defaultOperator,
+                        BranchId = firstBranchId.Value,
+                    });
+                }
             }
 
             cx.ChangeTracker.DetectChanges();
