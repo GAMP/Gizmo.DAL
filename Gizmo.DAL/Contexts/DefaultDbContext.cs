@@ -2385,8 +2385,20 @@ namespace Gizmo.DAL.Contexts
             if (ex.GetBaseException() is SqlException sqlException)
                 return Enum.IsDefined(typeof(MSSQLServerRetriableErrors), sqlException.Number);
 
-            else if (ex.GetBaseException() is NpgsqlException npgsqlException)
-                return Enum.IsDefined(typeof(NPGSQLRetriableErrors), npgsqlException.ErrorCode);
+            // PostgreSQL surfaces server-side errors as PostgresException (a subclass of NpgsqlException)
+            // carrying the SQLSTATE on the string SqlState property. We match against the canonical
+            // PostgresErrorCodes string constants - the same pattern as IsUniqueViolation below.
+            // Note: this MUST cast to PostgresException, not NpgsqlException - SqlState lives on the
+            // subclass, and NpgsqlException exposes no PostgreSQL error code (its .ErrorCode is the
+            // base Exception.HResult, which is why the previous int-enum check never matched).
+            else if (ex.GetBaseException() is PostgresException postgresException)
+                return postgresException.SqlState is
+                    PostgresErrorCodes.DeadlockDetected         // 40P01
+                    or PostgresErrorCodes.SerializationFailure  // 40001
+                    or PostgresErrorCodes.LockNotAvailable      // 55P03
+                    or PostgresErrorCodes.ConnectionFailure     // 08006
+                    or PostgresErrorCodes.TooManyConnections    // 53300
+                    or PostgresErrorCodes.CannotConnectNow;     // 57P03
 
             return false;
         }
@@ -2656,52 +2668,6 @@ namespace Gizmo.DAL.Contexts
             /// Error code: 40613
             /// </summary>
             DatabaseOrServerNotAvailable = 40613
-        }
-
-        #endregion
-
-        #region NPGSQLRETRIABLEERRORS
-
-        /// <summary>
-        /// Npgsql PostgreSQL retriable error codes.
-        /// </summary>
-        public enum NPGSQLRetriableErrors
-        {
-            /// <summary>
-            /// A deadlock has been detected, and the transaction can be retried.
-            /// Error code: 40P01
-            /// </summary>
-            DeadlockDetected = 40001,
-
-            /// <summary>
-            /// A transaction serialization failure occurred.
-            /// Error code: 40001
-            /// </summary>
-            SerializationFailure = 40001,
-
-            /// <summary>
-            /// Connection exception due to a timeout, often retriable.
-            /// Error code: 08006
-            /// </summary>
-            ConnectionExceptionTimeout = 8006,
-
-            /// <summary>
-            /// Could not obtain a lock on the resource, often retriable.
-            /// Error code: 55P03
-            /// </summary>
-            LockNotAvailable = 55003,
-
-            /// <summary>
-            /// Too many connections, retrying later might succeed.
-            /// Error code: 53300
-            /// </summary>
-            TooManyConnections = 53300,
-
-            /// <summary>
-            /// Server is too busy to handle the request, retry might succeed.
-            /// Error code: 57P03
-            /// </summary>
-            CannotConnectNow = 57003
         }
 
         #endregion
