@@ -453,18 +453,12 @@ namespace Gizmo.DAL.Contexts
                             // new permission sets, its up to user
                             // validating existing operator and restoring permissions is also not part of initialization, its better to use other tools for such cases
 
-                            if (result.IsUpgrade)
-                            {
-                                // we do need to add all existing operators to the newly created branch, their state is irrelevant
-                                var currentOperators = await _dbContext.UsersOperator.Select(userOperator => userOperator.Id).ToArrayAsync(cancellationToken);
-                                _dbContext.UserOperatorBranches.AddRange(currentOperators.Select(userOperatorId => new DAL.Entities.UserOperatorBranch()
-                                {
-                                    OperatorId = userOperatorId,
-                                    BranchId = targetBranchId.Value
-                                }));
-
-                                await _dbContext.SaveChangesAsync(cancellationToken);
-                            }
+                            // Existing operators are attached to the default branch by the EF6->Core
+                            // migration script (Scripts.EF_6_BRANCH_SET) so the assignment is atomic with
+                            // the schema upgrade and recorded in __EFMigrationsHistory. Doing it here instead
+                            // relied on the transient IsUpgrade flag (true for a single process run only): if
+                            // anything threw after the migration committed, operators were stranded with no
+                            // UserOperatorBranch rows and no second chance. Do not reintroduce that here.
                         }
                     }
 

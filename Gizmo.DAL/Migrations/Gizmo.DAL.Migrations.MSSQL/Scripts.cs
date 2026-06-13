@@ -112,6 +112,23 @@
               AND aeb.BranchId = @DefaultBranchId
         );
 
+        -- Operator branch (add all existing operators to the default branch)
+
+        INSERT INTO [dbo].[UserOperatorBranch] (OperatorId, BranchId, IsDefault, CreatedTime)
+        SELECT
+              OperatorId  = uo.UserId
+            , BranchId    = @DefaultBranchId
+            , IsDefault   = CAST(1 AS bit)
+            , CreatedTime = GETDATE()
+        FROM [dbo].[UserOperator] AS uo
+        WHERE NOT EXISTS (
+            SELECT
+                1
+            FROM [dbo].[UserOperatorBranch] AS uob
+            WHERE uob.OperatorId = uo.UserId
+              AND uob.BranchId   = @DefaultBranchId
+        );
+
         -- Generic updates
 
         UPDATE dp
