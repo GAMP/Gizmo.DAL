@@ -77,6 +77,12 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(register => register.StockId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(register => register.Branch)
+                .WithMany(branch => branch.Registers)
+                .HasForeignKey(register => register.BranchId)
+                .IsRequired(true)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
