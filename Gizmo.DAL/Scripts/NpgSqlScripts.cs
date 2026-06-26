@@ -72,18 +72,24 @@ namespace Gizmo.DAL.Scripts
                 "UserSessionId" = ANY(STRING_TO_ARRAY(@JoinList, ',')::int[]);
             """;
         private const string SESSION_UPDATE_SQL = """
+            -- Billable states = those with the Active bit set: Active(1), Pending(5), Paused(9), Move(17),
+            -- Grace(33) — i.e. everything except None(0) and Ended(2). Expressed as an explicit IN list rather
+            -- than the old bitmask `"State" & 1 = 1`: the positive equality list is index-friendly (lets the
+            -- planner use the IX_UserSession_NotEnded partial index, WHERE "State" <> 2, which the IN list
+            -- implies) instead of scanning the whole table. Keep in sync with UserSessionState's Active-bit
+            -- members. (Mirrors the MSSQL SESSION_UPDATE_SQL fix.)
             WITH updated AS (
-                UPDATE "UserSession" 
+                UPDATE "UserSession"
                 SET
                     "Span" = "Span" + @SPAN,
-                    "PendSpan" = CASE WHEN "State" = 5 THEN "PendSpan" + @SPAN ELSE "PendSpan" END, 
+                    "PendSpan" = CASE WHEN "State" = 5 THEN "PendSpan" + @SPAN ELSE "PendSpan" END,
                     "PendSpanTotal" = CASE WHEN "State" = 5 THEN "PendSpanTotal" + @SPAN ELSE "PendSpanTotal" END,
-                    "PauseSpan" = CASE WHEN "State" = 9 THEN "PauseSpan" + @SPAN ELSE "PauseSpan" END, 
+                    "PauseSpan" = CASE WHEN "State" = 9 THEN "PauseSpan" + @SPAN ELSE "PauseSpan" END,
                     "PauseSpanTotal" = CASE WHEN "State" = 9 THEN "PauseSpanTotal" + @SPAN ELSE "PauseSpanTotal" END,
-                    "GraceSpan" = CASE WHEN "State" = 33 THEN "GraceSpan" + @SPAN ELSE "GraceSpan" END, 
+                    "GraceSpan" = CASE WHEN "State" = 33 THEN "GraceSpan" + @SPAN ELSE "GraceSpan" END,
                     "GraceSpanTotal" = CASE WHEN "State" = 33 THEN "GraceSpanTotal" + @SPAN ELSE "GraceSpanTotal" END
-                WHERE 
-                    "State" & 1 = 1
+                WHERE
+                    "State" IN (1, 5, 9, 17, 33)
                 RETURNING
                     "UserSessionId", "UserId", "HostId", "State", "Span", "BilledSpan", "PendTime", "PendSpan", "EndTime", 
                     "CreatedById", "CreatedTime", "Slot", "PendSpanTotal", "PauseSpan", "PauseSpanTotal", "GraceTime", 

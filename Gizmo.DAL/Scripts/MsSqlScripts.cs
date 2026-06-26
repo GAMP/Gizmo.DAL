@@ -76,13 +76,20 @@ namespace Gizmo.DAL.Scripts
                 UserSessionId IN (SELECT value FROM STRING_SPLIT(@JoinList, ','));
             """;
         private const string SESSION_UPDATE_SQL = """
-            UPDATE UserSession 
+            -- Billable states = those with the Active bit set: Active(1), Pending(5), Paused(9), Move(17),
+            -- Grace(33) — i.e. everything except None(0) and Ended(2). Expressed as an explicit IN list rather
+            -- than the old non-sargable bitmask `State & 1 = 1` OR a `State <> 0 AND State <> 2` inequality:
+            -- both of those force a FULL SCAN of all ~661K UserSession rows every tick (3143 logical reads,
+            -- ~40ms even with ZERO active sessions) because the optimizer can't seek/estimate them. The equality
+            -- IN list is seekable and accurately estimated, so the optimizer uses IX_UserSession_NotEnded on its
+            -- own (15 logical reads). Keep this list in sync with UserSessionState's Active-bit members.
+            UPDATE UserSession
             SET
                 Span=Span+@SPAN,
                 PendSpan = CASE State WHEN 5 THEN PendSpan+@SPAN ELSE PendSpan END, PendSpanTotal = CASE State WHEN 5 THEN PendSpanTotal+@SPAN ELSE PendSpanTotal END,
                 PauseSpan = CASE State WHEN 9 THEN PauseSpan+@SPAN ELSE PauseSpan END, PauseSpanTotal = CASE State WHEN 9 THEN PauseSpanTotal+@SPAN ELSE PauseSpanTotal END,
                 GraceSpan = CASE State WHEN 33 THEN GraceSpan+@SPAN ELSE GraceSpan END, GraceSpanTotal = CASE State WHEN 33 THEN GraceSpanTotal+@SPAN ELSE GraceSpanTotal END
-            OUTPUT 
+            OUTPUT
                 INSERTED.UserSessionId
                 ,INSERTED.UserId
                 ,INSERTED.HostId
@@ -102,8 +109,8 @@ namespace Gizmo.DAL.Scripts
                 ,INSERTED.GraceSpan
                 ,INSERTED.GraceSpanTotal
                 ,INSERTED.BranchId
-            WHERE 
-                State & 1 = 1;
+            WHERE
+                State IN (1, 5, 9, 17, 33);
             """;
         private const string LOG_LIMIT_SQL = """
             DECLARE @LOG_LIMIT_SQL TABLE (RowsAffected INT);
