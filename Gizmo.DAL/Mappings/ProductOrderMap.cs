@@ -75,6 +75,13 @@ namespace Gizmo.DAL.Mappings
                 .WithMany(branch => branch.Orders)
                 .HasForeignKey(productOrder => productOrder.BranchId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Orders admin list (ProductOrderService.GetAsync) filters the ~867K-row table by a CreatedTime
+            // range + Status and otherwise full-scans it (~26,500 logical reads). Status is sargable here
+            // (the LINQ predicate is Status == OrderStatus.X; the HasFlag is on the client-side filter flag in
+            // C#, not the SQL). CreatedTime is a shadow property → specified by name. (The filtered active-queue
+            // index — Status IN (OnHold,Accepted,Processing) — lives in ApplyPerformanceIndexes.)
+            builder.HasIndex("CreatedTime", nameof(ProductOrder.Status));
         }
     }
 }

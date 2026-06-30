@@ -17,7 +17,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -908,7 +908,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("HostId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("StartTime");
+
+                    b.HasIndex("UserId", "AppId");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("UserId", "AppId"), new[] { "Span" });
 
                     b.ToTable("AppStat", (string)null);
                 });
@@ -2105,9 +2109,19 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("CreatedTime");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedTime"), new[] { "Amount", "UserId", "CreatedById", "ShiftId", "RegisterId" });
+
                     b.HasIndex("DepositTransactionId");
 
                     b.HasIndex("FiscalReceiptId");
+
+                    b.HasIndex("FiscalReceiptStatus")
+                        .HasDatabaseName("IX_DepositPayment_FiscalReceiptStatus_Pending")
+                        .HasFilter("\"FiscalReceiptStatus\" IN (2, 5) AND \"FiscalReceiptId\" IS NULL AND \"IsVoided\" = false");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("FiscalReceiptStatus"), new[] { "RegisterId" });
 
                     b.HasIndex("ModifiedById");
 
@@ -2182,7 +2196,15 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "Id")
+                        .IsDescending(false, true);
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("UserId", "Id"), new[] { "Balance" });
+
+                    b.HasIndex("CreatedTime", "IsVoided", "CreatedById", "RegisterId")
+                        .HasDatabaseName("IX_DepositTransaction_Created_Voided_Register");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedTime", "IsVoided", "CreatedById", "RegisterId"), new[] { "Type", "Amount", "UserId" });
 
                     b.ToTable("DepositTransaction", (string)null);
                 });
@@ -3797,9 +3819,25 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("RegisterId");
 
+                    b.HasIndex("ReturnFiscalReceiptStatus")
+                        .HasDatabaseName("IX_Invoice_ReturnFiscalReceiptStatus_Pending")
+                        .HasFilter("\"ReturnFiscalReceiptStatus\" IN (2, 5) AND \"IsVoided\" = true AND \"Status\" = 2 AND \"Total\" > 0");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("ReturnFiscalReceiptStatus"), new[] { "RegisterId" });
+
+                    b.HasIndex("SaleFiscalReceiptStatus")
+                        .HasDatabaseName("IX_Invoice_SaleFiscalReceiptStatus_Pending")
+                        .HasFilter("\"SaleFiscalReceiptStatus\" IN (2, 5) AND \"IsVoided\" = false AND \"Status\" = 2 AND \"Total\" > 0");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("SaleFiscalReceiptStatus"), new[] { "RegisterId" });
+
                     b.HasIndex("ShiftId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("CreatedTime", "CreatedById", "RegisterId");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedTime", "CreatedById", "RegisterId"), new[] { "Total", "Outstanding", "IsVoided", "Status" });
 
                     b.ToTable("Invoice", (string)null);
                 });
@@ -4081,6 +4119,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("ShiftId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("CreatedTime", "CreatedById", "RegisterId");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedTime", "CreatedById", "RegisterId"), new[] { "Amount", "RefundStatus", "RefundedAmount" });
 
                     b.ToTable("InvoicePayment", (string)null);
                 });
@@ -5170,7 +5212,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "Id")
+                        .IsDescending(false, true);
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("UserId", "Id"), new[] { "Balance" });
 
                     b.ToTable("PointTransaction", (string)null);
                 });
@@ -5957,6 +6002,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("ShiftId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("CreatedTime", "Status");
 
                     b.ToTable("ProductOrder", (string)null);
                 });
@@ -7064,6 +7111,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("Status", "ActivationTime", "ExpireAfter");
+
                     b.ToTable("Reservation", (string)null);
                 });
 
@@ -7947,11 +7996,16 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("ModifiedById");
 
-                    b.HasIndex("ProductId");
-
                     b.HasIndex("SourceProductId");
 
                     b.HasIndex("StockId");
+
+                    b.HasIndex("CreatedTime", "ProductId");
+
+                    b.HasIndex("ProductId", "StockId", "Id")
+                        .IsDescending(false, false, true);
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("ProductId", "StockId", "Id"), new[] { "OnHand" });
 
                     b.ToTable("StockTransaction", (string)null);
                 });
@@ -8291,6 +8345,12 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("CurrentUsageId");
 
                     b.HasIndex("Id");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_UsageSession_IsActive")
+                        .HasFilter("\"IsActive\" = true");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("IsActive"), new[] { "UserId", "NegativeSeconds", "RatesTotal", "CurrentUsageId" });
 
                     b.HasIndex("UserId");
 
@@ -9257,9 +9317,17 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("HostId");
+                    b.HasIndex("State")
+                        .HasDatabaseName("IX_UserSession_NotEnded")
+                        .HasFilter("\"State\" <> 2");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("State"), new[] { "UserId", "HostId", "Slot" });
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("HostId", "State");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("HostId", "State"), new[] { "UserId", "CreatedTime", "Span" });
 
                     b.ToTable("UserSession", (string)null);
                 });
@@ -13744,9 +13812,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
             modelBuilder.Entity("Gizmo.DAL.Entities.Register", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
-                        .WithMany()
+                        .WithMany("Registers")
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Gizmo.DAL.Entities.Companion", "Companion")
@@ -16124,6 +16192,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("Promotions");
 
                     b.Navigation("RegisterTransactions");
+
+                    b.Navigation("Registers");
 
                     b.Navigation("Shifts");
 

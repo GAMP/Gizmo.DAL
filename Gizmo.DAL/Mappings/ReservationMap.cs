@@ -72,6 +72,15 @@ namespace Gizmo.DAL.Mappings
 
             builder.HasIndex(reservation => reservation.Status);
 
+            // Gate for the ReservationProcessingService 1s timer ExpiringQuery (Status in (Active,Waiting) AND
+            // ActivationTime IS NULL AND ExpireAfter IS NOT NULL) — a sargable filter, so this composite is
+            // genuinely usable. The table is small today (~180 rows) but reservations accumulate into the
+            // thousands+ per year, and this query runs every second — so it's indexed ahead of that growth to
+            // avoid a recurring per-second scan as the table grows (cf. the UserSession timer-scan pathology).
+            // (The admin-list (BranchId,Status,Date) composite was NOT restored: it's on-demand, not per-second,
+            // and its Date.AddMinutes(Duration) upper bound is non-sargable anyway.)
+            builder.HasIndex(reservation => new { reservation.Status, reservation.ActivationTime, reservation.ExpireAfter });
+
             builder.HasOne(reservation => reservation.User)
                 .WithMany(reservation => reservation.Reservations)
                 .HasForeignKey(reservation => reservation.UserId);

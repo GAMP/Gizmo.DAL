@@ -14,6 +14,7 @@ using Gizmo.Server.Security;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql;
@@ -1488,6 +1489,10 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new UserMemberDisableReasonMap());
             modelBuilder.ApplyConfiguration(new UserMemberDisableEntryMap());
 
+            #region PERFORMANCE INDEXES
+            ApplyPerformanceIndexes(modelBuilder);
+            #endregion
+
             #region GLOBAL CONFIGURATIONS
             ApplyGlobalMapConfigurations(modelBuilder);
             #endregion
@@ -2228,6 +2233,201 @@ namespace Gizmo.DAL.Contexts
                 SaveChanges();
                 dbTransaction.Commit();
             }
+        }
+
+        /// <summary>
+        /// Applies the hot-path covering and filtered ("partial") indexes identified by the index audit.
+        /// </summary>
+        /// <param name="modelBuilder">Model builder.</param>
+        /// <remarks>
+        /// These indexes are centralized here rather than in the per-entity maps for two reasons:
+        /// (1) <c>IncludeProperties</c> (the INCLUDE/covering API) is ambiguous in the shared DAL project
+        /// because it references both the SQL Server and Npgsql providers, each of which ships its own
+        /// extension - so the call must be disambiguated against the active provider; and
+        /// (2) the filtered-index predicates use provider-specific SQL (column quoting and boolean literals
+        /// differ between the two databases). Both concerns need the active provider, which the
+        /// <see cref="IEntityTypeConfiguration{TEntity}"/> map classes do not have access to.
+        ///
+        /// The covering report indexes back the financial reports (shift / daily / Z-report). The filtered
+        /// indexes back the fiscalization processing background service, which scans several large parent
+        /// tables every second for rows whose receipt is still pending
+        /// (<see cref="FiscalReceiptPrintStatus.Pending"/> = 2 or
+        /// <see cref="FiscalReceiptPrintStatus.EReceiptPending"/> = 5); the pending set is tiny and shrinks as
+        /// receipts print, but the tables grow unbounded, so only a filtered index helps. The filtered indexes
+        /// match the exact predicates in the fiscalization processing query. See the
+        /// project_index_hotpath_audit memo.
+        /// </remarks>
+        private void ApplyPerformanceIndexes(ModelBuilder modelBuilder)
+        {
+            bool isSqlServer = Database.IsSqlServer();
+
+            // INCLUDE (covering) columns. The two providers expose this through separate extension methods that
+            // are ambiguous in this project, so the call is disambiguated against the active provider here.
+            // Each provider stores its own annotation, so on a provider that does not support INCLUDE the call
+            // is simply a no-op for that provider's migration.
+            static IndexBuilder Include(IndexBuilder index, bool sqlServer, params string[] columns)
+                => sqlServer
+                    ? SqlServerIndexBuilderExtensions.IncludeProperties(index, columns)
+                    : NpgsqlIndexBuilderExtensions.IncludeProperties(index, columns);
+
+            // ----- Covering indexes (no filter) -----
+
+            // UserSession: per-host occupancy probes (HostStatusService, HostService, Service.Users,
+            // ReservationProcessingService, WaitingLinesService, ...). State is a KEY column (not just INCLUDE)
+            // because a host accumulates thousands of rows over its lifetime (~3,300 avg, 99.8% Ended on the
+            // live DB) and the probes want the handful of non-ended ones. Keying (HostId, State) lets the
+            // sargable "State != Ended" filter seek straight to a host's live sliver, skipping its thousands of
+            // Ended rows — vs INCLUDE(State) which seeks only HostId and then residual-scans all of them.
+            // INCLUDE(UserId, CreatedTime, Span) covers the HostStatusService projection. The State filter MUST
+            // be written sargable (State != Ended), never State.HasFlag(Active) — the bitmask defeats the seek.
+            Include(modelBuilder.Entity<UserSession>().HasIndex(nameof(UserSession.HostId), nameof(UserSession.State)), isSqlServer,
+                nameof(UserSession.UserId), nameof(UserSession.CreatedTime), nameof(UserSession.Span));
+
+            // (PaymentIntent State,CreatedTime index removed — table is ~220 rows; the optimizer seq-scans it
+            // regardless, so the index was pure write overhead with no read benefit. Audit static-analysis
+            // flagged it without checking table size.)
+
+            // Invoice: financial reports filter by CreatedTime range + operator + register and aggregate totals.
+            Include(modelBuilder.Entity<Invoice>().HasIndex("CreatedTime", "CreatedById", nameof(Invoice.RegisterId)), isSqlServer,
+                nameof(Invoice.Total), nameof(Invoice.Outstanding), nameof(Invoice.IsVoided), nameof(Invoice.Status));
+
+            // DepositTransaction: deposit reports filter by CreatedTime range + voided + operator + register.
+            // Explicit short name keeps it under the 63-char DB identifier limit (PostgreSQL).
+            Include(modelBuilder.Entity<DepositTransaction>()
+                    .HasIndex("CreatedTime", nameof(DepositTransaction.IsVoided), "CreatedById", "RegisterId")
+                    .HasDatabaseName("IX_DepositTransaction_Created_Voided_Register"), isSqlServer,
+                nameof(DepositTransaction.Type), nameof(DepositTransaction.Amount), nameof(DepositTransaction.UserId));
+
+            // (RegisterTransaction report index and Notification IsDisabled index removed — RegisterTransaction
+            // is ~26 rows and Notification ~5 rows; both seq-scan regardless. Pure write overhead, no benefit.)
+
+            // DepositTransaction: balance calculation reads the user's CURRENT deposit balance as the latest
+            // ledger row (Where(UserId==id).OrderByDescending(Id).Select(Balance).First()). The clustered key is
+            // Id, so a plain (UserId) index still needs a key lookup for Balance and a backward scan/sort for the
+            // ordering. (UserId, Id DESC) INCLUDE(Balance) makes it a one-row covered backward seek per user.
+            // See UserBalanceService.GetLegacyAsync DEPOSIT region and the project_index_hotpath_audit memo.
+            Include(modelBuilder.Entity<DepositTransaction>()
+                    .HasIndex(nameof(DepositTransaction.UserId), nameof(DepositTransaction.Id))
+                    .IsDescending(false, true), isSqlServer,
+                nameof(DepositTransaction.Balance));
+
+            // PointTransaction: identical "latest balance per user" access pattern in the balance POINTS region.
+            Include(modelBuilder.Entity<PointTransaction>()
+                    .HasIndex(nameof(PointTransaction.UserId), nameof(PointTransaction.Id))
+                    .IsDescending(false, true), isSqlServer,
+                nameof(PointTransaction.Balance));
+
+            // StockTransaction: the per-sale hot path reads the CURRENT on-hand for a product in a stock as the
+            // latest ledger row (Where(ProductId==p && StockId==s).OrderByDescending(Id).Select(OnHand).First())
+            // — runs on every sale/return/adjustment, and the "last transaction before period" report subqueries
+            // share the shape. Today only (ProductId) is indexed, so it relies on a backward CLUSTERED scan that
+            // is fast only when the latest matching row is recent (it degrades for dormant product+stocks as the
+            // ~400K-row table grows). (ProductId, StockId, Id DESC) INCLUDE(OnHand) makes it a deterministic
+            // one-row covered seek and supersedes the plain ProductId FK index.
+            Include(modelBuilder.Entity<StockTransaction>()
+                    .HasIndex(nameof(StockTransaction.ProductId), nameof(StockTransaction.StockId), nameof(StockTransaction.Id))
+                    .IsDescending(false, false, true), isSqlServer,
+                nameof(StockTransaction.OnHand));
+
+            // AppStat: the per-user/per-app usage aggregation (UsersController "sort apps by my usage":
+            // for each app, AppStats.Where(UserId==me).Sum(Span)/Count()) filters by UserId+AppId and sums
+            // Span. With only the single-column UserId FK index, Span isn't covered, so for a heavy user
+            // (~197K of ~1M rows = 19%) the optimizer ignores the index and FULL-SCANS (~13,800 reads).
+            // (UserId, AppId) INCLUDE(Span) makes it a covered seek and supersedes the plain UserId FK index.
+            Include(modelBuilder.Entity<AppStat>().HasIndex(nameof(AppStat.UserId), nameof(AppStat.AppId)), isSqlServer,
+                nameof(AppStat.Span));
+
+            // DepositPayment: the payment-transactions report (GET_PAGINATED_PAYMENT_TRANSACTIONS raw SQL +
+            // account-transaction reports) filters the ~402K-row table by dp.CreatedTime range and full-scans it
+            // (~8,800 logical reads). CreatedTime leads (always present; optional branch/register/shift/operator
+            // filters are residual OR-arms). INCLUDE covers the report's dp.* projection. CreatedTime/CreatedById
+            // are shadow properties.
+            // (NOTE: there is deliberately NO Payment(CreatedTime) index — nothing filters the Payment TABLE by
+            // CreatedTime; all date-range payment reporting filters InvoicePayment.CreatedTime / DepositPayment.
+            // CreatedTime and joins Payment only by PaymentId/UserId.)
+            Include(modelBuilder.Entity<DepositPayment>().HasIndex("CreatedTime"), isSqlServer,
+                nameof(DepositPayment.Amount), nameof(DepositPayment.UserId), "CreatedById", nameof(DepositPayment.ShiftId), nameof(DepositPayment.RegisterId));
+
+            // InvoicePayment: the payment-transaction reports (GetCurrent/Past/VoidedPaymentsWithinPeriod +
+            // TransactionsStatsAsync) filter the ~658K-row table by CreatedTime range (+ optional operator/
+            // register) and full-scan it (~15,300 logical reads). CreatedTime leads (always present) so the
+            // index seeks even though the operator/register filters are optional OR-arms. CreatedTime/
+            // CreatedById are shadow properties.
+            Include(modelBuilder.Entity<InvoicePayment>().HasIndex("CreatedTime", "CreatedById", nameof(InvoicePayment.RegisterId)), isSqlServer,
+                nameof(InvoicePayment.Amount), nameof(InvoicePayment.RefundStatus), nameof(InvoicePayment.RefundedAmount));
+
+            // NOTE: plain (non-covering, non-filtered) performance indexes belong in their entity map classes
+            // (e.g. the two Reservation composites live in ReservationMap), NOT here. This method is reserved
+            // for indexes that are provider-incompatible in a shared map: covering INCLUDE columns (the
+            // IncludeProperties extension is ambiguous when both providers are referenced) and filtered indexes
+            // (the filter SQL differs between SQL Server and PostgreSQL). Only such indexes are kept below.
+
+            // ----- Filtered (partial) indexes -----
+
+            const int Pending = (int)FiscalReceiptPrintStatus.Pending;                 // 2
+            const int EReceiptPending = (int)FiscalReceiptPrintStatus.EReceiptPending; // 5
+            const int Paid = (int)InvoiceStatus.Paid;                                  // 2
+            const int Ended = (int)UserSessionState.Ended;                             // 2
+
+            // Column quoting and boolean literal style differ between providers.
+            string Q(string column) => isSqlServer ? $"[{column}]" : $"\"{column}\"";
+            string True = isSqlServer ? "1" : "true";
+            string False = isSqlServer ? "0" : "false";
+            string PendingStatus(string column) => $"{Q(column)} IN ({Pending}, {EReceiptPending})";
+
+            // UsageSession: the balance calculation (and its bulk cache-warm path, hit from HostStatusService)
+            // scans Where(IsActive) over the whole UsageSession table, which grows unbounded (one row per
+            // session ever) while the active set stays tiny. A filtered index on the live sliver turns that
+            // recurring full scan into a small seek and covers the projected columns. The "logged-in user"
+            // condition guarantees the active set is small. See UserBalanceService active-usage region.
+            Include(modelBuilder.Entity<UsageSession>().HasIndex(nameof(UsageSession.IsActive)), isSqlServer,
+                    nameof(UsageSession.UserId), nameof(UsageSession.NegativeSeconds), nameof(UsageSession.RatesTotal),
+                    nameof(UsageSession.CurrentUsageId))
+                .HasFilter($"{Q(nameof(UsageSession.IsActive))} = {True}")
+                .HasDatabaseName("IX_UsageSession_IsActive");
+
+            // (Removed IX_Payment_RefundStatus_Refunded — NO query filters the Payment table by RefundStatus;
+            // the refund-status checks are all in-memory on already-loaded payments or on DepositPayment.)
+            // (Removed IX_ProductOrder_Status_Active — ProductOrderService.ActiveAsync filters with
+            // "Status != Completed && != Canceled" (negative !=), which the optimizer cannot match to a positive
+            // IN(0,3,4) filtered index, so the index would never be used. Re-add ONLY together with a query
+            // rewrite to "Status IN (OnHold,Accepted,Processing)" — see the SESSION_UPDATE_SQL lesson.)
+
+            // UserSession: the balance bulk path scans Where(State != Ended) to find currently-occupied
+            // sessions. On an aged deployment the overwhelming majority of the ~659K+ rows are Ended, so a
+            // filtered index on the non-Ended sliver is highly selective and turns that scan into a seek.
+            // INCLUDE(UserId, HostId, Slot) covers the projection; the Host/HostGroup branch is reached via the
+            // HostId FK. State <> Ended is the sargable "host occupied" predicate (see project_usersession_
+            // hasflag_scan: None counts as occupied, so it is NOT State == Active). Ended = 2.
+            Include(modelBuilder.Entity<UserSession>().HasIndex(nameof(UserSession.State)), isSqlServer,
+                    nameof(UserSession.UserId), nameof(UserSession.HostId), nameof(UserSession.Slot))
+                .HasFilter($"{Q(nameof(UserSession.State))} <> {Ended}")
+                .HasDatabaseName("IX_UserSession_NotEnded");
+
+            // Invoice - SALE receipt pending: non-voided, paid, positive-total invoices.
+            Include(modelBuilder.Entity<Invoice>().HasIndex(nameof(Invoice.SaleFiscalReceiptStatus)), isSqlServer,
+                    nameof(Invoice.RegisterId))
+                .HasFilter($"{PendingStatus(nameof(Invoice.SaleFiscalReceiptStatus))} AND {Q(nameof(Invoice.IsVoided))} = {False} AND {Q(nameof(Invoice.Status))} = {Paid} AND {Q(nameof(Invoice.Total))} > 0")
+                .HasDatabaseName("IX_Invoice_SaleFiscalReceiptStatus_Pending");
+
+            // Invoice - RETURN receipt pending: voided, paid, positive-total invoices.
+            Include(modelBuilder.Entity<Invoice>().HasIndex(nameof(Invoice.ReturnFiscalReceiptStatus)), isSqlServer,
+                    nameof(Invoice.RegisterId))
+                .HasFilter($"{PendingStatus(nameof(Invoice.ReturnFiscalReceiptStatus))} AND {Q(nameof(Invoice.IsVoided))} = {True} AND {Q(nameof(Invoice.Status))} = {Paid} AND {Q(nameof(Invoice.Total))} > 0")
+                .HasDatabaseName("IX_Invoice_ReturnFiscalReceiptStatus_Pending");
+
+            // (RegisterTransaction fiscal-pending filtered index removed — table is ~26 rows; even the 1s
+            // fiscalization timer seq-scans it trivially. Kept the Invoice/DepositPayment fiscal indexes which
+            // ARE on large tables (855K / 402K).)
+
+            // DepositPayment - receipt pending: not yet fiscalized (FiscalReceiptId null) and not voided.
+            Include(modelBuilder.Entity<DepositPayment>().HasIndex(nameof(DepositPayment.FiscalReceiptStatus)), isSqlServer,
+                    nameof(DepositPayment.RegisterId))
+                .HasFilter($"{PendingStatus(nameof(DepositPayment.FiscalReceiptStatus))} AND {Q(nameof(DepositPayment.FiscalReceiptId))} IS NULL AND {Q(nameof(DepositPayment.IsVoided))} = {False}")
+                .HasDatabaseName("IX_DepositPayment_FiscalReceiptStatus_Pending");
+
+            // (RefundDepositPayment fiscal-pending filtered index removed — table is ~1,580 rows; seq-scan is
+            // cheap, the filtered index added negligible benefit for its write/maintenance cost.)
         }
 
         /// <summary>

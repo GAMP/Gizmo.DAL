@@ -45,6 +45,12 @@ namespace Gizmo.DAL.Mappings
             // Indexes
             builder.HasIndex(x => x.AppExeId);
 
+            // App-usage reports (Service.Reports) filter the ~1M-row table by a StartTime range and otherwise
+            // full-scan it (~13,800 logical reads for a handful of in-period rows). StartTime is the
+            // always-present filter for those reports. (The covering (UserId, AppId) INCLUDE(Span) index for
+            // the per-user/per-app SUM(Span) aggregation lives in ApplyPerformanceIndexes — it needs INCLUDE.)
+            builder.HasIndex(x => x.StartTime);
+
             // Relationships
             builder.HasOne(t => t.App)
                 .WithMany(t => t.AppStats)

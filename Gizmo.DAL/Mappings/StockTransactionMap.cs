@@ -42,6 +42,13 @@ namespace Gizmo.DAL.Mappings
                 .WithMany(stock => stock.Transactions)
                 .HasForeignKey(stockTransaction => stockTransaction.StockId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Stock reports (ProductStockReport / ProductTransactionReport in Service.Reports) filter the
+            // ~400K-row table by a CreatedTime range (optionally + ProductId) and otherwise full-scan it
+            // (~10,900 logical reads for a handful of in-period rows). CreatedTime leads because it is the
+            // always-present filter; ProductId is the optional second predicate. (The covering composite for
+            // the per-sale latest-OnHand read lives in ApplyPerformanceIndexes — it needs INCLUDE.)
+            builder.HasIndex(stockTransaction => new { stockTransaction.CreatedTime, stockTransaction.ProductId });
         }
     }
 }
