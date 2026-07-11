@@ -1155,6 +1155,44 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<UserMemberDisableReason> UserDisableReasons { get; set; }
 
+        // ACHIEVEMENTS — entities are fully configured in the model; the migration is NOT
+        // generated yet, so the tables do not exist. Generate it together with REMOVING the
+        // IsTierExempt Ignore in UserMemberMap (leaving it would silently omit the column).
+        /// <summary>
+        /// Achievements.
+        /// </summary>
+        public DbSet<Achievement> Achievements { get; set; }
+
+        /// <summary>
+        /// Achievement completions.
+        /// </summary>
+        public DbSet<AchievementCompletion> AchievementCompletions { get; set; }
+
+        /// <summary>
+        /// Achievement ladders.
+        /// </summary>
+        public DbSet<AchievementLadder> AchievementLadders { get; set; }
+
+        /// <summary>
+        /// Achievement ladder user states.
+        /// </summary>
+        public DbSet<AchievementLadderUserState> AchievementLadderUserStates { get; set; }
+
+        /// <summary>
+        /// Achievement ladder events.
+        /// </summary>
+        public DbSet<AchievementLadderEvent> AchievementLadderEvents { get; set; }
+
+        /// <summary>
+        /// Achievement challenges.
+        /// </summary>
+        public DbSet<AchievementChallenge> AchievementChallenges { get; set; }
+
+        /// <summary>
+        /// Achievement challenge completions.
+        /// </summary>
+        public DbSet<AchievementChallengeCompletion> AchievementChallengeCompletions { get; set; }
+
         #endregion
 
         #region OVERRIDES
@@ -1488,6 +1526,48 @@ namespace Gizmo.DAL.Contexts
 
             modelBuilder.ApplyConfiguration(new UserMemberDisableReasonMap());
             modelBuilder.ApplyConfiguration(new UserMemberDisableEntryMap());
+
+            // ACHIEVEMENTS — fully configured in the model (DbSet navigation discovery requires the
+            // complete hierarchy configuration); the migration is NOT generated yet — the tables do not
+            // exist until it ships, together with removing the IsTierExempt Ignore in UserMemberMap.
+            modelBuilder.ApplyConfiguration(new AchievementMap());
+            modelBuilder.ApplyConfiguration(new AchievementFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementHostFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementHostGroupFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementBranchFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementAppFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementAppExeFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementAppGroupFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementAppCategoryFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementProductFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementProductGroupFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementBillProfileFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementPaymentMethodFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementDayOfWeekFilterMap());
+            modelBuilder.ApplyConfiguration(new AchievementParameterMap());
+
+            modelBuilder.ApplyConfiguration(new AchievementLadderMap());
+            modelBuilder.ApplyConfiguration(new AchievementLadderLevelMap());
+            modelBuilder.ApplyConfiguration(new AchievementLadderEntryMap());
+            modelBuilder.ApplyConfiguration(new AchievementLadderRequirementMap());
+            modelBuilder.ApplyConfiguration(new AchievementCompletionMap());
+            modelBuilder.ApplyConfiguration(new AchievementLadderUserStateMap());
+            modelBuilder.ApplyConfiguration(new AchievementLadderEventMap());
+            modelBuilder.ApplyConfiguration(new AchievementRequirementSnapshotMap());
+            modelBuilder.ApplyConfiguration(new AchievementLadderEventRequirementMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeCompletionRequirementMap());
+
+            modelBuilder.ApplyConfiguration(new AchievementChallengeMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeRequirementMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeRewardMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengePointsRewardMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeProductRewardMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeTimeRewardMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeCompletionMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeCompletionRewardMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeCompletionPointsRewardMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeCompletionProductRewardMap());
+            modelBuilder.ApplyConfiguration(new AchievementChallengeCompletionTimeRewardMap());
 
             #region PERFORMANCE INDEXES
             ApplyPerformanceIndexes(modelBuilder);
@@ -2425,6 +2505,29 @@ namespace Gizmo.DAL.Contexts
                     nameof(DepositPayment.RegisterId))
                 .HasFilter($"{PendingStatus(nameof(DepositPayment.FiscalReceiptStatus))} AND {Q(nameof(DepositPayment.FiscalReceiptId))} IS NULL AND {Q(nameof(DepositPayment.IsVoided))} = {False}")
                 .HasDatabaseName("IX_DepositPayment_FiscalReceiptStatus_Pending");
+
+            // ACHIEVEMENT indexes — part of the configured model; no DB effect until the
+            // achievements migration ships.
+            // AchievementLadder: at most one ladder may be enabled at a time. The invariant is enforced at
+            // the database level with a filtered unique index instead of an application convention — filter
+            // SQL is provider-specific, hence here rather than in AchievementLadderMap (see the map comment).
+            modelBuilder.Entity<AchievementLadder>().HasIndex(nameof(AchievementLadder.IsEnabled))
+                .IsUnique()
+                .HasFilter($"{Q(nameof(AchievementLadder.IsEnabled))} = {True}")
+                .HasDatabaseName("IX_AchievementLadder_Enabled");
+
+            // AchievementChallengeCompletionReward: the reward grant executor's retry sweep (Status = Pending)
+            // and the operator pending-claims list (Status = AwaitingClaim) both probe the non-granted sliver
+            // of a table that grows unbounded (grant history is kept forever) while the actionable set stays
+            // tiny and shrinks as rewards are delivered — the same shape as the fiscalization pending indexes.
+            // Both query predicates are subsets of the IN filter, so one filtered index serves both.
+            const int RewardPending = (int)AchievementChallengeRewardStatus.Pending;             // 0
+            const int RewardAwaitingClaim = (int)AchievementChallengeRewardStatus.AwaitingClaim; // 1
+            Include(modelBuilder.Entity<AchievementChallengeCompletionReward>()
+                    .HasIndex(nameof(AchievementChallengeCompletionReward.Status)), isSqlServer,
+                    nameof(AchievementChallengeCompletionReward.CompletionId))
+                .HasFilter($"{Q(nameof(AchievementChallengeCompletionReward.Status))} IN ({RewardPending}, {RewardAwaitingClaim})")
+                .HasDatabaseName("IX_AchievementChallengeCompletionReward_NotGranted");
 
             // (RefundDepositPayment fiscal-pending filtered index removed — table is ~1,580 rows; seq-scan is
             // cheap, the filtered index added negligible benefit for its write/maintenance cost.)

@@ -26,6 +26,10 @@ namespace Gizmo.DAL.Mappings
             builder.Property(userMember => userMember.Email)
                 .HasMaxLength(254);
 
+            // pending the achievements migration — excluded so EF does not read a column
+            // that does not exist in current databases; remove together with the migration
+            builder.Ignore(userMember => userMember.IsTierExempt);
+
             // Indexes
             builder.HasIndex(userMember => userMember.Username)
                 .IsUnique()
