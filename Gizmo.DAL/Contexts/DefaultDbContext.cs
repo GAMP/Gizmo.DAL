@@ -1146,6 +1146,11 @@ namespace Gizmo.DAL.Contexts
         public DbSet<Integration> Integrations { get; set; }
 
         /// <summary>
+        /// Gets verification methods.
+        /// </summary>
+        public DbSet<VerificationMethod> VerificationMethods { get; set; }
+
+        /// <summary>
         /// User disable entries.
         /// </summary>
         public DbSet<UserMemberDisableEntry> UserDisableEntries { get; set; }
@@ -1523,6 +1528,7 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new RefundPaymentMap());
 
             modelBuilder.ApplyConfiguration(new IntegrationMap());
+            modelBuilder.ApplyConfiguration(new VerificationMethodMap());
 
             modelBuilder.ApplyConfiguration(new UserMemberDisableReasonMap());
             modelBuilder.ApplyConfiguration(new UserMemberDisableEntryMap());
