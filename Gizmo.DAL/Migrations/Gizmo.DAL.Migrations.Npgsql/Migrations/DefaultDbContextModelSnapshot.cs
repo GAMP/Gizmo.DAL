@@ -118,17 +118,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnOrder(4);
 
+                    b.Property<int?>("GlobalMaxCompletions")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(6);
+
                     b.Property<int?>("ImageId")
                         .HasColumnType("integer")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(9);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(10);
 
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("boolean")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
 
                     b.Property<int>("MaxCompletions")
                         .HasColumnType("integer")
@@ -148,7 +152,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Property<int>("Options")
                         .HasColumnType("integer")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("timestamp without time zone")
@@ -181,6 +185,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Property<DateTime>("CompletedTime")
                         .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(5);
+
+                    b.Property<int>("GlobalOccurrence")
+                        .HasColumnType("integer")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Occurrence")
@@ -193,7 +201,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChallengeId");
+                    b.HasIndex("ChallengeId", "GlobalOccurrence")
+                        .IsUnique();
 
                     b.HasIndex("UserId", "ChallengeId", "Occurrence")
                         .IsUnique();
