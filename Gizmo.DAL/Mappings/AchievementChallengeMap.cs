@@ -40,7 +40,7 @@ namespace Gizmo.DAL.Mappings
 
             builder.Property(challenge => challenge.MaxCompletions)
                 .HasColumnOrder(5)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(challenge => challenge.GlobalMaxCompletions)
                 .HasColumnOrder(6)

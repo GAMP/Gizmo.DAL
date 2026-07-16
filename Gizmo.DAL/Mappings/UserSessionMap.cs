@@ -51,6 +51,11 @@ namespace Gizmo.DAL.Mappings
             builder.Property(t => t.Id)
                 .HasColumnName("UserSessionId");
 
+            // achievement signal queries (visits, logins, play time) aggregate one user's
+            // sessions over short time windows on every evaluation trigger and progress
+            // read — the composite turns them into few-row range seeks
+            builder.HasIndex(t => new { t.UserId, t.CreatedTime });
+
             // Relationships
             builder.HasOne(t => t.User)
                 .WithMany(t => t.UserSessions)

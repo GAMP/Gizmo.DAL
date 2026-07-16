@@ -35,6 +35,11 @@ namespace Gizmo.DAL.Mappings
 
             builder.ToTable(nameof(DepositTransaction));
 
+            // achievement signal queries (deposits) aggregate one user's transactions over
+            // short time windows on every evaluation trigger and progress read — the
+            // composite turns them into few-row range seeks
+            builder.HasIndex(x => new { x.UserId, x.CreatedTime });
+
             // Relationships
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Deposits)

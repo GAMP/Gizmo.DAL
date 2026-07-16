@@ -118,21 +118,17 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("datetime2")
                         .HasColumnOrder(4);
 
-                    b.Property<int?>("GlobalMaxCompletions")
-                        .HasColumnType("int")
-                        .HasColumnOrder(6);
-
                     b.Property<int?>("ImageId")
                         .HasColumnType("int")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(8);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(9);
 
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("bit")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(7);
 
                     b.Property<int>("MaxCompletions")
                         .HasColumnType("int")
@@ -152,7 +148,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<int>("Options")
                         .HasColumnType("int")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2")
@@ -185,10 +181,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<DateTime>("CompletedTime")
                         .HasColumnType("datetime2")
-                        .HasColumnOrder(5);
-
-                    b.Property<int>("GlobalOccurrence")
-                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Occurrence")
@@ -201,8 +193,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChallengeId", "GlobalOccurrence")
-                        .IsUnique();
+                    b.HasIndex("ChallengeId");
 
                     b.HasIndex("UserId", "ChallengeId", "Occurrence")
                         .IsUnique();

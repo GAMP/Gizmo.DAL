@@ -51,6 +51,11 @@ namespace Gizmo.DAL.Mappings
             // the per-user/per-app SUM(Span) aggregation lives in ApplyPerformanceIndexes — it needs INCLUDE.)
             builder.HasIndex(x => x.StartTime);
 
+            // achievement signal queries (app time) aggregate one user's app runs over
+            // short time windows on every evaluation trigger and progress read — the
+            // composite turns them into few-row range seeks
+            builder.HasIndex(x => new { x.UserId, x.StartTime });
+
             // Relationships
             builder.HasOne(t => t.App)
                 .WithMany(t => t.AppStats)
