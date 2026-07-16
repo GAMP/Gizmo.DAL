@@ -42,20 +42,24 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(5)
                 .IsRequired();
 
-            builder.Property(challenge => challenge.Options)
+            builder.Property(challenge => challenge.GlobalMaxCompletions)
                 .HasColumnOrder(6)
-                .IsRequired();
+                .IsRequired(false);
 
-            builder.Property(challenge => challenge.IsDisabled)
+            builder.Property(challenge => challenge.Options)
                 .HasColumnOrder(7)
                 .IsRequired();
 
-            builder.Property(challenge => challenge.ImageId)
+            builder.Property(challenge => challenge.IsDisabled)
                 .HasColumnOrder(8)
+                .IsRequired();
+
+            builder.Property(challenge => challenge.ImageId)
+                .HasColumnOrder(9)
                 .IsRequired(false);
 
             builder.Property(challenge => challenge.IsDeleted)
-                .HasColumnOrder(9)
+                .HasColumnOrder(10)
                 .IsRequired();
 
             builder.HasOne(challenge => challenge.Image)

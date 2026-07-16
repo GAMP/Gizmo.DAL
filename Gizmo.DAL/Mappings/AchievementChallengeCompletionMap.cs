@@ -32,12 +32,21 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(3)
                 .IsRequired();
 
-            builder.Property(completion => completion.CompletedTime)
+            builder.Property(completion => completion.GlobalOccurrence)
                 .HasColumnOrder(4)
+                .IsRequired();
+
+            builder.Property(completion => completion.CompletedTime)
+                .HasColumnOrder(5)
                 .IsRequired();
 
             // Indexes — the unique key is the evaluator's idempotency guard
             builder.HasIndex(completion => new { completion.UserId, completion.ChallengeId, completion.Occurrence })
+                .IsUnique();
+
+            // the global finisher slot is claimable exactly once — enforces the completion
+            // pool (GlobalMaxCompletions) under concurrent evaluation
+            builder.HasIndex(completion => new { completion.ChallengeId, completion.GlobalOccurrence })
                 .IsUnique();
 
             builder.HasOne(completion => completion.User)
