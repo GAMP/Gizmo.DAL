@@ -14,27 +14,21 @@ namespace Gizmo.DAL.Mappings
         {
             builder.ToTable(nameof(AchievementLadderUserState));
 
-            builder.HasKey(state => state.Id);
-
-            builder.Property(state => state.Id)
-                .HasColumnOrder(0)
-                .HasColumnName("AchievementLadderUserStateId");
+            // one row per user per ladder, referenced by nothing — the composite key IS
+            // the identity, no surrogate (link-table convention)
+            builder.HasKey(state => new { state.UserId, state.LadderId });
 
             builder.Property(state => state.UserId)
-                .HasColumnOrder(1)
+                .HasColumnOrder(0)
                 .IsRequired();
 
             builder.Property(state => state.LadderId)
-                .HasColumnOrder(2)
+                .HasColumnOrder(1)
                 .IsRequired();
 
             builder.Property(state => state.LastSettledPeriodStart)
-                .HasColumnOrder(3)
+                .HasColumnOrder(2)
                 .IsRequired();
-
-            // Indexes
-            builder.HasIndex(state => new { state.UserId, state.LadderId })
-                .IsUnique();
 
             builder.HasOne(state => state.User)
                 .WithMany()

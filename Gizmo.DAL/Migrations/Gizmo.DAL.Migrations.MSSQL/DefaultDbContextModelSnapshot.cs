@@ -118,23 +118,19 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("datetime2")
                         .HasColumnOrder(4);
 
-                    b.Property<int?>("GlobalMaxCompletions")
-                        .HasColumnType("int")
-                        .HasColumnOrder(6);
-
                     b.Property<int?>("ImageId")
                         .HasColumnType("int")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(8);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
-                        .HasColumnOrder(10);
+                        .HasColumnOrder(9);
 
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("bit")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(7);
 
-                    b.Property<int?>("MaxCompletions")
+                    b.Property<int>("MaxCompletions")
                         .HasColumnType("int")
                         .HasColumnOrder(5);
 
@@ -152,7 +148,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<int>("Options")
                         .HasColumnType("int")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2")
@@ -185,10 +181,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.Property<DateTime>("CompletedTime")
                         .HasColumnType("datetime2")
-                        .HasColumnOrder(5);
-
-                    b.Property<int>("GlobalOccurrence")
-                        .HasColumnType("int")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Occurrence")
@@ -201,8 +193,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChallengeId", "GlobalOccurrence")
-                        .IsUnique();
+                    b.HasIndex("ChallengeId");
 
                     b.HasIndex("UserId", "ChallengeId", "Occurrence")
                         .IsUnique();
@@ -1706,8 +1697,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("UserId", "AppId"), new[] { "Span" });
 
-                    b.HasIndex("UserId", "StartTime");
-
                     b.ToTable("AppStat", (string)null);
                 });
 
@@ -2991,8 +2980,6 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("RegisterId");
 
                     b.HasIndex("ShiftId");
-
-                    b.HasIndex("UserId", "CreatedTime");
 
                     b.HasIndex("UserId", "Id")
                         .IsDescending(false, true);
@@ -4633,7 +4620,7 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     b.HasIndex("ShiftId");
 
-                    b.HasIndex("UserId", "CreatedTime");
+                    b.HasIndex("UserId");
 
                     b.HasIndex("CreatedTime", "CreatedById", "RegisterId");
 
@@ -10132,11 +10119,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("State"), new[] { "UserId", "HostId", "Slot" });
 
+                    b.HasIndex("UserId");
+
                     b.HasIndex("HostId", "State");
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("HostId", "State"), new[] { "UserId", "CreatedTime", "Span" });
-
-                    b.HasIndex("UserId", "CreatedTime");
 
                     b.ToTable("UserSession", (string)null);
                 });

@@ -26,9 +26,10 @@ namespace Gizmo.DAL.Mappings
             builder.Property(userMember => userMember.Email)
                 .HasMaxLength(254);
 
-            // pending the achievements migration — excluded so EF does not read a column
-            // that does not exist in current databases; remove together with the migration
-            builder.Ignore(userMember => userMember.IsTierExempt);
+            // IsTierExempt is mapped — the column ships with the achievements migration.
+            // RELEASE NOTE: a mapped property rides in every UserMember query, so any build
+            // carrying this mapping MUST also carry the migration that adds the column —
+            // it cannot ship on the maps-without-migration path.
 
             // Indexes
             builder.HasIndex(userMember => userMember.Username)
