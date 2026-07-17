@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20260716165344_Update3")]
+    [Migration("20260717114155_Update3")]
     partial class Update3
     {
         /// <inheritdoc />
@@ -705,32 +705,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderUserState", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserId")
                         .HasColumnType("integer")
-                        .HasColumnName("AchievementLadderUserStateId")
                         .HasColumnOrder(0);
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("LadderId")
                         .HasColumnType("integer")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(1);
 
                     b.Property<DateTime>("LastSettledPeriodStart")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(2);
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnOrder(1);
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "LadderId");
 
                     b.HasIndex("LadderId");
-
-                    b.HasIndex("UserId", "LadderId")
-                        .IsUnique();
 
                     b.ToTable("AchievementLadderUserState", (string)null);
                 });
@@ -11533,6 +11522,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsPersonalInfoRequested")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsTierExempt")
                         .HasColumnType("boolean");
 
                     b.Property<int>("UserGroupId")

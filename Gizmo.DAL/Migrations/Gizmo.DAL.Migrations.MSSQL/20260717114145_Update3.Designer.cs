@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizmo.DAL.Migrations.MSSQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20260716165335_Update3")]
+    [Migration("20260717114145_Update3")]
     partial class Update3
     {
         /// <inheritdoc />
@@ -705,32 +705,21 @@ namespace Gizmo.DAL.Migrations.MSSQL
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderUserState", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserId")
                         .HasColumnType("int")
-                        .HasColumnName("AchievementLadderUserStateId")
                         .HasColumnOrder(0);
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("LadderId")
                         .HasColumnType("int")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(1);
 
                     b.Property<DateTime>("LastSettledPeriodStart")
                         .HasColumnType("datetime2")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(2);
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "LadderId");
 
                     b.HasIndex("LadderId");
-
-                    b.HasIndex("UserId", "LadderId")
-                        .IsUnique();
 
                     b.ToTable("AchievementLadderUserState", (string)null);
                 });
@@ -11553,6 +11542,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsPersonalInfoRequested")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTierExempt")
                         .HasColumnType("bit");
 
                     b.Property<int>("UserGroupId")

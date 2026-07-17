@@ -118,19 +118,23 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnOrder(4);
 
+                    b.Property<int?>("GlobalMaxCompletions")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(6);
+
                     b.Property<int?>("ImageId")
                         .HasColumnType("integer")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(9);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(10);
 
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("boolean")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
 
-                    b.Property<int>("MaxCompletions")
+                    b.Property<int?>("MaxCompletions")
                         .HasColumnType("integer")
                         .HasColumnOrder(5);
 
@@ -148,7 +152,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Property<int>("Options")
                         .HasColumnType("integer")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("timestamp without time zone")
@@ -181,6 +185,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.Property<DateTime>("CompletedTime")
                         .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(5);
+
+                    b.Property<int>("GlobalOccurrence")
+                        .HasColumnType("integer")
                         .HasColumnOrder(4);
 
                     b.Property<int>("Occurrence")
@@ -193,7 +201,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChallengeId");
+                    b.HasIndex("ChallengeId", "GlobalOccurrence")
+                        .IsUnique();
 
                     b.HasIndex("UserId", "ChallengeId", "Occurrence")
                         .IsUnique();
@@ -693,32 +702,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderUserState", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserId")
                         .HasColumnType("integer")
-                        .HasColumnName("AchievementLadderUserStateId")
                         .HasColumnOrder(0);
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("LadderId")
                         .HasColumnType("integer")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(1);
 
                     b.Property<DateTime>("LastSettledPeriodStart")
                         .HasColumnType("timestamp without time zone")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(2);
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnOrder(1);
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "LadderId");
 
                     b.HasIndex("LadderId");
-
-                    b.HasIndex("UserId", "LadderId")
-                        .IsUnique();
 
                     b.ToTable("AchievementLadderUserState", (string)null);
                 });
@@ -1696,6 +1694,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("UserId", "AppId");
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("UserId", "AppId"), new[] { "Span" });
+
+                    b.HasIndex("UserId", "StartTime");
 
                     b.ToTable("AppStat", (string)null);
                 });
@@ -2978,6 +2978,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("RegisterId");
 
                     b.HasIndex("ShiftId");
+
+                    b.HasIndex("UserId", "CreatedTime");
 
                     b.HasIndex("UserId", "Id")
                         .IsDescending(false, true);
@@ -4616,7 +4618,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "CreatedTime");
 
                     b.HasIndex("CreatedTime", "CreatedById", "RegisterId");
 
@@ -10106,11 +10108,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("State"), new[] { "UserId", "HostId", "Slot" });
 
-                    b.HasIndex("UserId");
-
                     b.HasIndex("HostId", "State");
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("HostId", "State"), new[] { "UserId", "CreatedTime", "Span" });
+
+                    b.HasIndex("UserId", "CreatedTime");
 
                     b.ToTable("UserSession", (string)null);
                 });
@@ -11517,6 +11519,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsPersonalInfoRequested")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsTierExempt")
                         .HasColumnType("boolean");
 
                     b.Property<int>("UserGroupId")
