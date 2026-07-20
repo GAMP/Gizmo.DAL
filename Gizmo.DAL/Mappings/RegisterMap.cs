@@ -53,6 +53,9 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(9);
 
+            // ReceiptPrinterNumber column is not migrated on this branch yet (Update4 on temp/update2)
+            builder.Ignore(t => t.ReceiptPrinterNumber);
+
             // Indexes
 
             builder.HasIndex(t => new { t.Name, t.BranchId })
