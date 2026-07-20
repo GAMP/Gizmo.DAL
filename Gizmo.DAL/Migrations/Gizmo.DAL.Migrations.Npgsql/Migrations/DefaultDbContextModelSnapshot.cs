@@ -7641,6 +7641,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<int?>("QrDisplayNumber")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ReceiptPrinterNumber")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
                         .HasColumnType("numeric(19,4)")
