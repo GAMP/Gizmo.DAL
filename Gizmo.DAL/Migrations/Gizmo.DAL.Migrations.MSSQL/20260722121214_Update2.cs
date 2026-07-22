@@ -1,10 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Gizmo.DAL.Migrations.Npgsql.Migrations
+namespace Gizmo.DAL.Migrations.MSSQL
 {
     /// <inheritdoc />
     public partial class Update2 : Migration
@@ -12,25 +11,52 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropIndex(
+                name: "IX_UserSession_UserId",
+                table: "UserSession");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Invoice_UserId",
+                table: "Invoice");
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsTierExempt",
+                table: "UserMember",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<int>(
+                name: "DefaultOperatorId",
+                table: "Register",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ReceiptPrinterNumber",
+                table: "Register",
+                type: "int",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "Achievement",
                 columns: table => new
                 {
-                    AchievementId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
-                    Description = table.Column<string>(type: "character varying(65535)", maxLength: 65535, nullable: true),
-                    SignalGuid = table.Column<Guid>(type: "uuid", nullable: false),
-                    Range = table.Column<int>(type: "integer", nullable: false),
-                    Value = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
-                    MaxCompletionsPerRange = table.Column<int>(type: "integer", nullable: false),
-                    Options = table.Column<int>(type: "integer", nullable: false),
-                    IsDisabled = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    AchievementId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
+                    SignalGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Range = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
+                    MaxCompletionsPerRange = table.Column<int>(type: "int", nullable: false),
+                    Options = table.Column<int>(type: "int", nullable: false),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,21 +77,22 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallenge",
                 columns: table => new
                 {
-                    AchievementChallengeId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
-                    Description = table.Column<string>(type: "character varying(65535)", maxLength: 65535, nullable: true),
-                    StartTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    EndTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    MaxCompletions = table.Column<int>(type: "integer", nullable: false),
-                    Options = table.Column<int>(type: "integer", nullable: false),
-                    IsDisabled = table.Column<bool>(type: "boolean", nullable: false),
-                    ImageId = table.Column<int>(type: "integer", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    AchievementChallengeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    MaxCompletions = table.Column<int>(type: "int", nullable: true),
+                    GlobalMaxCompletions = table.Column<int>(type: "int", nullable: true),
+                    Options = table.Column<int>(type: "int", nullable: false),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    ImageId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -92,17 +119,17 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementLadder",
                 columns: table => new
                 {
-                    AchievementLadderId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Period = table.Column<int>(type: "integer", nullable: false),
-                    Mode = table.Column<int>(type: "integer", nullable: false),
-                    Options = table.Column<int>(type: "integer", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    AchievementLadderId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Period = table.Column<int>(type: "int", nullable: false),
+                    Mode = table.Column<int>(type: "int", nullable: false),
+                    Options = table.Column<int>(type: "int", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -123,17 +150,17 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "VerificationMethod",
                 columns: table => new
                 {
-                    VerificationMethodId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Context = table.Column<int>(type: "integer", nullable: false),
-                    IntegrationId = table.Column<int>(type: "integer", nullable: false),
-                    CapabilityGuid = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomName = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: true),
-                    IsPrimary = table.Column<bool>(type: "boolean", nullable: false),
-                    IsDisabled = table.Column<bool>(type: "boolean", nullable: false),
-                    DisplayOrder = table.Column<int>(type: "integer", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    VerificationMethodId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Context = table.Column<int>(type: "int", nullable: false),
+                    IntegrationId = table.Column<int>(type: "int", nullable: false),
+                    CapabilityGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CustomName = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
+                    IsPrimary = table.Column<bool>(type: "bit", nullable: false),
+                    IsDisabled = table.Column<bool>(type: "bit", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -155,13 +182,13 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementCompletion",
                 columns: table => new
                 {
-                    AchievementCompletionId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    AchievementId = table.Column<int>(type: "integer", nullable: false),
-                    RangeStart = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    CompletedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                    AchievementCompletionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    AchievementId = table.Column<int>(type: "int", nullable: false),
+                    RangeStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CompletedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -184,11 +211,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AchievementId = table.Column<int>(type: "integer", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AchievementId = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -210,13 +237,13 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementParameter",
                 columns: table => new
                 {
-                    AchievementParameterId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AchievementId = table.Column<int>(type: "integer", nullable: false),
-                    Key = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
-                    Value = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    AchievementParameterId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AchievementId = table.Column<int>(type: "int", nullable: false),
+                    Key = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -238,13 +265,13 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementRequirementSnapshot",
                 columns: table => new
                 {
-                    AchievementRequirementSnapshotId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AchievementId = table.Column<int>(type: "integer", nullable: false),
-                    RequiredCount = table.Column<int>(type: "integer", nullable: false),
-                    CompletedCount = table.Column<int>(type: "integer", nullable: false),
-                    TargetValue = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false),
-                    ActualValue = table.Column<decimal>(type: "numeric(19,4)", precision: 19, scale: 4, nullable: false)
+                    AchievementRequirementSnapshotId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AchievementId = table.Column<int>(type: "int", nullable: false),
+                    RequiredCount = table.Column<int>(type: "int", nullable: false),
+                    CompletedCount = table.Column<int>(type: "int", nullable: false),
+                    TargetValue = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
+                    ActualValue = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -261,18 +288,19 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeCompletion",
                 columns: table => new
                 {
-                    AchievementChallengeCompletionId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    ChallengeId = table.Column<int>(type: "integer", nullable: false),
-                    Occurrence = table.Column<int>(type: "integer", nullable: false),
-                    CompletedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    AchievementChallengeCompletionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ChallengeId = table.Column<int>(type: "int", nullable: false),
+                    Occurrence = table.Column<int>(type: "int", nullable: false),
+                    GlobalOccurrence = table.Column<int>(type: "int", nullable: false),
+                    CompletedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengeCompletion", x => x.AchievementChallengeCompletionId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletion_AchievementChallenge_Challen~",
+                        name: "FK_AchievementChallengeCompletion_AchievementChallenge_ChallengeId",
                         column: x => x.ChallengeId,
                         principalTable: "AchievementChallenge",
                         principalColumn: "AchievementChallengeId",
@@ -289,21 +317,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeRequirement",
                 columns: table => new
                 {
-                    AchievementChallengeRequirementId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ChallengeId = table.Column<int>(type: "integer", nullable: false),
-                    AchievementId = table.Column<int>(type: "integer", nullable: false),
-                    RequiredCount = table.Column<int>(type: "integer", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    AchievementChallengeRequirementId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ChallengeId = table.Column<int>(type: "int", nullable: false),
+                    AchievementId = table.Column<int>(type: "int", nullable: false),
+                    RequiredCount = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengeRequirement", x => x.AchievementChallengeRequirementId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeRequirement_AchievementChallenge_Challe~",
+                        name: "FK_AchievementChallengeRequirement_AchievementChallenge_ChallengeId",
                         column: x => x.ChallengeId,
                         principalTable: "AchievementChallenge",
                         principalColumn: "AchievementChallengeId",
@@ -330,14 +358,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeReward",
                 columns: table => new
                 {
-                    AchievementChallengeRewardId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ChallengeId = table.Column<int>(type: "integer", nullable: false),
-                    Options = table.Column<int>(type: "integer", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    AchievementChallengeRewardId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ChallengeId = table.Column<int>(type: "int", nullable: false),
+                    Options = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -364,16 +392,16 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementLadderEntry",
                 columns: table => new
                 {
-                    AchievementLadderEntryId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    LadderId = table.Column<int>(type: "integer", nullable: false),
-                    AchievementId = table.Column<int>(type: "integer", nullable: false),
-                    Points = table.Column<int>(type: "integer", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    AchievementLadderEntryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LadderId = table.Column<int>(type: "int", nullable: false),
+                    AchievementId = table.Column<int>(type: "int", nullable: false),
+                    Points = table.Column<int>(type: "int", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -406,18 +434,18 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementLadderEvent",
                 columns: table => new
                 {
-                    AchievementLadderEventId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    LadderId = table.Column<int>(type: "integer", nullable: false),
-                    FromUserGroupId = table.Column<int>(type: "integer", nullable: false),
-                    ToUserGroupId = table.Column<int>(type: "integer", nullable: false),
-                    FromRank = table.Column<int>(type: "integer", nullable: false),
-                    ToRank = table.Column<int>(type: "integer", nullable: false),
-                    Trigger = table.Column<int>(type: "integer", nullable: false),
-                    PeriodStart = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Score = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    AchievementLadderEventId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    LadderId = table.Column<int>(type: "int", nullable: false),
+                    FromUserGroupId = table.Column<int>(type: "int", nullable: false),
+                    ToUserGroupId = table.Column<int>(type: "int", nullable: false),
+                    FromRank = table.Column<int>(type: "int", nullable: false),
+                    ToRank = table.Column<int>(type: "int", nullable: false),
+                    Trigger = table.Column<int>(type: "int", nullable: false),
+                    PeriodStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Score = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -452,18 +480,18 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementLadderLevel",
                 columns: table => new
                 {
-                    AchievementLadderLevelId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    LadderId = table.Column<int>(type: "integer", nullable: false),
-                    Rank = table.Column<int>(type: "integer", nullable: false),
-                    Threshold = table.Column<int>(type: "integer", nullable: false),
-                    UserGroupId = table.Column<int>(type: "integer", nullable: false),
-                    Description = table.Column<string>(type: "character varying(65535)", maxLength: 65535, nullable: true),
-                    ImageId = table.Column<int>(type: "integer", nullable: true),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    AchievementLadderLevelId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LadderId = table.Column<int>(type: "int", nullable: false),
+                    Rank = table.Column<int>(type: "int", nullable: false),
+                    Threshold = table.Column<int>(type: "int", nullable: false),
+                    UserGroupId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 65535, nullable: true),
+                    ImageId = table.Column<int>(type: "int", nullable: true),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -502,15 +530,13 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementLadderUserState",
                 columns: table => new
                 {
-                    AchievementLadderUserStateId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    LadderId = table.Column<int>(type: "integer", nullable: false),
-                    LastSettledPeriodStart = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    LadderId = table.Column<int>(type: "int", nullable: false),
+                    LastSettledPeriodStart = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AchievementLadderUserState", x => x.AchievementLadderUserStateId);
+                    table.PrimaryKey("PK_AchievementLadderUserState", x => new { x.UserId, x.LadderId });
                     table.ForeignKey(
                         name: "FK_AchievementLadderUserState_AchievementLadder_LadderId",
                         column: x => x.LadderId,
@@ -529,14 +555,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementAppCategoryFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    AppCategoryId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    AppCategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementAppCategoryFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementAppCategoryFilter_AchievementFilter_AchievementF~",
+                        name: "FK_AchievementAppCategoryFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -553,14 +579,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementAppExeFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    AppExeId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    AppExeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementAppExeFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementAppExeFilter_AchievementFilter_AchievementFilter~",
+                        name: "FK_AchievementAppExeFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -577,8 +603,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementAppFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    AppId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    AppId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -601,14 +627,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementAppGroupFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    AppGroupId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    AppGroupId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementAppGroupFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementAppGroupFilter_AchievementFilter_AchievementFilt~",
+                        name: "FK_AchievementAppGroupFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -625,14 +651,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementBillProfileFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    BillProfileId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    BillProfileId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementBillProfileFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementBillProfileFilter_AchievementFilter_AchievementF~",
+                        name: "FK_AchievementBillProfileFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -649,14 +675,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementBranchFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    BranchId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementBranchFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementBranchFilter_AchievementFilter_AchievementFilter~",
+                        name: "FK_AchievementBranchFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -673,16 +699,16 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementDayOfWeekFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    Day = table.Column<int>(type: "integer", nullable: false),
-                    DayTimeFrom = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    DayTimeTo = table.Column<TimeOnly>(type: "time without time zone", nullable: true)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    Day = table.Column<int>(type: "int", nullable: false),
+                    DayTimeFrom = table.Column<TimeOnly>(type: "time", nullable: true),
+                    DayTimeTo = table.Column<TimeOnly>(type: "time", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementDayOfWeekFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementDayOfWeekFilter_AchievementFilter_AchievementFil~",
+                        name: "FK_AchievementDayOfWeekFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -693,8 +719,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementHostFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    HostId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    HostId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -717,14 +743,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementHostGroupFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    HostGroupId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    HostGroupId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementHostGroupFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementHostGroupFilter_AchievementFilter_AchievementFil~",
+                        name: "FK_AchievementHostGroupFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -741,14 +767,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementPaymentMethodFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    PaymentMethodId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethodId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementPaymentMethodFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementPaymentMethodFilter_AchievementFilter_Achievemen~",
+                        name: "FK_AchievementPaymentMethodFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -765,14 +791,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementProductFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementProductFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementProductFilter_AchievementFilter_AchievementFilte~",
+                        name: "FK_AchievementProductFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -789,14 +815,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementProductGroupFilter",
                 columns: table => new
                 {
-                    AchievementFilterId = table.Column<int>(type: "integer", nullable: false),
-                    ProductGroupId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementFilterId = table.Column<int>(type: "int", nullable: false),
+                    ProductGroupId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementProductGroupFilter", x => x.AchievementFilterId);
                     table.ForeignKey(
-                        name: "FK_AchievementProductGroupFilter_AchievementFilter_Achievement~",
+                        name: "FK_AchievementProductGroupFilter_AchievementFilter_AchievementFilterId",
                         column: x => x.AchievementFilterId,
                         principalTable: "AchievementFilter",
                         principalColumn: "AchievementFilterId",
@@ -813,20 +839,20 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeCompletionRequirement",
                 columns: table => new
                 {
-                    AchievementRequirementSnapshotId = table.Column<int>(type: "integer", nullable: false),
-                    CompletionId = table.Column<int>(type: "integer", nullable: false)
+                    AchievementRequirementSnapshotId = table.Column<int>(type: "int", nullable: false),
+                    CompletionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengeCompletionRequirement", x => x.AchievementRequirementSnapshotId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionRequirement_AchievementChalle~",
+                        name: "FK_AchievementChallengeCompletionRequirement_AchievementChallengeCompletion_CompletionId",
                         column: x => x.CompletionId,
                         principalTable: "AchievementChallengeCompletion",
                         principalColumn: "AchievementChallengeCompletionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionRequirement_AchievementRequir~",
+                        name: "FK_AchievementChallengeCompletionRequirement_AchievementRequirementSnapshot_AchievementRequirementSnapshotId",
                         column: x => x.AchievementRequirementSnapshotId,
                         principalTable: "AchievementRequirementSnapshot",
                         principalColumn: "AchievementRequirementSnapshotId",
@@ -837,24 +863,24 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeCompletionReward",
                 columns: table => new
                 {
-                    AchievementChallengeCompletionRewardId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CompletionId = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    ProcessedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    ProcessedById = table.Column<int>(type: "integer", nullable: true)
+                    AchievementChallengeCompletionRewardId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompletionId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    ProcessedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProcessedById = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengeCompletionReward", x => x.AchievementChallengeCompletionRewardId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionReward_AchievementChallengeCo~",
+                        name: "FK_AchievementChallengeCompletionReward_AchievementChallengeCompletion_CompletionId",
                         column: x => x.CompletionId,
                         principalTable: "AchievementChallengeCompletion",
                         principalColumn: "AchievementChallengeCompletionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionReward_UserOperator_Processed~",
+                        name: "FK_AchievementChallengeCompletionReward_UserOperator_ProcessedById",
                         column: x => x.ProcessedById,
                         principalTable: "UserOperator",
                         principalColumn: "UserId",
@@ -865,14 +891,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengePointsReward",
                 columns: table => new
                 {
-                    AchievementChallengeRewardId = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<int>(type: "integer", nullable: false)
+                    AchievementChallengeRewardId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengePointsReward", x => x.AchievementChallengeRewardId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengePointsReward_AchievementChallengeReward~",
+                        name: "FK_AchievementChallengePointsReward_AchievementChallengeReward_AchievementChallengeRewardId",
                         column: x => x.AchievementChallengeRewardId,
                         principalTable: "AchievementChallengeReward",
                         principalColumn: "AchievementChallengeRewardId",
@@ -883,15 +909,15 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeProductReward",
                 columns: table => new
                 {
-                    AchievementChallengeRewardId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                    AchievementChallengeRewardId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengeProductReward", x => x.AchievementChallengeRewardId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeProductReward_AchievementChallengeRewar~",
+                        name: "FK_AchievementChallengeProductReward_AchievementChallengeReward_AchievementChallengeRewardId",
                         column: x => x.AchievementChallengeRewardId,
                         principalTable: "AchievementChallengeReward",
                         principalColumn: "AchievementChallengeRewardId",
@@ -908,14 +934,14 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeTimeReward",
                 columns: table => new
                 {
-                    AchievementChallengeRewardId = table.Column<int>(type: "integer", nullable: false),
-                    Seconds = table.Column<int>(type: "integer", nullable: false)
+                    AchievementChallengeRewardId = table.Column<int>(type: "int", nullable: false),
+                    Seconds = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengeTimeReward", x => x.AchievementChallengeRewardId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeTimeReward_AchievementChallengeReward_A~",
+                        name: "FK_AchievementChallengeTimeReward_AchievementChallengeReward_AchievementChallengeRewardId",
                         column: x => x.AchievementChallengeRewardId,
                         principalTable: "AchievementChallengeReward",
                         principalColumn: "AchievementChallengeRewardId",
@@ -926,21 +952,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementLadderEventRequirement",
                 columns: table => new
                 {
-                    AchievementRequirementSnapshotId = table.Column<int>(type: "integer", nullable: false),
-                    EventId = table.Column<int>(type: "integer", nullable: false),
-                    PointsAwarded = table.Column<int>(type: "integer", nullable: false)
+                    AchievementRequirementSnapshotId = table.Column<int>(type: "int", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    PointsAwarded = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementLadderEventRequirement", x => x.AchievementRequirementSnapshotId);
                     table.ForeignKey(
-                        name: "FK_AchievementLadderEventRequirement_AchievementLadderEvent_Ev~",
+                        name: "FK_AchievementLadderEventRequirement_AchievementLadderEvent_EventId",
                         column: x => x.EventId,
                         principalTable: "AchievementLadderEvent",
                         principalColumn: "AchievementLadderEventId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AchievementLadderEventRequirement_AchievementRequirementSna~",
+                        name: "FK_AchievementLadderEventRequirement_AchievementRequirementSnapshot_AchievementRequirementSnapshotId",
                         column: x => x.AchievementRequirementSnapshotId,
                         principalTable: "AchievementRequirementSnapshot",
                         principalColumn: "AchievementRequirementSnapshotId",
@@ -951,15 +977,15 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementLadderRequirement",
                 columns: table => new
                 {
-                    AchievementLadderRequirementId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    LevelId = table.Column<int>(type: "integer", nullable: false),
-                    AchievementId = table.Column<int>(type: "integer", nullable: false),
-                    RequiredCount = table.Column<int>(type: "integer", nullable: false),
-                    CreatedById = table.Column<int>(type: "integer", nullable: true),
-                    CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    ModifiedById = table.Column<int>(type: "integer", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    AchievementLadderRequirementId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LevelId = table.Column<int>(type: "int", nullable: false),
+                    AchievementId = table.Column<int>(type: "int", nullable: false),
+                    RequiredCount = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedById = table.Column<int>(type: "int", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -992,21 +1018,21 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeCompletionPointsReward",
                 columns: table => new
                 {
-                    AchievementChallengeCompletionRewardId = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<int>(type: "integer", nullable: false),
-                    PointTransactionId = table.Column<int>(type: "integer", nullable: true)
+                    AchievementChallengeCompletionRewardId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<int>(type: "int", nullable: false),
+                    PointTransactionId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengeCompletionPointsReward", x => x.AchievementChallengeCompletionRewardId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionPointsReward_AchievementChall~",
+                        name: "FK_AchievementChallengeCompletionPointsReward_AchievementChallengeCompletionReward_AchievementChallengeCompletionRewardId",
                         column: x => x.AchievementChallengeCompletionRewardId,
                         principalTable: "AchievementChallengeCompletionReward",
                         principalColumn: "AchievementChallengeCompletionRewardId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionPointsReward_PointTransaction~",
+                        name: "FK_AchievementChallengeCompletionPointsReward_PointTransaction_PointTransactionId",
                         column: x => x.PointTransactionId,
                         principalTable: "PointTransaction",
                         principalColumn: "PointTransactionId",
@@ -1017,28 +1043,28 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeCompletionProductReward",
                 columns: table => new
                 {
-                    AchievementChallengeCompletionRewardId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false),
-                    InvoiceId = table.Column<int>(type: "integer", nullable: true)
+                    AchievementChallengeCompletionRewardId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    InvoiceId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengeCompletionProductReward", x => x.AchievementChallengeCompletionRewardId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionProductReward_AchievementChal~",
+                        name: "FK_AchievementChallengeCompletionProductReward_AchievementChallengeCompletionReward_AchievementChallengeCompletionRewardId",
                         column: x => x.AchievementChallengeCompletionRewardId,
                         principalTable: "AchievementChallengeCompletionReward",
                         principalColumn: "AchievementChallengeCompletionRewardId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionProductReward_Invoice_Invoice~",
+                        name: "FK_AchievementChallengeCompletionProductReward_Invoice_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoice",
                         principalColumn: "InvoiceId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionProductReward_ProductBase_Pro~",
+                        name: "FK_AchievementChallengeCompletionProductReward_ProductBase_ProductId",
                         column: x => x.ProductId,
                         principalTable: "ProductBase",
                         principalColumn: "ProductId",
@@ -1049,19 +1075,44 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "AchievementChallengeCompletionTimeReward",
                 columns: table => new
                 {
-                    AchievementChallengeCompletionRewardId = table.Column<int>(type: "integer", nullable: false),
-                    Seconds = table.Column<int>(type: "integer", nullable: false)
+                    AchievementChallengeCompletionRewardId = table.Column<int>(type: "int", nullable: false),
+                    Seconds = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AchievementChallengeCompletionTimeReward", x => x.AchievementChallengeCompletionRewardId);
                     table.ForeignKey(
-                        name: "FK_AchievementChallengeCompletionTimeReward_AchievementChallen~",
+                        name: "FK_AchievementChallengeCompletionTimeReward_AchievementChallengeCompletionReward_AchievementChallengeCompletionRewardId",
                         column: x => x.AchievementChallengeCompletionRewardId,
                         principalTable: "AchievementChallengeCompletionReward",
                         principalColumn: "AchievementChallengeCompletionRewardId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSession_UserId_CreatedTime",
+                table: "UserSession",
+                columns: new[] { "UserId", "CreatedTime" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Register_DefaultOperatorId",
+                table: "Register",
+                column: "DefaultOperatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoice_UserId_CreatedTime",
+                table: "Invoice",
+                columns: new[] { "UserId", "CreatedTime" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DepositTransaction_UserId_CreatedTime",
+                table: "DepositTransaction",
+                columns: new[] { "UserId", "CreatedTime" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppStat_UserId_StartTime",
+                table: "AppStat",
+                columns: new[] { "UserId", "StartTime" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Achievement_CreatedById",
@@ -1119,9 +1170,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AchievementChallengeCompletion_ChallengeId",
+                name: "IX_AchievementChallengeCompletion_ChallengeId_GlobalOccurrence",
                 table: "AchievementChallengeCompletion",
-                column: "ChallengeId");
+                columns: new[] { "ChallengeId", "GlobalOccurrence" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AchievementChallengeCompletion_UserId_ChallengeId_Occurrence",
@@ -1158,8 +1210,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "IX_AchievementChallengeCompletionReward_NotGranted",
                 table: "AchievementChallengeCompletionReward",
                 column: "Status",
-                filter: "\"Status\" IN (0, 1)")
-                .Annotation("Npgsql:IndexInclude", new[] { "CompletionId" });
+                filter: "[Status] IN (0, 1)")
+                .Annotation("SqlServer:Include", new[] { "CompletionId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AchievementChallengeCompletionReward_ProcessedById",
@@ -1248,7 +1300,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 table: "AchievementLadder",
                 column: "IsEnabled",
                 unique: true,
-                filter: "\"IsEnabled\" = true");
+                filter: "[IsEnabled] = 1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AchievementLadder_ModifiedById",
@@ -1360,12 +1412,6 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 column: "LadderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AchievementLadderUserState_UserId_LadderId",
-                table: "AchievementLadderUserState",
-                columns: new[] { "UserId", "LadderId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AchievementParameter_AchievementId_Key",
                 table: "AchievementParameter",
                 columns: new[] { "AchievementId", "Key" },
@@ -1411,11 +1457,23 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "IX_VerificationMethod_IntegrationId",
                 table: "VerificationMethod",
                 column: "IntegrationId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Register_UserOperator_DefaultOperatorId",
+                table: "Register",
+                column: "DefaultOperatorId",
+                principalTable: "UserOperator",
+                principalColumn: "UserId",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Register_UserOperator_DefaultOperatorId",
+                table: "Register");
+
             migrationBuilder.DropTable(
                 name: "AchievementAppCategoryFilter");
 
@@ -1526,6 +1584,48 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             migrationBuilder.DropTable(
                 name: "AchievementChallenge");
+
+            migrationBuilder.DropIndex(
+                name: "IX_UserSession_UserId_CreatedTime",
+                table: "UserSession");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Register_DefaultOperatorId",
+                table: "Register");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Invoice_UserId_CreatedTime",
+                table: "Invoice");
+
+            migrationBuilder.DropIndex(
+                name: "IX_DepositTransaction_UserId_CreatedTime",
+                table: "DepositTransaction");
+
+            migrationBuilder.DropIndex(
+                name: "IX_AppStat_UserId_StartTime",
+                table: "AppStat");
+
+            migrationBuilder.DropColumn(
+                name: "IsTierExempt",
+                table: "UserMember");
+
+            migrationBuilder.DropColumn(
+                name: "DefaultOperatorId",
+                table: "Register");
+
+            migrationBuilder.DropColumn(
+                name: "ReceiptPrinterNumber",
+                table: "Register");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSession_UserId",
+                table: "UserSession",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoice_UserId",
+                table: "Invoice",
+                column: "UserId");
         }
     }
 }

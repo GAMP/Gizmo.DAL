@@ -83,6 +83,12 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(register => register.BranchId)
                 .IsRequired(true)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne<UserOperator>()
+                .WithMany()
+                .HasForeignKey(register => register.DefaultOperatorId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

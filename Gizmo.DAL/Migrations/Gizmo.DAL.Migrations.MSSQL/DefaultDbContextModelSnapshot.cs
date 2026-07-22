@@ -7606,6 +7606,9 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DefaultOperatorId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("FiscalReceiptPrinterNumber")
                         .HasColumnType("int")
                         .HasColumnOrder(9);
@@ -7668,6 +7671,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasIndex("CompanionId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("DefaultOperatorId");
 
                     b.HasIndex("MacAddress")
                         .IsUnique()
@@ -15340,6 +15345,11 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", null)
+                        .WithMany()
+                        .HasForeignKey("DefaultOperatorId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()

@@ -7597,6 +7597,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int?>("DefaultOperatorId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("FiscalReceiptPrinterNumber")
                         .HasColumnType("integer")
                         .HasColumnOrder(9);
@@ -7659,6 +7662,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("CompanionId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("DefaultOperatorId");
 
                     b.HasIndex("MacAddress")
                         .IsUnique();
@@ -15317,6 +15322,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", null)
+                        .WithMany()
+                        .HasForeignKey("DefaultOperatorId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
