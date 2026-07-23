@@ -53,6 +53,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     MaxCompletionsPerRange = table.Column<int>(type: "integer", nullable: false),
                     Options = table.Column<int>(type: "integer", nullable: false),
                     IsDisabled = table.Column<bool>(type: "boolean", nullable: false),
+                    ImageId = table.Column<int>(type: "integer", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedById = table.Column<int>(type: "integer", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -62,6 +63,12 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Achievement", x => x.AchievementId);
+                    table.ForeignKey(
+                        name: "FK_Achievement_FileImage_ImageId",
+                        column: x => x.ImageId,
+                        principalTable: "FileImage",
+                        principalColumn: "FileId",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Achievement_UserOperator_CreatedById",
                         column: x => x.CreatedById,
@@ -1119,6 +1126,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                 name: "IX_Achievement_CreatedById",
                 table: "Achievement",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Achievement_ImageId",
+                table: "Achievement",
+                column: "ImageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Achievement_ModifiedById",

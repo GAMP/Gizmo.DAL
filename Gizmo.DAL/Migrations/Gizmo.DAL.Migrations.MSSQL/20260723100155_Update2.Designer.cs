@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gizmo.DAL.Migrations.MSSQL
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20260722121214_Update2")]
+    [Migration("20260723100155_Update2")]
     partial class Update2
     {
         /// <inheritdoc />
@@ -46,9 +46,13 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .HasColumnType("nvarchar(max)")
                         .HasColumnOrder(2);
 
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(9);
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(10);
 
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("bit")
@@ -90,6 +94,8 @@ namespace Gizmo.DAL.Migrations.MSSQL
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("ImageId");
 
                     b.HasIndex("ModifiedById");
 
@@ -11901,11 +11907,18 @@ namespace Gizmo.DAL.Migrations.MSSQL
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("Gizmo.DAL.Entities.FileImage", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
                         .HasForeignKey("ModifiedById");
 
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("Image");
 
                     b.Navigation("ModifiedBy");
                 });
