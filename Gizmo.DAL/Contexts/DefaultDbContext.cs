@@ -1148,6 +1148,12 @@ namespace Gizmo.DAL.Contexts
         /// <summary>
         /// Gets verification methods.
         /// </summary>
+        /// <remarks>
+        /// The VerificationMethod migration lives on the Update2 branch, so the table does not exist here and
+        /// the entity type is ignored in OnModelCreating (see <c>IgnoreUnmigratedEntities</c>). This set and
+        /// its consumers are kept deliberately — querying it without the Update2 migrations throws
+        /// "invalid object name", which is the accepted contract on this branch.
+        /// </remarks>
         public DbSet<VerificationMethod> VerificationMethods { get; set; }
 
         /// <summary>
@@ -1160,9 +1166,12 @@ namespace Gizmo.DAL.Contexts
         /// </summary>
         public DbSet<UserMemberDisableReason> UserDisableReasons { get; set; }
 
-        // ACHIEVEMENTS — entities are fully configured in the model; the migration is NOT
-        // generated yet, so the tables do not exist. Generate it together with REMOVING the
-        // IsTierExempt Ignore in UserMemberMap (leaving it would silently omit the column).
+        // ACHIEVEMENTS — the migration lives on the Update2 branch, so the tables do not exist here and the
+        // entity types are ignored in OnModelCreating (see IgnoreUnmigratedEntities). The DbSets and the code
+        // written against them are kept deliberately: querying them without the Update2 migrations throws
+        // "invalid object name", which is the accepted contract on this branch. AchievementEvaluationService
+        // already expects that — it gates itself on IsSchemaPresentAsync, which probes through Achievements
+        // and disables evaluation when the query fails.
         /// <summary>
         /// Achievements.
         /// </summary>
@@ -1528,14 +1537,118 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new RefundPaymentMap());
 
             modelBuilder.ApplyConfiguration(new IntegrationMap());
-            modelBuilder.ApplyConfiguration(new VerificationMethodMap());
 
             modelBuilder.ApplyConfiguration(new UserMemberDisableReasonMap());
             modelBuilder.ApplyConfiguration(new UserMemberDisableEntryMap());
 
-            // ACHIEVEMENTS — fully configured in the model (DbSet navigation discovery requires the
-            // complete hierarchy configuration); the migration is NOT generated yet — the tables do not
-            // exist until it ships, together with removing the IsTierExempt Ignore in UserMemberMap.
+            // UNMIGRATED ENTITIES — the achievement and verification-method migrations live on the Update2
+            // branch, so their tables do not exist here. The maps are therefore NOT applied: a
+            // configured-but-untabled entity type poisons every consumer that walks Model.GetEntityTypes()
+            // instead of the real schema — the v2->v3 UTC conversion (DateTimeTimeZoneConverter) issued
+            // UPDATE dbo.Achievement and killed startup for any non-UTC v2 database.
+            IgnoreUnmigratedEntities(modelBuilder);
+
+            #region PERFORMANCE INDEXES
+            ApplyPerformanceIndexes(modelBuilder);
+            #endregion
+
+            #region GLOBAL CONFIGURATIONS
+            ApplyGlobalMapConfigurations(modelBuilder);
+            #endregion
+
+            #region BASE MODEL CREATION
+            base.OnModelCreating(modelBuilder);
+            #endregion
+        }
+
+        /// <summary>
+        /// Removes everything the Update2 migration adds from the model — the entity types whose tables it
+        /// creates, and the properties whose columns it adds to existing tables.
+        /// </summary>
+        /// <param name="modelBuilder">Model builder.</param>
+        /// <remarks>
+        /// The Update2 migration lives on the temp/update2 branch, so none of this exists in databases built
+        /// from this branch. Leaving it configured makes it present in
+        /// <see cref="Microsoft.EntityFrameworkCore.Metadata.IModel"/> while absent from the database, which
+        /// breaks anything deriving SQL from the model rather than from the real schema — the v2 to v3 UTC
+        /// conversion (<c>DateTimeTimeZoneConverter</c>) issued <c>UPDATE dbo.Achievement</c> and killed
+        /// startup for any non-UTC v2 database.
+        /// <para>
+        /// The <c>DbSet</c> properties and the services written against them stay in place by design: querying
+        /// them without the Update2 migrations throws "invalid object name", and that is the accepted contract
+        /// on this branch. What is not acceptable is a model-walking consumer emitting SQL for them unprompted,
+        /// which is what this method prevents.
+        /// </para>
+        /// <para>
+        /// Ignored properties behave differently from ignored types, and more quietly: EF omits the column from
+        /// the SELECT list and leaves the property at its CLR default instead of throwing, and drops it on
+        /// save. A regression there surfaces as wrong data rather than an error, which is why
+        /// <c>UnmigratedEntityTests</c> asserts on the columns individually.
+        /// </para>
+        /// <para>
+        /// Everything Update2 touches is collected here rather than spread across the individual maps so that
+        /// it all lifts in one edit when the migration merges. Deleting this method and its call site is the
+        /// whole of that change; nothing needs unpicking from <c>RegisterMap</c> or <c>UserMemberMap</c>.
+        /// </para>
+        /// </remarks>
+        private static void IgnoreUnmigratedEntities(ModelBuilder modelBuilder)
+        {
+            // Aggregate roots — ignoring these removes their owned/derived graphs with them.
+            modelBuilder.Ignore<Achievement>();
+            modelBuilder.Ignore<AchievementLadder>();
+            modelBuilder.Ignore<AchievementChallenge>();
+
+            // Reachable only through the roots' navigations, but ignored explicitly so that convention-based
+            // discovery cannot resurrect them via the DbSet properties or a relationship on a migrated type.
+            modelBuilder.Ignore<AchievementFilter>();
+            modelBuilder.Ignore<AchievementParameter>();
+            modelBuilder.Ignore<AchievementCompletion>();
+            modelBuilder.Ignore<AchievementRequirementSnapshot>();
+            modelBuilder.Ignore<AchievementLadderLevel>();
+            modelBuilder.Ignore<AchievementLadderEntry>();
+            modelBuilder.Ignore<AchievementLadderUserState>();
+            modelBuilder.Ignore<AchievementLadderEvent>();
+            modelBuilder.Ignore<AchievementChallengeReward>();
+            modelBuilder.Ignore<AchievementChallengeCompletion>();
+            modelBuilder.Ignore<AchievementChallengeCompletionReward>();
+
+            // Requirements need naming in their own right. The first two derive from ModifiableByOperatorBase
+            // rather than from an achievement type, so no root reaches them; the last two are TPT derivatives
+            // of AchievementRequirementSnapshot, and ignoring a TPT base does not remove its derived types.
+            modelBuilder.Ignore<AchievementChallengeRequirement>();
+            modelBuilder.Ignore<AchievementLadderRequirement>();
+            modelBuilder.Ignore<AchievementLadderEventRequirement>();
+            modelBuilder.Ignore<AchievementChallengeCompletionRequirement>();
+
+            // Verification methods — same situation as the achievements above, and the reason the UTC
+            // conversion would still have failed once dbo.Achievement stopped being the first table it hit.
+            modelBuilder.Ignore<VerificationMethod>();
+
+            // Columns Update2 adds to tables that DO exist here. DefaultOperatorId also brings an FK to
+            // UserOperator and an index, but both come with the column, so ignoring the property is enough.
+            // Note the quiet-failure caveat above: reads of Register.DefaultOperatorId see null until Update2
+            // lands. Harmless for its only consumer today — FiscalReceiptGeneratorService uses it as a
+            // `CreatedById ?? DefaultOperatorId` fallback — but the RegisterModel create/update API accepts
+            // the value and will silently discard it.
+            modelBuilder.Entity<Register>().Ignore(register => register.ReceiptPrinterNumber);
+            modelBuilder.Entity<Register>().Ignore(register => register.DefaultOperatorId);
+            modelBuilder.Entity<UserMember>().Ignore(userMember => userMember.IsTierExempt);
+        }
+
+        /// <summary>
+        /// Applies the entity configurations whose tables are not migrated on this branch.
+        /// </summary>
+        /// <param name="modelBuilder">Model builder.</param>
+        /// <remarks>
+        /// NOT CALLED — retained so the mapping work is not lost while the Update2 migrations are pending.
+        /// To enable these entities: merge the Update2 migrations, call this from <c>OnModelCreating</c> in
+        /// place of <see cref="IgnoreUnmigratedEntities"/> (which also lifts the ignored columns), restore the
+        /// achievement index block in <c>ApplyPerformanceIndexes</c>, and delete <c>UnmigratedEntityTests</c>.
+        /// </remarks>
+        private static void ApplyUnmigratedEntityConfigurations(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new VerificationMethodMap());
+
             modelBuilder.ApplyConfiguration(new AchievementMap());
             modelBuilder.ApplyConfiguration(new AchievementFilterMap());
             modelBuilder.ApplyConfiguration(new AchievementHostFilterMap());
@@ -1574,18 +1687,6 @@ namespace Gizmo.DAL.Contexts
             modelBuilder.ApplyConfiguration(new AchievementChallengeCompletionPointsRewardMap());
             modelBuilder.ApplyConfiguration(new AchievementChallengeCompletionProductRewardMap());
             modelBuilder.ApplyConfiguration(new AchievementChallengeCompletionTimeRewardMap());
-
-            #region PERFORMANCE INDEXES
-            ApplyPerformanceIndexes(modelBuilder);
-            #endregion
-
-            #region GLOBAL CONFIGURATIONS
-            ApplyGlobalMapConfigurations(modelBuilder);
-            #endregion
-
-            #region BASE MODEL CREATION
-            base.OnModelCreating(modelBuilder);
-            #endregion
         }
 
         /// <inheritdoc/>
@@ -2512,28 +2613,22 @@ namespace Gizmo.DAL.Contexts
                 .HasFilter($"{PendingStatus(nameof(DepositPayment.FiscalReceiptStatus))} AND {Q(nameof(DepositPayment.FiscalReceiptId))} IS NULL AND {Q(nameof(DepositPayment.IsVoided))} = {False}")
                 .HasDatabaseName("IX_DepositPayment_FiscalReceiptStatus_Pending");
 
-            // ACHIEVEMENT indexes — part of the configured model; no DB effect until the
-            // achievements migration ships.
-            // AchievementLadder: at most one ladder may be enabled at a time. The invariant is enforced at
-            // the database level with a filtered unique index instead of an application convention — filter
-            // SQL is provider-specific, hence here rather than in AchievementLadderMap (see the map comment).
-            modelBuilder.Entity<AchievementLadder>().HasIndex(nameof(AchievementLadder.IsEnabled))
-                .IsUnique()
-                .HasFilter($"{Q(nameof(AchievementLadder.IsEnabled))} = {True}")
-                .HasDatabaseName("IX_AchievementLadder_Enabled");
-
-            // AchievementChallengeCompletionReward: the reward grant executor's retry sweep (Status = Pending)
-            // and the operator pending-claims list (Status = AwaitingClaim) both probe the non-granted sliver
-            // of a table that grows unbounded (grant history is kept forever) while the actionable set stays
-            // tiny and shrinks as rewards are delivered — the same shape as the fiscalization pending indexes.
-            // Both query predicates are subsets of the IN filter, so one filtered index serves both.
-            const int RewardPending = (int)AchievementChallengeRewardStatus.Pending;             // 0
-            const int RewardAwaitingClaim = (int)AchievementChallengeRewardStatus.AwaitingClaim; // 1
-            Include(modelBuilder.Entity<AchievementChallengeCompletionReward>()
-                    .HasIndex(nameof(AchievementChallengeCompletionReward.Status)), isSqlServer,
-                    nameof(AchievementChallengeCompletionReward.CompletionId))
-                .HasFilter($"{Q(nameof(AchievementChallengeCompletionReward.Status))} IN ({RewardPending}, {RewardAwaitingClaim})")
-                .HasDatabaseName("IX_AchievementChallengeCompletionReward_NotGranted");
+            // ACHIEVEMENT indexes — REMOVED while the Update2 migrations are pending. These entity types
+            // are ignored in OnModelCreating (see IgnoreUnmigratedEntities); calling
+            // modelBuilder.Entity<T>() here would re-add them to the model and reinstate the missing-table
+            // problem the Ignore exists to prevent. Restore this block together with the migration:
+            //
+            //   AchievementLadder — filtered unique index on IsEnabled: at most one ladder may be enabled at
+            //   a time, enforced in the database rather than by application convention. Filter SQL is
+            //   provider-specific, hence here rather than in AchievementLadderMap (see the map comment).
+            //
+            //   AchievementChallengeCompletionReward — filtered index on Status IN (Pending, AwaitingClaim):
+            //   the grant executor's retry sweep and the operator pending-claims list both probe the
+            //   non-granted sliver of a table that grows unbounded (grant history is kept forever) while the
+            //   actionable set stays tiny — the same shape as the fiscalization pending indexes. Both query
+            //   predicates are subsets of the IN filter, so one filtered index serves both. Include
+            //   CompletionId on SQL Server; use the explicit short name IX_AchievementChallengeCompletionReward_NotGranted
+            //   to stay inside the 63-char identifier guard.
 
             // (RefundDepositPayment fiscal-pending filtered index removed — table is ~1,580 rows; seq-scan is
             // cheap, the filtered index added negligible benefit for its write/maintenance cost.)

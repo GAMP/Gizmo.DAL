@@ -53,8 +53,9 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(9);
 
-            // ReceiptPrinterNumber column is not migrated on this branch yet (Update4 on temp/update2)
-            builder.Ignore(t => t.ReceiptPrinterNumber);
+            // NOTE ReceiptPrinterNumber and DefaultOperatorId are not mapped here — they are Update2 columns
+            // excluded centrally in DefaultDbContext.IgnoreUnmigratedEntities, so that all of them lift in
+            // one place on merge.
 
             // Indexes
 
