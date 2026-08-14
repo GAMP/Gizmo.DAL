@@ -69,6 +69,11 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // achievement signal queries (money spent, points earned/spent) aggregate one
+            // user's invoices over short time windows on every evaluation trigger and
+            // progress read — the composite turns them into few-row range seeks
+            builder.HasIndex(x => new { x.UserId, x.CreatedTime });
+
             builder.ToTable(nameof(Invoice));
         }
     }

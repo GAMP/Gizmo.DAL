@@ -22,6 +22,793 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.Achievement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(65535)
+                        .HasColumnType("character varying(65535)")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(9);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(10);
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(8);
+
+                    b.Property<int>("MaxCompletionsPerRange")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(6);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Options")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(7);
+
+                    b.Property<int>("Range")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(4);
+
+                    b.Property<Guid>("SignalGuid")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(3);
+
+                    b.Property<decimal>("Value")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)")
+                        .HasColumnOrder(5);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("Achievement", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallenge", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementChallengeId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(65535)
+                        .HasColumnType("character varying(65535)")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(4);
+
+                    b.Property<int?>("GlobalMaxCompletions")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(6);
+
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(9);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(10);
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(8);
+
+                    b.Property<int?>("MaxCompletions")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(5);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Options")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(7);
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("AchievementChallenge", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementChallengeCompletionId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChallengeId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("CompletedTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(5);
+
+                    b.Property<int>("GlobalOccurrence")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("Occurrence")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChallengeId", "GlobalOccurrence")
+                        .IsUnique();
+
+                    b.HasIndex("UserId", "ChallengeId", "Occurrence")
+                        .IsUnique();
+
+                    b.ToTable("AchievementChallengeCompletion", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionReward", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementChallengeCompletionRewardId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompletionId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("ProcessedById")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(4);
+
+                    b.Property<DateTime?>("ProcessedTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompletionId");
+
+                    b.HasIndex("ProcessedById");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_AchievementChallengeCompletionReward_NotGranted")
+                        .HasFilter("\"Status\" IN (0, 1)");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("Status"), new[] { "CompletionId" });
+
+                    b.ToTable("AchievementChallengeCompletionReward", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeRequirement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementChallengeRequirementId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AchievementId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("ChallengeId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("RequiredCount")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AchievementId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("ChallengeId", "AchievementId")
+                        .IsUnique();
+
+                    b.ToTable("AchievementChallengeRequirement", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeReward", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementChallengeRewardId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChallengeId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Options")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChallengeId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("AchievementChallengeReward", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementCompletion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementCompletionId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AchievementId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("CompletedTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(5);
+
+                    b.Property<DateTime>("RangeStart")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AchievementId");
+
+                    b.HasIndex("UserId", "AchievementId", "RangeStart")
+                        .IsUnique();
+
+                    b.ToTable("AchievementCompletion", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementFilter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementFilterId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AchievementId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AchievementId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.ToTable("AchievementFilter", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementLadderId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(5);
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Options")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("Period")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("IsEnabled")
+                        .IsUnique()
+                        .HasDatabaseName("IX_AchievementLadder_Enabled")
+                        .HasFilter("\"IsEnabled\" = true");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("AchievementLadder", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementLadderEntryId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AchievementId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("LadderId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AchievementId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("LadderId", "AchievementId")
+                        .IsUnique();
+
+                    b.ToTable("AchievementLadderEntry", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementLadderEventId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(10);
+
+                    b.Property<int>("FromRank")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(5);
+
+                    b.Property<int>("FromUserGroupId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("LadderId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<DateTime>("PeriodStart")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(8);
+
+                    b.Property<int?>("Score")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(9);
+
+                    b.Property<int>("ToRank")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(6);
+
+                    b.Property<int>("ToUserGroupId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("Trigger")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(7);
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromUserGroupId");
+
+                    b.HasIndex("LadderId");
+
+                    b.HasIndex("ToUserGroupId");
+
+                    b.HasIndex("UserId", "CreatedTime");
+
+                    b.ToTable("AchievementLadderEvent", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementLadderLevelId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(65535)
+                        .HasColumnType("character varying(65535)")
+                        .HasColumnOrder(5);
+
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(6);
+
+                    b.Property<int>("LadderId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("Threshold")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("UserGroupId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(4);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("UserGroupId");
+
+                    b.HasIndex("LadderId", "Rank")
+                        .IsUnique();
+
+                    b.HasIndex("LadderId", "UserGroupId")
+                        .IsUnique();
+
+                    b.ToTable("AchievementLadderLevel", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderRequirement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementLadderRequirementId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AchievementId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("LevelId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ModifiedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("RequiredCount")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AchievementId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("LevelId", "AchievementId")
+                        .IsUnique();
+
+                    b.ToTable("AchievementLadderRequirement", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderUserState", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("LadderId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<DateTime>("LastSettledPeriodStart")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("UserId", "LadderId");
+
+                    b.HasIndex("LadderId");
+
+                    b.ToTable("AchievementLadderUserState", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementParameter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementParameterId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AchievementId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("AchievementId", "Key")
+                        .IsUnique();
+
+                    b.ToTable("AchievementParameter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementRequirementSnapshot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("AchievementRequirementSnapshotId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AchievementId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<decimal>("ActualValue")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)")
+                        .HasColumnOrder(5);
+
+                    b.Property<int>("CompletedCount")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("RequiredCount")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<decimal>("TargetValue")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)")
+                        .HasColumnOrder(4);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AchievementId");
+
+                    b.ToTable("AchievementRequirementSnapshot", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.AgeRestriction", b =>
                 {
                     b.Property<int>("Id")
@@ -913,6 +1700,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("UserId", "AppId");
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("UserId", "AppId"), new[] { "Span" });
+
+                    b.HasIndex("UserId", "StartTime");
 
                     b.ToTable("AppStat", (string)null);
                 });
@@ -2195,6 +2984,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("RegisterId");
 
                     b.HasIndex("ShiftId");
+
+                    b.HasIndex("UserId", "CreatedTime");
 
                     b.HasIndex("UserId", "Id")
                         .IsDescending(false, true);
@@ -3833,7 +4624,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     b.HasIndex("ShiftId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "CreatedTime");
 
                     b.HasIndex("CreatedTime", "CreatedById", "RegisterId");
 
@@ -6812,6 +7603,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int?>("DefaultOperatorId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("FiscalReceiptPrinterNumber")
                         .HasColumnType("integer")
                         .HasColumnOrder(9);
@@ -6856,6 +7650,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<int?>("QrDisplayNumber")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ReceiptPrinterNumber")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("StartCash")
                         .HasPrecision(19, 4)
                         .HasColumnType("numeric(19,4)")
@@ -6871,6 +7668,8 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.HasIndex("CompanionId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("DefaultOperatorId");
 
                     b.HasIndex("MacAddress")
                         .IsUnique();
@@ -9323,11 +10122,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("State"), new[] { "UserId", "HostId", "Slot" });
 
-                    b.HasIndex("UserId");
-
                     b.HasIndex("HostId", "State");
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("HostId", "State"), new[] { "UserId", "CreatedTime", "Span" });
+
+                    b.HasIndex("UserId", "CreatedTime");
 
                     b.ToTable("UserSession", (string)null);
                 });
@@ -9484,6 +10283,63 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.UseTptMappingStrategy();
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.VerificationMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("VerificationMethodId")
+                        .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("CapabilityGuid")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("Context")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CustomName")
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(7);
+
+                    b.Property<int>("IntegrationId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(6);
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("boolean")
+                        .HasColumnOrder(5);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("IntegrationId");
+
+                    b.HasIndex("Context", "IntegrationId", "CapabilityGuid")
+                        .IsUnique();
+
+                    b.ToTable("VerificationMethod", (string)null);
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Void", b =>
                 {
                     b.Property<int>("Id")
@@ -9522,6 +10378,289 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.ToTable("Void", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionPointsReward", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementChallengeCompletionReward");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int?>("PointTransactionId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.HasIndex("PointTransactionId")
+                        .HasDatabaseName("IX_AchievementChallengeCompletionPointsReward_Transaction");
+
+                    b.ToTable("AchievementChallengeCompletionPointsReward", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionProductReward", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementChallengeCompletionReward");
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("AchievementChallengeCompletionProductReward", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionTimeReward", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementChallengeCompletionReward");
+
+                    b.Property<int>("Seconds")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.ToTable("AchievementChallengeCompletionTimeReward", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengePointsReward", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementChallengeReward");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.ToTable("AchievementChallengePointsReward", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeProductReward", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementChallengeReward");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("AchievementChallengeProductReward", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeTimeReward", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementChallengeReward");
+
+                    b.Property<int>("Seconds")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.ToTable("AchievementChallengeTimeReward", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementAppCategoryFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("AppCategoryId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("AppCategoryId");
+
+                    b.ToTable("AchievementAppCategoryFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementAppExeFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("AppExeId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("AppExeId");
+
+                    b.ToTable("AchievementAppExeFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementAppFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("AppId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("AppId");
+
+                    b.ToTable("AchievementAppFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementAppGroupFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("AppGroupId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("AppGroupId");
+
+                    b.ToTable("AchievementAppGroupFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementBillProfileFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("BillProfileId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("BillProfileId");
+
+                    b.ToTable("AchievementBillProfileFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementBranchFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("AchievementBranchFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementDayOfWeekFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("Day")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<TimeOnly?>("DayTimeFrom")
+                        .HasColumnType("time without time zone")
+                        .HasColumnOrder(2);
+
+                    b.Property<TimeOnly?>("DayTimeTo")
+                        .HasColumnType("time without time zone")
+                        .HasColumnOrder(3);
+
+                    b.ToTable("AchievementDayOfWeekFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementHostFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("HostId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("HostId");
+
+                    b.ToTable("AchievementHostFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementHostGroupFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("HostGroupId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("HostGroupId");
+
+                    b.ToTable("AchievementHostGroupFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementPaymentMethodFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("PaymentMethodId");
+
+                    b.ToTable("AchievementPaymentMethodFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementProductFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("AchievementProductFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementProductGroupFilter", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementFilter");
+
+                    b.Property<int>("ProductGroupId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("ProductGroupId");
+
+                    b.ToTable("AchievementProductGroupFilter", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionRequirement", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementRequirementSnapshot");
+
+                    b.Property<int>("CompletionId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.HasIndex("CompletionId");
+
+                    b.ToTable("AchievementChallengeCompletionRequirement", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderEventRequirement", b =>
+                {
+                    b.HasBaseType("Gizmo.DAL.Entities.AchievementRequirementSnapshot");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("PointsAwarded")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("AchievementLadderEventRequirement", (string)null);
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AgeRestrictionLogin", b =>
@@ -10396,6 +11535,9 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Property<bool>("IsPersonalInfoRequested")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsTierExempt")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("UserGroupId")
                         .HasColumnType("integer");
 
@@ -10731,6 +11873,374 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsUnique();
 
                     b.ToTable("UserApiKey", (string)null);
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.Achievement", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.FileImage", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Image");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallenge", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.FileImage", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Image");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletion", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallenge", "Challenge")
+                        .WithMany()
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Challenge");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionReward", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallengeCompletion", "Completion")
+                        .WithMany("Rewards")
+                        .HasForeignKey("CompletionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ProcessedBy")
+                        .WithMany()
+                        .HasForeignKey("ProcessedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Completion");
+
+                    b.Navigation("ProcessedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeRequirement", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Achievement", "Achievement")
+                        .WithMany()
+                        .HasForeignKey("AchievementId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallenge", "Challenge")
+                        .WithMany("Requirements")
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("Achievement");
+
+                    b.Navigation("Challenge");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeReward", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallenge", "Challenge")
+                        .WithMany("Rewards")
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("Challenge");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementCompletion", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Achievement", "Achievement")
+                        .WithMany()
+                        .HasForeignKey("AchievementId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Achievement");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Achievement", "Achievement")
+                        .WithMany("Filters")
+                        .HasForeignKey("AchievementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.Navigation("Achievement");
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadder", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderEntry", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Achievement", "Achievement")
+                        .WithMany()
+                        .HasForeignKey("AchievementId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementLadder", "Ladder")
+                        .WithMany("Achievements")
+                        .HasForeignKey("LadderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("Achievement");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Ladder");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderEvent", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserGroup", "FromUserGroup")
+                        .WithMany()
+                        .HasForeignKey("FromUserGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementLadder", "Ladder")
+                        .WithMany()
+                        .HasForeignKey("LadderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserGroup", "ToUserGroup")
+                        .WithMany()
+                        .HasForeignKey("ToUserGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FromUserGroup");
+
+                    b.Navigation("Ladder");
+
+                    b.Navigation("ToUserGroup");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderLevel", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.FileImage", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementLadder", "Ladder")
+                        .WithMany("Levels")
+                        .HasForeignKey("LadderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.UserGroup", "UserGroup")
+                        .WithMany()
+                        .HasForeignKey("UserGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Image");
+
+                    b.Navigation("Ladder");
+
+                    b.Navigation("ModifiedBy");
+
+                    b.Navigation("UserGroup");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderRequirement", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Achievement", "Achievement")
+                        .WithMany()
+                        .HasForeignKey("AchievementId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementLadderLevel", "Level")
+                        .WithMany("Requirements")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.Navigation("Achievement");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Level");
+
+                    b.Navigation("ModifiedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderUserState", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementLadder", "Ladder")
+                        .WithMany()
+                        .HasForeignKey("LadderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ladder");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementParameter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Achievement", "Achievement")
+                        .WithMany("Parameters")
+                        .HasForeignKey("AchievementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.Navigation("Achievement");
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementRequirementSnapshot", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Achievement", "Achievement")
+                        .WithMany()
+                        .HasForeignKey("AchievementId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Achievement");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AgeRestriction", b =>
@@ -13826,6 +15336,11 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", null)
+                        .WithMany()
+                        .HasForeignKey("DefaultOperatorId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Gizmo.DAL.Entities.UserOperator", "ModifiedBy")
                         .WithMany()
                         .HasForeignKey("ModifiedById");
@@ -15023,6 +16538,23 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Gizmo.DAL.Entities.VerificationMethod", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.UserOperator", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Gizmo.DAL.Entities.Integration", "Integration")
+                        .WithMany()
+                        .HasForeignKey("IntegrationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Integration");
+                });
+
             modelBuilder.Entity("Gizmo.DAL.Entities.Void", b =>
                 {
                     b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
@@ -15048,6 +16580,320 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("Register");
 
                     b.Navigation("Shift");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionPointsReward", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallengeCompletionReward", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementChallengeCompletionPointsReward", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.PointTransaction", "PointTransaction")
+                        .WithMany()
+                        .HasForeignKey("PointTransactionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("PointTransaction");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionProductReward", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallengeCompletionReward", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementChallengeCompletionProductReward", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionTimeReward", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallengeCompletionReward", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementChallengeCompletionTimeReward", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengePointsReward", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallengeReward", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementChallengePointsReward", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeProductReward", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallengeReward", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementChallengeProductReward", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeTimeReward", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallengeReward", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementChallengeTimeReward", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementAppCategoryFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AppCategory", "AppCategory")
+                        .WithMany()
+                        .HasForeignKey("AppCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementAppCategoryFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppCategory");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementAppExeFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AppExe", "AppExe")
+                        .WithMany()
+                        .HasForeignKey("AppExeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementAppExeFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppExe");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementAppFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.App", "App")
+                        .WithMany()
+                        .HasForeignKey("AppId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementAppFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("App");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementAppGroupFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AppGroup", "AppGroup")
+                        .WithMany()
+                        .HasForeignKey("AppGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementAppGroupFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppGroup");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementBillProfileFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.BillProfile", "BillProfile")
+                        .WithMany()
+                        .HasForeignKey("BillProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementBillProfileFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BillProfile");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementBranchFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementBranchFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementDayOfWeekFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementDayOfWeekFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementHostFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.Host", "Host")
+                        .WithMany()
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementHostFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Host");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementHostGroupFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.HostGroup", "HostGroup")
+                        .WithMany()
+                        .HasForeignKey("HostGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementHostGroupFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HostGroup");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementPaymentMethodFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementPaymentMethodFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementProductFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementProductFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductBase", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementProductGroupFilter", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementFilter", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementProductGroupFilter", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.ProductGroup", "ProductGroup")
+                        .WithMany()
+                        .HasForeignKey("ProductGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProductGroup");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletionRequirement", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementChallengeCompletion", "Completion")
+                        .WithMany("Requirements")
+                        .HasForeignKey("CompletionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementRequirementSnapshot", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementChallengeCompletionRequirement", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Completion");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderEventRequirement", b =>
+                {
+                    b.HasOne("Gizmo.DAL.Entities.AchievementLadderEvent", "Event")
+                        .WithMany("Requirements")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gizmo.DAL.Entities.AchievementRequirementSnapshot", null)
+                        .WithOne()
+                        .HasForeignKey("Gizmo.DAL.Entities.AchievementLadderEventRequirement", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.AgeRestrictionLogin", b =>
@@ -16070,6 +17916,44 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasForeignKey("Gizmo.DAL.Entities.UserApiKey", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.Achievement", b =>
+                {
+                    b.Navigation("Filters");
+
+                    b.Navigation("Parameters");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallenge", b =>
+                {
+                    b.Navigation("Requirements");
+
+                    b.Navigation("Rewards");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementChallengeCompletion", b =>
+                {
+                    b.Navigation("Requirements");
+
+                    b.Navigation("Rewards");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadder", b =>
+                {
+                    b.Navigation("Achievements");
+
+                    b.Navigation("Levels");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderEvent", b =>
+                {
+                    b.Navigation("Requirements");
+                });
+
+            modelBuilder.Entity("Gizmo.DAL.Entities.AchievementLadderLevel", b =>
+                {
+                    b.Navigation("Requirements");
                 });
 
             modelBuilder.Entity("Gizmo.DAL.Entities.App", b =>

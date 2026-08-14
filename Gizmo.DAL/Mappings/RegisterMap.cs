@@ -53,10 +53,6 @@ namespace Gizmo.DAL.Mappings
                 .IsRequired(false)
                 .HasColumnOrder(9);
 
-            // NOTE ReceiptPrinterNumber and DefaultOperatorId are not mapped here — they are Update2 columns
-            // excluded centrally in DefaultDbContext.IgnoreUnmigratedEntities, so that all of them lift in
-            // one place on merge.
-
             // Indexes
 
             builder.HasIndex(t => new { t.Name, t.BranchId })
@@ -87,6 +83,12 @@ namespace Gizmo.DAL.Mappings
                 .HasForeignKey(register => register.BranchId)
                 .IsRequired(true)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne<UserOperator>()
+                .WithMany()
+                .HasForeignKey(register => register.DefaultOperatorId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

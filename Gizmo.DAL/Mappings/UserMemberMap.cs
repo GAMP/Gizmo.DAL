@@ -26,8 +26,7 @@ namespace Gizmo.DAL.Mappings
             builder.Property(userMember => userMember.Email)
                 .HasMaxLength(254);
 
-            // NOTE IsTierExempt is not mapped here — it is one of the Update2 columns excluded centrally in
-            // DefaultDbContext.IgnoreUnmigratedEntities, so that all of them lift in one place on merge.
+            // IsTierExempt is mapped by convention — its column is added by the Update2 migration.
 
             // Indexes
             builder.HasIndex(userMember => userMember.Username)

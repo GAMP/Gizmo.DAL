@@ -54,9 +54,19 @@ namespace Gizmo.DAL.Mappings
                 .HasColumnOrder(8)
                 .IsRequired();
 
-            builder.Property(achievement => achievement.IsDeleted)
+            builder.Property(achievement => achievement.ImageId)
                 .HasColumnOrder(9)
+                .IsRequired(false);
+
+            builder.Property(achievement => achievement.IsDeleted)
+                .HasColumnOrder(10)
                 .IsRequired();
+
+            builder.HasOne(achievement => achievement.Image)
+                .WithMany()
+                .HasForeignKey(achievement => achievement.ImageId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
