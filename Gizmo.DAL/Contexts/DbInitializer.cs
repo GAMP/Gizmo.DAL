@@ -911,10 +911,7 @@ namespace Gizmo.DAL.Contexts
 
                             }, cancellationToken);
 
-                            await optionsService.WriteAsync(_dbContext, new Server.Options.PaymentProcessingOptions()
-                            {
-                                CreditCardUseTerminal = false,
-                            }, cancellationToken);
+                            await optionsService.WriteAsync(_dbContext, new Server.Options.PaymentProcessingOptions(), cancellationToken);
 
                             await optionsService.WriteAsync(_dbContext, new Server.Options.TopUpOptions()
                             {
