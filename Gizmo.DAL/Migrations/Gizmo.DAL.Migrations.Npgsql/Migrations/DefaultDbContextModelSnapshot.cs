@@ -17,7 +17,7 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.6")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -5607,6 +5607,18 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .HasColumnType("uuid")
                         .HasColumnOrder(7);
 
+                    b.Property<int?>("QrDisplayNumber")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(18);
+
+                    b.Property<int?>("RegisterId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(16);
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(17);
+
                     b.Property<int>("State")
                         .HasColumnType("integer")
                         .HasColumnOrder(4);
@@ -5645,6 +5657,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .IsUnique();
 
                     b.HasIndex("PaymentMethodId");
+
+                    b.HasIndex("RegisterId");
+
+                    b.HasIndex("ShiftId");
 
                     b.HasIndex("UserId");
 
@@ -14423,6 +14439,16 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Gizmo.DAL.Entities.Register", "Register")
+                        .WithMany()
+                        .HasForeignKey("RegisterId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Gizmo.DAL.Entities.Shift", "Shift")
+                        .WithMany()
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Gizmo.DAL.Entities.UserMember", "User")
                         .WithMany("PaymentIntents")
                         .HasForeignKey("UserId")
@@ -14440,6 +14466,10 @@ namespace Gizmo.DAL.Migrations.Npgsql.Migrations
                     b.Navigation("Payment");
 
                     b.Navigation("PaymentMethod");
+
+                    b.Navigation("Register");
+
+                    b.Navigation("Shift");
 
                     b.Navigation("User");
                 });

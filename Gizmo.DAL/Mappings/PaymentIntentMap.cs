@@ -84,6 +84,18 @@ namespace Gizmo.DAL.Mappings
                .HasColumnOrder(15)
                .IsRequired(false);
 
+            builder.Property(paymentIntent => paymentIntent.RegisterId)
+               .HasColumnOrder(16)
+               .IsRequired(false);
+
+            builder.Property(paymentIntent => paymentIntent.ShiftId)
+               .HasColumnOrder(17)
+               .IsRequired(false);
+
+            builder.Property(paymentIntent => paymentIntent.QrDisplayNumber)
+               .HasColumnOrder(18)
+               .IsRequired(false);
+
             builder.HasOne(paymentIntent => paymentIntent.User)
                 .WithMany(userMember => userMember.PaymentIntents)
                 .HasForeignKey(paymentIntent => paymentIntent.UserId)
@@ -101,6 +113,16 @@ namespace Gizmo.DAL.Mappings
             builder.HasOne(paymentIntent => paymentIntent.Companion)
                 .WithMany()
                 .HasForeignKey(paymentIntent => paymentIntent.CompanionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(paymentIntent => paymentIntent.Register)
+                .WithMany()
+                .HasForeignKey(paymentIntent => paymentIntent.RegisterId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(paymentIntent => paymentIntent.Shift)
+                .WithMany()
+                .HasForeignKey(paymentIntent => paymentIntent.ShiftId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasIndex(paymentIntent => paymentIntent.Guid).IsUnique();  
