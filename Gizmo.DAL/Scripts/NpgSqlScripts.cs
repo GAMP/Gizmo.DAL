@@ -366,12 +366,82 @@ namespace Gizmo.DAL.Scripts
         """
             CREATE TEMP TABLE "UserIdList" ("UserId" INT);
             CREATE TEMP TABLE "UserMemberIdList" ("UserMemberId" INT);
+            CREATE TEMP TABLE "AchievementChallengeCompletionIdList" ("AchievementChallengeCompletionId" INT);
+            CREATE TEMP TABLE "AchievementLadderEventIdList" ("AchievementLadderEventId" INT);
+            CREATE TEMP TABLE "AchievementRequirementSnapshotIdList" ("AchievementRequirementSnapshotId" INT);
             
             INSERT INTO "UserIdList" ("UserId")
             SELECT UNNEST(STRING_TO_ARRAY(@UserIds, ',')::INT[]);
             
             BEGIN;
             
+                -- Achievement completion history. Reward leaves reference Invoice/PointTransaction
+                -- through restrictive FKs, so they must be removed before those tables are deleted
+                -- below. Ordered child-before-parent, mirroring the provider cleanup script.
+                INSERT INTO "AchievementChallengeCompletionIdList" ("AchievementChallengeCompletionId")
+                SELECT "AchievementChallengeCompletionId"
+                FROM "AchievementChallengeCompletion"
+                WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                INSERT INTO "AchievementLadderEventIdList" ("AchievementLadderEventId")
+                SELECT "AchievementLadderEventId"
+                FROM "AchievementLadderEvent"
+                WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                INSERT INTO "AchievementRequirementSnapshotIdList" ("AchievementRequirementSnapshotId")
+                SELECT "AchievementRequirementSnapshotId"
+                FROM "AchievementChallengeCompletionRequirement"
+                WHERE "CompletionId" IN (SELECT "AchievementChallengeCompletionId" FROM "AchievementChallengeCompletionIdList")
+                UNION
+                SELECT "AchievementRequirementSnapshotId"
+                FROM "AchievementLadderEventRequirement"
+                WHERE "EventId" IN (SELECT "AchievementLadderEventId" FROM "AchievementLadderEventIdList");
+
+                DELETE FROM "AchievementChallengeCompletionPointsReward"
+                WHERE "AchievementChallengeCompletionRewardId" IN (
+                    SELECT "AchievementChallengeCompletionRewardId"
+                    FROM "AchievementChallengeCompletionReward"
+                    WHERE "CompletionId" IN (SELECT "AchievementChallengeCompletionId" FROM "AchievementChallengeCompletionIdList")
+                );
+
+                DELETE FROM "AchievementChallengeCompletionProductReward"
+                WHERE "AchievementChallengeCompletionRewardId" IN (
+                    SELECT "AchievementChallengeCompletionRewardId"
+                    FROM "AchievementChallengeCompletionReward"
+                    WHERE "CompletionId" IN (SELECT "AchievementChallengeCompletionId" FROM "AchievementChallengeCompletionIdList")
+                );
+
+                DELETE FROM "AchievementChallengeCompletionTimeReward"
+                WHERE "AchievementChallengeCompletionRewardId" IN (
+                    SELECT "AchievementChallengeCompletionRewardId"
+                    FROM "AchievementChallengeCompletionReward"
+                    WHERE "CompletionId" IN (SELECT "AchievementChallengeCompletionId" FROM "AchievementChallengeCompletionIdList")
+                );
+
+                DELETE FROM "AchievementChallengeCompletionReward"
+                WHERE "CompletionId" IN (SELECT "AchievementChallengeCompletionId" FROM "AchievementChallengeCompletionIdList");
+
+                DELETE FROM "AchievementChallengeCompletionRequirement"
+                WHERE "CompletionId" IN (SELECT "AchievementChallengeCompletionId" FROM "AchievementChallengeCompletionIdList");
+
+                DELETE FROM "AchievementLadderEventRequirement"
+                WHERE "EventId" IN (SELECT "AchievementLadderEventId" FROM "AchievementLadderEventIdList");
+
+                DELETE FROM "AchievementRequirementSnapshot"
+                WHERE "AchievementRequirementSnapshotId" IN (SELECT "AchievementRequirementSnapshotId" FROM "AchievementRequirementSnapshotIdList");
+
+                DELETE FROM "AchievementChallengeCompletion"
+                WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "AchievementCompletion"
+                WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "AchievementLadderEvent"
+                WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
+                DELETE FROM "AchievementLadderUserState"
+                WHERE "UserId" IN (SELECT "UserId" FROM "UserIdList");
+
                 DELETE FROM "UserCreditLimit"
                 USING "UserMember" AS u
                 WHERE "UserCreditLimit"."UserId" = u."UserId"

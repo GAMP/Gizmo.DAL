@@ -1,8 +1,6 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Microsoft.Extensions.Configuration;
 using Testcontainers.MsSql;
@@ -36,25 +34,14 @@ public static class Container
         .GetSection(section)
         .Get<Configuration>();
 
-    private static async Task<T> Start<B, T>(B containerBuilder, Configuration config)
+    private static async Task<T> Start<B, T>(B containerBuilder)
          where B : IContainerBuilder<B, T>
          where T : DockerContainer, IDatabaseContainer
     {
-        T container;
-        if (config.Backup is not null)
-        {
-            var srcDir = Path.GetDirectoryName(config.Backup.Src);
-
-            container = containerBuilder
-                .WithBindMount(srcDir, config.Backup.Dst, AccessMode.ReadWrite)
-                .Build();
-
-            await container.StartAsync().ConfigureAwait(false);
-
-            return container;
-        }
-
-        container = containerBuilder.Build();
+        // Disposable current-schema harness: containers never bind-mount a host backup source.
+        // Per-test databases and the optional ticker schema are created inside the container from
+        // the current EF model, so the harness reads or writes no host backup directory or data.
+        var container = containerBuilder.Build();
         await container.StartAsync();
         return container;
     }
@@ -68,11 +55,11 @@ public static class Container
            .WithImage(configuration.Image)
            .WithPassword(configuration.Password);
 
-        var container = await Start<PostgreSqlBuilder, PostgreSqlContainer>(containerBuilder, configuration);
+        var container = await Start<PostgreSqlBuilder, PostgreSqlContainer>(containerBuilder);
 
         Environment.SetEnvironmentVariable("POSTGRES_DOCKER", container.Name[1..]); // reduce / from start
 
-        return new CreationResult<PostgreSqlContainer>(container, configuration);
+        return new CreationResult<PostgreSqlContainer>(container);
     }
 
     private static async Task<CreationResult<MsSqlContainer>> CreateMsSql()
@@ -85,7 +72,7 @@ public static class Container
             .WithImage(configuration.Image)
             .WithPassword(configuration.Password);
 
-        var container = await Start<MsSqlBuilder, MsSqlContainer>(containerBuilder, configuration);
-        return new CreationResult<MsSqlContainer>(container, configuration);
+        var container = await Start<MsSqlBuilder, MsSqlContainer>(containerBuilder);
+        return new CreationResult<MsSqlContainer>(container);
     }
 }

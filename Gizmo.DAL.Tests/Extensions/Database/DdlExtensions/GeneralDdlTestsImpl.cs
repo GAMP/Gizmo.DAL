@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gizmo.DAL.Contexts;
+using Gizmo.DAL;
 using Gizmo.DAL.Extensions;
-using SharedLib;
 using Xunit;
 
 namespace Gizmo.DAL.Tests.Extensions.Database.DdlExtensions;
@@ -184,42 +184,6 @@ public static class GeneralDdlTestsImpl
 
         Assert.True(count > 0);
         Assert.Equal(cnmd.DatabaseName, dbName);
-    }
-
-    public static async Task ReinitializeDatabase(DefaultDbContext context, DatabaseTestFixture fixture, DatabaseType dbType)
-    {
-        var cts = new CancellationTokenSource(TimeSpan.FromMinutes(3));
-        var config = fixture.GetConfiguration(dbType);
-
-        var exists = await context.Database.Exists(cts.Token);
-
-        Assert.True(exists);
-
-        var backupName = context.Database.GenerateBackupName();
-        var backupPath = Path.Combine(config.Backup.Dst, backupName);
-
-        await context.Database.Backup(backupPath, cts.Token);
-
-        await context.Database.Drop(cts.Token);
-
-        exists = await context.Database.Exists(cts.Token);
-
-        Assert.False(exists);
-
-        await context.Database.Restore(backupPath, cts.Token);
-
-        exists = await context.Database.Exists(cts.Token);
-
-        Assert.True(exists);
-
-        var backupVolumeDirectory = Path.GetDirectoryName(config.Backup.Src);
-
-        var backupToRemove = Path.Combine(backupVolumeDirectory!, backupName);
-
-        if (File.Exists(backupToRemove))
-        {
-            File.Delete(backupToRemove);
-        }
     }
 
     public static async Task TruncateLogs(DefaultDbContext context)

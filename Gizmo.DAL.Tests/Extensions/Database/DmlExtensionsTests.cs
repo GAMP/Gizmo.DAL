@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
+using Gizmo.DAL;
 using Gizmo.DAL.Tests.Extensions.Database.DmlExtensions;
-using SharedLib;
 using Xunit;
 
 namespace Gizmo.DAL.Tests.Extensions.Database;
@@ -13,18 +13,9 @@ public class DmlExtensionsTests(DatabaseTestFixture fixture)
     [Theory]
     [InlineData(DatabaseType.MSSQL)]
     [InlineData(DatabaseType.POSTGRE)]
-    public async Task Cleanup_All(DatabaseType dbType)
-    {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_All), useBackup: true);
-        await CleanupTestsImpl.Cleanup_All(context);
-    }
-
-    [Theory]
-    [InlineData(DatabaseType.MSSQL)]
-    [InlineData(DatabaseType.POSTGRE)]
     public async Task CleanupUsers(DatabaseType dbType)
     {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(CleanupUsers), useBackup: true);
+        await using var context = await _fixture.CreateDbContext(dbType, nameof(CleanupUsers));
         await CleanupUsersTestsImpl.CleanupUsers_Basic(context);
     }
 
@@ -40,45 +31,9 @@ public class DmlExtensionsTests(DatabaseTestFixture fixture)
     [Theory]
     [InlineData(DatabaseType.MSSQL)]
     [InlineData(DatabaseType.POSTGRE)]
-    public async Task Cleanup_DeleteProductsOnly(DatabaseType dbType)
-    {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_DeleteProductsOnly), useBackup: true);
-        await CleanupTestsImpl.Cleanup_DeleteProductsOnly(context);
-    }
-
-    [Theory]
-    [InlineData(DatabaseType.MSSQL)]
-    [InlineData(DatabaseType.POSTGRE)]
-    public async Task Cleanup_DeleteHostsOnly(DatabaseType dbType)
-    {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_DeleteHostsOnly), useBackup: true);
-        await CleanupTestsImpl.Cleanup_DeleteHostsOnly(context);
-    }
-
-    [Theory]
-    [InlineData(DatabaseType.MSSQL)]
-    [InlineData(DatabaseType.POSTGRE)]
-    public async Task Cleanup_DeleteOperatorsOnly(DatabaseType dbType)
-    {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_DeleteOperatorsOnly), useBackup: true);
-        await CleanupTestsImpl.Cleanup_DeleteOperatorsOnly(context);
-    }
-
-    [Theory]
-    [InlineData(DatabaseType.MSSQL)]
-    [InlineData(DatabaseType.POSTGRE)]
-    public async Task Cleanup_DeleteUsersOnly(DatabaseType dbType)
-    {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_DeleteUsersOnly), useBackup: true);
-        await CleanupTestsImpl.Cleanup_DeleteUsersOnly(context);
-    }
-
-    [Theory]
-    [InlineData(DatabaseType.MSSQL)]
-    [InlineData(DatabaseType.POSTGRE)]
     public async Task Cleanup_HandlesEmptyDatabase(DatabaseType dbType)
     {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_HandlesEmptyDatabase), useBackup: true);
+        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_HandlesEmptyDatabase));
         await CleanupTestsImpl.Cleanup_HandlesEmptyDatabase(context);
     }
 
@@ -112,18 +67,90 @@ public class DmlExtensionsTests(DatabaseTestFixture fixture)
     [Theory]
     [InlineData(DatabaseType.MSSQL)]
     [InlineData(DatabaseType.POSTGRE)]
-    public async Task Cleanup_DeleteAllFalse(DatabaseType dbType)
+    public async Task Cleanup_HandlesAssetTransactionCheckedInBy(DatabaseType dbType)
     {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_DeleteAllFalse), useBackup: true);
-        await CleanupTestsImpl.Cleanup_DeleteAllFalse(context);
+        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_HandlesAssetTransactionCheckedInBy));
+        await CleanupTestsImpl.Cleanup_HandlesAssetTransactionCheckedInBy(context);
     }
 
     [Theory]
     [InlineData(DatabaseType.MSSQL)]
     [InlineData(DatabaseType.POSTGRE)]
-    public async Task Cleanup_HandlesAssetTransactionCheckedInBy(DatabaseType dbType)
+    public async Task FullReset_RemovesAchievementCompletionRewardsBeforeFinancialParents(DatabaseType dbType)
     {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(Cleanup_HandlesAssetTransactionCheckedInBy));
-        await CleanupTestsImpl.Cleanup_HandlesAssetTransactionCheckedInBy(context);
+        await using var context = await _fixture.CreateDbContext(dbType, $"{nameof(FullReset_RemovesAchievementCompletionRewardsBeforeFinancialParents)}_{dbType}");
+        await CleanupTestsImpl.FullReset_RemovesAchievementCompletionRewardsBeforeFinancialParents(context);
+    }
+
+    [Theory]
+    [InlineData(DatabaseType.MSSQL)]
+    [InlineData(DatabaseType.POSTGRE)]
+    public async Task FullReset_ResetsTickerQIncludingSelfReference(DatabaseType dbType)
+    {
+        await using var context = await _fixture.CreateDbContext(dbType, $"{nameof(FullReset_ResetsTickerQIncludingSelfReference)}_{dbType}", withTickerSchema: true);
+        await CleanupTestsImpl.FullReset_ResetsTickerQIncludingSelfReference(context);
+    }
+
+    [Theory]
+    [InlineData(DatabaseType.MSSQL)]
+    [InlineData(DatabaseType.POSTGRE)]
+    public async Task FullReset_SucceedsWhenTickerSchemaAbsent(DatabaseType dbType)
+    {
+        await using var context = await _fixture.CreateDbContext(dbType, $"{nameof(FullReset_SucceedsWhenTickerSchemaAbsent)}_{dbType}");
+        await CleanupTestsImpl.FullReset_SucceedsWhenTickerSchemaAbsent(context);
+    }
+
+    [Theory]
+    [InlineData(DatabaseType.MSSQL)]
+    [InlineData(DatabaseType.POSTGRE)]
+    public async Task ProductsOnlyCleanup_RemovesAchievementProductDependencies(DatabaseType dbType)
+    {
+        await using var context = await _fixture.CreateDbContext(dbType, $"{nameof(ProductsOnlyCleanup_RemovesAchievementProductDependencies)}_{dbType}");
+        await CleanupTestsImpl.ProductsOnlyCleanup_RemovesAchievementProductDependencies(context);
+    }
+
+    [Theory]
+    [InlineData(DatabaseType.MSSQL)]
+    [InlineData(DatabaseType.POSTGRE)]
+    public async Task HostsOnlyCleanup_RemovesAchievementHostDependencies(DatabaseType dbType)
+    {
+        await using var context = await _fixture.CreateDbContext(dbType, $"{nameof(HostsOnlyCleanup_RemovesAchievementHostDependencies)}_{dbType}");
+        await CleanupTestsImpl.HostsOnlyCleanup_RemovesAchievementHostDependencies(context);
+    }
+
+    [Theory]
+    [InlineData(DatabaseType.MSSQL)]
+    [InlineData(DatabaseType.POSTGRE)]
+    public async Task UsersHardDelete_RemovesAchievementHistoryAndUser(DatabaseType dbType)
+    {
+        await using var context = await _fixture.CreateDbContext(dbType, $"{nameof(UsersHardDelete_RemovesAchievementHistoryAndUser)}_{dbType}");
+        await CleanupUsersTestsImpl.UsersHardDelete_RemovesAchievementHistoryAndUser(context);
+    }
+
+    [Theory]
+    [InlineData(DatabaseType.MSSQL)]
+    [InlineData(DatabaseType.POSTGRE)]
+    public async Task CleanupUsers_RemovesSoftDeletedUserAchievementDependencies(DatabaseType dbType)
+    {
+        await using var context = await _fixture.CreateDbContext(dbType, $"{nameof(CleanupUsers_RemovesSoftDeletedUserAchievementDependencies)}_{dbType}");
+        await CleanupUsersTestsImpl.CleanupUsers_RemovesSoftDeletedUserAchievementDependencies(context);
+    }
+
+    [Theory]
+    [InlineData(DatabaseType.MSSQL)]
+    [InlineData(DatabaseType.POSTGRE)]
+    public async Task ProductsOnlyCleanup_RemovesTptBaseRowsForProductsAndPreservesUnrelatedConfiguration(DatabaseType dbType)
+    {
+        await using var context = await _fixture.CreateDbContext(dbType, $"{nameof(ProductsOnlyCleanup_RemovesTptBaseRowsForProductsAndPreservesUnrelatedConfiguration)}_{dbType}");
+        await CleanupTestsImpl.ProductsOnlyCleanup_RemovesTptBaseRowsForProductsAndPreservesUnrelatedConfiguration(context);
+    }
+
+    [Theory]
+    [InlineData(DatabaseType.MSSQL)]
+    [InlineData(DatabaseType.POSTGRE)]
+    public async Task HostsOnlyCleanup_RemovesTptBaseRowsForHostsAndPreservesUnrelatedConfiguration(DatabaseType dbType)
+    {
+        await using var context = await _fixture.CreateDbContext(dbType, $"{nameof(HostsOnlyCleanup_RemovesTptBaseRowsForHostsAndPreservesUnrelatedConfiguration)}_{dbType}");
+        await CleanupTestsImpl.HostsOnlyCleanup_RemovesTptBaseRowsForHostsAndPreservesUnrelatedConfiguration(context);
     }
 }

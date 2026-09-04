@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gizmo.DAL.Contexts;
+using Gizmo.DAL.Entities;
 using Gizmo.DAL.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -193,432 +194,457 @@ public static class CleanupTestsImpl
         });
     }
 
-    #region Helper Methods
+    #region Achievement/TickerQ cleanup contract
 
-    private static async Task<int> GetDeleteUsersCount(DefaultDbContext context)
+    internal sealed record FinancialAchievementGraph(
+        int UserId,
+        int ProductId,
+        int OrderId,
+        int InvoiceId,
+        int PointTransactionId,
+        int AchievementId,
+        int ChallengeId,
+        int CompletionId);
+
+    private static bool IsSqlServer(DefaultDbContext db) =>
+        db.Database.ProviderName == "Microsoft.EntityFrameworkCore.SqlServer";
+
+    /// <summary>
+    /// Seeds a user financial graph (product, order, invoice, point transaction) plus an
+    /// achievement challenge completion whose reward leaves reference the invoice and the point
+    /// transaction through restrictive FKs (product reward has NOT NULL ProductId, nullable
+    /// InvoiceId; points reward has nullable PointTransactionId). When <paramref name="user"/> is
+    /// supplied the graph is attached to that member; otherwise it is attached to the first
+    /// seeded member.
+    /// </summary>
+    internal static async Task<FinancialAchievementGraph> SeedFinancialAndAchievementGraphAsync(DefaultDbContext db, CancellationToken ct, UserMember? user = null)
     {
-        var appStatsCount = await context.AppStats.CountAsync();
-        var reservationUsersCount = await context.ReservationUsers.CountAsync();
-        var reservationHostsCount = await context.ReservationHosts.CountAsync();
-        var reservationsCount = await context.Reservations.CountAsync();
-        var assetTransactionCount = await context.AssetTransactions.CountAsync();
-        var appRatingCount = await context.AppRatings.CountAsync();
-        var userCreditLimitCount = await context.UserCreditLimits.CountAsync();
-        var userAttributeCount = await context.UserAttribute.CountAsync();
-        var userNoteCount = await context.UserNotes.CountAsync();
-        var verificationEmailCount = await context.EmailVerifications.CountAsync();
-        var verificationMobilePhoneCount = await context.MobilePhoneVerifications.CountAsync();
-        var verificationCount = await context.Verifications.CountAsync();
-        var usersGuestCount = await context.UsersGuest.CountAsync();
-        var usersMemberCount = await context.UsersMember.CountAsync();
+        var now = DateTime.UtcNow;
+        var targetUser = user ?? await db.UsersMember.FirstAsync(ct);
 
-        return appRatingCount
-            + appStatsCount
-            + reservationUsersCount
-            + reservationHostsCount
-            + reservationsCount
-            + assetTransactionCount
-            + userCreditLimitCount
-            + userAttributeCount
-            + userNoteCount
-            + verificationEmailCount
-            + verificationMobilePhoneCount
-            + verificationCount
-            + usersGuestCount
-            + usersMemberCount;
+        var productGroup = new ProductGroup { Name = "Test Products", CreatedTime = now };
+        var product = new Product { Name = "Test Product", ProductGroup = productGroup, CreatedTime = now };
+        db.Products.Add(product);
+        await db.SaveChangesAsync(ct);
+
+        var order = new ProductOrder { UserId = targetUser.Id, CreatedTime = now };
+        db.Orders.Add(order);
+        await db.SaveChangesAsync(ct);
+
+        var invoice = new Invoice { UserId = targetUser.Id, ProductOrderId = order.Id, CreatedTime = now };
+        var pointTransaction = new PointTransaction { UserId = targetUser.Id, CreatedTime = now };
+        db.Invoices.Add(invoice);
+        db.PointsTransaction.Add(pointTransaction);
+        await db.SaveChangesAsync(ct);
+
+        var achievement = new Achievement { Name = "Test Achievement", CreatedTime = now };
+        db.Achievements.Add(achievement);
+        await db.SaveChangesAsync(ct);
+
+        db.AchievementCompletions.Add(new AchievementCompletion
+        {
+            UserId = targetUser.Id,
+            AchievementId = achievement.Id,
+            RangeStart = DateTime.UtcNow.Date,
+            CompletedTime = now,
+            Quantity = 1
+        });
+        await db.SaveChangesAsync(ct);
+
+        var challenge = new AchievementChallenge { Name = "Test Challenge", CreatedTime = now };
+        db.AchievementChallenges.Add(challenge);
+        await db.SaveChangesAsync(ct);
+
+        var completion = new AchievementChallengeCompletion
+        {
+            UserId = targetUser.Id,
+            ChallengeId = challenge.Id,
+            Occurrence = 1,
+            GlobalOccurrence = 1,
+            CompletedTime = now
+        };
+        completion.Rewards.Add(new AchievementChallengeCompletionPointsReward
+        {
+            Amount = 25,
+            PointTransactionId = pointTransaction.Id,
+            Status = AchievementChallengeRewardStatus.Granted
+        });
+        completion.Rewards.Add(new AchievementChallengeCompletionProductReward
+        {
+            ProductId = product.Id,
+            InvoiceId = invoice.Id,
+            Quantity = 1,
+            Status = AchievementChallengeRewardStatus.Granted
+        });
+        db.AchievementChallengeCompletions.Add(completion);
+        await db.SaveChangesAsync(ct);
+
+        return new FinancialAchievementGraph(
+            targetUser.Id, product.Id, order.Id, invoice.Id, pointTransaction.Id,
+            achievement.Id, challenge.Id, completion.Id);
     }
 
-    private static async Task<int> GetDeleteHostsCount(DefaultDbContext context)
+    private static async Task<int> CountScalarAsync(DefaultDbContext db, string sql, CancellationToken ct)
     {
-        var appStatsCount = await context.AppStats.CountAsync();
-        var reservationUsersCount = await context.ReservationUsers.CountAsync();
-        var reservationHostsCount = await context.ReservationHosts.CountAsync();
-        var reservationsCount = await context.Reservations.CountAsync();
-        var hostComputerCount = await context.HostComputers.CountAsync();
-        var hostEndpointCount = await context.HostEndpoint.CountAsync();
-        var hostCount = await context.Hosts.CountAsync();
-        var productHostHiddenCount = await context.ProductHostGroupHidden.CountAsync();
-
-        return appStatsCount
-            + reservationUsersCount
-            + reservationHostsCount
-            + reservationsCount
-            + hostComputerCount
-            + hostEndpointCount
-            + hostCount
-            + productHostHiddenCount;
+        var values = await db.Database.SqlQueryRaw<int>(sql).ToArrayAsync(ct);
+        return values.Length == 0 ? 0 : values[0];
     }
 
-    private static async Task<int> GetDeleteOperatorsCount(DefaultDbContext context)
+    private static string TickerCountSql(string table, DefaultDbContext db) => IsSqlServer(db)
+        ? $"SELECT COUNT(*) FROM [ticker].[{table}]"
+        : $"SELECT COUNT(*)::int FROM \"ticker\".\"{table}\"";
+
+    /// <summary>
+    /// Provider-qualified whole-table row count used to assert TPT base-table state (e.g.
+    /// AchievementFilter / AchievementChallengeReward base rows) that has no EF entity set.
+    /// </summary>
+    private static string TableCountSql(string table, DefaultDbContext db) => IsSqlServer(db)
+        ? $"SELECT COUNT(*) FROM [{table}]"
+        : $"SELECT COUNT(*)::int FROM \"{table}\"";
+
+    internal static Task<int> CountTableRowsAsync(DefaultDbContext db, string table, CancellationToken ct) =>
+        CountScalarAsync(db, TableCountSql(table, db), ct);
+
+    private static async Task SeedTickerRowsAsync(DefaultDbContext db, CancellationToken ct)
     {
-        var admin = await context.UsersOperator.FirstOrDefaultAsync(x => x.Username == "Admin");
-        var usersOperatorCount = await context.UsersOperator.CountAsync();
-
-        if (admin != null)
-            usersOperatorCount--; // Exclude the admin operator
-
-        return usersOperatorCount;
+        var cronId = Guid.NewGuid();
+        var occurrenceId = Guid.NewGuid();
+        var parentId = Guid.NewGuid();
+        var childId = Guid.NewGuid();
+        var executionTime = DateTime.UtcNow.AddMinutes(5);
+        var sql = IsSqlServer(db)
+            ? $"""
+                INSERT INTO [ticker].[CronTickers] ([Id], [Retries], [CreatedAt], [UpdatedAt])
+                VALUES ('{cronId}', 0, SYSUTCDATETIME(), SYSUTCDATETIME());
+                INSERT INTO [ticker].[CronTickerOccurrences] ([Id], [Status], [ExecutionTime], [CronTickerId], [ElapsedTime], [RetryCount], [CreatedAt], [UpdatedAt])
+                VALUES ('{occurrenceId}', 0, '{executionTime:yyyy-MM-ddTHH:mm:ss.fffffff}', '{cronId}', 0, 0, SYSUTCDATETIME(), SYSUTCDATETIME());
+                INSERT INTO [ticker].[TimeTickers] ([Id], [CreatedAt], [UpdatedAt], [Status], [ElapsedTime], [Retries], [RetryCount])
+                VALUES ('{parentId}', SYSUTCDATETIME(), SYSUTCDATETIME(), 0, 0, 0, 0);
+                INSERT INTO [ticker].[TimeTickers] ([Id], [CreatedAt], [UpdatedAt], [Status], [ElapsedTime], [Retries], [RetryCount], [ParentId])
+                VALUES ('{childId}', SYSUTCDATETIME(), SYSUTCDATETIME(), 0, 0, 0, 0, '{parentId}');
+                """
+            : $"""
+                INSERT INTO "ticker"."CronTickers" ("Id", "Retries", "CreatedAt", "UpdatedAt")
+                VALUES ('{cronId}'::uuid, 0, now(), now());
+                INSERT INTO "ticker"."CronTickerOccurrences" ("Id", "Status", "ExecutionTime", "CronTickerId", "ElapsedTime", "RetryCount", "CreatedAt", "UpdatedAt")
+                VALUES ('{occurrenceId}'::uuid, 0, '{executionTime:yyyy-MM-ddTHH:mm:ss.fffffff}', '{cronId}'::uuid, 0, 0, now(), now());
+                INSERT INTO "ticker"."TimeTickers" ("Id", "CreatedAt", "UpdatedAt", "Status", "ElapsedTime", "Retries", "RetryCount")
+                VALUES ('{parentId}'::uuid, now(), now(), 0, 0, 0, 0);
+                INSERT INTO "ticker"."TimeTickers" ("Id", "CreatedAt", "UpdatedAt", "Status", "ElapsedTime", "Retries", "RetryCount", "ParentId")
+                VALUES ('{childId}'::uuid, now(), now(), 0, 0, 0, 0, '{parentId}'::uuid);
+                """;
+        await db.Database.ExecuteSqlRawAsync(sql, ct);
     }
 
-    private static async Task<int> GetDeleteProductsCount(DefaultDbContext context)
+    /// <summary>
+    /// Full reset must delete achievement completion rewards before the always-reset Invoice and
+    /// PointTransaction rows they reference through restrictive FKs, then remove all configuration.
+    /// </summary>
+    public static async Task FullReset_RemovesAchievementCompletionRewardsBeforeFinancialParents(DefaultDbContext db)
     {
-        var productImageCount = await context.ProductImages.CountAsync();
-        var productTaxCount = await context.ProductsTaxes.CountAsync();
-        var productPeriodCount = await context.ProductPeriods.CountAsync();
-        var productPeriodDayCount = await context.ProductPeriodDays.CountAsync();
-        var productTimeHostDisallowedCount = await context.ProductTimeHostDisallowed.CountAsync();
-        var productUserDisallowedCount = await context.ProductUserGroupDisallowed.CountAsync();
-        var productUserPriceCount = await context.ProductUserPrices.CountAsync();
-        var bundleProductCount = await context.BundleProducts.CountAsync();
-        var productTimePeriodCount = await context.ProductTimePeriods.CountAsync();
-        var productTimePeriodDayCount = await context.ProductTimePeriodDays.CountAsync();
-        var productBundleCount = await context.ProductBundles.CountAsync();
-        var productCount = await context.Products.CountAsync();
-        var productTimeCount = await context.ProductTimes.CountAsync();
-        var productHostHiddenCount = await context.ProductHostGroupHidden.CountAsync();
+        var ct = CancellationToken.None;
+        var graph = await SeedFinancialAndAchievementGraphAsync(db, ct);
 
-        return productImageCount
-            + productTaxCount
-            + productPeriodCount
-            + productPeriodDayCount
-            + productTimeHostDisallowedCount
-            + productUserDisallowedCount
-            + productUserPriceCount
-            + bundleProductCount
-            + productTimePeriodCount
-            + productTimePeriodDayCount
-            + productBundleCount
-            + productCount
-            + productTimeCount
-            + productHostHiddenCount;
+        await db.Cleanup(deleteUsers: true, deleteHosts: true, deleteOperators: true, deleteProducts: true, ct);
+
+        db.ChangeTracker.Clear();
+
+        Assert.Equal(0, await db.Achievements.CountAsync(ct));
+        Assert.Equal(0, await db.AchievementCompletions.CountAsync(ct));
+        Assert.Equal(0, await db.AchievementChallenges.CountAsync(ct));
+        Assert.Equal(0, await db.AchievementChallengeCompletions.CountAsync(ct));
+        Assert.Equal(0, await db.Set<AchievementChallengeCompletionReward>().CountAsync(ct));
+        Assert.Equal(0, await db.Invoices.CountAsync(ct));
+        Assert.Equal(0, await db.PointsTransaction.CountAsync(ct));
+        Assert.Equal(0, await db.Orders.CountAsync(ct));
+        Assert.Equal(0, await db.Products.CountAsync(ct));
+        Assert.Equal(0, await db.UsersMember.CountAsync(ct));
+        Assert.NotNull(await db.UsersOperator.FirstOrDefaultAsync(o => o.Username == "Admin", ct));
+        Assert.True(graph.CompletionId > 0);
     }
 
-    private static async Task<int> GetDeleteGeneralCount(DefaultDbContext context)
+    /// <summary>
+    /// Full reset resets TickerQ rows in the shared database: cron occurrences, cron tickers and
+    /// self-referencing time tickers (child-before-parent ordering, parent FK released first).
+    /// </summary>
+    public static async Task FullReset_ResetsTickerQIncludingSelfReference(DefaultDbContext db)
     {
-        // USAGE SESSION
-        var usageRateCount = await context.UsageRate.CountAsync();
-        var usageTimeFixedCount = await context.UsageFixed.CountAsync();
-        var usageTimeCount = await context.UsageTime.CountAsync();
-        var usageUserSessionCount = await context.UsageUserSession.CountAsync();
-        var usageCount = await context.Usage.CountAsync();
-        var usageSessionCount = await context.UsageSessions.CountAsync();
+        var ct = CancellationToken.None;
+        await SeedTickerRowsAsync(db, ct);
 
-        // USER SESSION
-        var userSessionChangeCount = await context.SessionsChanges.CountAsync();
-        var userSessionCount = await context.UsageUserSession.CountAsync();
+        Assert.Equal(1, await CountScalarAsync(db, TickerCountSql("CronTickers", db), ct));
+        Assert.Equal(1, await CountScalarAsync(db, TickerCountSql("CronTickerOccurrences", db), ct));
+        Assert.Equal(2, await CountScalarAsync(db, TickerCountSql("TimeTickers", db), ct));
 
-        // REFUNDS
-        var refundInvoicePaymentCount = await context.InvoicePaymentRefund.CountAsync();
-        var refundDepositPaymentCount = await context.DepositPaymentRefunds.CountAsync();
-        var refundCount = await context.Refunds.CountAsync();
+        await db.Cleanup(deleteUsers: true, deleteHosts: true, deleteOperators: true, deleteProducts: true, ct);
 
-        // VOIDS
-        var voidInvoiceCount = await context.InvoiceVoids.CountAsync();
-        var voidDepositPaymentCount = await context.DepositPaymentVoids.CountAsync();
-        var voidCount = await context.Voids.CountAsync();
+        Assert.Equal(0, await CountScalarAsync(db, TickerCountSql("CronTickers", db), ct));
+        Assert.Equal(0, await CountScalarAsync(db, TickerCountSql("CronTickerOccurrences", db), ct));
+        Assert.Equal(0, await CountScalarAsync(db, TickerCountSql("TimeTickers", db), ct));
+    }
 
-        // INVOICE PAYMENTS
-        var invoicePaymentCount = await context.InvoicePayments.CountAsync();
+    /// <summary>
+    /// Full reset succeeds even when the ticker schema was never initialized (guards must skip the
+    /// ticker statements instead of failing on missing tables).
+    /// </summary>
+    public static async Task FullReset_SucceedsWhenTickerSchemaAbsent(DefaultDbContext db)
+    {
+        var ct = CancellationToken.None;
 
-        // DEPOSIT PAYMENT
-        var paymentIntentDepositCount = await context.PaymentIntents.CountAsync();
-        var paymentIntentCount = await context.PaymentIntents.CountAsync();
-        var depositPaymentCount = await context.DepositPayments.CountAsync();
+        await db.Cleanup(deleteUsers: true, deleteHosts: true, deleteOperators: true, deleteProducts: true, ct);
 
-        // PAYMENTS
-        var paymentCount = await context.Payments.CountAsync();
+        db.ChangeTracker.Clear();
+        Assert.NotNull(await db.UsersOperator.FirstOrDefaultAsync(o => o.Username == "Admin", ct));
+    }
 
-        // INVOICE
-        var invoiceLineProductCount = await context.InvoiceLineProduct.CountAsync();
-        var invoiceLineSessionCount = await context.InvoiceLineSession.CountAsync();
-        var invoiceLineTimeCount = await context.InvoiceLineTime.CountAsync();
-        var invoiceLineTimeFixedCount = await context.InvoiceLineTimeFixed.CountAsync();
-        var invoiceLineExtendedCount = await context.InvoiceLinesExtended.CountAsync();
-        var invoiceLineCount = await context.InvoiceLines.CountAsync();
-        var invoiceFiscalReceiptCount = await context.InvoiceFiscalReceipts.CountAsync();
-        var invoiceCount = await context.Invoices.CountAsync();
+    /// <summary>
+    /// Products-only cleanup removes achievement rows referencing products (product filters and
+    /// challenge product reward configuration) so product deletion cannot hit restrictive FKs;
+    /// achievement/challenge configuration that does not reference products is retained.
+    /// </summary>
+    public static async Task ProductsOnlyCleanup_RemovesAchievementProductDependencies(DefaultDbContext db)
+    {
+        var ct = CancellationToken.None;
+        var now = DateTime.UtcNow;
 
-        // ORDER
-        var productOLTimeFixedCount = await context.OrderLinesTimeFixed.CountAsync();
-        var productOLTimeCount = await context.OrderLinesTime.CountAsync();
-        var productOLSessionCount = await context.OrderLineSession.CountAsync();
-        var productOLProductCount = await context.OrderLinesProduct.CountAsync();
-        var productOLExtendedCount = await context.OrderLinesExtended.CountAsync();
-        var productOLCount = await context.OrderLines.CountAsync();
-        var productOrderCount = await context.Orders.CountAsync();
+        var productGroup = new ProductGroup { Name = "Test Products", CreatedTime = now };
+        var product = new Product { Name = "Test Product", ProductGroup = productGroup, CreatedTime = now };
+        db.Products.Add(product);
+        await db.SaveChangesAsync(ct);
 
-        // DEPOSIT TRANSACTION
-        var depositTransactionCount = await context.DepositTransactions.CountAsync();
+        var achievement = new Achievement { Name = "Product Achievement", CreatedTime = now };
+        db.Achievements.Add(achievement);
+        await db.SaveChangesAsync(ct);
 
-        // POINT TRANSACTION
-        var pointTransactionCount = await context.PointsTransaction.CountAsync();
+        var challenge = new AchievementChallenge { Name = "Product Challenge", CreatedTime = now };
+        db.AchievementChallenges.Add(challenge);
+        await db.SaveChangesAsync(ct);
 
-        // STOCK TRANSACTION
-        var stockTransactionCount = await context.StockTransactions.CountAsync();
+        db.Set<AchievementProductFilter>().Add(new AchievementProductFilter
+        {
+            AchievementId = achievement.Id,
+            ProductId = product.Id,
+            CreatedTime = now
+        });
+        db.Set<AchievementChallengeProductReward>().Add(new AchievementChallengeProductReward
+        {
+            ChallengeId = challenge.Id,
+            ProductId = product.Id,
+            Quantity = 1,
+            CreatedTime = now
+        });
+        await db.SaveChangesAsync(ct);
 
-        // SHIFT COUNT
-        var shiftCountCount = await context.ShiftCounts.CountAsync();
+        await db.Cleanup(deleteUsers: false, deleteHosts: false, deleteOperators: false, deleteProducts: true, ct);
 
-        // REGISTER TRANSACTION
-        var registerTransactionCount = await context.RegisterTransactions.CountAsync();
+        db.ChangeTracker.Clear();
 
-        // FISCAL RECEIPTS
-        var fiscalReceiptCount = await context.FiscalReceipts.CountAsync();
+        Assert.Equal(0, await db.Products.CountAsync(ct));
+        Assert.Equal(0, await db.Set<AchievementProductFilter>().CountAsync(ct));
+        Assert.Equal(0, await db.Set<AchievementChallengeProductReward>().CountAsync(ct));
+        Assert.True(await db.Achievements.AnyAsync(a => a.Id == achievement.Id, ct), "Achievement configuration should be retained in products-only cleanup.");
+        Assert.True(await db.AchievementChallenges.AnyAsync(c => c.Id == challenge.Id, ct), "Challenge configuration should be retained in products-only cleanup.");
+    }
 
-        // SHIFT
-        var shiftCount = await context.Shifts.CountAsync();
+    /// <summary>
+    /// Hosts-only cleanup removes achievement rows referencing hosts (host filters) so host
+    /// deletion cannot hit restrictive FKs; achievement configuration is retained.
+    /// </summary>
+    public static async Task HostsOnlyCleanup_RemovesAchievementHostDependencies(DefaultDbContext db)
+    {
+        var ct = CancellationToken.None;
+        var now = DateTime.UtcNow;
 
-        // REGISTER
-        var registerCount = await context.Registers.CountAsync();
+        var achievement = new Achievement { Name = "Host Achievement", CreatedTime = now };
+        db.Achievements.Add(achievement);
+        await db.SaveChangesAsync(ct);
 
-        return usageRateCount
-            + usageTimeFixedCount
-            + usageTimeCount
-            + usageUserSessionCount
-            + usageCount
-            + usageSessionCount
-            + userSessionChangeCount
-            + userSessionCount
-            + refundInvoicePaymentCount
-            + refundDepositPaymentCount
-            + refundCount
-            + voidInvoiceCount
-            + voidDepositPaymentCount
-            + voidCount
-            + invoicePaymentCount
-            + paymentIntentDepositCount
-            + paymentIntentCount
-            + depositPaymentCount
-            + paymentCount
-            + invoiceLineProductCount
-            + invoiceLineSessionCount
-            + invoiceLineTimeCount
-            + invoiceLineTimeFixedCount
-            + invoiceLineExtendedCount
-            + invoiceLineCount
-            + invoiceFiscalReceiptCount
-            + invoiceCount
-            + productOLTimeFixedCount
-            + productOLTimeCount
-            + productOLSessionCount
-            + productOLProductCount
-            + productOLExtendedCount
-            + productOLCount
-            + productOrderCount
-            + depositTransactionCount
-            + pointTransactionCount
-            + stockTransactionCount
-            + shiftCountCount
-            + registerTransactionCount
-            + fiscalReceiptCount
-            + shiftCount
-            + registerCount;
+        var host = new Host { Name = "Test Host", CreatedTime = now };
+        db.Hosts.Add(host);
+        await db.SaveChangesAsync(ct);
+
+        db.Set<AchievementHostFilter>().Add(new AchievementHostFilter
+        {
+            AchievementId = achievement.Id,
+            HostId = host.Id,
+            CreatedTime = now
+        });
+        await db.SaveChangesAsync(ct);
+
+        await db.Cleanup(deleteUsers: false, deleteHosts: true, deleteOperators: false, deleteProducts: false, ct);
+
+        db.ChangeTracker.Clear();
+
+        Assert.Equal(0, await db.Hosts.CountAsync(ct));
+        Assert.Equal(0, await db.Set<AchievementHostFilter>().CountAsync(ct));
+        Assert.True(await db.Achievements.AnyAsync(a => a.Id == achievement.Id, ct), "Achievement configuration should be retained in hosts-only cleanup.");
+    }
+
+    /// <summary>
+    /// D2 regression (products-only): cleanup must delete the TPT base rows
+    /// (AchievementFilter/AchievementChallengeReward) keyed by product-derived rows so the
+    /// base-&gt;derived cascade removes the product filter/reward leaves, leaving no orphaned base
+    /// configuration. Unrelated host filter and points reward configuration (leaf and base) is
+    /// preserved.
+    /// </summary>
+    public static async Task ProductsOnlyCleanup_RemovesTptBaseRowsForProductsAndPreservesUnrelatedConfiguration(DefaultDbContext db)
+    {
+        var ct = CancellationToken.None;
+        var now = DateTime.UtcNow;
+
+        var productGroup = new ProductGroup { Name = "D2 Products", CreatedTime = now };
+        var product = new Product { Name = "D2 Target Product", ProductGroup = productGroup, CreatedTime = now };
+        db.Products.Add(product);
+        await db.SaveChangesAsync(ct);
+
+        var host = new Host { Name = "D2 Preserved Host", CreatedTime = now };
+        db.Hosts.Add(host);
+        await db.SaveChangesAsync(ct);
+
+        var productAchievement = new Achievement { Name = "D2 Product Achievement", CreatedTime = now };
+        var hostAchievement = new Achievement { Name = "D2 Host Achievement", CreatedTime = now };
+        db.Achievements.AddRange(productAchievement, hostAchievement);
+        await db.SaveChangesAsync(ct);
+
+        var challenge = new AchievementChallenge { Name = "D2 Reward Challenge", CreatedTime = now };
+        db.AchievementChallenges.Add(challenge);
+        await db.SaveChangesAsync(ct);
+
+        db.Set<AchievementProductFilter>().Add(new AchievementProductFilter
+        {
+            AchievementId = productAchievement.Id,
+            ProductId = product.Id,
+            CreatedTime = now
+        });
+        db.Set<AchievementHostFilter>().Add(new AchievementHostFilter
+        {
+            AchievementId = hostAchievement.Id,
+            HostId = host.Id,
+            CreatedTime = now
+        });
+        db.Set<AchievementChallengeProductReward>().Add(new AchievementChallengeProductReward
+        {
+            ChallengeId = challenge.Id,
+            ProductId = product.Id,
+            Quantity = 1,
+            CreatedTime = now
+        });
+        db.Set<AchievementChallengePointsReward>().Add(new AchievementChallengePointsReward
+        {
+            ChallengeId = challenge.Id,
+            Amount = 25,
+            CreatedTime = now
+        });
+        await db.SaveChangesAsync(ct);
+
+        // Pre-state: TPT gives one base row per filter/reward leaf.
+        Assert.Equal(2, await CountTableRowsAsync(db, "AchievementFilter", ct));
+        Assert.Equal(2, await CountTableRowsAsync(db, "AchievementChallengeReward", ct));
+
+        await db.Cleanup(deleteUsers: false, deleteHosts: false, deleteOperators: false, deleteProducts: true, ct);
+
+        db.ChangeTracker.Clear();
+
+        Assert.Equal(0, await db.Products.CountAsync(ct));
+        Assert.True(await db.Hosts.AnyAsync(h => h.Id == host.Id, ct), "Hosts are not deleted by products-only cleanup.");
+
+        // Product-derived leaves removed.
+        Assert.Equal(0, await db.Set<AchievementProductFilter>().CountAsync(ct));
+        Assert.Equal(0, await db.Set<AchievementChallengeProductReward>().CountAsync(ct));
+
+        // No orphaned base rows: only the preserved host filter and points reward bases remain.
+        Assert.Equal(1, await CountTableRowsAsync(db, "AchievementFilter", ct));
+        Assert.Equal(1, await CountTableRowsAsync(db, "AchievementChallengeReward", ct));
+        Assert.Equal(1, await db.Set<AchievementHostFilter>().CountAsync(ct));
+        Assert.Equal(1, await db.Set<AchievementChallengePointsReward>().CountAsync(ct));
+
+        // Configuration retained.
+        Assert.True(await db.Achievements.AnyAsync(a => a.Id == productAchievement.Id || a.Id == hostAchievement.Id, ct));
+        Assert.True(await db.AchievementChallenges.AnyAsync(c => c.Id == challenge.Id, ct));
+    }
+
+    /// <summary>
+    /// D2 regression (hosts-only): cleanup must delete the TPT base AchievementFilter rows keyed by
+    /// host-derived rows so the cascade removes the host filter leaves and host deletion cannot hit
+    /// the restrictive host FK. Product-derived filter/reward configuration (leaf and base) is
+    /// preserved because no reward type is host-dependent.
+    /// </summary>
+    public static async Task HostsOnlyCleanup_RemovesTptBaseRowsForHostsAndPreservesUnrelatedConfiguration(DefaultDbContext db)
+    {
+        var ct = CancellationToken.None;
+        var now = DateTime.UtcNow;
+
+        var host = new Host { Name = "D2 Target Host", CreatedTime = now };
+        db.Hosts.Add(host);
+        await db.SaveChangesAsync(ct);
+
+        var productGroup = new ProductGroup { Name = "D2 Products", CreatedTime = now };
+        var product = new Product { Name = "D2 Preserved Product", ProductGroup = productGroup, CreatedTime = now };
+        db.Products.Add(product);
+        await db.SaveChangesAsync(ct);
+
+        var hostAchievement = new Achievement { Name = "D2 Host Achievement", CreatedTime = now };
+        var productAchievement = new Achievement { Name = "D2 Product Achievement", CreatedTime = now };
+        db.Achievements.AddRange(hostAchievement, productAchievement);
+        await db.SaveChangesAsync(ct);
+
+        var challenge = new AchievementChallenge { Name = "D2 Reward Challenge", CreatedTime = now };
+        db.AchievementChallenges.Add(challenge);
+        await db.SaveChangesAsync(ct);
+
+        db.Set<AchievementHostFilter>().Add(new AchievementHostFilter
+        {
+            AchievementId = hostAchievement.Id,
+            HostId = host.Id,
+            CreatedTime = now
+        });
+        db.Set<AchievementProductFilter>().Add(new AchievementProductFilter
+        {
+            AchievementId = productAchievement.Id,
+            ProductId = product.Id,
+            CreatedTime = now
+        });
+        db.Set<AchievementChallengeProductReward>().Add(new AchievementChallengeProductReward
+        {
+            ChallengeId = challenge.Id,
+            ProductId = product.Id,
+            Quantity = 1,
+            CreatedTime = now
+        });
+        db.Set<AchievementChallengePointsReward>().Add(new AchievementChallengePointsReward
+        {
+            ChallengeId = challenge.Id,
+            Amount = 25,
+            CreatedTime = now
+        });
+        await db.SaveChangesAsync(ct);
+
+        // Pre-state: one base row per filter leaf.
+        Assert.Equal(2, await CountTableRowsAsync(db, "AchievementFilter", ct));
+
+        await db.Cleanup(deleteUsers: false, deleteHosts: true, deleteOperators: false, deleteProducts: false, ct);
+
+        db.ChangeTracker.Clear();
+
+        Assert.Equal(0, await db.Hosts.CountAsync(ct));
+        Assert.True(await db.Products.AnyAsync(p => p.Id == product.Id, ct), "Products are not deleted by hosts-only cleanup.");
+
+        // Host-derived filter leaves removed; only the preserved product filter leaf/base remains.
+        Assert.Equal(0, await db.Set<AchievementHostFilter>().CountAsync(ct));
+        Assert.Equal(1, await db.Set<AchievementProductFilter>().CountAsync(ct));
+        Assert.Equal(1, await CountTableRowsAsync(db, "AchievementFilter", ct));
+
+        // No reward configuration depends on hosts, so product reward and points reward leaves and
+        // bases are fully preserved.
+        Assert.Equal(2, await CountTableRowsAsync(db, "AchievementChallengeReward", ct));
+        Assert.Equal(1, await db.Set<AchievementChallengeProductReward>().CountAsync(ct));
+        Assert.Equal(1, await db.Set<AchievementChallengePointsReward>().CountAsync(ct));
+
+        // Configuration retained.
+        Assert.True(await db.Achievements.AnyAsync(a => a.Id == hostAchievement.Id || a.Id == productAchievement.Id, ct));
+        Assert.True(await db.AchievementChallenges.AnyAsync(c => c.Id == challenge.Id, ct));
     }
 
     #endregion
 
-    #region Complex Cleanup Tests
-
-    public static async Task Cleanup_All(DefaultDbContext context)
-    {
-        // Get initial counts
-        var initialGeneralCount = await GetDeleteGeneralCount(context);
-        var initialUserCount = await GetDeleteUsersCount(context);
-        var initialHostCount = await GetDeleteHostsCount(context);
-        var initialOperatorCount = await GetDeleteOperatorsCount(context);
-
-        if(initialOperatorCount == 0)
-        {
-            // If there are no operators, we cannot test this case
-            return; // Skip the test by returning early
-        }
-
-        var initialProductCount = await GetDeleteProductsCount(context);
-
-        var initialTotalCount = initialGeneralCount
-            + initialUserCount
-            + initialHostCount
-            + initialOperatorCount
-            + initialProductCount;
-
-        // Verify initial counts are greater than zero
-        Assert.True(initialTotalCount > 0, "Initial counts should be greater than zero.");
-
-        await context.Cleanup(
-            deleteUsers: true,
-            deleteHosts: true,
-            deleteOperators: true,
-            deleteProducts: true,
-            CancellationToken.None
-        );
-
-        var finalGeneralCount = await GetDeleteGeneralCount(context);
-        var finalUserCount = await GetDeleteUsersCount(context);
-        var finalProductCount = await GetDeleteProductsCount(context);
-        var finalHostCount = await GetDeleteHostsCount(context);
-        var finalOperatorCount = await GetDeleteOperatorsCount(context);
-
-        Assert.Equal(0, finalGeneralCount);
-        Assert.Equal(0, finalUserCount);
-        Assert.Equal(0, finalHostCount);
-        Assert.Equal(0, finalOperatorCount);
-        Assert.Equal(0, finalProductCount);
-    }
-
-    public static async Task Cleanup_DeleteUsersOnly(DefaultDbContext context)
-    {
-        // Get initial counts
-        var initialUserCount = await GetDeleteUsersCount(context);
-        var initialHostCount = await GetDeleteHostsCount(context);
-        var initialOperatorCount = await GetDeleteOperatorsCount(context);
-        var initialProductCount = await GetDeleteProductsCount(context);
-
-        // Verify initial user count is greater than zero
-        Assert.True(initialUserCount > 0, "Initial user count should be greater than zero.");
-
-        await context.Cleanup(
-            deleteUsers: true,
-            deleteHosts: false,
-            deleteOperators: false,
-            deleteProducts: false,
-            CancellationToken.None
-        );
-
-        var finalUserCount = await GetDeleteUsersCount(context);
-        var finalHostCount = await GetDeleteHostsCount(context);
-        var finalOperatorCount = await GetDeleteOperatorsCount(context);
-        var finalProductCount = await GetDeleteProductsCount(context);
-
-        Assert.Equal(0, finalUserCount);
-        Assert.Equal(initialHostCount, finalHostCount);
-        Assert.Equal(initialOperatorCount, finalOperatorCount);
-        Assert.Equal(initialProductCount, finalProductCount);
-    }
-
-    public static async Task Cleanup_DeleteHostsOnly(DefaultDbContext context)
-    {
-        // Get initial counts
-        var initialHostCount = await GetDeleteHostsCount(context);
-        var initialUserCount = await GetDeleteUsersCount(context);
-        var initialOperatorCount = await GetDeleteOperatorsCount(context);
-        var initialProductCount = await GetDeleteProductsCount(context);
-
-        // Verify initial host count is greater than zero
-        Assert.True(initialHostCount > 0, "Initial host count should be greater than zero.");
-
-        await context.Cleanup(
-            deleteUsers: false,
-            deleteHosts: true,
-            deleteOperators: false,
-            deleteProducts: false,
-            CancellationToken.None
-        );
-
-        var finalHostCount = await GetDeleteHostsCount(context);
-        var finalUserCount = await GetDeleteUsersCount(context);
-        var finalOperatorCount = await GetDeleteOperatorsCount(context);
-        var finalProductCount = await GetDeleteProductsCount(context);
-
-        Assert.Equal(0, finalHostCount);
-        Assert.Equal(initialUserCount, finalUserCount);
-        Assert.Equal(initialOperatorCount, finalOperatorCount);
-        Assert.Equal(initialProductCount, finalProductCount);
-    }
-
-    public static async Task Cleanup_DeleteOperatorsOnly(DefaultDbContext context)
-    {
-        // Get initial counts
-        var initialOperatorCount = await GetDeleteOperatorsCount(context);
-
-        if (initialOperatorCount == 0)
-        {
-            // If there are no operators, we cannot test this case
-            return; // Skip the test by returning early
-        }
-
-        var initialUserCount = await GetDeleteUsersCount(context);
-        var initialHostCount = await GetDeleteHostsCount(context);
-        var initialProductCount = await GetDeleteProductsCount(context);
-
-        await context.Cleanup(
-            deleteUsers: false,
-            deleteHosts: false,
-            deleteOperators: true,
-            deleteProducts: false,
-            CancellationToken.None
-        );
-
-        var finalOperatorCount = await GetDeleteOperatorsCount(context);
-        var finalUserCount = await GetDeleteUsersCount(context);
-        var finalHostCount = await GetDeleteHostsCount(context);
-        var finalProductCount = await GetDeleteProductsCount(context);
-
-        Assert.Equal(0, finalOperatorCount);
-        Assert.Equal(initialUserCount, finalUserCount);
-        Assert.Equal(initialHostCount, finalHostCount);
-        Assert.Equal(initialProductCount, finalProductCount);
-    }
-
-    public static async Task Cleanup_DeleteProductsOnly(DefaultDbContext context)
-    {
-        // Get initial counts
-        var initialProductCount = await GetDeleteProductsCount(context);
-        var initialUserCount = await GetDeleteUsersCount(context);
-        var initialHostCount = await GetDeleteHostsCount(context);
-        var initialOperatorCount = await GetDeleteOperatorsCount(context);
-
-        await context.Cleanup(
-            deleteUsers: false,
-            deleteHosts: false,
-            deleteOperators: false,
-            deleteProducts: true,
-            CancellationToken.None
-        );
-
-        var finalProductCount = await GetDeleteProductsCount(context);
-        var finalUserCount = await GetDeleteUsersCount(context);
-        var finalHostCount = await GetDeleteHostsCount(context);
-        var finalOperatorCount = await GetDeleteOperatorsCount(context);
-
-        Assert.True(finalProductCount <= initialProductCount);
-        Assert.Equal(initialUserCount, finalUserCount);
-        Assert.Equal(initialHostCount, finalHostCount);
-        Assert.Equal(initialOperatorCount, finalOperatorCount);
-    }
-
-    public static async Task Cleanup_DeleteAllFalse(DefaultDbContext context)
-    {
-        // Get initial counts
-        var initialUserCount = await GetDeleteUsersCount(context);
-        var initialHostCount = await GetDeleteHostsCount(context);
-        var initialOperatorCount = await GetDeleteOperatorsCount(context);
-        var initialProductCount = await GetDeleteProductsCount(context);
-
-        // Verify initial counts are greater than zero
-        Assert.True(initialUserCount > 0, "Initial user count should be greater than zero.");
-        Assert.True(initialHostCount > 0, "Initial host count should be greater than zero.");
-        Assert.True(initialProductCount > 0, "Initial product count should be greater than zero.");
-
-        await context.Cleanup(
-            deleteUsers: false,
-            deleteHosts: false,
-            deleteOperators: false,
-            deleteProducts: false,
-            CancellationToken.None
-        );
-
-        var finalUserCount = await GetDeleteUsersCount(context);
-        var finalHostCount = await GetDeleteHostsCount(context);
-        var finalOperatorCount = initialOperatorCount == 0
-            ? 0
-            : await GetDeleteOperatorsCount(context);
-        var finalProductCount = await GetDeleteProductsCount(context);
-
-        Assert.Equal(initialUserCount, finalUserCount);
-        Assert.Equal(initialHostCount, finalHostCount);
-        Assert.Equal(initialOperatorCount, finalOperatorCount);
-        Assert.Equal(initialProductCount, finalProductCount);
-    }
-
-    #endregion
 }

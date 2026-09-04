@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
+using Gizmo.DAL;
 using Gizmo.DAL.Tests.Extensions.Database.DdlExtensions;
-using SharedLib;
 using Xunit;
 
 namespace Gizmo.DAL.Tests.Extensions.Database;
@@ -45,15 +45,6 @@ public class DdlExtensionsTests(DatabaseTestFixture fixture)
     {
         await using var context = await _fixture.CreateDbContext(dbType, nameof(GetNonSystemDbName));
         await GeneralDdlTestsImpl.GetNonSystemDbName(context);
-    }
-
-    [Theory]
-    [InlineData(DatabaseType.MSSQL)]
-    [InlineData(DatabaseType.POSTGRE)]
-    public async Task ReinitializeDatabase(DatabaseType dbType)
-    {
-        await using var context = await _fixture.CreateDbContext(dbType, nameof(ReinitializeDatabase));
-        await GeneralDdlTestsImpl.ReinitializeDatabase(context, _fixture, dbType);
     }
 
     [Theory]

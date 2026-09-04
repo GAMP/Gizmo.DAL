@@ -13,6 +13,58 @@ internal static class SqlServer
 
         var script = new StringBuilder();
 
+        var fullCleanup = deleteUsers && deleteHosts && deleteOperators && deleteProducts;
+
+        // Achievement completion history is cleared on every cleanup, before the always-run
+        // financial section. Table names and child-before-parent order are shared with the
+        // PostgreSQL provider via AchievementCleanupTables; only the quoting differs here.
+        script.AppendLine("-- Achievement completion history (references always-reset financial data)");
+        foreach (var table in AchievementCleanupTables.CompletionTables)
+            script.AppendLine(DeleteTable(table));
+
+        if (fullCleanup)
+        {
+            // Full reset removes achievement configuration and verification methods too, in the
+            // shared order so restrictive references to Achievement/Challenge/Ladder are cleared first.
+            script.AppendLine("-- Achievement configuration and verification cleanup (full reset)");
+            foreach (var table in AchievementCleanupTables.ConfigTables)
+                script.AppendLine(DeleteTable(table));
+        }
+        else
+        {
+            // Partial cleanups remove only the achievement data that references the entity being
+            // deleted via restrictive FKs, so product/host deletion keeps referential integrity.
+            // These derived tables are TPT leaves sharing their PK with a base row
+            // (AchievementProductFilter/AchievementHostFilter -> AchievementFilter,
+            // AchievementChallengeProductReward -> AchievementChallengeReward). Deleting only the
+            // leaf leaves an orphaned base row, so delete the base rows first and let the TPT
+            // cascade remove the leaves; unrelated filter/reward types are untouched.
+            if (deleteProducts)
+            {
+                script.AppendLine("-- Achievement data referencing products");
+                script.AppendLine("DELETE FROM [AchievementFilter] WHERE [AchievementFilterId] IN (SELECT [AchievementFilterId] FROM [AchievementProductFilter]);");
+                script.AppendLine("DELETE FROM [AchievementChallengeReward] WHERE [AchievementChallengeRewardId] IN (SELECT [AchievementChallengeRewardId] FROM [AchievementChallengeProductReward]);");
+            }
+
+            if (deleteHosts)
+            {
+                script.AppendLine("-- Achievement data referencing hosts");
+                script.AppendLine("DELETE FROM [AchievementFilter] WHERE [AchievementFilterId] IN (SELECT [AchievementFilterId] FROM [AchievementHostFilter]);");
+            }
+        }
+
+        // TickerQ tables live in the shared physical database (same configured connection string),
+        // so their reset participates in this same transaction. Guarded for databases where the
+        // ticker schema has not been initialized yet.
+        if (fullCleanup)
+        {
+            script.AppendLine("-- TickerQ cleanup (shared database, guarded for pre-initialization state)");
+            script.AppendLine("IF OBJECT_ID(N'ticker.CronTickerOccurrences', N'U') IS NOT NULL DELETE FROM [ticker].[CronTickerOccurrences];");
+            script.AppendLine("IF OBJECT_ID(N'ticker.TimeTickers', N'U') IS NOT NULL UPDATE [ticker].[TimeTickers] SET [ParentId] = NULL;");
+            script.AppendLine("IF OBJECT_ID(N'ticker.TimeTickers', N'U') IS NOT NULL DELETE FROM [ticker].[TimeTickers];");
+            script.AppendLine("IF OBJECT_ID(N'ticker.CronTickers', N'U') IS NOT NULL DELETE FROM [ticker].[CronTickers];");
+        }
+
         // Tables that couple users and hosts — cleared when either is being deleted.
         // AppStat: app usage logged per user/host.
         // HostGroupWaitingLineEntry: queue state linking a user to a host group.
@@ -247,6 +299,21 @@ internal static class SqlServer
             );
         """;
 
+        static string DeleteChallengeCompletionRewardLeaf(string tableName, string subquery) => $"""
+            DELETE FROM [{tableName}] 
+            WHERE [AchievementChallengeCompletionRewardId] IN (
+                SELECT [AchievementChallengeCompletionRewardId] 
+                FROM [AchievementChallengeCompletionReward] 
+                WHERE [CompletionId] IN (
+                    SELECT [AchievementChallengeCompletionId] 
+                    FROM [AchievementChallengeCompletion] 
+                    WHERE [UserId] IN (
+                        {subquery}
+                    )
+                )
+            );
+        """;
+
         const string DeletedUsersSubquery = """
             SELECT A.UserId 
             FROM [User] AS A 
@@ -258,6 +325,56 @@ internal static class SqlServer
         """;
 
         var script = new StringBuilder();
+
+        // Achievement completion history must be removed before the financial parent deletes below.
+        // Reward leaves reference PointTransaction/Invoice through restrictive FKs, so deleting those
+        // financial rows for a soft-deleted user fails while its completion rewards remain.
+        // Ordered child-before-parent, mirroring the batch user hard-delete script.
+        script.AppendLine("-- Achievement completion history (child-before-financial for soft-deleted users)");
+        script.AppendLine(DeleteChallengeCompletionRewardLeaf("AchievementChallengeCompletionPointsReward", DeletedUsersSubquery));
+        script.AppendLine(DeleteChallengeCompletionRewardLeaf("AchievementChallengeCompletionProductReward", DeletedUsersSubquery));
+        script.AppendLine(DeleteChallengeCompletionRewardLeaf("AchievementChallengeCompletionTimeReward", DeletedUsersSubquery));
+        script.AppendLine($"""
+            DELETE FROM [AchievementChallengeCompletionReward] 
+            WHERE [CompletionId] IN (
+                SELECT [AchievementChallengeCompletionId] 
+                FROM [AchievementChallengeCompletion] 
+                WHERE [UserId] IN (
+                    {DeletedUsersSubquery}
+                )
+            );
+        """);
+        // Requirement snapshots: the two requirement tables are TPT leaves of
+        // AchievementRequirementSnapshot, so deleting the base rows cascades the leaves.
+        script.AppendLine($"""
+            DELETE FROM [AchievementRequirementSnapshot] 
+            WHERE [AchievementRequirementSnapshotId] IN (
+                SELECT [AchievementRequirementSnapshotId] 
+                FROM [AchievementChallengeCompletionRequirement] 
+                WHERE [CompletionId] IN (
+                    SELECT [AchievementChallengeCompletionId] 
+                    FROM [AchievementChallengeCompletion] 
+                    WHERE [UserId] IN (
+                        {DeletedUsersSubquery}
+                    )
+                )
+                UNION
+                SELECT [AchievementRequirementSnapshotId] 
+                FROM [AchievementLadderEventRequirement] 
+                WHERE [EventId] IN (
+                    SELECT [AchievementLadderEventId] 
+                    FROM [AchievementLadderEvent] 
+                    WHERE [UserId] IN (
+                        {DeletedUsersSubquery}
+                    )
+                )
+            );
+        """);
+        script.AppendLine(DeleteFromTableForCleanup("AchievementChallengeCompletion", DeletedUsersSubquery));
+        script.AppendLine(DeleteFromTableForCleanup("AchievementCompletion", DeletedUsersSubquery));
+        script.AppendLine(DeleteFromTableForCleanup("AchievementLadderEvent", DeletedUsersSubquery));
+        script.AppendLine(DeleteFromTableForCleanup("AchievementLadderUserState", DeletedUsersSubquery));
+        script.AppendLine();
 
         // Pre-delete child rows that reference UserSession/UserMember via restrict FKs,
         // otherwise subsequent DELETE FROM [UserSession]/[UserMember] fails.

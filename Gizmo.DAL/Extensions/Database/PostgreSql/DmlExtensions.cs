@@ -21,6 +21,69 @@ internal static class PostgreSql
 
         var script = new StringBuilder();
 
+        var fullCleanup = deleteUsers && deleteHosts && deleteOperators && deleteProducts;
+
+        // Achievement completion history is cleared on every cleanup, before the always-run
+        // financial section. Table names and child-before-parent order are shared with the SQL
+        // Server provider via AchievementCleanupTables; only the quoting differs here.
+        script.AppendLine("-- Achievement completion history (references always-reset financial data)");
+        foreach (var table in AchievementCleanupTables.CompletionTables)
+            script.AppendLine(DeleteTable(table));
+
+        if (fullCleanup)
+        {
+            // Full reset removes achievement configuration and verification methods too, in the
+            // shared order so restrictive references to Achievement/Challenge/Ladder are cleared first.
+            script.AppendLine("-- Achievement configuration and verification cleanup (full reset)");
+            foreach (var table in AchievementCleanupTables.ConfigTables)
+                script.AppendLine(DeleteTable(table));
+        }
+        else
+        {
+            // Partial cleanups remove only the achievement data that references the entity being
+            // deleted via restrictive FKs, so product/host deletion keeps referential integrity.
+            // These derived tables are TPT leaves sharing their PK with a base row
+            // (AchievementProductFilter/AchievementHostFilter -> AchievementFilter,
+            // AchievementChallengeProductReward -> AchievementChallengeReward). Deleting only the
+            // leaf leaves an orphaned base row, so delete the base rows first and let the TPT
+            // cascade remove the leaves; unrelated filter/reward types are untouched.
+            if (deleteProducts)
+            {
+                script.AppendLine("-- Achievement data referencing products");
+                script.AppendLine("DELETE FROM \"AchievementFilter\" WHERE \"AchievementFilterId\" IN (SELECT \"AchievementFilterId\" FROM \"AchievementProductFilter\");");
+                script.AppendLine("DELETE FROM \"AchievementChallengeReward\" WHERE \"AchievementChallengeRewardId\" IN (SELECT \"AchievementChallengeRewardId\" FROM \"AchievementChallengeProductReward\");");
+            }
+
+            if (deleteHosts)
+            {
+                script.AppendLine("-- Achievement data referencing hosts");
+                script.AppendLine("DELETE FROM \"AchievementFilter\" WHERE \"AchievementFilterId\" IN (SELECT \"AchievementFilterId\" FROM \"AchievementHostFilter\");");
+            }
+        }
+
+        // TickerQ tables live in the shared physical database (same configured connection string),
+        // so their reset participates in this same transaction. Guarded for databases where the
+        // ticker schema has not been initialized yet.
+        if (fullCleanup)
+        {
+            script.AppendLine("-- TickerQ cleanup (shared database, guarded for pre-initialization state)");
+            script.AppendLine("""
+                DO $$
+                BEGIN
+                    IF to_regclass('ticker."CronTickerOccurrences"') IS NOT NULL THEN
+                        DELETE FROM "ticker"."CronTickerOccurrences";
+                    END IF;
+                    IF to_regclass('ticker."TimeTickers"') IS NOT NULL THEN
+                        UPDATE "ticker"."TimeTickers" SET "ParentId" = NULL;
+                        DELETE FROM "ticker"."TimeTickers";
+                    END IF;
+                    IF to_regclass('ticker."CronTickers"') IS NOT NULL THEN
+                        DELETE FROM "ticker"."CronTickers";
+                    END IF;
+                END $$;
+                """);
+        }
+
         // Tables that couple users and hosts — cleared when either is being deleted.
         // AppStat: app usage logged per user/host.
         // HostGroupWaitingLineEntry: queue state linking a user to a host group.
@@ -234,17 +297,17 @@ internal static class PostgreSql
     public static string CleanupUsersScript()
     {
         static string DeleteFromTableForCleanup(string tableName, string subquery, string columnName = "UserId") => $"""
-            DELETE FROM "{tableName}" 
+            DELETE FROM "{tableName}"
             WHERE "{columnName}" IN (
                 {subquery}
             );
         """;
 
         static string DeleteFromTableWithJoinForCleanup(string tableName, string joinTableName, string joinColumnName, string subquery, string whereColumnName = "UserId") => $"""
-            DELETE FROM "{tableName}" 
+            DELETE FROM "{tableName}"
             WHERE "{joinColumnName}" IN (
-                SELECT "{joinColumnName}" 
-                FROM "{joinTableName}" 
+                SELECT "{joinColumnName}"
+                FROM "{joinTableName}"
                 WHERE "{whereColumnName}" IN (
                     {subquery}
                 )
@@ -252,28 +315,93 @@ internal static class PostgreSql
         """;
 
         static string UpdateTableSetNullForCleanup(string tableName, string columnToSetNull, string joinTableName, string joinColumnName, string subquery, string whereColumnName = "UserId") => $"""
-            UPDATE "{tableName}" 
-            SET "{columnToSetNull}" = NULL 
+            UPDATE "{tableName}"
+            SET "{columnToSetNull}" = NULL
             WHERE "{joinColumnName}" IN (
-                SELECT "{joinColumnName}" 
-                FROM "{joinTableName}" 
+                SELECT "{joinColumnName}"
+                FROM "{joinTableName}"
                 WHERE "{whereColumnName}" IN (
                     {subquery}
                 )
             );
         """;
 
+        static string DeleteChallengeCompletionRewardLeaf(string tableName, string subquery) => $"""
+            DELETE FROM "{tableName}"
+            WHERE "AchievementChallengeCompletionRewardId" IN (
+                SELECT "AchievementChallengeCompletionRewardId"
+                FROM "AchievementChallengeCompletionReward"
+                WHERE "CompletionId" IN (
+                    SELECT "AchievementChallengeCompletionId"
+                    FROM "AchievementChallengeCompletion"
+                    WHERE "UserId" IN (
+                        {subquery}
+                    )
+                )
+            );
+        """;
+
         const string DeletedUsersSubquery = """
-            SELECT A."UserId" 
-            FROM "User" AS A 
-            LEFT OUTER JOIN "UserGuest" AS B ON A."UserId" = B."UserId" 
-            LEFT OUTER JOIN "UserOperator" AS C ON A."UserId" = C."UserId" 
+            SELECT A."UserId"
+            FROM "User" AS A
+            LEFT OUTER JOIN "UserGuest" AS B ON A."UserId" = B."UserId"
+            LEFT OUTER JOIN "UserOperator" AS C ON A."UserId" = C."UserId"
             WHERE A."IsDeleted" = true
-            AND B."UserId" IS NULL 
+            AND B."UserId" IS NULL
             AND C."UserId" IS NULL
         """;
 
         var script = new StringBuilder();
+
+        // Achievement completion history must be removed before the financial parent deletes below.
+        // Reward leaves reference PointTransaction/Invoice through restrictive FKs, so deleting those
+        // financial rows for a soft-deleted user fails while its completion rewards remain.
+        // Ordered child-before-parent, mirroring the batch user hard-delete script.
+        script.AppendLine("-- Achievement completion history (child-before-financial for soft-deleted users)");
+        script.AppendLine(DeleteChallengeCompletionRewardLeaf("AchievementChallengeCompletionPointsReward", DeletedUsersSubquery));
+        script.AppendLine(DeleteChallengeCompletionRewardLeaf("AchievementChallengeCompletionProductReward", DeletedUsersSubquery));
+        script.AppendLine(DeleteChallengeCompletionRewardLeaf("AchievementChallengeCompletionTimeReward", DeletedUsersSubquery));
+        script.AppendLine($"""
+            DELETE FROM "AchievementChallengeCompletionReward"
+            WHERE "CompletionId" IN (
+                SELECT "AchievementChallengeCompletionId"
+                FROM "AchievementChallengeCompletion"
+                WHERE "UserId" IN (
+                    {DeletedUsersSubquery}
+                )
+            );
+        """);
+        // Requirement snapshots: the two requirement tables are TPT leaves of
+        // AchievementRequirementSnapshot, so deleting the base rows cascades the leaves.
+        script.AppendLine($"""
+            DELETE FROM "AchievementRequirementSnapshot"
+            WHERE "AchievementRequirementSnapshotId" IN (
+                SELECT "AchievementRequirementSnapshotId"
+                FROM "AchievementChallengeCompletionRequirement"
+                WHERE "CompletionId" IN (
+                    SELECT "AchievementChallengeCompletionId"
+                    FROM "AchievementChallengeCompletion"
+                    WHERE "UserId" IN (
+                        {DeletedUsersSubquery}
+                    )
+                )
+                UNION
+                SELECT "AchievementRequirementSnapshotId"
+                FROM "AchievementLadderEventRequirement"
+                WHERE "EventId" IN (
+                    SELECT "AchievementLadderEventId"
+                    FROM "AchievementLadderEvent"
+                    WHERE "UserId" IN (
+                        {DeletedUsersSubquery}
+                    )
+                )
+            );
+        """);
+        script.AppendLine(DeleteFromTableForCleanup("AchievementChallengeCompletion", DeletedUsersSubquery));
+        script.AppendLine(DeleteFromTableForCleanup("AchievementCompletion", DeletedUsersSubquery));
+        script.AppendLine(DeleteFromTableForCleanup("AchievementLadderEvent", DeletedUsersSubquery));
+        script.AppendLine(DeleteFromTableForCleanup("AchievementLadderUserState", DeletedUsersSubquery));
+        script.AppendLine();
 
         // Pre-delete child rows that reference UserSession/UserMember via restrict FKs,
         // otherwise subsequent DELETE FROM "UserSession"/"UserMember" fails.
@@ -381,8 +509,8 @@ internal static class PostgreSql
         script.AppendLine();
         script.AppendLine("-- Final user deletion");
         script.AppendLine($"""
-            DELETE FROM "User" 
-            WHERE "IsDeleted" = true 
+            DELETE FROM "User"
+            WHERE "IsDeleted" = true
             AND "UserId" IN (
                 {DeletedUsersSubquery}
             );
