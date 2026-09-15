@@ -3,7 +3,8 @@
 Outstanding database changes that have been designed or agreed but not yet built, plus the
 decisions that were deliberately settled *against* a schema change so they are not raised again.
 
-**Verified against this repository on 2026-09-04.** Item status ages; re-verify before acting:
+**Verified against this repository on 2026-09-04, corrected line by line on 2026-09-07.** Item
+status ages; re-verify before acting:
 
 ```bash
 git rev-list --left-right --count @{u}...HEAD      # "behind<TAB>ahead" — ahead 0 = nothing unpushed
@@ -11,6 +12,18 @@ grep -c 'migrationBuilder.CreateTable' Gizmo.DAL/Migrations/Gizmo.DAL.Migrations
 ```
 
 Never assert commit or push state from notes — run the check.
+
+## Closed By Review (2026-09-07)
+
+Listed so they are not raised again as open work:
+
+- **Npgsql billing-loop predicate** — `NpgSqlScripts.cs` already uses `"State" IN (1, 5, 9, 17, 33)`
+  (DAL `dc73adb`, 2026-06-26), mirroring the SQL Server fix.
+- **Kitchen prep status** — `PrepareStatus` / `PreparedQuantity` / `PrepareTime` are mapped on both
+  `ProductOL` and `ProductOrder` and shipped in `EFCore_Initial`. Only `StationId` is new persistence.
+- **`AchievementLadder.Options`** — exists since `Update2` (column order 3) with
+  `AchievementLadderOptionType.PromoteOnSettleOnly = 1`. Only the level-side flag column is new, and
+  it is parked (see below).
 
 ## Migration State
 
@@ -21,10 +34,13 @@ Never assert commit or push state from notes — run the check.
 | `Update2` | 20260723100155 | 20260723101222 | 37 `CreateTable` — the achievement family (incl. both TPT hierarchies) and `VerificationMethod`. 3 `AddColumn` — `UserMember.IsTierExempt`, `Register.DefaultOperatorId`, `Register.ReceiptPrinterNumber`. No `InsertData`. |
 | `Update3` | 20260825145608 | 20260825145544 | `PaymentIntent.RegisterId` / `.ShiftId` / `.QrDisplayNumber`, 2 indexes, 2 FKs (`NO ACTION`). |
 
-`Update1` is understood to be the last publicly released migration, which would leave `Update2`
-and `Update3` free to squash before release. **That has not been verified** — confirm before
-relying on it, because it decides whether new columns fold into a regenerated `Update2` or land
-in a new `Update4` (see [Batching](#batching)).
+Whether `Update1` is the last publicly released migration cannot be verified from git — neither
+repository carries release tags. It no longer matters for batching: `Update2` and `Update3` are on
+`origin/version-3`, so regenerating `Update2` would force every checkout to downgrade. **New
+columns go in `Update4`** (see [Batching](#batching)).
+
+`Gizmo.DAL.Entities` `5760f54` (2026-09-04) renamed `AchievementChallengeRewardStatus.Granted` to
+`Delivered` (same value) and added `Claimed = 4`. Enum only — no migration.
 
 ---
 
@@ -35,7 +51,7 @@ Each is a small additive column whose design is settled.
 ### `AchievementLadderLevel.Name`
 
 ```
-+ Name nvarchar(45) NULL          -- SQLStringSize.TINY45, IsRequired(false), column order 7
++ Name nvarchar(45) NULL          -- SQLStringSize.TINY45 (= UserGroup.Name), IsRequired(false), column order 7
 resolution everywhere:  level.Name ?? level.UserGroup.Name
 ```
 
@@ -71,7 +87,7 @@ a TODO pointing here. Read models already carry file GUIDs, so the consuming sid
 ### `AchievementChallengeCompletionTimeReward.InvoiceId`
 
 ```
-+ InvoiceId int NULL  ->  Invoice (RESTRICT)
++ InvoiceId int NULL  ->  Invoice (RESTRICT)   -- same shape as the product snapshot's Invoice FK
 ```
 
 Points snapshots reference their `PointTransaction` and product snapshots their `Invoice`; time
@@ -79,29 +95,39 @@ snapshots reference nothing. A delivered time prize leaves no ledger trail and c
 de-duplicated — which also makes the delivery/stamp atomicity gap undetectable for time, where
 product at least leaves an invoice id in the log.
 
-### Ladder option flags
+### Ladder level option flags — parked, not for the initial release
 
 ```
-AchievementLadderLevel + Options int   [Flags] AchievementLadderLevelOptionType { None, InheritRequirements = 1 }
-AchievementLadder      + Options int   [Flags] AchievementLadderOptionType      { None, StepwisePromotion  = 1 }
+AchievementLadderLevel + Options int   [Flags] AchievementLadderLevelOptionType { None = 0, InheritRequirements = 1, RequirePreviousLevel = 2 }
 ```
 
-For requirement inheritance (level N's effective set = own rows ∪ the chain below, while each
-level carries the flag; merge overlapping achievements by `max(RequiredCount)`, flattened at
-config-cache rebuild) and stepwise promotion (candidate rank clamped to
-`min(highestSatisfied, periodStartRank + 1)`; promotion only, demotion uncapped).
+Two per-level flags on different axes (decided 2026-09-07, build later):
 
-Verify whether `AchievementLadder.Options` already exists before scaffolding — `IsStepwise` is
-already on the standing model, hardcoded false. Stepwise needs no state column: the
-already-promoted-this-period early-out reads `AchievementLadderEvent`. **Doc-comment that on the
-event entity** — it promotes the history table to evaluator control state, so the "keep forever"
-retention decision can no longer change without breaking the early-out.
+- **`InheritRequirements`** — a *content* rule, requirements mode only. The level's effective set
+  is its own rows ∪ the level below, judged on the same period's completions; the chain walks down
+  while each level carries the flag, overlapping achievements merge by `max(RequiredCount)`,
+  flattened at config-cache rebuild so the evaluator loop is untouched. Says nothing about speed.
+- **`RequirePreviousLevel`** — a *path* rule, both modes. Entering the level requires having held
+  the level below at the start of the period. Judges history, not this period's counts; the only
+  flag that slows a climb (one gated rung per period). Anchored at period start on purpose — a gate
+  on "currently holds the level below" is vacuous under live evaluation, which climbs rung by rung
+  across consecutive ticks. Read from `AchievementLadderEvent` (`PeriodStart` = current period,
+  `ToRank > FromRank`; add `CreatedTime >=` for the `(UserId, CreatedTime)` index), no state
+  column. **Doc-comment on the event entity** that it is evaluator control state, so the
+  "keep forever" retention decision is load-bearing.
+
+The ladder-scoped `StepwisePromotion` flag is **dropped**: every level gated is ladder-wide
+stepwise, so the per-level gate subsumes it. `AchievementLadder.Options` already exists with
+`PromoteOnSettleOnly = 1` and stays ladder-scoped — cadence belongs to the ladder's clock
+(`Period`, settle state, boundary sweep), entry rules belong to the rung. `StepwisePromotion`
+never existed in code; the only footprint is `LadderStandingModel.IsStepwise` (key 7, reserved,
+always false) and its comments — clean up with the models later.
 
 ### Reversal reference on the refund base
 
 ```
-RefundInvoicePayment / RefundDepositPayment (common base)
-+ reversal reference nvarchar NULL
+Refund (TPT base of RefundInvoicePayment / RefundDepositPayment / RefundPayment)
++ reversal reference nvarchar NULL     -- column order 8, after Note
 ```
 
 A reversal produces a *new* reference — terminal reversal RRN, or a Stripe `re_…` refund id — that
@@ -111,6 +137,7 @@ a completed PSP refund records no provider reference and cannot be reconciled.
 
 Every rail populates this one field. Writing the reference here (rather than anywhere
 terminal-specific) is also what keeps a later sync→async reversal lifecycle purely additive.
+`DepositPaymentService.VoidAsync` already carries the TODO for this column.
 
 ### `InventoryTransferEntry` cost and expiry
 
@@ -134,17 +161,23 @@ FiscalPrinterReceiptResult widened: DocumentNumber, ExternalId, Uid, QrUrl
 ```
 
 The row carries only `Signature` and `TaxSystem`, and `DocumentNumber` is never populated. Greek
-myDATA returns a MARK and QR per document, so all of it must persist.
+myDATA returns a MARK and QR per document, so all of it must persist. **Types matter:**
+`DocumentNumber` is `int?` and a MARK is a 15-digit number, so it needs `bigint` or a string
+column, not a widening of the existing one; the UID is a 40-character hex string.
 
 Related and also schema-shaped: on the certified-provider route the server must assign a gapless
 per-register series number **before** first transmission, stable across poller retries. No such
 counter exists on `Invoice`, and the `FiscalReceipt` row is only created after a successful print.
 
-### Emailer integration seed row
+### Emailer integration seed row — not a migration
 
-The emailer-as-integration split needs an `Integration` row seeded when `SMTPOptions.IsEnabled`.
-The agreed home was the communication-methods migration, but `Update2` contains no `InsertData`
-anywhere, so it was missed. Deliberately does **not** wrap the legacy SMS gateway.
+The emailer-as-integration split needs an `Integration` row for `SystemSmtpEmailProvider` so
+`VerificationMethod` entries can reference it. The earlier plan put it in the communication-methods
+migration "when `SMTPOptions.IsEnabled`" — a migration cannot read application options, so that
+was never buildable and `Update2` correctly contains no `InsertData`. It is an **idempotent startup
+seeder** in the server: look up by `TypeGuid` (the index is non-unique, so the seeder checks
+existence itself), insert with a fixed `PublicId` (unique index), `Name`, `CreatedTime`, and no
+`ConfigJson`. Deliberately does **not** wrap the legacy SMS gateway.
 
 ---
 
@@ -156,13 +189,13 @@ anywhere, so it was missed. Deliberately does **not** wrap the legacy SMS gatewa
 Station         global, named, soft-delete only (order lines keep the stamp forever)
 KitchenBinding  branch + station SET + display options; Guid Uid on the wire, int Id internal
                 station -> companion/printer binding per branch, with a delivery mode
-ProductOL     + StationId int NULL   + index on StationId
-IPreparable on ProductOL and ProductOrder: PrepareStatus, PreparedQuantity, PrepareTime
+ProductOL     + StationId int NULL   + index on StationId   -- the ONLY new persistence
 ```
 
 The `StationId` stamp at order acceptance is the load-bearing commitment: a snapshot, never
 re-derived on read, so a config change mid-shift cannot re-route in-flight tickets. It is also the
-only new persistence the printing half of the feature needs.
+only new persistence the feature needs — the prep-status track (`PrepareStatus`, `PreparedQuantity`,
+`PrepareTime`) already exists on both `ProductOL` and `ProductOrder` since `EFCore_Initial`.
 
 Order lines have no `BranchId` and must not gain one — branch filtering joins line→order, one
 indexed FK hop. Prep status is a track separate from `IDeliverable`, not a new state machine. The
@@ -175,10 +208,15 @@ Option A  UserMember + one persisted/computed folded search column
 Option B  UserSearchTerm (UserId, Term, FieldType) + INDEX (Term, FieldType)
 ```
 
-**A before B.** A computed column is maintained by the database, so there is no sync surface and no
-silently-unfindable-user risk; B's only edge is being fully B-tree-indexable on *both* engines,
-which decides it only if large SQL Server installs exist. A also fixes the Turkish dotless `ı` bug
-and the PostgreSQL/SQL Server result divergence for correctness alone, independent of performance.
+**A before B, but A is an application-maintained column, not a computed one.** The folding the
+design needs (lowercase, strip diacritics, explicit map for `ı`, `ø`, `ß`, `æ`) exists only in C#:
+SQL Server has no accent-folding function, and PostgreSQL's `unaccent()` is marked STABLE, so it
+cannot sit in a STORED generated column or an expression index without an IMMUTABLE wrapper
+function shipped by the migration. So A carries the same sync surface as B — every write path that
+touches a searchable field must refresh the column (one `SaveChanges` interceptor, plus a backfill).
+A still wins on size, and it fixes the Turkish dotless `ı` bug and the PostgreSQL/SQL Server result
+divergence for correctness alone. B's only edge is being fully B-tree-indexable on *both* engines,
+which decides it only if large SQL Server installs exist.
 
 **Gated:** get the customer's `UserMember` row count and an `EXPLAIN ANALYZE` of a real search
 first. Under roughly 50k users the current query is likely under 150 ms and this backlogs.
@@ -214,13 +252,11 @@ so these are code-and-DDL pairs, not DDL alone.
 |---|---|
 | `ProductOrder (Status) WHERE Status IN (0,3,4)` | `ProductOrderService.ActiveAsync` filters `Status != Completed && != Canceled`. The optimizer cannot prove `!=1 && !=2` implies `IN (0,3,4)`, so it would never pick the index. Add **only** with the predicate rewritten as a positive `IN`. Completed is ~98.5% of 867k rows. |
 | `UserSession (UserId, State) INCLUDE (EndTime / CreatedTime)` | ~15 remaining `State.HasFlag(Active)` call sites must first become `State != UserSessionState.Ended`. The existing `(HostId, State)` index already serves the HostId-prefiltered ones once they are sargable. Do **not** rewrite `Service.Reports` — that `HasFlag` is in-memory on an API enum. |
-| Reservation gate composites | Non-sargable `Date.AddMinutes(Duration)`. Needs a persisted computed `EndDate` column on `Reservation` first — parked as a larger schema change, but it unblocks every date-range, overlap and availability query. |
-| `InventoryEntry (StockId, ProductId, Id)` | Nothing. The FIFO estimator's two `SUM` aggregates still scan; this makes them index-only. No index exists on that table today and it is TPT, so the adjustment and transfer-out sums also join subtype tables. |
+| Reservation gate composites | Non-sargable `Date.AddMinutes(Duration)`. Needs a persisted computed `EndDate` column on `Reservation` first — parked as a larger schema change, but it unblocks every date-range, overlap and availability query. The computed SQL is provider-specific (`DATEADD(minute, Duration, Date) PERSISTED` vs `"Date" + make_interval(mins => "Duration") STORED`), so it lives in the context's provider branch, like the filtered indexes. |
+| `InventoryEntry (StockId, ProductId, Id DESC)` | Nothing, but the expectation was wrong. The table already has single-column FK indexes (`StockId`, `ProductId`, …); the composite supersedes `IX_InventoryEntry_StockId` (drop it, as with `StockTransaction`). It can never be index-only: the estimator's sums filter by subtype under TPT, which forces a join to the subtype table, and they aggregate `Quantity`, which the key does not carry — same shape as the `UsageTime` finding. Expect a seek plus subtype join instead of a scan; `Id DESC` also serves the newest-first layer paging. Check the row count first. |
 | Order-line `StationId` | Ships with the kitchen schema above. |
 
-Not an index, but the same family: `NpgSqlScripts.cs` still carries `"State" & 1 = 1` in the
-billing loop. SQL Server got the `IN (1,5,9,17,33)` fix (3143 logical reads → 15; 40 ms →
-microseconds on 661k rows). The Postgres side should match.
+The Npgsql billing-loop predicate is done — see *Closed By Review* above.
 
 ---
 
@@ -235,12 +271,18 @@ customer-managed instance. Verify before promising either.
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS unaccent;   -- then unaccent(col) ILIKE unaccent(pattern)
-CREATE EXTENSION IF NOT EXISTS pg_trgm;    -- then GIN on the searched columns
+CREATE EXTENSION IF NOT EXISTS pg_trgm;    -- then GIN (gin_trgm_ops) on the searched columns
 ```
 
 `unaccent` closes a real behavioural divergence: server-side `ILike` is case-insensitive but
 accent-**sensitive**, so `Agua` misses `Água` on every PostgreSQL install. SQL Server never had the
 bug — `Latin1_General_100_CI_AI_SC` is accent-insensitive. Same code, two collation tables.
+
+Mechanics: declare both with `modelBuilder.HasPostgresExtension(...)` inside the Npgsql branch so
+EF emits the `CREATE EXTENSION`, rather than `migrationBuilder.Sql`. `unaccent()` is STABLE, so a
+trigram index on `unaccent(col)` needs an IMMUTABLE wrapper function created in the same migration,
+and the query must use that exact wrapper expression for the index to match. The GIN opclass
+(`gin_trgm_ops`) is Npgsql-only configuration and belongs in `ApplyPerformanceIndexes`.
 
 `pg_trgm` is the only item on this page that changes complexity class, O(rows) → O(matches), and it
 is migration-only. Caveats to carry into the decision: trigrams need 3+ characters, so short
@@ -255,16 +297,22 @@ decision, not a performance one.
 
 Plain SQL for both engines, not EF migrations. Each fixes rows already written.
 
-**Transfer inbound rows carry the source stock id.** Rows created before the StockId fix point at
-the source stock. Rewrite `InventoryInboundEntry` where `InventoryTransferEntryId IS NOT NULL`, and
-the parent `InventoryInbound.StockId`, to the transfer's `TransferStockId`. Symptom is understated
+**Transfer inbound rows carry the source stock id.** Rows created before server `b572c537`
+(2026-07-30) point at the source stock. `StockId` lives on the TPT **base** tables: rewrite
+`InventoryEntry.StockId` for rows whose `InventoryInboundEntry.InventoryTransferEntryId IS NOT NULL`
+(join entry → transfer entry → its `Inventory` → `InventoryTransfer.TransferStockId`), and the
+parent `Inventory.StockId` for the `InventoryInbound` row (one inbound per transfer, so it is
+unambiguous). The subtype tables do not carry the column. Symptom is understated
 inbound totals on transfer-destination stocks. Because the missing-inbound deficit is a permanent
 offset that never decays, shallow-stocked products fall back to `Product.Cost` forever even after
 correct usage.
 
 **`ProductOrder.BranchId` nulls.** Nullable is legacy-only — pre-branch v2 data the v2→v3 migration
-should have defaulted and did not. Current code always sets it. Backfilling to the default branch
-helps historical branch-scoped reports and would allow tightening the column to non-null later.
+should have defaulted and did not. Current code always sets it. There is no "default branch" —
+`Branch` has no such flag; the house rule is the branch of the register flagged
+`RegisterOptions.GlobalDefault` (duplicates are tolerated there, so take the lowest `RegisterId`).
+Backfilling helps historical branch-scoped reports and would allow tightening the column to
+non-null later.
 
 **Registers orphaned by the terminal-flag change.** Replacing the global `CreditCardUseTerminal`
 with `Register.PaymentTerminalNumber != null` shipped no data migration, so registers that relied on
@@ -303,11 +351,11 @@ uses the default `Migrations/` folder. `migrations add` needs no database; `migr
 Both migration projects have a `DesignTimeDbContextFactory`.
 
 <a name="batching"></a>
-**Batching.** Several open columns above land on tables `Update2` created. Either fold them into a
-drop-regenerated `Update2` — the precedent, that is how `Achievement.ImageId` got in, at the cost of
-a dev-database downgrade and now re-scaffolding `Update3` on top — or add a plain `Update4`. Update4
-is cheaper now that Update3 exists, unless 2 and 3 are still to be squashed before release. Settle
-once and apply to all of them.
+**Batching — decided: `Update4`.** Several open columns above land on tables `Update2` created.
+Regenerating `Update2` was the precedent (that is how `Achievement.ImageId` got in), but `Update2`
+and `Update3` are now on `origin/version-3`, so a regeneration would force every checkout to
+downgrade. All additive columns go in a plain `Update4`; on `AchievementLadderLevel` the `Name`
+column takes order 7 and, if the parked `Options` column ever ships with it, order 8.
 
 **Index placement.** Only provider-**incompatible** index configuration lives in
 `DefaultDbContext.ApplyPerformanceIndexes`: covering `INCLUDE` (`IncludeProperties` is ambiguous in
