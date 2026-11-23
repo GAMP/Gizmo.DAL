@@ -36,6 +36,14 @@ namespace Gizmo.DAL
         /// <param name="cancellationToken">Cancellation token.</param>
         public async Task ConvertToUtcAsync(CancellationToken cancellationToken = default)
         {
+            // SQL Server's AT TIME ZONE only accepts Windows time zone ids (sys.time_zone_info).
+            // TimeZoneInfo.Id is the Windows id on Windows, but an IANA id (e.g. "Europe/Istanbul")
+            // on Linux, and TimeZoneInfo.StandardName on Linux/ICU is a display string such as
+            // "GMT+03:00" that AT TIME ZONE rejects (error 9820), crashing the v2 upgrade.
+            var sqlTimeZoneId = TimeZoneInfo.TryConvertIanaIdToWindowsId(_sourceTimeZone.Id, out var windowsTimeZoneId)
+                ? windowsTimeZoneId
+                : _sourceTimeZone.Id;
+
             var entityTypes = _context.Model.GetEntityTypes();
 
             foreach (var entityType in entityTypes)
@@ -63,7 +71,7 @@ namespace Gizmo.DAL
 
                     var sql = $@"UPDATE {fullTableName}
                                      SET {columnName} = CAST({columnName} AS datetimeoffset)
-                                     AT TIME ZONE '{_sourceTimeZone.StandardName}'
+                                     AT TIME ZONE '{sqlTimeZoneId}'
                                      AT TIME ZONE 'UTC'
                                      WHERE {columnName} IS NOT NULL";
 
