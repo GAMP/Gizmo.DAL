@@ -135,6 +135,13 @@
         SET dp.Amount = p.Amount
         FROM DepositPayment dp
         INNER JOIN Payment p ON dp.PaymentId = p.PaymentId;
+
+        -- v2 upgrade marker: DbInitializer runs the post-upgrade steps (UTC conversion, payment intents,
+        -- upgrade seeding) while this row exists and deletes it once they have committed.
+        IF NOT EXISTS (SELECT 1 FROM [dbo].[Setting] WHERE GroupName = 'UPGRADE' AND Name = 'V2_UPGRADE_PENDING')
+        BEGIN
+        INSERT INTO [dbo].[Setting] (Name, GroupName, Value, CreatedTime) VALUES ('V2_UPGRADE_PENDING', 'UPGRADE', NULL, GETDATE())
+        END
         END
 
         """;

@@ -36,6 +36,8 @@ namespace Gizmo.DAL
         /// <param name="cancellationToken">Cancellation token.</param>
         public async Task ConvertToUtcAsync(CancellationToken cancellationToken = default)
         {
+            var sqlTimeZoneName = GetSqlServerTimeZoneName(_sourceTimeZone);
+
             var entityTypes = _context.Model.GetEntityTypes();
 
             foreach (var entityType in entityTypes)
@@ -61,15 +63,40 @@ namespace Gizmo.DAL
                     if (columnName == null)
                         continue;
 
+                    // The column must not be cast to datetimeoffset first: AT TIME ZONE assigns the zone offset only to a value
+                    // that has none, an offset-carrying value is converted to the zone and back to UTC, leaving it unchanged.
+                    // Values within a day of the datetime2 minimum or maximum are placeholders, not timestamps: shifting them
+                    // overflows (error 9813), so they are left as they are. The bounds are typed because a plain string bound
+                    // is converted to the column type and is out of range for a datetime column.
                     var sql = $@"UPDATE {fullTableName}
-                                     SET {columnName} = CAST({columnName} AS datetimeoffset)
-                                     AT TIME ZONE '{_sourceTimeZone.StandardName}'
+                                     SET {columnName} = {columnName}
+                                     AT TIME ZONE '{sqlTimeZoneName}'
                                      AT TIME ZONE 'UTC'
-                                     WHERE {columnName} IS NOT NULL";
+                                     WHERE {columnName} IS NOT NULL
+                                     AND {columnName} >= CAST('0001-01-02' AS datetime2)
+                                     AND {columnName} < CAST('9999-12-31' AS datetime2)";
 
                     await _context.Database.ExecuteSqlRawAsync(sql, cancellationToken);
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the time zone name SQL Server AT TIME ZONE accepts (a Windows time zone id, see sys.time_zone_info).
+        /// </summary>
+        /// <param name="timeZone">Time zone.</param>
+        /// <returns>Windows time zone id.</returns>
+        /// <exception cref="NotSupportedException">thrown if the time zone cannot be mapped to a Windows time zone id.</exception>
+        private static string GetSqlServerTimeZoneName(TimeZoneInfo timeZone)
+        {
+            // On Windows the id already is a Windows id, on Linux it is an IANA id and has to be mapped.
+            if (!timeZone.HasIanaId)
+                return timeZone.Id;
+
+            if (TimeZoneInfo.TryConvertIanaIdToWindowsId(timeZone.Id, out var windowsId))
+                return windowsId;
+
+            throw new NotSupportedException($"Time zone '{timeZone.Id}' cannot be mapped to the Windows time zone id required by SQL Server.");
         }
 
         private static bool IsUnspecifiedDateTimeProperty(IProperty mutableProperty)

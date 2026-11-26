@@ -88,6 +88,11 @@ namespace Gizmo.DAL.Contexts
                     await _dbContext.Database.MigrateAsync(cancellationToken);
                 }
 
+                // the v2 upgrade marker is written by the EFCore_Initial migration (Scripts.EF_6_BRANCH_SET) and removed by
+                // ValidateDataAsync once upgrade seeding commits, so an upgrade that failed half way is resumed on the next start
+                isUpgrade = isUpgrade || await _dbContext.Settings
+                    .AnyAsync(setting => setting.GroupName == "UPGRADE" && setting.Name == "V2_UPGRADE_PENDING", cancellationToken);
+
                 if (isUpgrade)
                 {
                     // NOTE we can only execute this step (UTC conversion) once the v3 migrations are applied
@@ -947,6 +952,14 @@ namespace Gizmo.DAL.Contexts
                     }
 
                     #endregion
+
+                    if (result.IsUpgrade)
+                    {
+                        // upgrade finished, removed in the same transaction as the upgrade seeding above
+                        await _dbContext.Settings
+                            .Where(setting => setting.GroupName == "UPGRADE" && setting.Name == "V2_UPGRADE_PENDING")
+                            .ExecuteDeleteAsync(cancellationToken);
+                    }
 
                     //save any changes made
                     await _dbContext.SaveChangesAsync(cancellationToken);
